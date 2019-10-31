@@ -84,7 +84,10 @@ public class ConnectorConfigField {
     }
 
     public String getDescription() {
-        return fieldDef.documentation;
+        if (fieldDef.documentation != null) {
+            return removeNonAsciiChars(fieldDef.documentation);
+        }
+        return "";
     }
 
     private String getSetterMethodName(final String name) {
@@ -123,5 +126,9 @@ public class ConnectorConfigField {
             return getDefaultValue().toString();
         }
         return null;
+    }
+
+    private String removeNonAsciiChars(final String text) {
+        return text.replaceAll("[^\\x00-\\x7F]", "");
     }
 }

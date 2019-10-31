@@ -68,255 +68,281 @@ public class DebeziumPostgresComponentConfiguration
     public static class PostgresConnectorEmbeddedDebeziumConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration.class;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * When 'snapshot.mode' is set as custom, this setting must be set to
+         * specify a fully qualified class name to load (via the default class
+         * loader).This class must implement the 'Snapshotter' interface and is
+         * called on each app boot to determine whether to do a snapshot and how
+         * to build queries.
          */
         private String snapshotCustomClass;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Maximum size of the queue for change events read from the database
+         * log but not yet recorded or forwarded. Defaults to 8192, and should
+         * always be larger than the maximum batch size.
          */
         private Integer maxQueueSize = 8192;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The name of the Postgres logical decoding slot created for streaming
+         * changes from a plugin.Defaults to 'debezium
          */
         private String slotName = "debezium";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Specify how HSTORE columns should be represented in change events,
+         * including:'json' represents values as json string'map' (default)
+         * represents values using java.util.Map
          */
         private String hstoreHandlingMode = "json";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'column.blacklist' description.
          */
         private String columnBlacklist;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The number of milliseconds to delay before a snapshot will begin.
          */
         private Long snapshotDelayMs = 0L;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'schema.blacklist' description.
          */
         private String schemaBlacklist;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'table.blacklist' description.
          */
         private String tableBlacklist;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Specify the conditions that trigger a refresh of the in-memory schema
+         * for a table. 'columns_diff' (the default) is the safest mode,
+         * ensuring the in-memory schema stays in-sync with the database table's
+         * schema at all times. 'columns_diff_exclude_unchanged_toast' instructs
+         * the connector to refresh the in-memory schema cache if there is a
+         * discrepancy between it and the schema derived from the incoming
+         * message, unless unchanged TOASTable data fully accounts for the
+         * discrepancy. This setting can improve connector performance
+         * significantly if there are frequently-updated tables that have
+         * TOASTed data that are rarely part of these updates. However, it is
+         * possible for the in-memory schema to become outdated if TOASTable
+         * columns are dropped from the table.
          */
         private String schemaRefreshMode = "columns_diff";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The tables for which changes are to be captured
          */
         private String tableWhitelist;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * How events received from the DB should be placed on topics. Options
+         * include'table' (the default) each DB table will have a separate Kafka
+         * topic; 'schema' there will be one Kafka topic per DB schema; events
+         * from multiple topics belonging to the same schema will be placed on
+         * the same topic
          */
         private String topicSelectionStrategy = "topic_per_table";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Whether delete operations should be represented by a delete event and
+         * a subsquenttombstone event (true) or only by a delete event (false).
+         * Emitting the tombstone event (the default behavior) allows Kafka to
+         * completely delete all events pertaining to the given key once the
+         * source record got deleted.
          */
         private Boolean tombstonesOnDelete = false;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Whether to use an encrypted connection to Postgres. Options
+         * include'disable' (the default) to use an unencrypted connection;
+         * 'require' to use a secure (encrypted) connection, and fail if one
+         * cannot be established; 'verify-ca' like 'required' but additionally
+         * verify the server TLS certificate against the configured Certificate
+         * Authority (CA) certificates, or fail if no valid matching CA
+         * certificates are found; or'verify-full' like 'verify-ca' but
+         * additionally verify that the server certificate matches the host to
+         * which the connection is attempted.
          */
         private String databaseSslmode = "disable";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Specify how DECIMAL and NUMERIC columns should be represented in
+         * change events, including:'precise' (the default) uses
+         * java.math.BigDecimal to represent values, which are encoded in the
+         * change events using a binary representation and Kafka Connect's
+         * 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to
+         * represent values; 'double' represents values using Java's 'double',
+         * which may not offer the precision but will be far easier to use in
+         * consumers.
          */
         private String decimalHandlingMode = "precise";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * File containing the SSL Certificate for the client. See the Postgres
+         * SSL docs for further information
          */
         private String databaseSslcert;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Frequency in milliseconds to wait for new change events to appear
+         * after receiving no events. Defaults to 500ms.
          */
         private Long pollIntervalMs = 500L;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * A semicolon separated list of SQL statements to be executed when a
+         * JDBC connection to the database is established. Note that the
+         * connector may establish JDBC connections at its own discretion, so
+         * this should typically be used for configurationof session parameters
+         * only, but not for executing DML statements. Use doubled semicolon
+         * (';;') to use a semicolon as a character and not as a delimiter.
          */
         private String databaseInitialStatements;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The prefix that is used to name heartbeat topics.Defaults to
+         * __debezium-heartbeat.
          */
         private String heartbeatTopicsPrefix = "__debezium-heartbeat";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * A name of class to that creates SSL Sockets. Use
+         * org.postgresql.ssl.NonValidatingFactory to disable SSL validation in
+         * development environments
          */
         private String databaseSslfactory;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Frequency in milliseconds for sending replication connection status
+         * updates to the server. Defaults to 10 seconds (10000 ms).
          */
         private Integer statusUpdateIntervalMs = 10000;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The maximum number of records that should be loaded into memory while
+         * performing a snapshot
          */
         private Integer snapshotFetchSize;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The maximum number of millis to wait for table locks at the beginning
+         * of a snapshot. If locks cannot be acquired in this time frame, the
+         * snapshot will be aborted. Defaults to 10 seconds
          */
         private Long snapshotLockTimeoutMs = 10000L;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Enable or disable TCP keep-alive probe to avoid dropping TCP
+         * connection
          */
         private Boolean databaseTcpkeepalive = true;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The path to the file that will be used to record the database history
          */
         private String databaseHistoryFileFilename;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The name of the database the connector should be monitoring
          */
         private String databaseDbname;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Name of the Postgres database user to be used when connecting to the
+         * database.
          */
         private String databaseUser;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * File containing the SSL private key for the client. See the Postgres
+         * SSL docs for further information
          */
         private String databaseSslkey;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * This property contains a comma-separated list of fully-qualified
+         * tables (DB_NAME.TABLE_NAME). Select statements for the individual
+         * tables are specified in further configuration properties, one for
+         * each table, identified by the id
+         * 'snapshot.select.statement.overrides.[DB_NAME].[TABLE_NAME]'. The
+         * value of those properties is the select statement to use when
+         * retrieving data from the specific table during snapshotting. A
+         * possible use case for large append-only tables is setting a specific
+         * point where to start (resume) snapshotting, in case a previous
+         * snapshotting was interrupted.
          */
         private String snapshotSelectStatementOverrides;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Specify how often (in ms) the xmin will be fetched from the
+         * replication slot. This xmin value is exposed by the slot which gives
+         * a lower bound of where a new replication slot could start from. The
+         * lower the value, the more likely this value is to be the current
+         * 'true' value, but the bigger the performance cost. The bigger the
+         * value, the less likely this value is to be the current 'true' value,
+         * but the lower the performance penalty. The default is set to 0 ms,
+         * which disables tracking xmin.
          */
         private Long xminFetchIntervalMs = 0L;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Time, date, and timestamps can be represented with different kinds of
+         * precisions, including:'adaptive' (the default) bases the precision of
+         * time, date, and timestamp values on the database column's precision;
+         * 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields
+         * always use microseconds precision;'connect' always represents time,
+         * date, and timestamp values using Kafka Connect's built-in
+         * representations for Time, Date, and Timestamp, which uses millisecond
+         * precision regardless of the database columns' precision .
          */
         private String timePrecisionMode = "adaptive";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Unique name that identifies the database server and all recorded
+         * offsets, and that is used as a prefix for all schemas and topics.
+         * Each distinct installation should have a separate namespace and be
+         * monitored by at most one Debezium connector.
          */
         private String databaseServerName;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Length of an interval in milli-seconds in in which the connector
+         * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+         * disable heartbeat messages. Disabled by default.
          */
         private Integer heartbeatIntervalMs = 0;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The name of the Postgres logical decoding plugin installed on the
+         * server. Supported values are 'decoderbufs' and 'wal2json'. Defaults
+         * to 'decoderbufs'.
          */
         private String pluginName = "decoderbufs";
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Port of the Postgres database server.
          */
         private Integer databasePort = 5432;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Password to access the client private key from the file specified by
+         * 'database.sslkey'. See the Postgres SSL docs for further information
          */
         private String databaseSslpassword;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The schemas for which events should be captured
          */
         private String schemaWhitelist;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Specify whether the fields of data type not supported by Debezium
+         * should be processed:'false' (the default) omits the fields; 'true'
+         * converts the field into an implementation dependent binary
+         * representation.
          */
         private Boolean includeUnknownDatatypes = false;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Resolvable hostname or IP address of the Postgres database server.
          */
         private String databaseHostname;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Password of the Postgres database user to be used when connecting to
+         * the database.
          */
         private String databasePassword;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * File containing the root certificate(s) against which the server is
+         * validated. See the Postgres JDBC SSL docs for further information
          */
         private String databaseSslrootcert;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * Maximum size of each batch of source records. Defaults to 2048.
          */
         private Integer maxBatchSize = 2048;
         /**
-         * Any optional parameters used by logical decoding plugin. Semi-colon
-         * separated. E.g.
-         * 'add-tables=public.table,public.table2;include-lsn=true'
+         * The criteria for running a snapshot upon startup of the connector.
+         * Options include: 'always' to specify that the connector run a
+         * snapshot each time it starts up; 'initial' (the default) to specify
+         * the connector can run a snapshot only when no offsets are available
+         * for the logical server name; 'initial_only' same as 'initial' except
+         * the connector should stop after completing the snapshot and before it
+         * would normally start emitting changes;'never' to specify the
+         * connector should never run a snapshot and that upon first startup the
+         * connector should read from the last position (LSN) recorded by the
+         * server; and'custom' to specify a custom class with
+         * 'snapshot.custom_class' which will be loaded and used to determine
+         * the snapshot, see docs for more details.
          */
         private String snapshotMode = "initial";
         /**
@@ -358,7 +384,7 @@ public class DebeziumPostgresComponentConfiguration
          * The name of the Java class of the commit policy. It defines when
          * offsets commit has to be triggered based on the number of events
          * processed and the time elapsed since the last commit. This class must
-         * implement the interface <…​>.OffsetCommitPolicy. The default is a
+         * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          */
         private String offsetCommitPolicy = "io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy";
@@ -375,8 +401,7 @@ public class DebeziumPostgresComponentConfiguration
         private Long offsetCommitTimeoutMs = 5000L;
         /**
          * The number of partitions used when creating the offset storage topic.
-         * Required when offset.storage is set to the
-         * <…​>.KafkaOffsetBackingStore.
+         * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          */
         private Integer offsetStoragePartitions;
         /**
