@@ -310,7 +310,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 | xref:jdbc-component.adoc[JDBC] (camel-jdbc) | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
-| xref:jetty-component.adoc[Jetty] (camel-jetty) | 1.2 | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+| xref:jetty-component.adoc[Jetty] (camel-jetty) | 1.2 | To use Jetty as a HTTP server as consumer for Camel routes.
 
 | xref:websocket-component.adoc[Jetty Websocket] (camel-websocket) | 2.10 | The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
 
