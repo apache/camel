@@ -317,15 +317,15 @@ public class EndpointDslMojo extends AbstractMojo {
             if (option.getLabel() != null) {
                 if (option.getLabel().contains("producer")) {
                     if (option.getLabel().contains("advanced")) {
-                        targets.add(advancedProducerClass);
+                        targets.add(advancedProducerClass != null ? advancedProducerClass : advancedBuilderClass);
                     } else {
-                        targets.add(producerClass);
+                        targets.add(producerClass != null ? producerClass : builderClass);
                     }
                 } else if (option.getLabel().contains("consumer")) {
                     if (option.getLabel().contains("advanced")) {
-                        targets.add(advancedConsumerClass);
+                        targets.add(advancedConsumerClass != null ? advancedConsumerClass : advancedBuilderClass);
                     } else {
-                        targets.add(consumerClass);
+                        targets.add(consumerClass != null ? consumerClass : builderClass);
                     }
                 } else {
                     if (option.getLabel().contains("advanced")) {
