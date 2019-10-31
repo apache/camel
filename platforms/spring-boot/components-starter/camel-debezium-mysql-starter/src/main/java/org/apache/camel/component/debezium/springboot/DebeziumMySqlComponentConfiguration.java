@@ -68,553 +68,386 @@ public class DebeziumMySqlComponentConfiguration
     public static class MySqlConnectorEmbeddedDebeziumConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration.class;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Controls how long the connector holds onto the global read lock while
+         * it is performing a snapshot. The default is 'minimal', which means
+         * the connector holds the global read lock (and thus prevents any
+         * updates) for just the initial portion of the snapshot while the
+         * database schemas and other metadata are being read. The remaining
+         * work in a snapshot involves selecting all rows from each table, and
+         * this can be done using the snapshot process' REPEATABLE READ
+         * transaction even when the lock is no longer held and other operations
+         * are updating the database. However, in some cases it may be desirable
+         * to block all writes for the entire duration of the snapshot; in such
+         * cases set this property to 'extended'. Using a value of 'none' will
+         * prevent the connector from acquiring any table locks during the
+         * snapshot process. This mode can only be used in combination with
+         * snapshot.mode values of 'schema_only' or 'schema_only_recovery' and
+         * is only safe to use if no schema changes are happening while the
+         * snapshot is taken.
          */
         private String snapshotLockingMode = "minimal";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'column.blacklist' description.
          */
         private String columnBlacklist;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'table.blacklist' description.
          */
         private String tableBlacklist;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Whether the connector should publish changes in the database schema
+         * to a Kafka topic with the same name as the database server ID. Each
+         * schema change will be recorded using a key that contains the database
+         * name and whose value includes the DDL statement(s).The default is
+         * 'true'. This is independent of how the connector internally records
+         * database history.
          */
         private Boolean includeSchemaChanges = true;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The source UUIDs used to include GTID ranges when determine the
+         * starting position in the MySQL server's binlog.
          */
         private String gtidSourceIncludes;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * JDBC Driver class name used to connect to the MySQL database server.
          */
         private String databaseJdbcDriver = "class com.mysql.cj.jdbc.Driver";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The number of milliseconds to wait while polling for persisted data
+         * during recovery.
          */
         private Integer databaseHistoryKafkaRecoveryPollIntervalMs = 100;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Frequency in milliseconds to wait for new change events to appear
+         * after receiving no events. Defaults to 500ms.
          */
         private Long pollIntervalMs = 500L;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * A semicolon separated list of SQL statements to be executed when a
+         * JDBC connection (not binlog reading connection) to the database is
+         * established. Note that the connector may establish JDBC connections
+         * at its own discretion, so this should typically be used for
+         * configuration of session parameters only,but not for executing DML
+         * statements. Use doubled semicolon (';;') to use a semicolon as a
+         * character and not as a delimiter.
          */
         private String databaseInitialStatements;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The prefix that is used to name heartbeat topics.Defaults to
+         * __debezium-heartbeat.
          */
         private String heartbeatTopicsPrefix = "__debezium-heartbeat";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The size of a look-ahead buffer used by the binlog reader to decide
+         * whether the transaction in progress is going to be committed or
+         * rolled back. Use 0 to disable look-ahead buffering. Defaults to 0
+         * (i.e. buffering is disabled).
          */
         private Integer binlogBufferSize = 0;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The maximum number of records that should be loaded into memory while
+         * performing a snapshot
          */
         private Integer snapshotFetchSize;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Name of the MySQL database user to be used when connecting to the
+         * database.
          */
         private String databaseUser;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The source UUIDs used to exclude GTID ranges when determine the
+         * starting position in the MySQL server's binlog.
          */
         private String gtidSourceExcludes;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * A list of host/port pairs that the connector will use for
+         * establishing the initial connection to the Kafka cluster for
+         * retrieving database schema history previously stored by the
+         * connector. This should point to the same Kafka cluster used by the
+         * Kafka Connect process.
          */
         private String databaseHistoryKafkaBootstrapServers;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Location of the Java keystore file containing an application
+         * process's own certificate and private key.
          */
         private String databaseSslKeystore;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Length of an interval in milli-seconds in in which the connector
+         * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+         * disable heartbeat messages. Disabled by default.
          */
         private Integer heartbeatIntervalMs = 0;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Password to unlock the keystore file (store password) specified by
+         * 'ssl.trustore' configuration property or the
+         * 'javax.net.ssl.trustStore' system or JVM property.
          */
         private String databaseSslTruststorePassword;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Specify how binlog events that belong to a table missing from
+         * internal schema representation (i.e. internal representation is not
+         * consistent with database) should be handled, including:'fail' (the
+         * default) an exception indicating the problematic event and its binlog
+         * position is raised, causing the connector to be stopped; 'warn' the
+         * problematic event and its binlog position will be logged and the
+         * event will be skipped;'ignore' the problematic event will be skipped.
          */
         private String inconsistentSchemaHandlingMode = "fail";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * MySQL allows user to insert year value as either 2-digit or 4-digit.
+         * In case of two digit the value is automatically mapped into 1970 -
+         * 2069.false - delegates the implicit conversion to the databasetrue -
+         * (the default) Debezium makes the conversion
          */
         private Boolean enableTimeAdjuster = true;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * If set to 'latest', when connector sees new GTID, it will start
+         * consuming gtid channel from the server latest executed gtid position.
+         * If 'earliest' connector starts reading channel from first available
+         * (not purged) gtid position on the server.
          */
         private String gtidNewChannelPosition = "latest";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * MySQL DDL statements can be parsed in different ways:'legacy' parsing
+         * is creating a TokenStream and comparing token by token with an
+         * expected values.The decisions are made by matched token
+         * values.'antlr' (the default) uses generated parser from MySQL grammar
+         * using ANTLR v4 tool which use ALL(*) algorithm for parsing.This
+         * parser creates a parsing tree for DDL statement, then walks trough it
+         * and apply changes by node types in parsed tree.
          */
         private String ddlParserMode = "antlr";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Password of the MySQL database user to be used when connecting to the
+         * database.
          */
         private String databasePassword;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Controls what DDL will Debezium store in database history.By default
+         * (false) Debezium will store all incoming DDL statements. If set to
+         * truethen only DDL that manipulates a monitored table will be stored.
          */
         private Boolean databaseHistoryStoreOnlyMonitoredTablesDdl = false;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * If set to true, we will only produce DML events into Kafka for
+         * transactions that were written on mysql servers with UUIDs matching
+         * the filters defined by the gtid.source.includes or
+         * gtid.source.excludes configuration options, if they are specified.
          */
         private Boolean gtidSourceFilterDmlEvents = true;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'database.blacklist' description.
          */
         private String databaseBlacklist;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Maximum size of each batch of source records. Defaults to 2048.
          */
         private Integer maxBatchSize = 2048;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Whether a separate thread should be used to ensure the connection is
+         * kept alive.
          */
         private Boolean connectKeepAlive = true;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The name of the DatabaseHistory class that should be used to store
+         * and recover database schema changes. The configuration properties for
+         * the history are prefixed with the 'database.history.' string.
          */
         private String databaseHistory = "io.debezium.relational.history.FileDatabaseHistory";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The criteria for running a snapshot upon startup of the connector.
+         * Options include: 'when_needed' to specify that the connector run a
+         * snapshot upon startup whenever it deems it necessary; 'initial' (the
+         * default) to specify the connector can run a snapshot only when no
+         * offsets are available for the logical server name; 'initial_only'
+         * same as 'initial' except the connector should stop after completing
+         * the snapshot and before it would normally read the binlog; and'never'
+         * to specify the connector should never run a snapshot and that upon
+         * first startup the connector should read from the beginning of the
+         * binlog. The 'never' mode should be used with care, and only when the
+         * binlog is known to contain all history.
          */
         private String snapshotMode = "initial";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Maximum time in milliseconds to wait after trying to connect to the
+         * database before timing out.
          */
         private Integer connectTimeoutMs = 30000;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Maximum size of the queue for change events read from the database
+         * log but not yet recorded or forwarded. Defaults to 8192, and should
+         * always be larger than the maximum batch size.
          */
         private Integer maxQueueSize = 8192;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The name of the topic for the database schema history
          */
         private String databaseHistoryKafkaTopic;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The number of milliseconds to delay before a snapshot will begin.
          */
         private Long snapshotDelayMs = 0L;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The number of attempts in a row that no data are returned from Kafka
+         * before recover completes. The maximum amount of time to wait after
+         * receiving no data is (recovery.attempts) x
+         * (recovery.poll.interval.ms).
          */
         private Integer databaseHistoryKafkaRecoveryAttempts = 100;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The tables for which changes are to be captured
          */
         private String tableWhitelist;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Whether delete operations should be represented by a delete event and
+         * a subsquenttombstone event (true) or only by a delete event (false).
+         * Emitting the tombstone event (the default behavior) allows Kafka to
+         * completely delete all events pertaining to the given key once the
+         * source record got deleted.
          */
         private Boolean tombstonesOnDelete = false;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Specify how DECIMAL and NUMERIC columns should be represented in
+         * change events, including:'precise' (the default) uses
+         * java.math.BigDecimal to represent values, which are encoded in the
+         * change events using a binary representation and Kafka Connect's
+         * 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to
+         * represent values; 'double' represents values using Java's 'double',
+         * which may not offer the precision but will be far easier to use in
+         * consumers.
          */
         private String decimalHandlingMode = "precise";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * BETA FEATURE: On connector restart, the connector will check if there
+         * have been any new tables added to the configuration, and snapshot
+         * them. There is presently only two options:'off': Default behavior. Do
+         * not snapshot new tables.'parallel': The snapshot of the new tables
+         * will occur in parallel to the continued binlog reading of the old
+         * tables. When the snapshot completes, an independent binlog reader
+         * will begin reading the events for the new tables until it catches up
+         * to present time. At this point, both old and new binlog readers will
+         * be momentarily halted and new binlog reader will start that will read
+         * the binlog for all configured tables. The parallel binlog reader will
+         * have a configured server id of 10000 + the primary binlog reader's
+         * server id.
          */
         private String snapshotNewTables = "off";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Controls the action Debezium will take when it meets a DDL statement
+         * in binlog, that it cannot parse.By default the connector will stop
+         * operating but by changing the setting it can ignore the statements
+         * which it cannot parse. If skipping is enabled then Debezium can miss
+         * metadata changes.
          */
         private Boolean databaseHistorySkipUnparseableDdl = false;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Flag specifying whether built-in tables should be ignored.
          */
         private Boolean tableIgnoreBuiltin = true;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The databases for which changes are to be captured
          */
         private String databaseWhitelist;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * The path to the file that will be used to record the database history
          */
         private String databaseHistoryFileFilename;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Specify how BIGINT UNSIGNED columns should be represented in change
+         * events, including:'precise' uses java.math.BigDecimal to represent
+         * values, which are encoded in the change events using a binary
+         * representation and Kafka Connect's
+         * 'org.apache.kafka.connect.data.Decimal' type; 'long' (the default)
+         * represents values using Java's 'long', which may not offer the
+         * precision but will be far easier to use in consumers.
          */
         private String bigintUnsignedHandlingMode = "long";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * A numeric ID of this database client, which must be unique across all
+         * currently-running database processes in the cluster. This connector
+         * joins the MySQL database cluster as another server (with this unique
+         * ID) so it can read the binlog. By default, a random number is
+         * generated between 5400 and 6400.
          */
         private Long databaseServerId;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Specify how failures during deserialization of binlog events (i.e.
+         * when encountering a corrupted event) should be handled,
+         * including:'fail' (the default) an exception indicating the
+         * problematic event and its binlog position is raised, causing the
+         * connector to be stopped; 'warn' the problematic event and its binlog
+         * position will be logged and the event will be skipped;'ignore' the
+         * problematic event will be skipped.
          */
         private String eventDeserializationFailureHandlingMode = "fail";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Time, date, and timestamps can be represented with different kinds of
+         * precisions, including:'adaptive_time_microseconds' (the default) like
+         * 'adaptive' mode, but TIME fields always use microseconds
+         * precision;'adaptive' (deprecated) bases the precision of time, date,
+         * and timestamp values on the database column's precision; 'connect'
+         * always represents time, date, and timestamp values using Kafka
+         * Connect's built-in representations for Time, Date, and Timestamp,
+         * which uses millisecond precision regardless of the database columns'
+         * precision.
          */
         private String timePrecisionMode = "adaptive_time_microseconds";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Unique name that identifies the database server and all recorded
+         * offsets, and that is used as a prefix for all schemas and topics.
+         * Each distinct installation should have a separate namespace and be
+         * monitored by at most one Debezium connector.
          */
         private String databaseServerName;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Port of the MySQL database server.
          */
         private Integer databasePort = 3306;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Location of the Java truststore file containing the collection of CA
+         * certificates trusted by this application process (trust store).
          */
         private String databaseSslTruststore;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Whether to use an encrypted connection to MySQL. Options
+         * include'disabled' (the default) to use an unencrypted connection;
+         * 'preferred' to establish a secure (encrypted) connection if the
+         * server supports secure connections, but fall back to an unencrypted
+         * connection otherwise; 'required' to use a secure (encrypted)
+         * connection, and fail if one cannot be established; 'verify_ca' like
+         * 'required' but additionally verify the server TLS certificate against
+         * the configured Certificate Authority (CA) certificates, or fail if no
+         * valid matching CA certificates are found; or'verify_identity' like
+         * 'verify_ca' but additionally verify that the server certificate
+         * matches the host to which the connection is attempted.
          */
         private String databaseSslMode = "disabled";
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Password to access the private key from the keystore file specified
+         * by 'ssl.keystore' configuration property or the
+         * 'javax.net.ssl.keyStore' system or JVM property. This password is
+         * used to unlock the keystore file (store password), and to decrypt the
+         * private key stored in the keystore (key password).
          */
         private String databaseSslKeystorePassword;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Resolvable hostname or IP address of the MySQL database server.
          */
         private String databaseHostname;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Only relevant if parallel snapshotting is configured. During parallel
+         * snapshotting, multiple (4) connections open to the database client,
+         * and they each need their own unique connection ID. This offset is
+         * used to generate those IDs from the base configured cluster ID.
          */
         private Long databaseServerIdOffset = 10000L;
         /**
-         * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON.
-         * Query will not be present for events generated from snapshot.
-         * WARNING: Enabling this option may expose tables or fields explicitly
-         * blacklisted or masked by including the original SQL statement in the
-         * change event. For this reason the default value is 'false'.
+         * Interval in milliseconds to wait for connection checking if keep
+         * alive thread is used.
          */
         private Long connectKeepAliveIntervalMs = 60000L;
         /**
@@ -660,7 +493,7 @@ public class DebeziumMySqlComponentConfiguration
          * The name of the Java class of the commit policy. It defines when
          * offsets commit has to be triggered based on the number of events
          * processed and the time elapsed since the last commit. This class must
-         * implement the interface <…​>.OffsetCommitPolicy. The default is a
+         * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          */
         private String offsetCommitPolicy = "io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy";
@@ -677,8 +510,7 @@ public class DebeziumMySqlComponentConfiguration
         private Long offsetCommitTimeoutMs = 5000L;
         /**
          * The number of partitions used when creating the offset storage topic.
-         * Required when offset.storage is set to the
-         * <…​>.KafkaOffsetBackingStore.
+         * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          */
         private Integer offsetStoragePartitions;
         /**
