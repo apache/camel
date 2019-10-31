@@ -16,13 +16,25 @@
  */
 package org.apache.camel.main;
 
+import java.util.Map;
+
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.PriorityBlockingQueueFactory;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,24 +43,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MainIoCAutowireTest {
     @Test
     public void autowireNonNullOnlyDisabledTest() {
-        CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("seda", createSedaComponent());
-
-        Main main = new Main() {
-            @Override
-            protected CamelContext createCamelContext() {
-                return context;
-            }
-        };
+        Main main = new Main();
 
         try {
+            main.bind("seda", createSedaComponent());
             main.addConfigurationClass(MyConfiguration.class);
-            main.addRouteBuilder(MyRouteBuilder.class);
             main.configure().setAutowireNonNullOnlyComponentProperties(false);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
 
-            BlockingQueueFactory qf = context.getComponent("seda", SedaComponent.class).getDefaultQueueFactory();
+            BlockingQueueFactory qf = main.getCamelContext().getComponent("seda", SedaComponent.class).getDefaultQueueFactory();
             assertThat(qf).isInstanceOf(PriorityBlockingQueueFactory.class);
         } finally {
             main.stop();
@@ -57,25 +61,43 @@ public class MainIoCAutowireTest {
 
     @Test
     public void autowireNonNullOnlyEnabledTest() {
-        CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("seda", createSedaComponent());
-
-        Main main = new Main() {
-            @Override
-            protected CamelContext createCamelContext() {
-                return context;
-            }
-        };
+        Main main = new Main();
 
         try {
+            main.bind("seda", createSedaComponent());
             main.addConfigurationClass(MyConfiguration.class);
-            main.addRouteBuilder(MyRouteBuilder.class);
             main.configure().setAutowireNonNullOnlyComponentProperties(true);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
 
-            BlockingQueueFactory qf = context.getComponent("seda", SedaComponent.class).getDefaultQueueFactory();
+            BlockingQueueFactory qf = main.getCamelContext().getComponent("seda", SedaComponent.class).getDefaultQueueFactory();
             assertThat(qf).isInstanceOf(MySedaBlockingQueueFactory.class);
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void doNotAutowireContextTest() {
+        Main main = new Main();
+
+        try {
+            DefaultCamelContext otherContext = new DefaultCamelContext();
+            otherContext.setName("other-ctx");
+
+            main.bind("dummy", new MyDummyComponent());
+            main.bind("context", otherContext);
+            main.addConfigurationClass(MyConfiguration.class);
+            main.configure().setName("main");
+            main.configure().setAutowireNonNullOnlyComponentProperties(true);
+            main.setPropertyPlaceholderLocations("empty.properties");
+            main.start();
+
+            MyDummyComponent component = main.getCamelContext().getComponent("dummy", MyDummyComponent.class);
+            // the camel context is bound to the component upon initialization
+            assertThat(component.getCamelContext()).isSameAs(main.getCamelContext());
+            // the camel context should not be set by auto wiring
+            assertThat(component.getConfig().getCamelContext()).isNull();
         } finally {
             main.stop();
         }
@@ -90,17 +112,62 @@ public class MainIoCAutowireTest {
         }
     }
 
-    public static class MyRouteBuilder extends RouteBuilder {
-        @Override
-        public void configure() throws Exception {
-            from("direct:start").to("mock:results");
-        }
-    }
-
     public static SedaComponent createSedaComponent() {
         SedaComponent seda = new SedaComponent();
         seda.setDefaultQueueFactory(new MySedaBlockingQueueFactory());
 
         return seda;
+    }
+
+
+    public static class MyDummyComponent extends DefaultComponent {
+        private MyDummyConfig config = new MyDummyConfig();
+
+        public MyDummyConfig getConfig() {
+            return config;
+        }
+
+        public void setConfig(MyDummyConfig config) {
+            this.config = config;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+            return new DefaultEndpoint() {
+                @Override
+                public Producer createProducer() throws Exception {
+                    return new DefaultAsyncProducer(this) {
+                        @Override
+                        public boolean process(Exchange exchange, AsyncCallback callback) {
+                            return false;
+                        }
+                    };
+                }
+
+                @Override
+                public Consumer createConsumer(Processor processor) throws Exception {
+                    return new DefaultConsumer(this, processor);
+                }
+
+                @Override
+                protected String createEndpointUri() {
+                    return "dummy://foo";
+                }
+            };
+        }
+    }
+
+    public static class MyDummyConfig implements CamelContextAware {
+        private CamelContext camelContext;
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
     }
 }
