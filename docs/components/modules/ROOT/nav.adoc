@@ -87,6 +87,7 @@
 * xref:dataformat-component.adoc[Data Format Component]
 * xref:dataset-component.adoc[Dataset Component]
 * xref:dataset-test-component.adoc[DataSet Test Component]
+* xref:debezium-mongodb-component.adoc[Debezium MongoDB Connector Component]
 * xref:debezium-mysql-component.adoc[Debezium MySQL Connector Component]
 * xref:debezium-postgres-component.adoc[Debezium PostgresSQL Connector Component]
 * xref:digitalocean-component.adoc[DigitalOcean Component]
