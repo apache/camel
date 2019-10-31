@@ -95,7 +95,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         + " A timeout value of zero is interpreted as an infinite timeout."
         + " A negative value is interpreted as undefined (system default).")
     private int socketTimeout = -1;
-    @UriParam(label = "producer", description = "To use a custom CookieStore."
+    @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
         + " By default the BasicCookieStore is used which is an in-memory only cookie store."
         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
         + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
@@ -103,12 +103,12 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "producer", defaultValue = "true", description = "Whether to clear expired cookies before sending the HTTP request."
         + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.")
     private boolean clearExpiredCookies = true;
-    @UriParam(label = "producer", description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
+    @UriParam(label = "producer,security", description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
     private boolean authenticationPreemptive;
-    @UriParam(label = "producer", description = "Whether the HTTP GET should include the message body or not."
+    @UriParam(label = "producer,advanced", description = "Whether the HTTP GET should include the message body or not."
         + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
     private boolean getWithBody;
-    @UriParam(label = "producer", description = "Whether the HTTP DELETE should include the message body or not."
+    @UriParam(label = "producer,advanced", description = "Whether the HTTP DELETE should include the message body or not."
         + " By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
     private boolean deleteWithBody;
     @UriParam(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
