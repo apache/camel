@@ -31,7 +31,6 @@ public abstract class CryptoCmsMarshallerConfiguration {
     private Boolean toBase64 = Boolean.FALSE;
 
     public CryptoCmsMarshallerConfiguration(CamelContext context) {
-        super();
         this.context = context;
     }
 

@@ -43,7 +43,6 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
     }
 
     public EventComponent(ApplicationContext applicationContext) {
-        super();
         setApplicationContext(applicationContext);
     }
 

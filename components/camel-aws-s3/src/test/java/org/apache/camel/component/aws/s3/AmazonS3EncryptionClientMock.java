@@ -88,7 +88,6 @@ public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     private int maxCapacity = 100;
     
     public AmazonS3EncryptionClientMock() {
-        super();
     }
 
     @Override

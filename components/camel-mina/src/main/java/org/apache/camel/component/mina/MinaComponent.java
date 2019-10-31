@@ -41,7 +41,6 @@ public class MinaComponent extends DefaultComponent implements SSLContextParamet
     private boolean useGlobalSslContextParameters;
 
     public MinaComponent() {
-        super();
     }
 
     public MinaComponent(CamelContext context) {

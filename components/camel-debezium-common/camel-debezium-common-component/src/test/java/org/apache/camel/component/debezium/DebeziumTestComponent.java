@@ -24,7 +24,6 @@ public final class DebeziumTestComponent extends DebeziumComponent<FileConnector
     private FileConnectorEmbeddedDebeziumConfiguration configuration;
 
     public DebeziumTestComponent() {
-        super();
     }
 
     public DebeziumTestComponent(final CamelContext context) {

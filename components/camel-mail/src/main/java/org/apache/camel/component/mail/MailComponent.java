@@ -49,7 +49,6 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
     }
 
     public MailComponent(MailConfiguration configuration) {
-        super();
         this.configuration = configuration;
     }
 

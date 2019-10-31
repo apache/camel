@@ -26,7 +26,6 @@ public final class DebeziumMySqlComponent extends DebeziumComponent<MySqlConnect
     private MySqlConnectorEmbeddedDebeziumConfiguration configuration;
 
     public DebeziumMySqlComponent() {
-        super();
     }
 
     public DebeziumMySqlComponent(final CamelContext context) {

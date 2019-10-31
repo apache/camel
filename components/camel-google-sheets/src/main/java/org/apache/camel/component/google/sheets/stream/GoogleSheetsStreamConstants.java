@@ -34,6 +34,5 @@ public final class GoogleSheetsStreamConstants {
      * Prevent instantiation.
      */
     private GoogleSheetsStreamConstants() {
-        super();
     }
 }

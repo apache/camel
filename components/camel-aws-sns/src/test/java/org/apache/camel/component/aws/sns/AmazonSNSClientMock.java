@@ -60,7 +60,6 @@ public class AmazonSNSClientMock extends AbstractAmazonSNS {
     private String endpoint;
     
     public AmazonSNSClientMock() {
-        super();
     }
     
     @Override

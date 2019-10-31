@@ -41,7 +41,6 @@ public class SObjectCompositeTest {
     public static class AccountContactJunction__c extends AbstractDescribedSObjectBase {
 
         public AccountContactJunction__c() {
-            super();
             getAttributes().setType("AccountContactJunction__c");
         }
 

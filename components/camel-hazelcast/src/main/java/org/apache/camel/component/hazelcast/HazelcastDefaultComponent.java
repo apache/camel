@@ -53,7 +53,6 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
     private String hazelcastMode = HazelcastConstants.HAZELCAST_NODE_MODE;
 
     public HazelcastDefaultComponent() {
-        super();
         this.customHazelcastInstances = new LinkedHashSet<>();
     }
 

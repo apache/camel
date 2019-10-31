@@ -57,7 +57,6 @@ public class AmazonSDBClientMock extends AbstractAmazonSimpleDB {
     protected SelectRequest selectRequest;
 
     public AmazonSDBClientMock() {
-        super();
     }
     
     @Override
