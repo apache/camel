@@ -79,6 +79,12 @@
 			"description":"Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. This option is default disabled."
 		},
 		{
+			"name":"camel.main.autowire-non-null-only-component-properties",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether to only autowire if the property has no default value or has not been configured explicit. This option is default disabled."
+		},
+		{
 			"name":"camel.main.backlog-tracing",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
