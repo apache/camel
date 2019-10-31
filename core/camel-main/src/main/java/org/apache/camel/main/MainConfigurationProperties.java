@@ -302,6 +302,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether to only autowire if the property has no default value or has not been configured explicit.
+     * <p/>
+     * This option is default disabled.
+     */
+    public MainConfigurationProperties withAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
+        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
+        return this;
+    }
+
+    /**
      * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
      * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
      * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
