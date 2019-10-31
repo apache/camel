@@ -105,10 +105,12 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private boolean clearExpiredCookies = true;
     @UriParam(label = "producer", description = "If this option is true, camel-http sends preemptive basic authentication to the server.")
     private boolean authenticationPreemptive;
+    @UriParam(label = "producer", description = "Whether the HTTP GET should include the message body or not."
+        + " By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
+    private boolean getWithBody;
     @UriParam(label = "producer", description = "Whether the HTTP DELETE should include the message body or not."
-        + " By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body.")
+        + " By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body.")
     private boolean deleteWithBody;
-
     @UriParam(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
     private int maxTotalConnections;
     @UriParam(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
@@ -309,11 +311,25 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     /**
      * Whether the HTTP DELETE should include the message body or not.
      * <p/>
-     * By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the
+     * By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the
      * message body.
      */
     public void setDeleteWithBody(boolean deleteWithBody) {
         this.deleteWithBody = deleteWithBody;
+    }
+
+    public boolean isGetWithBody() {
+        return getWithBody;
+    }
+
+    /**
+     * Whether the HTTP GET should include the message body or not.
+     * <p/>
+     * By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the
+     * message body.
+     */
+    public void setGetWithBody(boolean getWithBody) {
+        this.getWithBody = getWithBody;
     }
 
     public CookieStore getCookieStore() {
