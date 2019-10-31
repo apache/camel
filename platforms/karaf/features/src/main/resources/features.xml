@@ -908,6 +908,16 @@
     <bundle>mvn:org.apache.camel/camel-debezium-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-debezium-postgres/${project.version}</bundle>
   </feature>
+  <feature name='camel-debezium-mongodb' version='${project.version}' start-level='50'>
+    <feature version="${project.version}">camel-core</feature>
+    <bundle dependency="true">wrap:mvn:io.debezium/debezium-core/${debezium-version}</bundle>
+    <bundle dependency="true">wrap:mvn:io.debezium/debezium-embedded/${debezium-version}</bundle>
+    <bundle dependency="true">wrap:mvn:io.debezium/debezium-connector-mongodb/${debezium-version}</bundle>
+    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-api/${kafka-version}</bundle>
+    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-json/${kafka-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-debezium-common/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-debezium-mongodb/${project.version}</bundle>
+  </feature>
   <feature name='camel-ehcache' version='${project.version}' start-level='50'>
     <feature>scr</feature>
     <feature version="${project.version}">camel-core</feature>
@@ -1216,7 +1226,7 @@
     <!-- Third party dependencies -->
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.perfmark/perfmark-api/${perfmark-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.auth0/java-jwt/${grpc-java-jwt-version}</bundle>  
+    <bundle dependency='true'>wrap:mvn:com.auth0/java-jwt/${grpc-java-jwt-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-credentials/${grpc-google-auth-library-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-oauth2-http/${grpc-google-auth-library-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
