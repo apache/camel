@@ -1,5 +1,6 @@
 [[debezium-postgres-component]]
 = Debezium PostgresSQL Connector Component
+:page-source: components/camel-debezium-postgres/src/main/docs/debezium-postgres-component.adoc
 
 *Since Camel 3.0*
 
