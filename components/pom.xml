@@ -159,6 +159,7 @@
         <module>camel-dropbox</module>
         <module>camel-debezium-common</module>
         <module>camel-debezium-mysql</module>
+        <module>camel-debezium-postgres</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
