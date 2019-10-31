@@ -64,8 +64,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.findCamelDirectory;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
- * Generate Spring Boot auto configuration files for Camel components and data
- * formats.
+ * Generate Endpoint DSL source files for Components.
  */
 @Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractMojo {
