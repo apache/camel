@@ -53,7 +53,7 @@ route, use the xref:jetty-component.adoc[Jetty] instead.
 
 
 // component options: START
-The HTTP4 component supports 20 options, which are listed below.
+The HTTP4 component supports 18 options, which are listed below.
 
 
 
@@ -70,8 +70,6 @@ The HTTP4 component supports 20 options, which are listed below.
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int
 | *connectionTimeToLive* (advanced) | The time for connection to live, the time unit is millisecond, the default value is always keep alive. |  | long
 | *cookieStore* (producer) | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). |  | CookieStore
-| *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
-| *getWithBody* (producer) | Whether the HTTP GET should include the message body or not. By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *connectionRequest Timeout* (timeout) | The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: code -1 | -1 | int
 | *connectTimeout* (timeout) | Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: code -1 | -1 | int
 | *socketTimeout* (timeout) | Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: code -1 | -1 | int
@@ -111,7 +109,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (49 parameters):
+=== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -127,7 +125,8 @@ with the following path and query parameters:
 | *connectionClose* (producer) | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false. | false | boolean
 | *cookieStore* (producer) | To use a custom CookieStore. By default the BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler. |  | CookieStore
 | *copyHeaders* (producer) | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers). | true | boolean
-| *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body. | false | boolean
+| *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
+| *getWithBody* (producer) | Whether the HTTP GET should include the message body or not. By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *httpMethod* (producer) | Configure the HTTP method to use. The HttpMethod header cannot override this option if set. |  | HttpMethods
 | *ignoreResponseBody* (producer) | If this option is true, The http producer won't read response body and cache the input stream | false | boolean
 | *preserveHostHeader* (producer) | If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service | false | boolean
