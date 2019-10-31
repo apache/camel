@@ -38,6 +38,141 @@ public interface MQEndpointBuilderFactory {
             return (AdvancedMQEndpointBuilder) this;
         }
         /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * To use a existing configured AmazonMQClient as client.
+         * 
+         * The option is a: <code>com.amazonaws.services.mq.AmazonMQ</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder amazonMqClient(Object amazonMqClient) {
+            doSetProperty("amazonMqClient", amazonMqClient);
+            return this;
+        }
+        /**
+         * To use a existing configured AmazonMQClient as client.
+         * 
+         * The option will be converted to a
+         * <code>com.amazonaws.services.mq.AmazonMQ</code> type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder amazonMqClient(String amazonMqClient) {
+            doSetProperty("amazonMqClient", amazonMqClient);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to perform. It can be
+         * listBrokers,createBroker,deleteBroker.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.mq.MQOperations</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default MQEndpointBuilder operation(MQOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform. It can be
+         * listBrokers,createBroker,deleteBroker.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws.mq.MQOperations</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default MQEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the MQ client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the MQ client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the MQ client.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
          * The region in which MQ client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name
@@ -49,6 +184,17 @@ public interface MQEndpointBuilderFactory {
          */
         default MQEndpointBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default MQEndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
