@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hdfs;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 import org.apache.camel.RuntimeCamelException;
@@ -27,13 +26,13 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-class HdfsArrayFileTypeHandler extends DefaultHdfsFile {
+class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFile.Reader> {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+    public ArrayFile.Writer createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
-            Closeable rout;
+            ArrayFile.Writer rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
@@ -58,9 +57,9 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+    public ArrayFile.Reader createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
-            Closeable rin;
+            ArrayFile.Reader rin;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             rin = new ArrayFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConfiguration());
             return rin;

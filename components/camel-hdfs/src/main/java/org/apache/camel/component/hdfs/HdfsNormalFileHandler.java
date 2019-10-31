@@ -33,7 +33,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 
-class HdfsNormalFileHandler extends DefaultHdfsFile {
+class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
 
     private boolean consumed = false;
 
@@ -97,7 +97,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
 
     @Override
     public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
-        if (hdfsInputStream.getHdfsInfoFactory().getEndpointConfig().isStreamDownload()) {
+        if (hdfsInputStream.isStreamDownload()) {
             return nextAsWrappedStream(hdfsInputStream, key, value);
         } else {
             return nextAsOutputStream(hdfsInputStream, key, value);
