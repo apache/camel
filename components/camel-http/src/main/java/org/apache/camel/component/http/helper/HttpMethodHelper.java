@@ -32,13 +32,9 @@ public final class HttpMethodHelper {
     }
 
     /**
-     * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
-     *
-     * @param exchange the exchange
-     * @return the created method
-     * @throws URISyntaxException
+     * Creates the HttpMethod to use to call the remote server, often either its GET or POST
      */
-    public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
+    public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint) throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
         // overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
@@ -76,7 +72,7 @@ public final class HttpMethodHelper {
                 answer = HttpMethods.GET;
             } else {
                 // fallback to POST if we have payload, otherwise GET
-                answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+                answer = exchange.getMessage().getBody() != null ? HttpMethods.POST : HttpMethods.GET;
             }
         }
 
