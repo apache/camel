@@ -523,7 +523,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         // conventional configuration via properties to allow configuring options on
         // component, dataformat, and languages (like spring-boot auto-configuration)
         if (mainConfigurationProperties.isAutowireComponentProperties() || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
-            autowireConfigurationFromRegistry(camelContext, mainConfigurationProperties.isAutowireNonNullOnlyComponentProperties(), mainConfigurationProperties.isAutowireComponentPropertiesDeep());
+            autowireConfigurationFromRegistry(camelContext, mainConfigurationProperties.isAutowireComponentPropertiesNonNullOnly(), mainConfigurationProperties.isAutowireComponentPropertiesDeep());
         }
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
