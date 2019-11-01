@@ -44,7 +44,7 @@ public class CxfComponentEnableMtomTest {
     private CamelContext context;
 
     @Test
-    public void testIsMtomEnabled_EnabledThroughBeanSetter() throws InterruptedException {
+    public void testIsMtomEnabledEnabledThroughBeanSetter() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByBeanSetter");
 
         if (endpoint instanceof CxfEndpoint) {
@@ -56,7 +56,7 @@ public class CxfComponentEnableMtomTest {
     }
 
     @Test
-    public void testIsMtomEnabled_EnabledThroughBeanProperties() throws InterruptedException {
+    public void testIsMtomEnabledEnabledThroughBeanProperties() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByBeanProperties");
 
         if (endpoint instanceof CxfEndpoint) {
@@ -68,7 +68,7 @@ public class CxfComponentEnableMtomTest {
     }
 
     @Test
-    public void testIsMtomEnabled_EnabledThroughURIProperties() throws InterruptedException {
+    public void testIsMtomEnabledEnabledThroughURIProperties() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByURIProperties?properties.mtom-enabled=true");
 
         if (endpoint instanceof CxfEndpoint) {
@@ -80,7 +80,7 @@ public class CxfComponentEnableMtomTest {
     }
 
     @Test
-    public void testIsMtomEnabled_EnabledThroughQueryParameters() throws InterruptedException {
+    public void testIsMtomEnabledEnabledThroughQueryParameters() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByQueryParameters?mtomEnabled=true");
 
         if (endpoint instanceof CxfEndpoint) {
