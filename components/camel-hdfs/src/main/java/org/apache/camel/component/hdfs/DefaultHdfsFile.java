@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.TypeConverter;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.ByteWritable;
@@ -62,13 +62,13 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
         return numBytes;
     }
 
-    protected final Writable getWritable(Object obj, TypeConverter typeConverter, Holder<Integer> size) {
+    protected final Writable getWritable(Object obj, Exchange exchange, Holder<Integer> size) {
         Class<?> objCls = obj == null ? null : obj.getClass();
         HdfsWritableFactories.HdfsWritableFactory objWritableFactory = WritableCache.writables.get(objCls);
         if (objWritableFactory == null) {
             objWritableFactory = new HdfsWritableFactories.HdfsObjectWritableFactory();
         }
-        return objWritableFactory.create(obj, typeConverter, size);
+        return objWritableFactory.create(obj, exchange.getContext().getTypeConverter(), size);
     }
 
     protected final Object getObject(Writable writable, Holder<Integer> size) {

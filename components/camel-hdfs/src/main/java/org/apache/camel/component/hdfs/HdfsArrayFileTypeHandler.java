@@ -18,8 +18,8 @@ package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.ArrayFile;
 import org.apache.hadoop.io.Writable;
@@ -45,10 +45,10 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFi
     }
 
     @Override
-    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, Exchange exchange) {
         try {
             Holder<Integer> valueSize = new Holder<>();
-            Writable valueWritable = getWritable(value, typeConverter, valueSize);
+            Writable valueWritable = getWritable(value, exchange, valueSize);
             ((ArrayFile.Writer) hdfsOutputStream.getOut()).append(valueWritable);
             return valueSize.value;
         } catch (Exception ex) {

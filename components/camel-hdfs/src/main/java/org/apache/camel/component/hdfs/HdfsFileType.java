@@ -18,7 +18,7 @@ package org.apache.camel.component.hdfs;
 
 import java.io.Closeable;
 
-import org.apache.camel.TypeConverter;
+import org.apache.camel.Exchange;
 
 public enum HdfsFileType {
 
@@ -38,8 +38,8 @@ public enum HdfsFileType {
         return this.file.createOutputStream(hdfsPath, hdfsInfoFactory);
     }
 
-    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
-        return this.file.append(hdfsOutputStream, key, value, typeConverter);
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, Exchange exchange) {
+        return this.file.append(hdfsOutputStream, key, value, exchange);
     }
 
     public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {

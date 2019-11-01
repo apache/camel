@@ -29,6 +29,7 @@ import javax.security.auth.login.Configuration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang.StringUtils;

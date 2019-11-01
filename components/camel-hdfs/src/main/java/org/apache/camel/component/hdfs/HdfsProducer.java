@@ -27,6 +27,7 @@ import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -211,7 +212,7 @@ public class HdfsProducer extends DefaultProducer {
 
         String path = oStream.getActualPath();
         log.trace("Writing body to hdfs-file {}", path);
-        oStream.append(key, body, exchange.getContext().getTypeConverter());
+        oStream.append(key, body, exchange);
 
         idle.set(false);
 
