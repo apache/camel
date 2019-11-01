@@ -127,11 +127,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         if (properties != null) {
             result.setProperties(properties);
         }
-        if (result.getProperties() != null) {
-            // set the properties of MTOM
-            result.setMtomEnabled(Boolean.valueOf((String) result.getProperties().get(Message.MTOM_ENABLED)));
-        }
-
+        
         // use global ssl config if set
         if (result.getSslContextParameters() == null) {
             result.setSslContextParameters(retrieveGlobalSslContextParameters());
