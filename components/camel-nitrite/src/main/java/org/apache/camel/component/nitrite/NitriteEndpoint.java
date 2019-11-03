@@ -28,7 +28,7 @@ import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.PersistentCollection;
 
 /**
- * Embedded single file store document DB with indexing and fulltext search capability.
+ * Used for integrating Camel with Nitrite databases.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "nitrite", title = "Nitrite", syntax = "nitrite:database",
              label = "database,nosql")
