@@ -2340,6 +2340,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-nsq</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3844,6 +3854,11 @@
             <artifactId>stax-api</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.dizitart</groupId>
+        <artifactId>nitrite</artifactId>
+        <version>3.3.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.rdf4j</groupId>

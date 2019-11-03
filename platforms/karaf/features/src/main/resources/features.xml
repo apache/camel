@@ -1908,6 +1908,11 @@
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty-http/${project.version}</bundle>
   </feature>
+  <feature name='camel-nitrite' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.dizitart/nitrite/${nitrite-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-nitrite/${project.version}</bundle>
+  </feature>
   <feature name='camel-nsq' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:com.github.brainlag/nsq-client/${nsq-client-version}</bundle>

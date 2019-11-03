@@ -257,6 +257,7 @@
 * xref:nats-component.adoc[Nats Component]
 * xref:netty-http-component.adoc[Netty HTTP Component]
 * xref:netty-component.adoc[Netty Component]
+* xref:nitrite-component.adoc[Nitrite Component]
 * xref:nsq-component.adoc[NSQ Component]
 * xref:ognl-language.adoc[OGNL Language]
 * xref:olingo2-component.adoc[Olingo2 Component]

@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 301 in 239 JAR artifacts (0 deprecated)
+Number of Components: 302 in 240 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -419,6 +419,8 @@ Number of Components: 301 in 239 JAR artifacts (0 deprecated)
 | xref:netty-component.adoc[Netty] (camel-netty) | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
 
 | xref:netty-http-component.adoc[Netty HTTP] (camel-netty-http) | 2.14 | Netty HTTP server and client using the Netty 4.x library.
+
+| xref:nitrite-component.adoc[Nitrite] (camel-nitrite) | 3.0 | Embedded single file store document DB with indexing and fulltext search capability.
 
 | xref:nsq-component.adoc[NSQ] (camel-nsq) | 2.23 | Represents a nsq endpoint.
 
