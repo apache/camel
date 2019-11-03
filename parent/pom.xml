@@ -482,6 +482,7 @@
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
         <networknt-json-schema-validator-version>1.0.11</networknt-json-schema-validator-version>
+        <nitrite-version>3.3.0</nitrite-version>
         <noggit-bundle-version>0.5_1</noggit-bundle-version>
         <objenesis-version>2.6</objenesis-version>
         <!-- should be in-sync with deltaspike -->
@@ -1825,6 +1826,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-http</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3409,6 +3415,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -5158,6 +5169,12 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- optional Nitrite dependencies -->
+            <dependency>
+                <groupId>org.dizitart</groupId>
+                <artifactId>nitrite</artifactId>
+                <version>${nitrite-version}</version>
+            </dependency>
             <!-- blueprint -->
             <dependency>
                 <groupId>org.apache.aries.blueprint</groupId>

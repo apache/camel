@@ -240,6 +240,7 @@
         <include>org.apache.camel:camel-nats</include>
         <include>org.apache.camel:camel-netty</include>
         <include>org.apache.camel:camel-netty-http</include>
+        <include>org.apache.camel:camel-nitrite</include>
         <include>org.apache.camel:camel-nsq</include>
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-olingo2</include>
@@ -590,6 +591,7 @@
         <include>org.apache.camel:camel-nats-starter</include>
         <include>org.apache.camel:camel-netty-http-starter</include>
         <include>org.apache.camel:camel-netty-starter</include>
+        <include>org.apache.camel:camel-nitrite-starter</include>
         <include>org.apache.camel:camel-nsq-starter</include>
         <include>org.apache.camel:camel-ognl-starter</include>
         <include>org.apache.camel:camel-olingo2-starter</include>
