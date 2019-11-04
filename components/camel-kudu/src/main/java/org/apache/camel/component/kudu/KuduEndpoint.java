@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.25.0",
     scheme = "kudu",
     title = "Apache Kudu", syntax = "kudu:host:port/tableName",
-    label = "cloud,database,iot")
+    label = "cloud,database,iot", producerOnly = true)
 public class KuduEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);
