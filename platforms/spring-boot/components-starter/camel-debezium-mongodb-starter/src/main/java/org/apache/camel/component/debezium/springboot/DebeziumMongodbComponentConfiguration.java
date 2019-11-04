@@ -125,6 +125,11 @@ public class DebeziumMongodbComponentConfiguration
          */
         private Long pollIntervalMs = 500L;
         /**
+         * The prefix that is used to name heartbeat topics.Defaults to
+         * __debezium-heartbeat.
+         */
+        private String heartbeatTopicsPrefix = "__debezium-heartbeat";
+        /**
          * The databases for which changes are to be captured
          */
         private String databaseWhitelist;
@@ -165,6 +170,17 @@ public class DebeziumMongodbComponentConfiguration
          * corresponding key 'field.blacklist' description.
          */
         private String fieldBlacklist;
+        /**
+         * A version of the format of the publicly visible source part in the
+         * message
+         */
+        private String sourceStructVersion = "v2";
+        /**
+         * Length of an interval in milli-seconds in in which the connector
+         * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+         * disable heartbeat messages. Disabled by default.
+         */
+        private Integer heartbeatIntervalMs = 0;
         /**
          * Unique name that identifies the MongoDB replica set or cluster and
          * all recorded offsets, andthat is used as a prefix for all schemas and
@@ -351,6 +367,14 @@ public class DebeziumMongodbComponentConfiguration
             this.pollIntervalMs = pollIntervalMs;
         }
 
+        public String getHeartbeatTopicsPrefix() {
+            return heartbeatTopicsPrefix;
+        }
+
+        public void setHeartbeatTopicsPrefix(String heartbeatTopicsPrefix) {
+            this.heartbeatTopicsPrefix = heartbeatTopicsPrefix;
+        }
+
         public String getDatabaseWhitelist() {
             return databaseWhitelist;
         }
@@ -415,6 +439,22 @@ public class DebeziumMongodbComponentConfiguration
 
         public void setFieldBlacklist(String fieldBlacklist) {
             this.fieldBlacklist = fieldBlacklist;
+        }
+
+        public String getSourceStructVersion() {
+            return sourceStructVersion;
+        }
+
+        public void setSourceStructVersion(String sourceStructVersion) {
+            this.sourceStructVersion = sourceStructVersion;
+        }
+
+        public Integer getHeartbeatIntervalMs() {
+            return heartbeatIntervalMs;
+        }
+
+        public void setHeartbeatIntervalMs(Integer heartbeatIntervalMs) {
+            this.heartbeatIntervalMs = heartbeatIntervalMs;
         }
 
         public String getMongodbName() {
