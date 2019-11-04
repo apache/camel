@@ -24,7 +24,6 @@ public class HeaderDto implements Cloneable, Serializable {
     private int key;
    
     public HeaderDto(String org, String type, int key) {
-        super();
         this.org = org;
         this.type = type;
         this.key = key;

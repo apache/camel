@@ -46,7 +46,6 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
 
     /** Instantiates an empty JsonObject. */
     public JsonObject() {
-        super();
     }
 
     /**

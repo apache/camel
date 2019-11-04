@@ -46,7 +46,6 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
 
     /** Instantiates an empty JsonArray. */
     public JsonArray() {
-        super();
     }
 
     /**

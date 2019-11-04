@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 299 in 237 JAR artifacts (0 deprecated)
+Number of Components: 302 in 240 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -148,7 +148,11 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:dataset-test-component.adoc[DataSet Test] (camel-dataset) | 1.3 | The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
 
-| xref:debezium-component.adoc[Debezium] (camel-debezium) | 3.0 | Represents a Debezium endpoint which is used for interacting with Debezium embedded engine.
+| xref:debezium-mongodb-component.adoc[Debezium MongoDB Connector] (camel-debezium-mongodb) | 3.0 | Represents a Debezium MongoDB endpoint which is used to capture changes in MongoDB database so that that applications can see those changes and respond to them.
+
+| xref:debezium-mysql-component.adoc[Debezium MySQL Connector] (camel-debezium-mysql) | 3.0 | Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.
+
+| xref:debezium-postgres-component.adoc[Debezium PostgresSQL Connector] (camel-debezium-postgres) | 3.0 | Represents a Debezium PostgresSQL endpoint which is used to capture changes in PostgresSQL database so that that applications can see those changes and respond to them.
 
 | xref:digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
 
@@ -308,7 +312,7 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:jdbc-component.adoc[JDBC] (camel-jdbc) | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
-| xref:jetty-component.adoc[Jetty] (camel-jetty) | 1.2 | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+| xref:jetty-component.adoc[Jetty] (camel-jetty) | 1.2 | To use Jetty as a HTTP server as consumer for Camel routes.
 
 | xref:websocket-component.adoc[Jetty Websocket] (camel-websocket) | 2.10 | The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
 
@@ -415,6 +419,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:netty-component.adoc[Netty] (camel-netty) | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
 
 | xref:netty-http-component.adoc[Netty HTTP] (camel-netty-http) | 2.14 | Netty HTTP server and client using the Netty 4.x library.
+
+| xref:nitrite-component.adoc[Nitrite] (camel-nitrite) | 3.0 | Used for integrating Camel with Nitrite databases.
 
 | xref:nsq-component.adoc[NSQ] (camel-nsq) | 2.23 | Represents a nsq endpoint.
 

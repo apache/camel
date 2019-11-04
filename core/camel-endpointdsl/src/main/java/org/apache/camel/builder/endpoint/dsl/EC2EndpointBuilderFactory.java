@@ -38,6 +38,145 @@ public interface EC2EndpointBuilderFactory {
             return (AdvancedEC2EndpointBuilder) this;
         }
         /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * To use a existing configured AmazonEC2Client as client.
+         * 
+         * The option is a: <code>com.amazonaws.services.ec2.AmazonEC2</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder amazonEc2Client(Object amazonEc2Client) {
+            doSetProperty("amazonEc2Client", amazonEc2Client);
+            return this;
+        }
+        /**
+         * To use a existing configured AmazonEC2Client as client.
+         * 
+         * The option will be converted to a
+         * <code>com.amazonaws.services.ec2.AmazonEC2</code> type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder amazonEc2Client(String amazonEc2Client) {
+            doSetProperty("amazonEc2Client", amazonEc2Client);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to perform. It can be createAndRunInstances,
+         * startInstances, stopInstances, terminateInstances, describeInstances,
+         * describeInstancesStatus, rebootInstances, monitorInstances,
+         * unmonitorInstances, createTags or deleteTags.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ec2.EC2Operations</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default EC2EndpointBuilder operation(EC2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform. It can be createAndRunInstances,
+         * startInstances, stopInstances, terminateInstances, describeInstances,
+         * describeInstancesStatus, rebootInstances, monitorInstances,
+         * unmonitorInstances, createTags or deleteTags.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws.ec2.EC2Operations</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default EC2EndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the EC2 client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the EC2 client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the EC2 client.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
          * The region in which EC2 client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name
@@ -49,6 +188,17 @@ public interface EC2EndpointBuilderFactory {
          */
         default EC2EndpointBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EC2EndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }

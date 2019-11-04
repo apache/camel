@@ -51,7 +51,6 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
     }
 
     public NettyComponent(Class<? extends Endpoint> endpointClass) {
-        super();
     }
 
     public NettyComponent(CamelContext context) {

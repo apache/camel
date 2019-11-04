@@ -132,6 +132,28 @@ public class ServiceSupportTest extends TestSupport {
         }
     }
 
+    @Test
+    public void testServiceBuild() throws Exception {
+        MyService service = new MyService();
+        assertTrue(service.isNew());
+        service.build();
+        assertTrue(service.isBuild());
+        assertFalse(service.isInit());
+        service.start();
+
+        assertEquals(true, service.isStarted());
+        assertEquals(false, service.isStarting());
+        assertEquals(false, service.isStopped());
+        assertEquals(false, service.isStopping());
+
+        service.stop();
+
+        assertEquals(true, service.isStopped());
+        assertEquals(false, service.isStopping());
+        assertEquals(false, service.isStarted());
+        assertEquals(false, service.isStarting());
+    }
+
     public static class ServiceSupportTestExOnStart extends ServiceSupport {
 
         public ServiceSupportTestExOnStart() {

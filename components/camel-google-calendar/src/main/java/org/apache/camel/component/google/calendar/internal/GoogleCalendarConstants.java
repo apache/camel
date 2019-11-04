@@ -31,6 +31,5 @@ public final class GoogleCalendarConstants {
      * Prevent instantiation.
      */
     private GoogleCalendarConstants() {
-        super();
     }
 }

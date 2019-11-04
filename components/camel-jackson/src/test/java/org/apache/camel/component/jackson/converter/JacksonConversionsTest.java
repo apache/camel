@@ -31,7 +31,8 @@ public class JacksonConversionsTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        // enable jackson type converter by setting this property on CamelContext
+        // enable jackson type converter by setting this property on
+        // CamelContext
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         return context;
     }
@@ -42,7 +43,7 @@ public class JacksonConversionsTest extends CamelTestSupport {
         Map<String, String> pojoAsMap = new HashMap<>();
         pojoAsMap.put("name", name);
 
-        TestPojo testPojo = (TestPojo) template.requestBody("direct:test", pojoAsMap);
+        TestPojo testPojo = (TestPojo)template.requestBody("direct:test", pojoAsMap);
 
         assertEquals(name, testPojo.getName());
     }

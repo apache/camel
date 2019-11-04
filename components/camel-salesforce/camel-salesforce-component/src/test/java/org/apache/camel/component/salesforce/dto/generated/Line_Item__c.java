@@ -32,7 +32,6 @@ import java.util.List;
 public class Line_Item__c extends AbstractDescribedSObjectBase {
 
     public Line_Item__c() {
-        super();
         getAttributes().setType("Line_Item__c");
     }
 

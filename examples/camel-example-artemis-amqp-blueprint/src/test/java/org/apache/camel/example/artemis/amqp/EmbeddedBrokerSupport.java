@@ -29,7 +29,6 @@ import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager
 public class EmbeddedBrokerSupport extends EmbeddedJMS {
     
     public EmbeddedBrokerSupport(ActiveMQJAASSecurityManager securityManager) throws Exception {
-        super();
         this.setSecurityManager(securityManager);
         this.start();
 

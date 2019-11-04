@@ -112,7 +112,6 @@ public class DefaultSparkBindingTest {
         String expectedHeaderValue;
         
         ExchangeHeaderScenario(Map<String, Object> headers, String expectedHeaderName, String expectedHeaderValue) {
-            super();
             this.expectedHeaderName = expectedHeaderName;
             this.expectedHeaderValue = expectedHeaderValue;
             

@@ -27,6 +27,5 @@ public final class GoogleCalendarStreamConstants {
      * Prevent instantiation.
      */
     private GoogleCalendarStreamConstants() {
-        super();
     }
 }

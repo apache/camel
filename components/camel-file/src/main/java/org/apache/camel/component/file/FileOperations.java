@@ -278,10 +278,11 @@ public class FileOperations implements GenericFileOperations<File> {
             String charset = endpoint.getCharset();
 
             // we can optimize and use file based if no charset must be used, and the input body is a file
+            // however optimization cannot be applied when content should be appended to target file
             File source = null;
             boolean fileBased = false;
-            if (charset == null) {
-                // if no charset, then we can try using file directly (optimized)
+            if (charset == null && endpoint.getFileExist() != GenericFileExist.Append) {
+                // if no charset and not in appending mode, then we can try using file directly (optimized)
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
                     body = ((WrappedFile<?>) body).getFile();

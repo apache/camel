@@ -34,7 +34,6 @@ import com.amazonaws.services.kafka.model.ListClustersResult;
 public class AmazonMSKClientMock extends AbstractAWSKafka {
 
     public AmazonMSKClientMock() {
-        super();
     }
 
     @Override

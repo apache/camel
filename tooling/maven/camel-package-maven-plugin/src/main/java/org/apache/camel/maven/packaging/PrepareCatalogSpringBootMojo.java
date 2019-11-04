@@ -161,8 +161,6 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                             target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-servicenow".equals(dir.getName())) {
                             target = new File(dir, "camel-servicenow-component/target/classes");
-                        } else if ("camel-debezium".equals(dir.getName())) {
-                            target = new File(dir, "camel-debezium-component/target/classes");
                         } else {
                             // this module must be active with a source folder
                             File src = new File(dir, "src");
@@ -445,7 +443,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName());
-                    boolean special3 = "camel-debezium".equals(dir.getName());
+                    boolean special3 = "camel-debezium-common".equals(dir.getName());
                     if (special || special2 || special3) {
                         continue;
                     }

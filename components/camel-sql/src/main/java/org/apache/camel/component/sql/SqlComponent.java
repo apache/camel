@@ -44,7 +44,6 @@ public class SqlComponent extends DefaultComponent {
     }
 
     public SqlComponent(Class<? extends Endpoint> endpointClass) {
-        super();
     }
 
     public SqlComponent(CamelContext context) {

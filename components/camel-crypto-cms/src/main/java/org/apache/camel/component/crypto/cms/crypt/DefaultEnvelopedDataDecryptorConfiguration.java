@@ -47,7 +47,6 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
     private char[] password;
 
     public DefaultEnvelopedDataDecryptorConfiguration() {
-        super();
     }
 
     /**
