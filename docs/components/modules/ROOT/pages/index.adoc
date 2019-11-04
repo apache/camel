@@ -420,7 +420,7 @@ Number of Components: 302 in 240 JAR artifacts (0 deprecated)
 
 | xref:netty-http-component.adoc[Netty HTTP] (camel-netty-http) | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
-| xref:nitrite-component.adoc[Nitrite] (camel-nitrite) | 3.0 | Embedded single file store document DB with indexing and fulltext search capability.
+| xref:nitrite-component.adoc[Nitrite] (camel-nitrite) | 3.0 | Used for integrating Camel with Nitrite databases.
 
 | xref:nsq-component.adoc[NSQ] (camel-nsq) | 2.23 | Represents a nsq endpoint.
 
