@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.kudu;
 
-public class KuduConstants {
-    public static String CamelKuduSchema = "CamelKuduSchema";
-    public static String CamelKuduTableOptions = "CamelKuduTableOptions";
+public final class KuduConstants {
+    public static final String CAMEL_KUDU_SCHEMA = "CamelKuduSchema";
+    public static final String CAMEL_KUDU_TABLE_OPTIONS = "CamelKuduTableOptions";
+
+    private KuduConstants() {
+    }
 }

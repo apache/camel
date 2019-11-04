@@ -95,10 +95,12 @@ public class KuduProducer extends DefaultProducer {
         KuduClient connection = endpoint.getKuduClient();
 
         try {
-            Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CamelKuduSchema);
-            CreateTableOptions builder = (CreateTableOptions) exchange.getIn().getHeader(KuduConstants.CamelKuduTableOptions);
+            Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCHEMA);
+            CreateTableOptions builder = (CreateTableOptions)
+                                             exchange.getIn()
+                                                 .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
             connection.createTable(tableName, schema, builder);
-        }catch(Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
             throw t;
         }

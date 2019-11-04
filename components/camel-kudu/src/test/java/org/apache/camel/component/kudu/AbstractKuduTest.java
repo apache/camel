@@ -38,14 +38,14 @@ import org.slf4j.LoggerFactory;
 public class AbstractKuduTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKuduTest.class);
 
-    private Integer id = 1;
-
     @Rule
     /**
      * This is the class that connects our Camel test with the
      * Kudu testing framework to spin up a Kudu local endpoint.
      */
     public IntegrationKuduConfiguration ikc = new IntegrationKuduConfiguration();
+
+    private Integer id = 1;
 
     protected void createTestTable(String tableName) {
         LOG.trace("Creating table " + tableName + ".");

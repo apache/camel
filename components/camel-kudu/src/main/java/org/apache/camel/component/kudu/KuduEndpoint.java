@@ -138,10 +138,9 @@ public class KuduEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) {
-        return new KuduConsumer(this, processor);
+    public Consumer createConsumer(Processor processor) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("You cannot create consumers on this endpoint");
     }
-
     @Override
     public boolean isSingleton() {
         return true;

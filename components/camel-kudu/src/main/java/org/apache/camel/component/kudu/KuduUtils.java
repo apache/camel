@@ -30,9 +30,12 @@ import org.apache.kudu.client.RowResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KuduUtils {
+public final class KuduUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduUtils.class);
+    
+    private KuduUtils() {
+    }
 
     /**
      * Convert results to a more Java friendly type
@@ -67,5 +70,4 @@ public class KuduUtils {
                                   .build();
         return KuduUtils.scannerToList(table, scanner);
     }
-
 }

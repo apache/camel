@@ -18,22 +18,36 @@ package org.apache.camel.component.kudu;
 
 import java.util.List;
 import java.util.Map;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.kudu.client.KuduException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class KuduConsumerTest extends AbstractKuduTest {
+public class KuduScanTest extends AbstractKuduTest {
+
+    public static final String TABLE = "ScanTableTest";
+
+    @EndpointInject(value = "mock:result")
+    public MockEndpoint successEndpoint;
+
+    @EndpointInject(value = "mock:error")
+    public MockEndpoint errorEndpoint;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
+
                 //integration test route
-                from("kudu:localhost:7051/ConsumerTable?operation=scan")
+                from("direct:scan").to("kudu:localhost:7051/" + TABLE + "?operation=scan")
+                    .to("mock:result");
+
+                from("direct:scan2")
+                    .to("kudu:localhost:7051/TestTable?operation=scan")
                     .to("mock:result");
             }
         };
@@ -41,20 +55,24 @@ public class KuduConsumerTest extends AbstractKuduTest {
 
     @Before
     public void setup() {
-        deleteTestTable("ConsumerTable");
-        createTestTable("ConsumerTable");
-        insertRowInTestTable("ConsumerTable");
-        insertRowInTestTable("ConsumerTable");
+        deleteTestTable(TABLE);
+        createTestTable(TABLE);
+        insertRowInTestTable(TABLE);
+        insertRowInTestTable(TABLE);
     }
 
     @Test
-    public void scan() throws KuduException, InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+    public void scan() throws InterruptedException {
 
-        assertMockEndpointsSatisfied();
+        errorEndpoint.expectedMessageCount(0);
+        successEndpoint.expectedMessageCount(1);
 
-        List<Exchange> exchanges = mock.getReceivedExchanges();
+        sendBody("direct:scan", null);
+        
+        errorEndpoint.assertIsSatisfied();
+        successEndpoint.assertIsSatisfied();
+
+        List<Exchange> exchanges = successEndpoint.getReceivedExchanges();
         assertEquals(1, exchanges.size());
 
         List<Map<String, Object>> results = exchanges.get(0).getIn().getBody(List.class);
@@ -83,5 +101,35 @@ public class KuduConsumerTest extends AbstractKuduTest {
         assertEquals("Smith", row.get("lastname"));
         assertEquals("4359  Plainfield Avenue", row.get("address"));
 
+    }
+
+    @Test
+    public void scanTable() throws InterruptedException {
+        createTestTable("TestTable");
+        insertRowInTestTable("TestTable");
+
+        errorEndpoint.expectedMessageCount(0);
+        successEndpoint.expectedMessageCount(1);
+
+        sendBody("direct:scan2", null);
+
+        errorEndpoint.assertIsSatisfied();
+        successEndpoint.assertIsSatisfied();
+
+        List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
+                                                                            .get(0).getIn().getBody(List.class);
+
+        assertEquals("Wrong number of results.", results.size(), 1);
+
+        Map<String, Object> row = results.get(0);
+
+        // INT32 id=??, STRING title=Mr.,
+        // STRING name=Samuel, STRING lastname=Smith,
+        // STRING address=4359  Plainfield Avenue
+        assertTrue(row.containsKey("id"));
+        assertEquals("Mr.", row.get("title"));
+        assertEquals("Samuel", row.get("name"));
+        assertEquals("Smith", row.get("lastname"));
+        assertEquals("4359  Plainfield Avenue", row.get("address"));
     }
 }

@@ -53,10 +53,6 @@ public class KuduProducerTest extends AbstractKuduTest {
                     .to("kudu:localhost:7051/TestTable?operation=create_table")
                     .to("mock:result");
 
-                from("direct:scan")
-                    .to("kudu:localhost:7051/TestTable?operation=scan")
-                    .to("mock:result");
-
                 from("direct:insert")
                     .to("kudu:localhost:7051/TestTable?operation=insert")
                     .to("mock:result");
@@ -97,8 +93,8 @@ public class KuduProducerTest extends AbstractKuduTest {
         List<String> rangeKeys = new ArrayList<>();
         rangeKeys.add("id");
 
-        headers.put(KuduConstants.CamelKuduSchema, new Schema(columns));
-        headers.put(KuduConstants.CamelKuduTableOptions, new CreateTableOptions().setRangePartitionColumns(rangeKeys));
+        headers.put(KuduConstants.CAMEL_KUDU_SCHEMA, new Schema(columns));
+        headers.put(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS, new CreateTableOptions().setRangePartitionColumns(rangeKeys));
 
         template().requestBodyAndHeaders("direct://create", null, headers);
 
@@ -144,35 +140,5 @@ public class KuduProducerTest extends AbstractKuduTest {
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void scanTable() throws InterruptedException {
-        createTestTable("TestTable");
-        insertRowInTestTable("TestTable");
-
-        errorEndpoint.expectedMessageCount(0);
-        successEndpoint.expectedMessageCount(1);
-
-        sendBody("direct:scan", null);
-
-        errorEndpoint.assertIsSatisfied();
-        successEndpoint.assertIsSatisfied();
-
-        List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
-                                                                            .get(0).getIn().getBody(List.class);
-
-        assertEquals("Wrong number of results.", results.size(), 1);
-
-        Map<String, Object> row = results.get(0);
-
-        // INT32 id=??, STRING title=Mr.,
-        // STRING name=Samuel, STRING lastname=Smith,
-        // STRING address=4359  Plainfield Avenue
-        assertTrue(row.containsKey("id"));
-        assertEquals("Mr.", row.get("title"));
-        assertEquals("Samuel", row.get("name"));
-        assertEquals("Smith", row.get("lastname"));
-        assertEquals("4359  Plainfield Avenue", row.get("address"));
     }
 }
