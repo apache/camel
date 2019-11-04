@@ -126,8 +126,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
-        super();
-
         registerExtension(HttpComponentVerifierExtension::new);
     }
 

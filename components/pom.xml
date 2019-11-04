@@ -157,7 +157,10 @@
         <module>camel-dozer</module>
         <module>camel-drill</module>
         <module>camel-dropbox</module>
-        <module>camel-debezium</module>
+        <module>camel-debezium-common</module>
+        <module>camel-debezium-mysql</module>
+        <module>camel-debezium-postgres</module>
+        <module>camel-debezium-mongodb</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
@@ -256,6 +259,7 @@
         <module>camel-nats</module>
         <module>camel-netty</module>
         <module>camel-netty-http</module>
+        <module>camel-nitrite</module>
         <module>camel-nsq</module>
         <module>camel-ognl</module>
         <module>camel-olingo2</module>

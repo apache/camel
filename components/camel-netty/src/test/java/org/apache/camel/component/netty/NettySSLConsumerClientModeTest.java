@@ -174,7 +174,6 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         private SSLContext sslContext;
 
         ServerInitializer() {
-            super();
             try {
                 // create the SSLContext that will be used to create SSLEngine
                 // instances

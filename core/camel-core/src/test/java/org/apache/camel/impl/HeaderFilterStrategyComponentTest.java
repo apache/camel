@@ -35,7 +35,6 @@ public class HeaderFilterStrategyComponentTest extends Assert {
     private static class MyComponent extends HeaderFilterStrategyComponent {
 
         MyComponent(Class<? extends Endpoint> endpointClass) {
-            super();
         }
 
         @Override

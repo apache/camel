@@ -27,7 +27,8 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        // enable jackson type converter by setting this property on CamelContext
+        // enable jackson type converter by setting this property on
+        // CamelContext
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
         return context;
@@ -40,7 +41,7 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
         order.setCustomerName("Acme");
         order.setPartName("Camel");
 
-        String json = (String) template.requestBody("direct:test", order);
+        String json = (String)template.requestBody("direct:test", order);
         assertEquals("{\"id\":0,\"partName\":\"Camel\",\"amount\":1,\"customerName\":\"Acme\"}", json);
     }
 

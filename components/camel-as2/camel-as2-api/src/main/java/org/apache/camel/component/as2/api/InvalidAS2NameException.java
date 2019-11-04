@@ -35,7 +35,6 @@ public class InvalidAS2NameException extends Exception {
      * @param index - the index in the <code>name</code> of the invalid character
      */
     public InvalidAS2NameException(String name, int index) {
-        super();
         this.name = name;
         this.index = index;
     }

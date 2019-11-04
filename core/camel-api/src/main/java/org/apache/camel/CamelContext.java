@@ -630,6 +630,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @param restConfiguration the REST configuration
      */
+    @Deprecated
     void addRestConfiguration(RestConfiguration restConfiguration);
 
     /**
@@ -645,6 +646,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     /**
      * Gets all the RestConfiguration's
      */
+    @Deprecated
     Collection<RestConfiguration> getRestConfigurations();
 
     /**

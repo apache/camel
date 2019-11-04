@@ -45,7 +45,6 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
 
     public AbstractApiComponent(Class<? extends Endpoint> endpointClass,
                                 Class<E> apiNameClass, S collection) {
-        super();
         this.collection = collection;
         this.apiNameClass = apiNameClass;
     }

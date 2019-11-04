@@ -61,7 +61,6 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
     private ScheduledExecutorService scheduler;
 
     public AmazonSQSClientMock() {
-        super();
     }
 
     @Override

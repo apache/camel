@@ -64,8 +64,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.findCamelDirectory;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
- * Generate Spring Boot auto configuration files for Camel components and data
- * formats.
+ * Generate Endpoint DSL source files for Components.
  */
 @Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractMojo {
@@ -209,10 +208,11 @@ public class EndpointDslMojo extends AbstractMojo {
 
         Map<String, JavaClass> enumClasses = new HashMap<>();
 
-        boolean advanced = false;
+        boolean hasAdvanced = false;
         for (EndpointOptionModel option : model.getEndpointOptions()) {
             if (option.getLabel().contains("advanced")) {
-                advanced = true;
+                hasAdvanced = true;
+                break;
             }
         }
 
@@ -229,7 +229,7 @@ public class EndpointDslMojo extends AbstractMojo {
             generateDummyClass(consumerClass.getCanonicalName());
             consumerClass.getJavaDoc().setText("Builder for endpoint consumers for the " + model.getTitle() + " component.");
 
-            if (advanced) {
+            if (hasAdvanced) {
                 advancedConsumerClass = javaClass.addNestedType().setPublic().setClass(false);
                 advancedConsumerClass.setName("Advanced" + consumerName);
                 advancedConsumerClass.implementInterface("EndpointConsumerBuilder");
@@ -249,7 +249,7 @@ public class EndpointDslMojo extends AbstractMojo {
             generateDummyClass(producerClass.getCanonicalName());
             producerClass.getJavaDoc().setText("Builder for endpoint producers for the " + model.getTitle() + " component.");
 
-            if (advanced) {
+            if (hasAdvanced) {
                 advancedProducerClass = javaClass.addNestedType().setPublic().setClass(false);
                 advancedProducerClass.setName("Advanced" + producerName);
                 advancedProducerClass.implementInterface("EndpointProducerBuilder");
@@ -277,7 +277,7 @@ public class EndpointDslMojo extends AbstractMojo {
         }
         generateDummyClass(builderClass.getCanonicalName());
         builderClass.getJavaDoc().setText("Builder for endpoint for the " + model.getTitle() + " component.");
-        if (advanced) {
+        if (hasAdvanced) {
             advancedBuilderClass = javaClass.addNestedType().setPublic().setClass(false);
             advancedBuilderClass.setName("Advanced" + builderName);
             if (realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly()) {
@@ -317,15 +317,15 @@ public class EndpointDslMojo extends AbstractMojo {
             if (option.getLabel() != null) {
                 if (option.getLabel().contains("producer")) {
                     if (option.getLabel().contains("advanced")) {
-                        targets.add(advancedProducerClass);
+                        targets.add(advancedProducerClass != null ? advancedProducerClass : advancedBuilderClass);
                     } else {
-                        targets.add(producerClass);
+                        targets.add(producerClass != null ? producerClass : builderClass);
                     }
                 } else if (option.getLabel().contains("consumer")) {
                     if (option.getLabel().contains("advanced")) {
-                        targets.add(advancedConsumerClass);
+                        targets.add(advancedConsumerClass != null ? advancedConsumerClass : advancedBuilderClass);
                     } else {
-                        targets.add(consumerClass);
+                        targets.add(consumerClass != null ? consumerClass : builderClass);
                     }
                 } else {
                     if (option.getLabel().contains("advanced")) {
@@ -523,20 +523,6 @@ public class EndpointDslMojo extends AbstractMojo {
         return wrapped;
     }
 
-    private String getMethodName(String type) {
-        String builderName = getEndpointName(type);
-        String methodName = builderName.replace("EndpointBuilder", "");
-        methodName = methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
-        switch (type) {
-        case "org.apache.camel.component.rest.RestComponent":
-            return "restEndpoint";
-        case "org.apache.camel.component.beanclass.ClassComponent":
-            return "classEndpoint";
-        default:
-            return methodName;
-        }
-    }
-
     private String getEndpointName(String type) {
         int pos = type.lastIndexOf(".");
         String name = type.substring(pos + 1).replace("Component", "EndpointBuilder");
@@ -609,7 +595,7 @@ public class EndpointDslMojo extends AbstractMojo {
         return field;
     }
 
-    static boolean isPrimitive(String type) {
+    private static boolean isPrimitive(String type) {
         return PRIMITIVEMAP.containsKey(type);
     }
 

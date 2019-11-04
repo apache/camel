@@ -27,7 +27,6 @@ public class MySpringIdempotentCacheManager extends AbstractCacheManager {
     private final Collection<Cache> cache = new ArrayList<>(1);
 
     public MySpringIdempotentCacheManager() {
-        super();
     }
 
     @Override

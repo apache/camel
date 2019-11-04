@@ -79,7 +79,6 @@ public class CamelWebSocketHandler implements HttpHandler {
     private final UndertowReceiveListener receiveListener;
 
     public CamelWebSocketHandler() {
-        super();
         this.receiveListener = new UndertowReceiveListener();
         this.callback = new UndertowWebSocketConnectionCallback();
         this.closeListener = new ChannelListener<WebSocketChannel>() {
@@ -209,7 +208,6 @@ public class CamelWebSocketHandler implements HttpHandler {
         private final Set<WebSocketChannel> peers;
 
         public MultiCallback(Collection<WebSocketChannel> peers, AsyncCallback camelCallback, Exchange camelExchange) {
-            super();
             this.camelCallback = camelCallback;
             this.camelExchange = camelExchange;
             synchronized (lock) {
@@ -349,7 +347,6 @@ public class CamelWebSocketHandler implements HttpHandler {
     class UndertowWebSocketConnectionCallback implements WebSocketConnectionCallback {
 
         public UndertowWebSocketConnectionCallback() {
-            super();
         }
 
         @Override

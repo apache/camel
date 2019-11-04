@@ -30,7 +30,7 @@ http://java.sun.com/javaee/5/docs/api/javax/persistence/Entity.html[@Entity]
 annotation on it) or a collection or array of entity beans.
 
 If the body is a List of entities, make sure to use
-*entityType=java.util.ArrayList* as a configuration passed to the
+*entityType=java.util.List* as a configuration passed to the
 producer endpoint.
 
 If the body does not contain one of the previous listed types, put a
@@ -419,7 +419,7 @@ Index: 20, Size: 20
 
 [source,xml]
 ---------------------------------------------------------------
-<camelContext xmlns="http://camel.apache.org/schema/spring">   
+<camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="JpaMessageIdRepositoryTest">
         <from uri="direct:start" />
         <idempotentConsumer messageIdRepositoryRef="jpaStore">
@@ -457,13 +457,13 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/pom.xml[enhanc
 the byte-code at build time]. To overcome this you need to enable
 http://openjpa.apache.org/entity-enhancement.html#dynamic-enhancement[dynamic
 byte-code enhancement of OpenJPA]. For example, assuming the current
-OpenJPA version being used in Camel is 2.2.1, to run the 
+OpenJPA version being used in Camel is 2.2.1, to run the
 tests inside your IDE you would need to pass the following
 argument to the JVM:
 
 [source,java]
 -------------------------------------------------------------------------------------------
- 
+
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------
 

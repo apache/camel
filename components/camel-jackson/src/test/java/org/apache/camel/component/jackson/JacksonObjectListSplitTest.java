@@ -36,14 +36,15 @@ public class JacksonObjectListSplitTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // you can specify the pojo class type for unmarshal the jason file
+                // you can specify the pojo class type for unmarshal the jason
+                // file
                 JacksonDataFormat format = new JacksonDataFormat(DummyObject.class);
                 format.useList();
                 from("direct:start").unmarshal(format).split(body()).to("mock:result");
             }
         };
     }
-    
+
     public static class DummyObject {
 
         private String dummy;

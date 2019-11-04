@@ -100,7 +100,6 @@ import com.amazonaws.services.kms.model.UpdateKeyDescriptionResult;
 public class AmazonKMSClientMock extends AbstractAWSKMS {
 
     public AmazonKMSClientMock() {
-        super();
     }
 
     @Override

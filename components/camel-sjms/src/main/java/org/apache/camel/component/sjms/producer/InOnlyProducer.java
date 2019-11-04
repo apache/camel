@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import javax.jms.Message;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.BatchMessage;
 import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
@@ -52,32 +47,8 @@ public class InOnlyProducer extends SjmsProducer {
     @Override
     public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer, final ReleaseProducerCallback releaseProducerCallback) throws Exception {
         try {
-            Collection<Message> messages = new ArrayList<>(1);
-            if (exchange.getIn().getBody() != null) {
-                if (exchange.getIn().getBody() instanceof List) {
-                    Iterable<?> payload = (Iterable<?>) exchange.getIn().getBody();
-                    for (final Object object : payload) {
-                        Message message;
-                        if (BatchMessage.class.isInstance(object)) {
-                            BatchMessage<?> batchMessage = (BatchMessage<?>) object;
-                            message = getEndpoint().getBinding().makeJmsMessage(exchange, batchMessage.getPayload(), batchMessage.getHeaders(), producer.getSession(), null);
-                        } else {
-                            message = getEndpoint().getBinding().makeJmsMessage(exchange, object, exchange.getIn().getHeaders(), producer.getSession(), null);
-                        }
-                        messages.add(message);
-                    }
-                } else {
-                    Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
-                    messages.add(message);
-                }
-            } else {
-                Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
-                messages.add(message);
-            }
-
-            for (final Message message : messages) {
-                producer.getMessageProducer().send(message);
-            }
+            Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
+            producer.getMessageProducer().send(message);
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Unable to complete sending the JMS message", exchange, e));
         } finally {

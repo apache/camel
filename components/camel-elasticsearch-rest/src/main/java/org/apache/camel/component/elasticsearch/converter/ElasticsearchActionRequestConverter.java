@@ -111,8 +111,11 @@ public final class ElasticsearchActionRequestConverter {
         if (document instanceof GetRequest) {
             return (GetRequest)document;
         }
-        return new GetRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-            .id((String)document);
+        if (document instanceof String) {
+            return new GetRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                    .id((String) document);
+        }
+        return null;
     }
 
     @Converter
@@ -123,9 +126,8 @@ public final class ElasticsearchActionRequestConverter {
         if (document instanceof String) {
             return new DeleteRequest().index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .id((String)document);
-        } else {
-            throw new IllegalArgumentException("Wrong body type. Only DeleteRequest or String is allowed as a type");
         }
+        return null;
     }
 
     @Converter
@@ -136,9 +138,8 @@ public final class ElasticsearchActionRequestConverter {
         if (document instanceof String) {
             String index = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
             return new DeleteIndexRequest(index);
-        } else {
-            throw new IllegalArgumentException("Wrong body type. Only DeleteIndexRequest or String is allowed as a type");
         }
+        return null;
     }
 
     @Converter
@@ -202,9 +203,8 @@ public final class ElasticsearchActionRequestConverter {
                 request.add(createIndexRequest(document, exchange));
             }
             return request;
-        } else {
-            throw new IllegalArgumentException("Wrong body type. Only BulkRequest or List is allowed as a type");
         }
+        return null;
     }
 
 }
