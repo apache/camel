@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.aws.s3.client.impl;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3EncryptionClient;
 import org.apache.camel.component.aws.s3.S3Configuration;
 import org.junit.Assert;
@@ -48,6 +51,17 @@ public class StandardAWSS3ClientImplTest {
         Assert.assertTrue(s3Client instanceof AmazonS3EncryptionClient);
     }
 
+    @Test
+    public void standardAWSS3ClientImplWithProxy() {
+        S3ClientStandardImpl standardAWSS3Client = new S3ClientStandardImpl(getS3ConfigurationUseProxy(), MAX_CONNECTIONS);
+        AmazonS3 s3Client = standardAWSS3Client.getS3Client();
+        Assert.assertNotNull(s3Client);
+        Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
+
+        ClientConfiguration configuration = ((AmazonS3Client) s3Client).getClientConfiguration();
+        Assert.assertEquals(Protocol.HTTP, configuration.getProxyProtocol());
+    }
+
     private S3Configuration getS3ConfigurationNoEncryption() {
         S3Configuration s3Configuration = mock(S3Configuration.class);
         when(s3Configuration.getRegion()).thenReturn("US_EAST_1");
@@ -59,6 +73,18 @@ public class StandardAWSS3ClientImplTest {
         S3Configuration s3Configuration = mock(S3Configuration.class);
         when(s3Configuration.getRegion()).thenReturn("US_EAST_1");
         when(s3Configuration.isUseEncryption()).thenReturn(true);
+        return s3Configuration;
+    }
+
+    private S3Configuration getS3ConfigurationUseProxy() {
+        S3Configuration s3Configuration = mock(S3Configuration.class);
+        when(s3Configuration.getRegion()).thenReturn("US_EAST_1");
+
+        when(s3Configuration.hasProxyConfiguration()).thenReturn(true);
+        when(s3Configuration.getProxyProtocol()).thenReturn(Protocol.HTTP);
+        when(s3Configuration.getProxyHost()).thenReturn("PROXY_HOST");
+        when(s3Configuration.getProxyPort()).thenReturn(1234);
+
         return s3Configuration;
     }
 }
