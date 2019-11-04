@@ -44,6 +44,11 @@ import java.util.regex.Pattern;
 import static org.apache.camel.util.BufferCaster.cast;
 
 public final class Scanner implements Iterator<String>, Closeable {
+  
+    static {
+        WHITESPACE_PATTERN = Pattern.compile("\\s+");
+        FIND_ANY_PATTERN = Pattern.compile("(?s).*");
+    }
 
     private static final Map<String, Pattern> CACHE = new LinkedHashMap<String, Pattern>() {
         @Override
@@ -51,10 +56,10 @@ public final class Scanner implements Iterator<String>, Closeable {
             return size() >= 7;
         }
     };
+    
+    private static final Pattern WHITESPACE_PATTERN;
 
-    private static final String WHITESPACE_PATTERN = "\\s+";
-
-    private static final String FIND_ANY_PATTERN = "(?s).*";
+    private static final Pattern FIND_ANY_PATTERN;
 
     private static final int BUFFER_SIZE = 1024;
 
@@ -81,6 +86,10 @@ public final class Scanner implements Iterator<String>, Closeable {
     public Scanner(String source, String pattern) {
         this(new StringReader(Objects.requireNonNull(source, "source")), cachePattern(pattern));
     }
+    
+    public Scanner(String source, Pattern pattern) {
+        this(new StringReader(Objects.requireNonNull(source, "source")), pattern);
+  }
 
     public Scanner(ReadableByteChannel source, String charsetName, String pattern) {
         this(Channels.newReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName), -1), cachePattern(pattern));
@@ -92,7 +101,7 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     private Scanner(Readable source, Pattern pattern) {
         this.source = source;
-        delimPattern = pattern != null ? pattern : cachePattern(WHITESPACE_PATTERN);
+        delimPattern = pattern != null ? pattern : WHITESPACE_PATTERN;
         buf = CharBuffer.allocate(BUFFER_SIZE);
         cast(buf).limit(0);
         matcher = delimPattern.matcher(buf);
@@ -251,7 +260,7 @@ public final class Scanner implements Iterator<String>, Closeable {
                 return null;
             }
             int tokenEnd = matcher.start();
-            matcher.usePattern(cachePattern(FIND_ANY_PATTERN));
+            matcher.usePattern(FIND_ANY_PATTERN);
             matcher.region(position, tokenEnd);
             if (matcher.matches()) {
                 String s = matcher.group();
@@ -262,7 +271,7 @@ public final class Scanner implements Iterator<String>, Closeable {
             }
         }
         if (inputExhausted) {
-            matcher.usePattern(cachePattern(FIND_ANY_PATTERN));
+            matcher.usePattern(FIND_ANY_PATTERN);
             matcher.region(position, buf.limit());
             if (matcher.matches()) {
                 String s = matcher.group();
@@ -302,7 +311,9 @@ public final class Scanner implements Iterator<String>, Closeable {
         if (pattern == null) {
             return null;
         }
-        return CACHE.computeIfAbsent(pattern, Pattern::compile);
+        synchronized (CACHE) {
+            return CACHE.computeIfAbsent(pattern, Pattern::compile);
+        }
     }
 
 }
