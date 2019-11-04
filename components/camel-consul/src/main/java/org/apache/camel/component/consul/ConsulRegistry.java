@@ -59,7 +59,6 @@ public class ConsulRegistry implements Registry {
 
     /* constructor (since spring.xml does not support builder pattern) */
     public ConsulRegistry(String hostname, int port) {
-        super();
         this.hostname = hostname;
         this.port = port;
         this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();

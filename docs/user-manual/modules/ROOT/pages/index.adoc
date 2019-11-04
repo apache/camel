@@ -207,7 +207,7 @@ camel routes without them knowing
 ** xref:components::crypto-cms-component.adoc[Crypto CMS]
 ** xref:components::cxf-component.adoc[CXF]
 ** xref:components::cxfrs-component.adoc[CXF-RS]
-** xref:components::debezium-component.adoc[Debezium]
+** xref:components::debezium-mysql-component.adoc[Debezium Mysql]
 ** xref:components::digitalocean-component.adoc[DigitalOcean]
 ** xref:components::disruptor-component.adoc[Disruptor]
 ** xref:components::dns-component.adoc[DNS]

@@ -51,8 +51,8 @@ public final class DebeziumMySqlConsumerToKinesis {
                 // Initial Debezium route that will run and listens to the changes,
                 // first it will perform an initial snapshot using (select * from) in case there are no offsets
                 // exists for the connector and then it will listens to MySQL binlogs for any DB events such as (UPDATE, INSERT and DELETE)
-                from("debezium:mysql?name={{debezium.mysql.name}}"
-                        + "&databaseServerId={{debezium.mysql.databaseServerId}}"
+                from("debezium-mysql:{{debezium.mysql.name}}?"
+                        + "databaseServerId={{debezium.mysql.databaseServerId}}"
                         + "&databaseHostname={{debezium.mysql.databaseHostName}}"
                         + "&databaseUser={{debezium.mysql.databaseUser}}"
                         + "&databasePassword={{debezium.mysql.databasePassword}}"

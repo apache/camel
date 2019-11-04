@@ -168,7 +168,10 @@
     <module>camel-cxf-transport-starter</module>
     <module>camel-dataformat-starter</module>
     <module>camel-dataset-starter</module>
-    <module>camel-debezium-starter</module>
+    <module>camel-debezium-common-starter</module>
+    <module>camel-debezium-mongodb-starter</module>
+    <module>camel-debezium-mysql-starter</module>
+    <module>camel-debezium-postgres-starter</module>
     <module>camel-digitalocean-starter</module>
     <module>camel-direct-starter</module>
     <module>camel-directvm-starter</module>
@@ -286,6 +289,7 @@
     <module>camel-nats-starter</module>
     <module>camel-netty-http-starter</module>
     <module>camel-netty-starter</module>
+    <module>camel-nitrite-starter</module>
     <module>camel-nsq-starter</module>
     <module>camel-ognl-starter</module>
     <module>camel-olingo2-starter</module>

@@ -118,7 +118,6 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    String[] warningFields,
                                                    Map<String, String> extensionFields,
                                                    ReceivedContentMic receivedContentMic) {
-        super();
         this.reportingUA = reportingUA;
         this.mtnName = mtnName;
         this.finalRecipient = finalRecipient;

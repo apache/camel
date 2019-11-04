@@ -42,7 +42,6 @@ public class LumberjackComponent extends DefaultComponent implements SSLContextP
     }
 
     protected LumberjackComponent(Class<? extends LumberjackEndpoint> endpointClass) {
-        super();
     }
 
     @Override

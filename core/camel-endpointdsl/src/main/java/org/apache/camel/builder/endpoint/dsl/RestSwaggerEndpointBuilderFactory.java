@@ -39,6 +39,120 @@ public interface RestSwaggerEndpointBuilderFactory {
         default AdvancedRestSwaggerEndpointBuilder advanced() {
             return (AdvancedRestSwaggerEndpointBuilder) this;
         }
+        /**
+         * API basePath, for example /v2. Default is unset, if set overrides the
+         * value present in Swagger specification and in the component
+         * configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default RestSwaggerEndpointBuilder basePath(String basePath) {
+            doSetProperty("basePath", basePath);
+            return this;
+        }
+        /**
+         * Name of the Camel component that will perform the requests. The
+         * component must be present in Camel registry and it must implement
+         * RestProducerFactory service provider interface. If not set CLASSPATH
+         * is searched for single component that implements RestProducerFactory
+         * SPI. Overrides component configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default RestSwaggerEndpointBuilder componentName(String componentName) {
+            doSetProperty("componentName", componentName);
+            return this;
+        }
+        /**
+         * What payload type this component capable of consuming. Could be one
+         * type, like application/json or multiple types as application/json,
+         * application/xml; q=0.5 according to the RFC7231. This equates to the
+         * value of Accept HTTP header. If set overrides any value found in the
+         * Swagger specification and. in the component configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default RestSwaggerEndpointBuilder consumes(String consumes) {
+            doSetProperty("consumes", consumes);
+            return this;
+        }
+        /**
+         * Scheme hostname and port to direct the HTTP requests to in the form
+         * of https://hostname:port. Can be configured at the endpoint,
+         * component or in the corresponding REST configuration in the Camel
+         * Context. If you give this component a name (e.g. petstore) that REST
+         * configuration is consulted first, rest-swagger next, and global
+         * configuration last. If set overrides any value found in the Swagger
+         * specification, RestConfiguration. Overrides all other configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default RestSwaggerEndpointBuilder host(String host) {
+            doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default RestSwaggerEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default RestSwaggerEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * What payload type this component is producing. For example
+         * application/json according to the RFC7231. This equates to the value
+         * of Content-Type HTTP header. If set overrides any value present in
+         * the Swagger specification. Overrides all other configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default RestSwaggerEndpointBuilder produces(String produces) {
+            doSetProperty("produces", produces);
+            return this;
+        }
     }
 
     /**

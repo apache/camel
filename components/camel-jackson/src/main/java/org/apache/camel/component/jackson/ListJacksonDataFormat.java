@@ -19,7 +19,8 @@ package org.apache.camel.component.jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * A {@link org.apache.camel.component.jackson.JacksonDataFormat} that is using a list
+ * A {@link org.apache.camel.component.jackson.JacksonDataFormat} that is using
+ * a list
  */
 public class ListJacksonDataFormat extends JacksonDataFormat {
 
@@ -36,7 +37,7 @@ public class ListJacksonDataFormat extends JacksonDataFormat {
         super(unmarshalType, jsonView);
         useList();
     }
-    
+
     public ListJacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView, boolean enableJaxbAnnotationModule) {
         super(unmarshalType, jsonView, enableJaxbAnnotationModule);
         useList();

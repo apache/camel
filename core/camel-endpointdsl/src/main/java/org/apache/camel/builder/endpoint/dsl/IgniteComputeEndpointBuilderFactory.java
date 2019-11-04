@@ -43,6 +43,119 @@ public interface IgniteComputeEndpointBuilderFactory {
             return (AdvancedIgniteComputeEndpointBuilder) this;
         }
         /**
+         * An expression that returns the Cluster Group for the IgniteCompute
+         * instance.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder clusterGroupExpression(
+                Object clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
+        /**
+         * An expression that returns the Cluster Group for the IgniteCompute
+         * instance.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder clusterGroupExpression(
+                String clusterGroupExpression) {
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
+            return this;
+        }
+        /**
+         * The name of the compute job, which will be set via
+         * IgniteCompute#withName(String).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder computeName(String computeName) {
+            doSetProperty("computeName", computeName);
+            return this;
+        }
+        /**
+         * The compute operation to perform. Possible values: CALL, BROADCAST,
+         * APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN. The component
+         * expects different payload types depending on the operation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder executionType(
+                IgniteComputeExecutionType executionType) {
+            doSetProperty("executionType", executionType);
+            return this;
+        }
+        /**
+         * The compute operation to perform. Possible values: CALL, BROADCAST,
+         * APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN. The component
+         * expects different payload types depending on the operation.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder executionType(String executionType) {
+            doSetProperty("executionType", executionType);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -66,6 +179,42 @@ public interface IgniteComputeEndpointBuilderFactory {
         default IgniteComputeEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
             doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            return this;
+        }
+        /**
+         * The task name, only applicable if using the
+         * IgniteComputeExecutionType#EXECUTE execution type.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder taskName(String taskName) {
+            doSetProperty("taskName", taskName);
+            return this;
+        }
+        /**
+         * The timeout interval for triggered jobs, in milliseconds, which will
+         * be set via IgniteCompute#withTimeout(long).
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder timeoutMillis(Long timeoutMillis) {
+            doSetProperty("timeoutMillis", timeoutMillis);
+            return this;
+        }
+        /**
+         * The timeout interval for triggered jobs, in milliseconds, which will
+         * be set via IgniteCompute#withTimeout(long).
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeEndpointBuilder timeoutMillis(String timeoutMillis) {
+            doSetProperty("timeoutMillis", timeoutMillis);
             return this;
         }
         /**

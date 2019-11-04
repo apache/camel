@@ -27,6 +27,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationLogSummary = true;
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
+    private boolean autowireComponentPropertiesNonNullOnly;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
@@ -153,6 +154,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
         this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
+    }
+
+    public boolean isAutowireComponentPropertiesNonNullOnly() {
+        return autowireComponentPropertiesNonNullOnly;
+    }
+
+    /**
+     * Whether to only autowire if the property has no default value or has not been configured explicit.
+     * <p/>
+     * This option is default disabled.
+     */
+    public void setAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
+        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
     }
 
     public boolean isAutowireComponentPropertiesAllowPrivateSetter() {
@@ -284,6 +298,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
         this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
+        return this;
+    }
+
+    /**
+     * Whether to only autowire if the property has no default value or has not been configured explicit.
+     * <p/>
+     * This option is default disabled.
+     */
+    public MainConfigurationProperties withAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
+        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
         return this;
     }
 

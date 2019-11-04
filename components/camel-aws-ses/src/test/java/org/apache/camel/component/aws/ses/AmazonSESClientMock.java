@@ -29,7 +29,6 @@ public class AmazonSESClientMock extends AbstractAmazonSimpleEmailService {
     private SendRawEmailRequest sendRawEmailRequest;
 
     public AmazonSESClientMock() {
-        super();
     }
 
     @Override

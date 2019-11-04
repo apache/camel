@@ -27,6 +27,5 @@ public final class GoogleBigQueryConstants {
      * Prevent instantiation.
      */
     private GoogleBigQueryConstants() {
-        super();
     }
 }

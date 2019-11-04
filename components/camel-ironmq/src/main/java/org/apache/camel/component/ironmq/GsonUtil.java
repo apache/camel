@@ -34,7 +34,6 @@ public final class GsonUtil {
         private String body;
 
         IronMqMessage(String body, Map<String, Object> headers) {
-            super();
             this.headers = headers;
             this.body = body;
         }
