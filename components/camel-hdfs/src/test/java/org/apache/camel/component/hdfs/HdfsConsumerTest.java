@@ -156,6 +156,7 @@ public class HdfsConsumerTest {
 
         // then
         assertThat(actual, is(1));
+
     }
 
 }
