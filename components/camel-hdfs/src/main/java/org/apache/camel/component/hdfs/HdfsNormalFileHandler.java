@@ -35,7 +35,7 @@ import org.apache.hadoop.fs.Path;
 
 class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
 
-    private boolean consumed = false;
+    private boolean consumed;
 
     @Override
     public OutputStream createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
@@ -105,16 +105,16 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
     }
 
     private long nextAsWrappedStream(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
-            InputStream inputStream = (InputStream) hdfsInputStream.getIn();
-            key.value = null;
-            value.value = inputStream;
+        InputStream inputStream = (InputStream) hdfsInputStream.getIn();
+        key.value = null;
+        value.value = inputStream;
 
-            if (consumed) {
-                return 0;
-            } else {
-                consumed = true;
-                return 1;
-            }
+        if (consumed) {
+            return 0;
+        } else {
+            consumed = true;
+            return 1;
+        }
     }
 
     private long nextAsOutputStream(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {

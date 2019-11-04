@@ -136,7 +136,7 @@ public class HdfsConsumerTest {
         when(endpointConfig.getOwner()).thenReturn("spiderman");
         when(endpointConfig.isConnectOnStartup()).thenReturn(true);
         when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
-        when(endpointConfig.getChunkSize()).thenReturn(100*1000);
+        when(endpointConfig.getChunkSize()).thenReturn(100 * 1000);
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.createExchange()).thenReturn(new DefaultExchange(context));
         when(endpoint.getEndpointUri()).thenReturn(hdfsPath);
@@ -186,7 +186,7 @@ public class HdfsConsumerTest {
         when(endpointConfig.getOwner()).thenReturn("spiderman");
         when(endpointConfig.isConnectOnStartup()).thenReturn(true);
         when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
-        when(endpointConfig.getChunkSize()).thenReturn(100*1000);
+        when(endpointConfig.getChunkSize()).thenReturn(100 * 1000);
         when(endpointConfig.isStreamDownload()).thenReturn(true);
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.createExchange()).thenReturn(new DefaultExchange(context));
@@ -223,9 +223,6 @@ public class HdfsConsumerTest {
 
         InputStream body = (InputStream) exchange.getIn().getBody();
         assertThat(body, notNullValue());
-
-//        BufferedReader br = new BufferedReader(new InputStreamReader(body, StandardCharsets.UTF_8));
-//        assertThat(br.readLine(), startsWith("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget fermentum arcu, vel dignissim ipsum."));
 
     }
 
