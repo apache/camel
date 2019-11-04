@@ -224,6 +224,7 @@ public class HdfsConsumerTest {
         InputStream body = (InputStream) exchange.getIn().getBody();
         assertThat(body, notNullValue());
 
+
     }
 
 }

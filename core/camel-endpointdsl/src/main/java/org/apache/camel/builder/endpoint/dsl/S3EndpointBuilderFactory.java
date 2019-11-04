@@ -165,6 +165,29 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointConsumerBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default S3EndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The region in which S3 client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name
@@ -1287,6 +1310,29 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointProducerBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default S3EndpointProducerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The region in which S3 client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name
@@ -1918,6 +1964,29 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default S3EndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The region in which S3 client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name
@@ -2210,6 +2279,14 @@ public interface S3EndpointBuilderFactory {
             doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
 
     /**
