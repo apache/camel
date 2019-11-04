@@ -4,24 +4,12 @@
 
 *Since Camel 2.25*
 
-*Available as of Camel version 3.0*
-
 The Kudu component supports storing and retrieving data from/to https://kudu.apache.org/[Apache Kudu], a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
-Prerequisites
+== Prerequisites
 
 You must have a valid Kudu instance running. More information are available at https://kudu.apache.org/[Apache Kudu].
 
-== URI Format
-
-[source,java]
-------------------------------
-kudu://host:port[?options]
-------------------------------
-
-You can append query options to the URI in the following format, ?options=value&option2=value&...
-
-== URI Options
 
 // component options: START
 The Apache Kudu component supports 1 options, which are listed below.
@@ -34,7 +22,6 @@ The Apache Kudu component supports 1 options, which are listed below.
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
-
 
 // endpoint options: START
 The Apache Kudu endpoint is configured using URI syntax:
@@ -71,6 +58,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Input Body formats
+
+=== Insert
+
+The input body format has to be a java.util.Map<String, Object>. This map will represent a row of the table whose elements are columns, where the key is the column name and the value is the value of the column. 
+
+== Output Body formats
+
+=== Scan
+
+The output body format will be a java.util.List<java.util.Map<String, Object>>. Each element of the list will be a different row of the table. Each row is a Map<String, Object> whose elements will be each pair of column name and column value for that row.
+
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
@@ -86,4 +86,36 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel (2.25.0 or higher).
+where `$\{camel-version\}` must be replaced by the actual version of Camel (3.0 or higher).
+
+
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kudu-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+
+== Camel Kudu Starter
+
+A starter module is available to spring-boot users.
+
+To use this feature, add the following dependencies to your spring boot pom.xml file:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kudu-starter</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+----
