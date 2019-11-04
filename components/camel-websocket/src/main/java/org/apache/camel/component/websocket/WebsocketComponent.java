@@ -127,8 +127,6 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     public WebsocketComponent() {
-        super();
-
         if (this.socketFactory == null) {
             this.socketFactory = new HashMap<>();
             this.socketFactory.put("default", new DefaultWebsocketFactory());

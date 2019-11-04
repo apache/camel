@@ -57,7 +57,6 @@ public class ProcessDefinitionResponse {
     private String version;
 
     public ProcessDefinitionResponse() {
-        super();
     }
 
     public String getId() {

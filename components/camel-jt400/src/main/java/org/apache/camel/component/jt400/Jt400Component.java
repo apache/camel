@@ -55,7 +55,6 @@ public class Jt400Component extends DefaultComponent {
     private AS400ConnectionPool connectionPool;
 
     public Jt400Component() {
-        super();
     }
 
     @Override

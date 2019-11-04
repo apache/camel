@@ -92,6 +92,54 @@ public interface AhcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if the Connection Close header has to be added to HTTP
+         * Request. This parameter is false by default.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder connectionClose(boolean connectionClose) {
+            doSetProperty("connectionClose", connectionClose);
+            return this;
+        }
+        /**
+         * Define if the Connection Close header has to be added to HTTP
+         * Request. This parameter is false by default.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder connectionClose(String connectionClose) {
+            doSetProperty("connectionClose", connectionClose);
+            return this;
+        }
+        /**
+         * Configure a cookie handler to maintain a HTTP session.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder cookieHandler(Object cookieHandler) {
+            doSetProperty("cookieHandler", cookieHandler);
+            return this;
+        }
+        /**
+         * Configure a cookie handler to maintain a HTTP session.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder cookieHandler(String cookieHandler) {
+            doSetProperty("cookieHandler", cookieHandler);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
          * 
@@ -117,6 +165,44 @@ public interface AhcEndpointBuilderFactory {
         default AhcEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**

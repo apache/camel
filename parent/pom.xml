@@ -152,7 +152,7 @@
         <couchbase-client-version>1.4.13</couchbase-client-version>
         <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
         <curator-version>2.12.0</curator-version>
-        <cxf-version>3.3.3</cxf-version>
+        <cxf-version>3.3.4</cxf-version>
         <cxf-version-range>[3.3,4.0)</cxf-version-range>
         <cxf-codegen-plugin-version>3.3.2</cxf-codegen-plugin-version>
         <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
@@ -473,7 +473,7 @@
         <mustache-bundle-version>0.9.6_1</mustache-bundle-version>
         <mvel-version>2.4.4.Final</mvel-version>
         <mybatis-version>3.5.2</mybatis-version>
-        <narayana-version>5.9.8.Final</narayana-version>
+        <narayana-version>5.10.0.Final</narayana-version>
         <nessus-version>1.0.0.Beta4</nessus-version>
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
@@ -482,6 +482,7 @@
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
         <networknt-json-schema-validator-version>1.0.11</networknt-json-schema-validator-version>
+        <nitrite-version>3.3.0</nitrite-version>
         <noggit-bundle-version>0.5_1</noggit-bundle-version>
         <objenesis-version>2.6</objenesis-version>
         <!-- should be in-sync with deltaspike -->
@@ -614,8 +615,8 @@
         <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
         <sshd-version>2.0.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
-        <swagger-java-version>1.5.23</swagger-java-version>
-        <swagger-java-parser-version>1.0.46</swagger-java-parser-version>
+        <swagger-java-version>1.5.24</swagger-java-version>
+        <swagger-java-parser-version>1.0.47</swagger-java-parser-version>
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
@@ -669,8 +670,8 @@
         <xmlunit-version>2.6.3</xmlunit-version>
         <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <xstream-bundle-version>1.4.11_1</xstream-bundle-version>
-        <xstream-version>1.4.11</xstream-version>
+        <xstream-bundle-version>1.4.11.1_1</xstream-bundle-version>
+        <xstream-version>1.4.11.1</xstream-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
         <zipkin-reporter-version>2.10.3</zipkin-reporter-version>
         <zipkin-version>2.18.3</zipkin-version>
@@ -1179,7 +1180,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium</artifactId>
+        <artifactId>camel-debezium-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1189,7 +1190,22 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mongodb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mysql</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-parent</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-postgres</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1810,6 +1826,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-http</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2793,7 +2814,22 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium-starter</artifactId>
+        <artifactId>camel-debezium-common-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mongodb-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mysql-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-postgres-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3379,6 +3415,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -5128,6 +5169,12 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- optional Nitrite dependencies -->
+            <dependency>
+                <groupId>org.dizitart</groupId>
+                <artifactId>nitrite</artifactId>
+                <version>${nitrite-version}</version>
+            </dependency>
             <!-- blueprint -->
             <dependency>
                 <groupId>org.apache.aries.blueprint</groupId>

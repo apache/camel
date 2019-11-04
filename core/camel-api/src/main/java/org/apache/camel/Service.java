@@ -24,6 +24,15 @@ import java.io.IOException;
 public interface Service extends AutoCloseable {
 
     /**
+     * Optional build phase which is executed by frameworks that supports pre-building projects (pre-compile)
+     * which allows special optimizations such as camel-quarkus.
+     *
+     * @throws RuntimeCamelException is thrown if build failed
+     */
+    default void build() {
+    }
+
+    /**
      * Initialize the service
      *
      * @throws RuntimeCamelException is thrown if initialization failed

@@ -63,7 +63,6 @@ import com.amazonaws.services.mq.model.UpdateUserResult;
 public class AmazonMQClientMock extends AbstractAmazonMQ {
 
     public AmazonMQClientMock() {
-        super();
     }
 
     @Override

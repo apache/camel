@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -45,6 +47,26 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAppendFileByFile() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+
+        // Create some test files
+        template.sendBodyAndHeader("file://target/data/file", "Row 1\n", Exchange.FILE_NAME, "test1.txt");
+        template.sendBodyAndHeader("file://target/data/file", "Row 2\n", Exchange.FILE_NAME, "test2.txt");
+
+        // Append test files to the target one
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Append", new File("target/data/file/test1.txt"), Exchange.FILE_NAME, "out.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Append", new File("target/data/file/test2.txt"), Exchange.FILE_NAME, "out.txt");
+
+        mock.expectedFileExists("target/data/file/out.txt", "Row 1\nRow 2\n");
+
+        context.getRouteController().startAllRoutes();
+
+        assertMockEndpointsSatisfied();
+
     }
 
     @Override

@@ -149,24 +149,45 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         if (operation == ElasticsearchOperation.Index) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
+            if (indexRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only Map, String, byte[], XContentBuilder or IndexRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.Update) {
             UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
+            if (updateRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only Map, String, byte[], XContentBuilder or UpdateRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.GetById) {
             GetRequest getRequest = message.getBody(GetRequest.class);
+            if (getRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only String or GetRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.get(getRequest, RequestOptions.DEFAULT));
         } else if (operation == ElasticsearchOperation.Bulk) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+            if (bulkRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.BulkIndex) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+            if (bulkRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.Delete) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
+            if (deleteRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only String or DeleteRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT).getResult());
         } else if (operation == ElasticsearchOperation.DeleteIndex) {
             DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
+            if (deleteIndexRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only String or DeleteIndexRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT).isAcknowledged());
         } else if (operation == ElasticsearchOperation.Exists) {
             // ExistsRequest API is deprecated, using SearchRequest instead with size=0 and terminate_after=1
@@ -188,6 +209,9 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
+            if (searchRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only Map, String or SearchRequest is allowed as a type");
+            }
             // is it a scroll request ?
             boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.isUseScroll(), Boolean.class);
             if (useScroll) {
@@ -199,6 +223,9 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.MultiSearch) {
             MultiSearchRequest searchRequest = message.getBody(MultiSearchRequest.class);
+            if (searchRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only MultiSearchRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.msearch(searchRequest, RequestOptions.DEFAULT).getResponses());
         } else if (operation == ElasticsearchOperation.Ping) {
             message.setBody(restHighLevelClient.ping(RequestOptions.DEFAULT));

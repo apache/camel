@@ -24,7 +24,6 @@ public class UndertowRestHeaderFilterStrategy extends UndertowHeaderFilterStrate
     private final String queryParameters;
 
     public UndertowRestHeaderFilterStrategy(String templateUri, String queryParameters) {
-        super();
         this.templateUri = templateUri;
         this.queryParameters = queryParameters;
     }

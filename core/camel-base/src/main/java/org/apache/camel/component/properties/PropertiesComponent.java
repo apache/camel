@@ -127,7 +127,6 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
 
     public PropertiesComponent() {
-        super();
         // include out of the box functions
         addFunction(new EnvPropertiesFunction());
         addFunction(new SysPropertiesFunction());

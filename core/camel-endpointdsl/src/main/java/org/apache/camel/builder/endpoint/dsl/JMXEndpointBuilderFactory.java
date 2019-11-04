@@ -19,9 +19,11 @@ package org.apache.camel.builder.endpoint.dsl;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * The jmx component allows to receive JMX notifications.
@@ -38,6 +40,40 @@ public interface JMXEndpointBuilderFactory {
     public interface JMXEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedJMXEndpointBuilder advanced() {
             return (AdvancedJMXEndpointBuilder) this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default JMXEndpointBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default JMXEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
         }
         /**
          * Format for the message body. Either xml or raw. If xml, the
@@ -121,6 +157,75 @@ public interface JMXEndpointBuilderFactory {
          */
         default JMXEndpointBuilder observedAttribute(String observedAttribute) {
             doSetProperty("observedAttribute", observedAttribute);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute differs
+         * from the string to compare (string monitor or consumer). By default
+         * the consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyDiffer(boolean notifyDiffer) {
+            doSetProperty("notifyDiffer", notifyDiffer);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute differs
+         * from the string to compare (string monitor or consumer). By default
+         * the consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyDiffer(String notifyDiffer) {
+            doSetProperty("notifyDiffer", notifyDiffer);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute matches
+         * the string to compare (string monitor or consumer). By default the
+         * consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyMatch(boolean notifyMatch) {
+            doSetProperty("notifyMatch", notifyMatch);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute matches
+         * the string to compare (string monitor or consumer). By default the
+         * consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyMatch(String notifyMatch) {
+            doSetProperty("notifyMatch", notifyMatch);
+            return this;
+        }
+        /**
+         * Value for attribute to compare (string monitor or consumer). By
+         * default the consumer will notify match if observed attribute and
+         * string to compare has been configured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder stringToCompare(String stringToCompare) {
+            doSetProperty("stringToCompare", stringToCompare);
             return this;
         }
         /**
@@ -345,6 +450,63 @@ public interface JMXEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default JMXEndpointBuilder basic() {
             return (JMXEndpointBuilder) this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
         }
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or

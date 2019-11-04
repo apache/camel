@@ -76,6 +76,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Boolean allowUnmarshallType;
     @XmlAttribute
     private String timezone;
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
+    private Boolean autoDiscoverObjectMapper;
 
     public JsonDataFormat() {
         super("json");
@@ -364,6 +367,18 @@ public class JsonDataFormat extends DataFormatDefinition {
      */
     public void setTimezone(String timezone) {
         this.timezone = timezone;
+    }
+
+    public Boolean isAutoDiscoverObjectMapper() {
+        return autoDiscoverObjectMapper;
+    }
+
+    /**
+     * If set to true then Jackson will lookup for an objectMapper into the
+     * registry
+     */
+    public void setAutoDiscoverObjectMapper(Boolean autoDiscoverObjectMapper) {
+        this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
     }
 
     @Override

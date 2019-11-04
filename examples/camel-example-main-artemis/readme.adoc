@@ -20,7 +20,7 @@ via two different styles
 === Generating tooling meta-data
 
 The `camel-main-maven-plugin` is used for pre-scanning your project and prepare
-autowiring and sprint boot tooling support by classpath scanning.
+autowiring and spring boot tooling support by classpath scanning.
 
 You can run manually via
 

@@ -38,7 +38,6 @@ import org.apache.camel.support.processor.validation.SchemaReader;
 import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
 
-
 /**
  * Validates the payload of a message using XML Schema and JAXP Validation.
  */
@@ -92,8 +91,8 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     @ManagedOperation(description = "Clears the cached schema, forcing to re-load the schema on next request")
     public void clearCachedSchema() {
-        
-        schemaReader.setSchema(null); // will cause to reload the schema
+        // will cause to reload the schema
+        schemaReader.setSchema(null);
     }
 
     @Override

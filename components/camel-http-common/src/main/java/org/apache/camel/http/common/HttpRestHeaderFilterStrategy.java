@@ -24,7 +24,6 @@ public class HttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy {
     private final String queryParameters;
 
     public HttpRestHeaderFilterStrategy(String templateUri, String queryParameters) {
-        super();
         this.templateUri = templateUri;
         this.queryParameters = queryParameters;
     }

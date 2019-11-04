@@ -21,7 +21,6 @@ public class ThrottlingException extends RuntimeException {
     private static final long serialVersionUID = 1993185881371058773L;
 
     public ThrottlingException() {
-        super();
     }
 
     public ThrottlingException(String message) {

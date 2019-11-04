@@ -32,11 +32,6 @@
   <name>Camel :: RobotFramework</name>
   <description>Camel RobotFramework Support</description>
 
-  <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.robotframework.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=robotframework</camel.osgi.export.service>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
