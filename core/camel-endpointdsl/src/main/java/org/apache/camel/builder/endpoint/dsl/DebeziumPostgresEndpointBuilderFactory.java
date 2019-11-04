@@ -757,9 +757,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * Group: postgres
          */
-        default DebeziumPostgresEndpointBuilder slotDrop_on_stop(
-                boolean slotDrop_on_stop) {
-            doSetProperty("slotDrop_on_stop", slotDrop_on_stop);
+        default DebeziumPostgresEndpointBuilder slotDropOnStop(
+                boolean slotDropOnStop) {
+            doSetProperty("slotDropOnStop", slotDropOnStop);
             return this;
         }
         /**
@@ -771,9 +771,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * Group: postgres
          */
-        default DebeziumPostgresEndpointBuilder slotDrop_on_stop(
-                String slotDrop_on_stop) {
-            doSetProperty("slotDrop_on_stop", slotDrop_on_stop);
+        default DebeziumPostgresEndpointBuilder slotDropOnStop(
+                String slotDropOnStop) {
+            doSetProperty("slotDropOnStop", slotDropOnStop);
             return this;
         }
         /**

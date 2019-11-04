@@ -99,7 +99,7 @@ public class ConnectorConfigField {
     }
 
     private String getCamelCase(final String name) {
-        return CaseUtils.toCamelCase(name, false, '.');
+        return CaseUtils.toCamelCase(name, false, '.', '_');
     }
 
     private Class<?> getType(final ConfigDef.Type type) {
