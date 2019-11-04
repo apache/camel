@@ -44,4 +44,20 @@ public class ConnectorConfigFieldTest {
         assertFalse(connectorConfigField.isDeprecated());
         assertTrue(connectorConfigField.isRequired());
     }
+
+    @Test
+    public void testIfHandlesUnderscoreFieldsCorrectly() {
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey("field.test_underscore", ConfigDef.Type.STRING, "empty",
+                null, ConfigDef.Importance.MEDIUM, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName", Collections.emptyList(),
+                null, false);
+
+        final ConnectorConfigField connectorConfigField = new ConnectorConfigField(configKey, false, true, null);
+
+        assertEquals("fieldTestUnderscore", connectorConfigField.getFieldName());
+        assertEquals("setFieldTestUnderscore", connectorConfigField.getFieldSetterMethodName());
+        assertEquals("getFieldTestUnderscore", connectorConfigField.getFieldGetterMethodName());
+        assertEquals(String.class, connectorConfigField.getRawType());
+        assertFalse(connectorConfigField.isDeprecated());
+        assertTrue(connectorConfigField.isRequired());
+    }
 }
