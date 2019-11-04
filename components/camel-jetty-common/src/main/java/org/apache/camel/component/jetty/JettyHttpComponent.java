@@ -134,6 +134,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected boolean useXForwardedForHeader;
     private Integer proxyPort;
     private boolean sendServerVersion = true;
+    private QueuedThreadPool _queuedThreadPool;
 
     public JettyHttpComponent() {
     }
@@ -479,6 +480,15 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     if (mbContainer != null) {
                         this.removeServerMBean(connectorRef.server);
                         //mbContainer.removeBean(connectorRef.connector);
+                    }
+                    if (_queuedThreadPool !=null){
+                        try {
+                            _queuedThreadPool.stop();
+                        }catch(Throwable t){
+                            _queuedThreadPool.destroy();
+                        }finally {
+                            _queuedThreadPool=null;
+                        }
                     }
                 }
             }
@@ -1319,6 +1329,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 qtp.setMaxThreads(maxThreads.intValue());
             }
             tp = qtp;
+            _queuedThreadPool=qtp;
+
         }
         if (tp != null) {
             try {
