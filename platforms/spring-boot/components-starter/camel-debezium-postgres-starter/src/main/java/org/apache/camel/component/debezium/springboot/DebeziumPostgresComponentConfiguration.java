@@ -139,6 +139,12 @@ public class DebeziumPostgresComponentConfiguration
          */
         private String topicSelectionStrategy = "topic_per_table";
         /**
+         * Whether or not to drop the logical replication slot when the
+         * connector finishes orderlyBy default the replication is kept so that
+         * on restart progress can resume from the last recorded location
+         */
+        private Boolean slotDropOnStop = false;
+        /**
          * Whether delete operations should be represented by a delete event and
          * a subsquenttombstone event (true) or only by a delete event (false).
          * Emitting the tombstone event (the default behavior) allows Kafka to
@@ -501,6 +507,14 @@ public class DebeziumPostgresComponentConfiguration
 
         public void setTopicSelectionStrategy(String topicSelectionStrategy) {
             this.topicSelectionStrategy = topicSelectionStrategy;
+        }
+
+        public Boolean getSlotDropOnStop() {
+            return slotDropOnStop;
+        }
+
+        public void setSlotDropOnStop(Boolean slotDropOnStop) {
+            this.slotDropOnStop = slotDropOnStop;
         }
 
         public Boolean getTombstonesOnDelete() {

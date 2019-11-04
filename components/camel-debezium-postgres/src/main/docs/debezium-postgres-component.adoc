@@ -117,7 +117,7 @@ with the following path and query parameters:
 | *schemaBlacklist* (postgres) | Description is not available here, please check Debezium website for corresponding key 'schema.blacklist' description. |  | String
 | *schemaRefreshMode* (postgres) | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String
 | *schemaWhitelist* (postgres) | The schemas for which events should be captured |  | String
-| *slotDrop_on_stop* (postgres) | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | boolean
+| *slotDropOnStop* (postgres) | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | boolean
 | *slotName* (postgres) | The name of the Postgres logical decoding slot created for streaming changes from a plugin.Defaults to 'debezium | debezium | String
 | *slotStreamParams* (postgres) | Any optional parameters used by logical decoding plugin. Semi-colon separated. E.g. 'add-tables=public.table,public.table2;include-lsn=true' |  | String
 | *snapshotCustomClass* (postgres) | When 'snapshot.mode' is set as custom, this setting must be set to specify a fully qualified class name to load (via the default class loader).This class must implement the 'Snapshotter' interface and is called on each app boot to determine whether to do a snapshot and how to build queries. |  | String
@@ -151,7 +151,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 57 options, which are listed below.
+The component supports 58 options, which are listed below.
 
 
 
@@ -199,6 +199,7 @@ The component supports 57 options, which are listed below.
 | *camel.component.debezium-postgres.configuration.schema-blacklist* | Description is not available here, please check Debezium website for corresponding key 'schema.blacklist' description. |  | String
 | *camel.component.debezium-postgres.configuration.schema-refresh-mode* | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String
 | *camel.component.debezium-postgres.configuration.schema-whitelist* | The schemas for which events should be captured |  | String
+| *camel.component.debezium-postgres.configuration.slot-drop-on-stop* | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | Boolean
 | *camel.component.debezium-postgres.configuration.slot-name* | The name of the Postgres logical decoding slot created for streaming changes from a plugin.Defaults to 'debezium | debezium | String
 | *camel.component.debezium-postgres.configuration.slot-stream-params* | Any optional parameters used by logical decoding plugin. Semi-colon separated. E.g. 'add-tables=public.table,public.table2;include-lsn=true' |  | String
 | *camel.component.debezium-postgres.configuration.snapshot-custom-class* | When 'snapshot.mode' is set as custom, this setting must be set to specify a fully qualified class name to load (via the default class loader).This class must implement the 'Snapshotter' interface and is called on each app boot to determine whether to do a snapshot and how to build queries. |  | String
