@@ -650,6 +650,9 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     private static Document createDocument() throws ParserConfigurationException {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        documentFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        documentFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
         DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
         return documentBuilder.newDocument();
     }
