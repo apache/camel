@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.kms;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kms.AWSKMS;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +40,8 @@ public class KMSConfiguration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(required = true)
     private KMSOperations operation;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "producer")
     private String proxyHost;
     @UriParam(label = "producer")
@@ -88,6 +91,17 @@ public class KMSConfiguration implements Cloneable {
      */
     public void setOperation(KMSOperations operation) {
         this.operation = operation;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the KMS client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {

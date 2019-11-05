@@ -170,6 +170,29 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the KMS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default KMSEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the KMS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default KMSEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The region in which KMS client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name
@@ -268,6 +291,14 @@ public interface KMSEndpointBuilderFactory {
         scheduleKeyDeletion,
         describeKey,
         enableKey;
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
     /**
      * AWS KMS (camel-aws-kms)
