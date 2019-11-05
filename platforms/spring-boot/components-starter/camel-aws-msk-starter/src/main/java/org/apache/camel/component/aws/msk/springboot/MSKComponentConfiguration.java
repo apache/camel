@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.msk.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kafka.AWSKafka;
 import org.apache.camel.component.aws.msk.MSKOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -120,6 +121,10 @@ public class MSKComponentConfiguration
          */
         private MSKOperations operation;
         /**
+         * To define a proxy protocol when instantiating the MSK client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the MSK client
          */
         private String proxyHost;
@@ -165,6 +170,14 @@ public class MSKComponentConfiguration
 
         public void setOperation(MSKOperations operation) {
             this.operation = operation;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

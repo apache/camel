@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.msk;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kafka.AWSKafka;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +40,8 @@ public class MSKConfiguration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(required = true)
     private MSKOperations operation;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "producer")
     private String proxyHost;
     @UriParam(label = "producer")
@@ -88,6 +91,17 @@ public class MSKConfiguration implements Cloneable {
      */
     public void setOperation(MSKOperations operation) {
         this.operation = operation;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the MSK client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {
