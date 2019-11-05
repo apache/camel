@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.translate;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.translate.AmazonTranslate;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +40,8 @@ public class TranslateConfiguration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(required = true, defaultValue = "translateText")
     private TranslateOperations operation = TranslateOperations.translateText;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "producer")
     private String proxyHost;
     @UriParam(label = "producer")
@@ -90,6 +93,18 @@ public class TranslateConfiguration implements Cloneable {
      */
     public void setOperation(TranslateOperations operation) {
         this.operation = operation;
+    }
+    
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the Translate client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {
