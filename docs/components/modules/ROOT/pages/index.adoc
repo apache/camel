@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 302 in 240 JAR artifacts (0 deprecated)
+Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -153,6 +153,8 @@ Number of Components: 302 in 240 JAR artifacts (0 deprecated)
 | xref:debezium-mysql-component.adoc[Debezium MySQL Connector] (camel-debezium-mysql) | 3.0 | Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.
 
 | xref:debezium-postgres-component.adoc[Debezium PostgresSQL Connector] (camel-debezium-postgres) | 3.0 | Represents a Debezium PostgresSQL endpoint which is used to capture changes in PostgresSQL database so that that applications can see those changes and respond to them.
+
+| xref:debezium-sqlserver-component.adoc[Debezium SQL Server Connector] (camel-debezium-sqlserver) | 3.0 | Represents a Debezium SQL Server endpoint which is used to capture changes in SQL Server database so that that applications can see those changes and respond to them.
 
 | xref:digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
 

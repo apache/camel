@@ -122,15 +122,8 @@ with the following path and query parameters:
 | *schemaBlacklist* (postgres) | The schemas for which events must not be captured |  | String
 | *schemaRefreshMode* (postgres) | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String
 | *schemaWhitelist* (postgres) | The schemas for which events should be captured |  | String
-<<<<<<< HEAD
 | *slotDropOnStop* (postgres) | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | boolean
-<<<<<<< HEAD
 | *slotMaxRetries* (postgres) | How many times to retry connecting to a replication slot when an attempt fails. | 6 | int
-=======
->>>>>>> 2f2d808...  CAMEL-14137: removed qtp variable according to pr comment.
-=======
-| *slotDrop_on_stop* (postgres) | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | boolean
->>>>>>> b982055...  CAMEL-14137: revert doc changes
 | *slotName* (postgres) | The name of the Postgres logical decoding slot created for streaming changes from a plugin.Defaults to 'debezium | debezium | String
 | *slotRetryDelayMs* (postgres) | The number of milli-seconds to wait between retry attempts when the connector fails to connect to a replication slot. | 10000 | long
 | *slotStreamParams* (postgres) | Any optional parameters used by logical decoding plugin. Semi-colon separated. E.g. 'add-tables=public.table,public.table2;include-lsn=true' |  | String
@@ -166,15 +159,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 The component supports 63 options, which are listed below.
-=======
-The component supports 58 options, which are listed below.
->>>>>>> 2f2d808...  CAMEL-14137: removed qtp variable according to pr comment.
-=======
-The component supports 57 options, which are listed below.
->>>>>>> b982055...  CAMEL-14137: revert doc changes
 
 
 
@@ -224,14 +209,8 @@ The component supports 57 options, which are listed below.
 | *camel.component.debezium-postgres.configuration.schema-blacklist* | The schemas for which events must not be captured |  | String
 | *camel.component.debezium-postgres.configuration.schema-refresh-mode* | Specify the conditions that trigger a refresh of the in-memory schema for a table. 'columns_diff' (the default) is the safest mode, ensuring the in-memory schema stays in-sync with the database table's schema at all times. 'columns_diff_exclude_unchanged_toast' instructs the connector to refresh the in-memory schema cache if there is a discrepancy between it and the schema derived from the incoming message, unless unchanged TOASTable data fully accounts for the discrepancy. This setting can improve connector performance significantly if there are frequently-updated tables that have TOASTed data that are rarely part of these updates. However, it is possible for the in-memory schema to become outdated if TOASTable columns are dropped from the table. | columns_diff | String
 | *camel.component.debezium-postgres.configuration.schema-whitelist* | The schemas for which events should be captured |  | String
-<<<<<<< HEAD
 | *camel.component.debezium-postgres.configuration.slot-drop-on-stop* | Whether or not to drop the logical replication slot when the connector finishes orderlyBy default the replication is kept so that on restart progress can resume from the last recorded location | false | Boolean
-<<<<<<< HEAD
 | *camel.component.debezium-postgres.configuration.slot-max-retries* | How many times to retry connecting to a replication slot when an attempt fails. | 6 | Integer
-=======
->>>>>>> 2f2d808...  CAMEL-14137: removed qtp variable according to pr comment.
-=======
->>>>>>> b982055...  CAMEL-14137: revert doc changes
 | *camel.component.debezium-postgres.configuration.slot-name* | The name of the Postgres logical decoding slot created for streaming changes from a plugin.Defaults to 'debezium | debezium | String
 | *camel.component.debezium-postgres.configuration.slot-retry-delay-ms* | The number of milli-seconds to wait between retry attempts when the connector fails to connect to a replication slot. | 10000 | Long
 | *camel.component.debezium-postgres.configuration.slot-stream-params* | Any optional parameters used by logical decoding plugin. Semi-colon separated. E.g. 'add-tables=public.table,public.table2;include-lsn=true' |  | String
