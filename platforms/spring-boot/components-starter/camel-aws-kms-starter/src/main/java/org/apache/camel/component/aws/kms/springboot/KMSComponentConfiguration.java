@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.kms.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kms.AWSKMS;
 import org.apache.camel.component.aws.kms.KMSOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -120,6 +121,10 @@ public class KMSComponentConfiguration
          */
         private KMSOperations operation;
         /**
+         * To define a proxy protocol when instantiating the KMS client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the KMS client
          */
         private String proxyHost;
@@ -165,6 +170,14 @@ public class KMSComponentConfiguration
 
         public void setOperation(KMSOperations operation) {
             this.operation = operation;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {
