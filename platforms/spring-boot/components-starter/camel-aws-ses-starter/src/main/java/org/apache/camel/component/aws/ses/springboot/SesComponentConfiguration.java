@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.ses.springboot;
 
 import java.util.List;
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -140,6 +141,10 @@ public class SesComponentConfiguration
          */
         private List replyToAddresses;
         /**
+         * To define a proxy protocol when instantiating the SES client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the SES client
          */
         private String proxyHost;
@@ -217,6 +222,14 @@ public class SesComponentConfiguration
 
         public void setReplyToAddresses(List replyToAddresses) {
             this.replyToAddresses = replyToAddresses;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {
