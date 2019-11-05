@@ -46,10 +46,14 @@ public class SesConfiguration implements Cloneable {
     private String returnPath;
     @UriParam
     private List<String> replyToAddresses;
-    @UriParam
+	
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
+	
     @UriParam
     private String region;
 

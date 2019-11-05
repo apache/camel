@@ -39,10 +39,14 @@ public class LambdaConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(label = "producer")
     private String region;
-    @UriParam(label = "proxy")
+
+    @UriParam(label = "producer,proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "producer,proxy")
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(label = "producer,proxy")
     private Integer proxyPort;
+
     @UriParam(label = "advanced")
     private AWSLambda awsLambdaClient;
 

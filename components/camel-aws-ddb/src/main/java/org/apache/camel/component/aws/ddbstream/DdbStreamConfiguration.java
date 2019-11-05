@@ -57,9 +57,12 @@ public class DdbStreamConfiguration implements Cloneable {
             + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
             + " iterator types. Can be a registry reference or a literal sequence number.")
     private SequenceNumberProvider sequenceNumberProvider;
-    @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
+	
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the DDBStreams client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
+    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
     
     public AmazonDynamoDBStreams getAmazonDynamoDbStreamsClient() {

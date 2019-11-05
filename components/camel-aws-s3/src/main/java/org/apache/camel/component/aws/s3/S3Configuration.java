@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 
@@ -56,10 +57,14 @@ public class S3Configuration implements Cloneable {
     private String storageClass;
     @UriParam(label = "producer")
     private String serverSideEncryption;
-    @UriParam
+
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
     @UriParam
@@ -292,6 +297,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setServerSideEncryption(String serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
+    }
+
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the SQS client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {

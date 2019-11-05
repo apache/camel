@@ -39,10 +39,14 @@ public class TranslateConfiguration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(required = true, defaultValue = "translateText")
     private TranslateOperations operation = TranslateOperations.translateText;
-    @UriParam(label = "producer")
+	
+    @UriParam(label = "producer,proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "producer,proxy")
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,proxy")
     private Integer proxyPort;
+	
     @UriParam
     private String region;
     @UriParam(label = "producer", defaultValue = "false")

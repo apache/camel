@@ -36,10 +36,14 @@ public class SnsConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam
+
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam
     private AmazonSQS amazonSQSClient;
     @UriParam
@@ -54,13 +58,13 @@ public class SnsConfiguration implements Cloneable {
     private boolean autoCreateTopic = true;
 
     // Producer only properties
-    @UriParam
+    @UriParam(label = "producer")
     private String subject;
-    @UriParam
+    @UriParam(label = "producer")
     private String policy;
-    @UriParam
+    @UriParam(label = "producer")
     private String messageStructure;
-    @UriParam
+    @UriParam(label = "producer")
     private String region;
 
     public String getSubject() {

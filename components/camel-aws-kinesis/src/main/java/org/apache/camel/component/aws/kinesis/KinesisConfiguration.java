@@ -53,9 +53,12 @@ public class KinesisConfiguration implements Cloneable {
                                                                          + "in case of silent there will be no logging and the consumer will start from the beginning,"
                                                                          + "in case of fail a ReachedClosedStateException will be raised")
     private KinesisShardClosedStrategyEnum shardClosed;
-    @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
+
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the DDBStreams client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
+    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
 
     public AmazonKinesis getAmazonKinesisClient() {

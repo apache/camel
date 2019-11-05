@@ -39,10 +39,14 @@ public class SqsConfiguration implements Cloneable {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
+	
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
     private Integer proxyPort;
+	
     @UriParam(defaultValue = "true")
     private boolean autoCreateQueue = true;
 

@@ -39,10 +39,14 @@ public class MSKConfiguration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(required = true)
     private MSKOperations operation;
-    @UriParam(label = "producer")
+	
+    @UriParam(label = "producer,proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "producer,proxy")
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,proxy")
     private Integer proxyPort;
+	
     @UriParam
     private String region;
 

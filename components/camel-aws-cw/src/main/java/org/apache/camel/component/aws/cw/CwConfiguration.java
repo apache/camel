@@ -45,10 +45,14 @@ public class CwConfiguration implements Cloneable {
     private String unit;
     @UriParam
     private Date timestamp;
-    @UriParam
+	
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol;
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
+	
     @UriParam
     private String region;
 
