@@ -94,16 +94,12 @@ public class KuduProducer extends DefaultProducer {
         LOG.trace("Creating table {}", tableName);
         KuduClient connection = endpoint.getKuduClient();
 
-        try {
-            Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCHEMA);
-            CreateTableOptions builder = (CreateTableOptions)
-                                             exchange.getIn()
-                                                 .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
-            connection.createTable(tableName, schema, builder);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw t;
-        }
+        Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCHEMA);
+        CreateTableOptions builder = (CreateTableOptions)
+                                         exchange.getIn()
+                                             .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
+        connection.createTable(tableName, schema, builder);
+
     }
 
     private void doScan(Exchange exchange, String tableName) throws KuduException {
