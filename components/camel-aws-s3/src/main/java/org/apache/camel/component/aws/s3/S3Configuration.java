@@ -303,7 +303,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the SQS client
+     * To define a proxy protocol when instantiating the S3 client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
