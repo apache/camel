@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.sqs.AmazonSQS;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +40,8 @@ public class SqsConfiguration implements Cloneable {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
@@ -402,6 +405,17 @@ public class SqsConfiguration implements Cloneable {
      */
     public void setQueueUrl(String queueUrl) {
         this.queueUrl = queueUrl;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the SQS client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {
