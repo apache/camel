@@ -59,7 +59,7 @@ public class S3Configuration implements Cloneable {
     private String serverSideEncryption;
 
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
-    private Protocol proxyProtocol;
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
     private String proxyHost;
     @UriParam
