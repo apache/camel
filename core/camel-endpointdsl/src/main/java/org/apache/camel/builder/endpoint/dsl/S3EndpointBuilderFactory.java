@@ -165,7 +165,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the SQS client.
+         * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
@@ -176,7 +176,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the SQS client.
+         * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
@@ -1310,7 +1310,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the SQS client.
+         * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
@@ -1321,7 +1321,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the SQS client.
+         * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
@@ -1964,7 +1964,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the SQS client.
+         * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
@@ -1975,7 +1975,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the SQS client.
+         * To define a proxy protocol when instantiating the S3 client.
          * 
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.

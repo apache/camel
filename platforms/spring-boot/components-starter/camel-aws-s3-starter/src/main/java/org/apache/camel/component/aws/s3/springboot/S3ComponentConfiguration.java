@@ -198,7 +198,7 @@ public class S3ComponentConfiguration
          */
         private String serverSideEncryption;
         /**
-         * To define a proxy protocol when instantiating the SQS client
+         * To define a proxy protocol when instantiating the S3 client
          */
         private Protocol proxyProtocol = Protocol.HTTPS;
         /**
