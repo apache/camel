@@ -22,22 +22,22 @@ import org.junit.Test;
 public class UndertowHttpProxyPreserveHostTest extends BaseUndertowTest {
 
     @Test
-    public void preserveHostFalse(){
-       String actual =   template.requestBody("undertow:http://localhost:{{port}}","&preserveHostHeader=false",String.class);
-       String expected = "localhost:"+getPort();
-       assertNotEquals(expected,actual);
+    public void preserveHostFalse() {
+        String actual =   template.requestBody("undertow:http://localhost:{{port}}", "&preserveHostHeader=false", String.class);
+        String expected = "localhost:" + getPort();
+        assertNotEquals(expected, actual);
     }
     @Test
-    public void preserveHostTrue(){
-      String actual =   template.requestBody("undertow:http://localhost:{{port}}","&preserveHostHeader=true",String.class);
-      String expected = "localhost:"+getPort();
-      assertEquals(expected,actual);
+    public void preserveHostTrue() {
+        String actual =   template.requestBody("undertow:http://localhost:{{port}}", "&preserveHostHeader=true", String.class);
+        String expected = "localhost:" + getPort();
+        assertEquals(expected, actual);
     }
     @Test
-    public void emptyPreseveHost(){
-        String actual =   template.requestBody("undertow:http://localhost:{{port}}","",String.class);
-        String expected = "localhost:"+getPort();
-        assertEquals(expected,actual);
+    public void emptyPreseveHost() {
+        String actual =   template.requestBody("undertow:http://localhost:{{port}}", "", String.class);
+        String expected = "localhost:" + getPort();
+        assertEquals(expected, actual);
     }
 
     @Override
