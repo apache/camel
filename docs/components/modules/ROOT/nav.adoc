@@ -90,6 +90,7 @@
 * xref:debezium-mongodb-component.adoc[Debezium MongoDB Connector Component]
 * xref:debezium-mysql-component.adoc[Debezium MySQL Connector Component]
 * xref:debezium-postgres-component.adoc[Debezium PostgresSQL Connector Component]
+* xref:debezium-sqlserver-component.adoc[Debezium SQL Server Connector Component]
 * xref:digitalocean-component.adoc[DigitalOcean Component]
 * xref:direct-component.adoc[Direct Component]
 * xref:direct-vm-component.adoc[Direct VM Component]
