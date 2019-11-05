@@ -138,8 +138,8 @@ The component supports 18 options, which are listed below.
 | *camel.component.aws-kinesis.configuration.amazon-kinesis-client* | Amazon Kinesis client to use for all requests for this endpoint |  | AmazonKinesis
 | *camel.component.aws-kinesis.configuration.iterator-type* | Defines where in the Kinesis stream to start getting records |  | ShardIteratorType
 | *camel.component.aws-kinesis.configuration.max-results-per-request* | Maximum number of records that will be fetched in each poll | 1 | Integer
-| *camel.component.aws-kinesis.configuration.proxy-host* | To define a proxy host when instantiating the DDBStreams client |  | String
-| *camel.component.aws-kinesis.configuration.proxy-port* | To define a proxy port when instantiating the DDBStreams client |  | Integer
+| *camel.component.aws-kinesis.configuration.proxy-host* | To define a proxy host when instantiating the Kinesis client |  | String
+| *camel.component.aws-kinesis.configuration.proxy-port* | To define a proxy port when instantiating the Kinesis client |  | Integer
 | *camel.component.aws-kinesis.configuration.proxy-protocol* | To define a proxy protocol when instantiating the Kinesis client |  | Protocol
 | *camel.component.aws-kinesis.configuration.region* | The region in which Kinesis client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-kinesis.configuration.secret-key* | Amazon AWS Secret Key |  | String
