@@ -24,7 +24,6 @@ public class FileInput implements Serializable {
     private byte[] content;
 
     public FileInput(String filename, byte[] content) {
-        super();
         this.filename = filename;
         this.content = content;
     }

@@ -86,8 +86,8 @@
         <!-- these two avro bundles relates to camel-hdfs karaf feature -->
         <avro-bundle-version>1.9.1_1</avro-bundle-version>
         <awaitility-version>4.0.1</awaitility-version>
-        <aws-java-sdk-bundle-version>1.11.636_1</aws-java-sdk-bundle-version>
-        <aws-java-sdk-version>1.11.636</aws-java-sdk-version>
+        <aws-java-sdk-bundle-version>1.11.658_1</aws-java-sdk-bundle-version>
+        <aws-java-sdk-version>1.11.658</aws-java-sdk-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.2.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -102,7 +102,7 @@
         <bouncycastle-version>1.64</bouncycastle-version>
         <box-java-sdk-version>2.41.0</box-java-sdk-version>
         <braintree-gateway-version>2.105.0</braintree-gateway-version>
-        <brave-zipkin-version>5.8.0</brave-zipkin-version>
+        <brave-zipkin-version>5.9.0</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.4</c3p0-version>
         <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
@@ -152,7 +152,7 @@
         <couchbase-client-version>1.4.13</couchbase-client-version>
         <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
         <curator-version>2.12.0</curator-version>
-        <cxf-version>3.3.3</cxf-version>
+        <cxf-version>3.3.4</cxf-version>
         <cxf-version-range>[3.3,4.0)</cxf-version-range>
         <cxf-codegen-plugin-version>3.3.2</cxf-codegen-plugin-version>
         <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
@@ -172,7 +172,7 @@
         <dozer-version>6.4.1</dozer-version>
         <drools-version>7.27.0.Final</drools-version>
         <dropbox-version>3.1.1</dropbox-version>
-        <debezium-version>0.9.5.Final</debezium-version>
+        <debezium-version>0.10.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.15</debezium-mysql-connector-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
@@ -240,12 +240,12 @@
         <google-truth-version>0.30</google-truth-version>
         <graphql-java-version>13.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
-        <grpc-version>1.23.0</grpc-version>
+        <grpc-version>1.24.1</grpc-version>
         <grpc-google-auth-library-version>0.13.0</grpc-google-auth-library-version>
         <grpc-guava-version>26.0-android</grpc-guava-version>
         <grpc-java-jwt-version>3.7.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.26.Final</grpc-netty-tcnative-boringssl-static-version>
-        <grpc-bundle-version>1.23.0_1</grpc-bundle-version>
+        <grpc-bundle-version>1.24.1_1</grpc-bundle-version>
         <grpc-errorprone-version>2.3.2</grpc-errorprone-version>
         <!-- 2.8.6 is broken in OSGi -->
         <gson-version>2.8.5</gson-version>
@@ -260,7 +260,7 @@
         <hapi-fhir-version>3.7.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
-        <hazelcast-version>3.12.3</hazelcast-version>
+        <hazelcast-version>3.12.4</hazelcast-version>
         <hbase-version>1.2.6</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.0.17.Final</hibernate-validator-version>
@@ -309,8 +309,8 @@
         <java-apns-version>1.0.0.Beta6</java-apns-version>
         <java-ewah-version>1.1.6</java-ewah-version>
         <java-grok-version>0.1.9</java-grok-version>
-        <java-util-version>1.36.0</java-util-version>
-        <java-util-bundle-version>1.36.0_1</java-util-bundle-version>
+        <java-util-version>1.37.0</java-util-version>
+        <java-util-bundle-version>1.37.0_1</java-util-bundle-version>
         <jnats-version>2.6.6</jnats-version>
         <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
@@ -400,19 +400,19 @@
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
-        <kafka-version>2.3.0</kafka-version>
-        <kafka-bundle-version>2.3.0_2</kafka-bundle-version>
+        <kafka-version>2.3.1</kafka-version>
+        <kafka-bundle-version>2.3.1_1</kafka-bundle-version>
         <karaf4-version>4.2.7</karaf4-version>
         <kie-version>7.27.0.Final</kie-version>
-        <kubernetes-client-version>4.6.1</kubernetes-client-version>
-        <kubernetes-model-version>4.6.1</kubernetes-model-version>
+        <kubernetes-client-version>4.6.2</kubernetes-client-version>
+        <kubernetes-model-version>4.6.2</kubernetes-model-version>
         <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.10</leveldb-api-version>
         <leveldb-version>0.10</leveldb-version>
         <leveldb-guava-version>21.0</leveldb-guava-version>
-        <libphonenumber-version>8.10.19</libphonenumber-version>
-        <libphonenumber-bundle-version>8.10.19_1</libphonenumber-bundle-version>
+        <libphonenumber-version>8.10.21</libphonenumber-version>
+        <libphonenumber-bundle-version>8.10.21_1</libphonenumber-bundle-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <lettuce-version>5.1.0.RELEASE</lettuce-version>
@@ -472,8 +472,8 @@
         <mustache-guava-version>20.0</mustache-guava-version>
         <mustache-bundle-version>0.9.6_1</mustache-bundle-version>
         <mvel-version>2.4.4.Final</mvel-version>
-        <mybatis-version>3.5.2</mybatis-version>
-        <narayana-version>5.9.8.Final</narayana-version>
+        <mybatis-version>3.5.3</mybatis-version>
+        <narayana-version>5.10.0.Final</narayana-version>
         <nessus-version>1.0.0.Beta4</nessus-version>
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
@@ -482,6 +482,7 @@
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
         <networknt-json-schema-validator-version>1.0.11</networknt-json-schema-validator-version>
+        <nitrite-version>3.3.0</nitrite-version>
         <noggit-bundle-version>0.5_1</noggit-bundle-version>
         <objenesis-version>2.6</objenesis-version>
         <!-- should be in-sync with deltaspike -->
@@ -614,8 +615,8 @@
         <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
         <sshd-version>2.0.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
-        <swagger-java-version>1.5.23</swagger-java-version>
-        <swagger-java-parser-version>1.0.46</swagger-java-parser-version>
+        <swagger-java-version>1.5.24</swagger-java-version>
+        <swagger-java-parser-version>1.0.47</swagger-java-parser-version>
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
@@ -669,11 +670,11 @@
         <xmlunit-version>2.6.3</xmlunit-version>
         <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <xstream-bundle-version>1.4.11_1</xstream-bundle-version>
-        <xstream-version>1.4.11</xstream-version>
+        <xstream-bundle-version>1.4.11.1_1</xstream-bundle-version>
+        <xstream-version>1.4.11.1</xstream-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
-        <zipkin-reporter-version>2.10.3</zipkin-reporter-version>
-        <zipkin-version>2.18.3</zipkin-version>
+        <zipkin-reporter-version>2.11.0</zipkin-reporter-version>
+        <zipkin-version>2.19.1</zipkin-version>
         <zjsonpatch-version>0.3.0</zjsonpatch-version>
         <zookeeper-version>3.4.14</zookeeper-version>
         <zookeeper-guava-version>16.0</zookeeper-guava-version>
@@ -1179,7 +1180,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium</artifactId>
+        <artifactId>camel-debezium-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1189,7 +1190,22 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mongodb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mysql</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-parent</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-postgres</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1810,6 +1826,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-http</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2793,7 +2814,22 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium-starter</artifactId>
+        <artifactId>camel-debezium-common-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mongodb-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-mysql-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-postgres-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3379,6 +3415,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-nitrite-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -5128,6 +5169,12 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- optional Nitrite dependencies -->
+            <dependency>
+                <groupId>org.dizitart</groupId>
+                <artifactId>nitrite</artifactId>
+                <version>${nitrite-version}</version>
+            </dependency>
             <!-- blueprint -->
             <dependency>
                 <groupId>org.apache.aries.blueprint</groupId>

@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.ddbstream.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import com.amazonaws.services.dynamodbv2.model.ShardIteratorType;
 import org.apache.camel.component.aws.ddbstream.SequenceNumberProvider;
@@ -142,6 +143,10 @@ public class DdbStreamComponentConfiguration
          */
         private SequenceNumberProvider sequenceNumberProvider;
         /**
+         * To define a proxy protocol when instantiating the DDBStreams client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the DDBStreams client
          */
         private String proxyHost;
@@ -214,6 +219,14 @@ public class DdbStreamComponentConfiguration
         public void setSequenceNumberProvider(
                 SequenceNumberProvider sequenceNumberProvider) {
             this.sequenceNumberProvider = sequenceNumberProvider;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

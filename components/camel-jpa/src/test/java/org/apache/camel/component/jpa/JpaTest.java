@@ -58,18 +58,6 @@ public class JpaTest extends Assert {
 
     @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                // lets delete any exiting records before the test
-                entityManager.createQuery("delete from " + entityName).executeUpdate();
-                return null;
-            }
-        });
-
-        List<?> results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have no results: " + results, 0, results.size());
-
         // lets produce some objects
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) {
@@ -78,7 +66,7 @@ public class JpaTest extends Assert {
         });
 
         // now lets assert that there is a result
-        results = entityManager.createQuery(queryText).getResultList();
+        List<?> results = entityManager.createQuery(queryText).getResultList();
         assertEquals("Should have results: " + results, 1, results.size());
         SendEmail mail = (SendEmail) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
@@ -106,18 +94,6 @@ public class JpaTest extends Assert {
 
     @Test
     public void testProducerInsertsList() throws Exception {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                // lets delete any exiting records before the test
-                entityManager.createQuery("delete from " + entityName).executeUpdate();
-                return null;
-            }
-        });
-
-        List<?> results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have no results: " + results, 0, results.size());
-
         // lets produce some objects
         template.send(listEndpoint, new Processor() {
             public void process(Exchange exchange) {
@@ -130,7 +106,7 @@ public class JpaTest extends Assert {
         });
 
         // now lets assert that there is a result
-        results = entityManager.createQuery(queryText).getResultList();
+        List<?> results = entityManager.createQuery(queryText).getResultList();
         assertEquals("Should have results: " + results, 2, results.size());
         SendEmail mail = (SendEmail) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
@@ -155,6 +131,18 @@ public class JpaTest extends Assert {
 
         transactionTemplate = endpoint.createTransactionTemplate();
         entityManager = endpoint.createEntityManager();
+
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+                entityManager.joinTransaction();
+                // lets delete any exiting records before the test
+                entityManager.createQuery("delete from " + entityName).executeUpdate();
+                return null;
+            }
+        });
+
+        List<?> results = entityManager.createQuery(queryText).getResultList();
+        assertEquals("Should have no results: " + results, 0, results.size());
     }
 
     protected String getEndpointUri() {

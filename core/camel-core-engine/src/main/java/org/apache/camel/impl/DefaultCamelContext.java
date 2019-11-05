@@ -112,7 +112,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
      * Use one of the other constructors to force use an explicit registry.
      */
     public DefaultCamelContext() {
-        super();
     }
 
     /**

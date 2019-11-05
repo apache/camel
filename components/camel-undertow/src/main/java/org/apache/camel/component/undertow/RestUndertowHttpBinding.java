@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 public class RestUndertowHttpBinding extends DefaultUndertowHttpBinding {
 
     public RestUndertowHttpBinding() {
-        super();
     }
 
     public RestUndertowHttpBinding(boolean useStreaming) {

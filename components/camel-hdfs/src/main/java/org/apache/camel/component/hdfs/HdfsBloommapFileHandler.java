@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.hdfs;
 
-import java.io.Closeable;
 import java.io.IOException;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BloomMapFile;
@@ -29,18 +28,50 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-class HdfsBloommapFileHandler extends DefaultHdfsFile {
+class HdfsBloommapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, BloomMapFile.Reader> {
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public BloomMapFile.Writer createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        try {
+            BloomMapFile.Writer rout;
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
+            Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
+            Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
+            rout = new BloomMapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass),
+                    MapFile.Writer.valueClass(valueWritableClass),
+                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
+                    MapFile.Writer.progressable(() -> {
+                    }));
+            return rout;
+        } catch (IOException ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
 
     @Override
-    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, Exchange exchange) {
         try {
             Holder<Integer> keySize = new Holder<>();
-            Writable keyWritable = getWritable(key, typeConverter, keySize);
+            Writable keyWritable = getWritable(key, exchange, keySize);
             Holder<Integer> valueSize = new Holder<>();
-            Writable valueWritable = getWritable(value, typeConverter, valueSize);
+            Writable valueWritable = getWritable(value, exchange, valueSize);
             ((BloomMapFile.Writer) hdfsOutputStream.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
             return Long.sum(keySize.value, valueSize.value);
         } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
+    @Override
+    public BloomMapFile.Reader createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        try {
+            BloomMapFile.Reader rin;
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            rin = new BloomMapFile.Reader(new Path(hdfsPath), hdfsInfo.getConfiguration());
+            return rin;
+        } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         }
     }
@@ -65,35 +96,4 @@ class HdfsBloommapFileHandler extends DefaultHdfsFile {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
-        try {
-            Closeable rout;
-            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
-            Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
-            Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
-            rout = new BloomMapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass),
-                    MapFile.Writer.valueClass(valueWritableClass),
-                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    MapFile.Writer.progressable(() -> {
-                    }));
-            return rout;
-        } catch (IOException ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
-    @Override
-    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
-        try {
-            Closeable rin;
-            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            rin = new BloomMapFile.Reader(new Path(hdfsPath), hdfsInfo.getConfiguration());
-            return rin;
-        } catch (IOException ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
 }

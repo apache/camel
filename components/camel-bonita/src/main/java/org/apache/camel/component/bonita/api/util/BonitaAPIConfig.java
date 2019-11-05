@@ -24,7 +24,6 @@ public class BonitaAPIConfig {
     private String password;
 
     public BonitaAPIConfig(String hostname, String port, String username, String password) {
-        super();
         this.hostname = hostname;
         this.port = port;
         this.username = username;

@@ -18,16 +18,16 @@ package org.apache.camel.component.hdfs;
 
 import java.io.Closeable;
 
-import org.apache.camel.TypeConverter;
+import org.apache.camel.Exchange;
 
-interface HdfsFile {
+interface HdfsFile<T extends Closeable, U extends Closeable, K, V> {
 
-    Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory);
+    T createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory);
 
-    long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter);
+    long append(HdfsOutputStream hdfsOutputStream, K key, V value, Exchange exchange);
 
-    Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory);
+    U createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory);
 
-    long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value);
+    long next(HdfsInputStream hdfsInputStream, Holder<K> key, Holder<V> value);
 
 }

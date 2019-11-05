@@ -32,7 +32,6 @@ public class LuceneComponent extends DefaultComponent {
     private LuceneConfiguration config;
     
     public LuceneComponent() {
-        super();
         config = new LuceneConfiguration();
     }
 

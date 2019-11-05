@@ -17,15 +17,15 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -33,22 +33,24 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 
-class HdfsNormalFileHandler extends DefaultHdfsFile {
+class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
+
+    private boolean consumed;
 
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+    public OutputStream createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
-            FSDataOutputStream rout;
+            OutputStream outputStream;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             if (endpointConfig.isAppend()) {
-                rout = hdfsInfo.getFileSystem().append(
+                outputStream = hdfsInfo.getFileSystem().append(
                         hdfsInfo.getPath(),
                         endpointConfig.getBufferSize(),
                     () -> { }
                 );
             } else {
-                rout = hdfsInfo.getFileSystem().create(
+                outputStream = hdfsInfo.getFileSystem().create(
                         hdfsInfo.getPath(),
                         endpointConfig.isOverwrite(),
                         endpointConfig.getBufferSize(),
@@ -57,37 +59,37 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
                     () -> { }
                 );
             }
-            return rout;
+            return outputStream;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         }
     }
 
     @Override
-    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
-        InputStream is = null;
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, Exchange exchange) {
+        InputStream inputStream = null;
         try {
-            is = typeConverter.convertTo(InputStream.class, value);
-            return copyBytes(is, (FSDataOutputStream) hdfsOutputStream.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
+            inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, value);
+            return copyBytes(inputStream, (FSDataOutputStream) hdfsOutputStream.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         } finally {
-            IOHelper.close(is);
+            IOHelper.close(inputStream);
         }
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+    public InputStream createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
-            Closeable rin;
+            InputStream inputStream;
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             if (endpointConfig.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
                 HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-                rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
+                inputStream = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
             } else {
-                rin = new FileInputStream(getHdfsFileToTmpFile(hdfsPath, endpointConfig));
+                inputStream = new FileInputStream(getHdfsFileToTmpFile(hdfsPath, endpointConfig));
             }
-            return rin;
+            return inputStream;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         }
@@ -95,19 +97,40 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
 
     @Override
     public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
+        if (hdfsInputStream.isStreamDownload()) {
+            return nextAsWrappedStream(hdfsInputStream, key, value);
+        } else {
+            return nextAsOutputStream(hdfsInputStream, key, value);
+        }
+    }
+
+    private long nextAsWrappedStream(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
+        InputStream inputStream = (InputStream) hdfsInputStream.getIn();
+        key.value = null;
+        value.value = inputStream;
+
+        if (consumed) {
+            return 0;
+        } else {
+            consumed = true;
+            return 1;
+        }
+    }
+
+    private long nextAsOutputStream(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(hdfsInputStream.getChunkSize());
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream(hdfsInputStream.getChunkSize());
             byte[] buf = new byte[hdfsInputStream.getChunkSize()];
             int bytesRead = ((InputStream) hdfsInputStream.getIn()).read(buf);
             if (bytesRead >= 0) {
-                bos.write(buf, 0, bytesRead);
+                outputStream.write(buf, 0, bytesRead);
                 key.value = null;
-                value.value = bos;
+                value.value = outputStream;
                 return bytesRead;
             } else {
                 key.value = null;
                 // indication that we may have read from empty file
-                value.value = bos;
+                value.value = outputStream;
                 return 0;
             }
         } catch (IOException ex) {
@@ -117,18 +140,17 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
 
     private File getHdfsFileToTmpFile(String hdfsPath, HdfsConfiguration configuration) {
         try {
-            String fname = hdfsPath.substring(hdfsPath.lastIndexOf('/'));
+            String fileName = hdfsPath.substring(hdfsPath.lastIndexOf('/'));
 
             // [CAMEL-13711] Files.createTempFile not equivalent to File.createTempFile
-
             File outputDest;
             try {
                 // First trying: Files.createTempFile
-                outputDest = Files.createTempFile(fname, ".hdfs").toFile();
+                outputDest = Files.createTempFile(fileName, ".hdfs").toFile();
 
             } catch (Exception ex) {
                 // Now trying: File.createTempFile
-                outputDest = File.createTempFile(fname, ".hdfs");
+                outputDest = File.createTempFile(fileName, ".hdfs");
             }
 
             if (outputDest.exists()) {
@@ -150,7 +172,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
                 return outputDest;
             }
 
-            return new File(outputDest, fname);
+            return new File(outputDest, fileName);
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         }

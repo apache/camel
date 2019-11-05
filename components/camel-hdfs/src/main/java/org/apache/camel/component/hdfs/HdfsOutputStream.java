@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 
@@ -84,10 +84,10 @@ public class HdfsOutputStream implements Closeable {
         }
     }
 
-    public void append(Object key, Object value, TypeConverter typeConverter) {
+    public void append(Object key, Object value, Exchange exchange) {
         try {
             busy.set(true);
-            long nb = fileType.append(this, key, value, typeConverter);
+            long nb = fileType.append(this, key, value, exchange);
             numOfWrittenBytes.addAndGet(nb);
             numOfWrittenMessages.incrementAndGet();
             lastAccess.set(System.currentTimeMillis());

@@ -60,7 +60,6 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     public ServletComponent(Class<? extends ServletEndpoint> endpointClass) {
-        super();
     }
 
     @Override

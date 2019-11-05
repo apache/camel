@@ -77,7 +77,6 @@ public final class GoogleSheetsApiTestServer {
      * Prevent direct instantiation.
      */
     private GoogleSheetsApiTestServer(HttpServer httpServer) {
-        super();
         this.httpServer = httpServer;
     }
 
@@ -307,7 +306,6 @@ public final class GoogleSheetsApiTestServer {
              * @throws IOException
              */
             public GzipServletInputStream(ServletRequest request) throws IOException {
-                super();
                 gzipStream = new GZIPInputStream(request.getInputStream());
             }
 

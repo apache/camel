@@ -91,7 +91,8 @@ public class CMSenderOneMessageImpl implements CMSender {
 
             final ByteArrayOutputStream xml = new ByteArrayOutputStream();
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             factory.setNamespaceAware(true);
 
             // Get the DocumentBuilder

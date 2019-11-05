@@ -144,6 +144,11 @@ public class JohnzonDataFormatConfiguration
      */
     private String timezone;
     /**
+     * If set to true then Jackson will lookup for an objectMapper into the
+     * registry
+     */
+    private Boolean autoDiscoverObjectMapper = false;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML, or
@@ -285,6 +290,14 @@ public class JohnzonDataFormatConfiguration
 
     public void setTimezone(String timezone) {
         this.timezone = timezone;
+    }
+
+    public Boolean getAutoDiscoverObjectMapper() {
+        return autoDiscoverObjectMapper;
+    }
+
+    public void setAutoDiscoverObjectMapper(Boolean autoDiscoverObjectMapper) {
+        this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
     }
 
     public Boolean getContentTypeHeader() {

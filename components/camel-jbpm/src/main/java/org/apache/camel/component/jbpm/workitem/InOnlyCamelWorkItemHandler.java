@@ -76,7 +76,6 @@ import org.kie.api.runtime.process.WorkItemManager;
 public class InOnlyCamelWorkItemHandler extends AbstractCamelWorkItemHandler {
 
     public InOnlyCamelWorkItemHandler() {
-        super();
     }
 
     public InOnlyCamelWorkItemHandler(String camelEndpointId) {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jackson;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ import org.junit.Test;
 public class JacksonNotUseDefaultObjectMapperTest extends CamelTestSupport {
 
     private JacksonDataFormat df = new JacksonDataFormat();
-    
+
     @BindToRegistry("myMapper")
     private ObjectMapper objectMapper = new ObjectMapper();
 

@@ -56,15 +56,14 @@ public class S3ClientIAMOptimizedImpl implements S3Client {
         AmazonS3 client = null;
         AmazonS3ClientBuilder clientBuilder = null;
         AmazonS3EncryptionClientBuilder encClientBuilder = null;
-        ClientConfiguration clientConfiguration = null;
+
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setMaxConnections(maxConnections);
+
         if (configuration.hasProxyConfiguration()) {
-            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyProtocol(configuration.getProxyProtocol());
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            clientConfiguration.setMaxConnections(maxConnections);
-        } else {
-            clientConfiguration = new ClientConfiguration();
-            clientConfiguration.setMaxConnections(maxConnections);
         }
 
         if (configuration.getAccessKey() != null || configuration.getSecretKey() != null) {

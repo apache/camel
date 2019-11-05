@@ -60,6 +60,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         builderFactory.setNamespaceAware(true);
 
         final DocumentBuilder builder = builderFactory.newDocumentBuilder();

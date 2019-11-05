@@ -173,7 +173,7 @@ public final class PackageHelper {
                 || "camel-olingo2".equals(name)
                 || "camel-olingo4".equals(name)
                 || "camel-salesforce".equals(name)
-                || "camel-debezium".equals(name);
+                || "camel-debezium-common".equals(name);
             if (special || special2) {
                 return false;
             }

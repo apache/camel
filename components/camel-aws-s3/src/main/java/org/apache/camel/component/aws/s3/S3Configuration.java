@@ -58,13 +58,12 @@ public class S3Configuration implements Cloneable {
     @UriParam(label = "producer")
     private String serverSideEncryption;
 
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
-    private Protocol proxyProtocol;
-    @UriParam(label = "proxy")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
+    @UriParam
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam
     private Integer proxyPort;
-
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
     @UriParam
@@ -304,7 +303,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the SQS client
+     * To define a proxy protocol when instantiating the S3 client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
