@@ -74,7 +74,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -85,7 +85,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -96,7 +96,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -889,7 +889,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -900,7 +900,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -911,7 +911,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1124,7 +1124,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1135,7 +1135,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1146,7 +1146,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
