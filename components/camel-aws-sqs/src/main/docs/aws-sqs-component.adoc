@@ -150,7 +150,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 39 options, which are listed below.
+The component supports 40 options, which are listed below.
 
 
 
@@ -183,6 +183,7 @@ The component supports 39 options, which are listed below.
 | *camel.component.aws-sqs.configuration.protocol* | The underlying protocol used to communicate with SQS | https | String
 | *camel.component.aws-sqs.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
 | *camel.component.aws-sqs.configuration.proxy-port* | To define a proxy port when instantiating the SQS client |  | Integer
+| *camel.component.aws-sqs.configuration.proxy-protocol* | To define a proxy protocol when instantiating the SQS client |  | Protocol
 | *camel.component.aws-sqs.configuration.queue-name* | Name of queue. The queue will be created if they don't already exists. |  | String
 | *camel.component.aws-sqs.configuration.queue-owner-a-w-s-account-id* | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
 | *camel.component.aws-sqs.configuration.queue-url* | To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored. This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes. |  | String

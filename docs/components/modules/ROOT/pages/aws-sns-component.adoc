@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (19 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,6 +84,7 @@ with the following path and query parameters:
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client | HTTPS | Protocol
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
 | *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
@@ -111,7 +112,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 22 options, which are listed below.
+The component supports 23 options, which are listed below.
 
 
 
@@ -129,6 +130,7 @@ The component supports 22 options, which are listed below.
 | *camel.component.aws-sns.configuration.policy* | The policy for this queue |  | String
 | *camel.component.aws-sns.configuration.proxy-host* | To define a proxy host when instantiating the SNS client |  | String
 | *camel.component.aws-sns.configuration.proxy-port* | To define a proxy port when instantiating the SNS client |  | Integer
+| *camel.component.aws-sns.configuration.proxy-protocol* | To define a proxy protocol when instantiating the SNS client |  | Protocol
 | *camel.component.aws-sns.configuration.queue-url* | The queueUrl to subscribe to |  | String
 | *camel.component.aws-sns.configuration.region* | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
