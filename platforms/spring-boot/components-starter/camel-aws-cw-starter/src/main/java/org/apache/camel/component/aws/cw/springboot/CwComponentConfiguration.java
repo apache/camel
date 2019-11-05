@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.cw.springboot;
 
 import java.util.Date;
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -136,6 +137,10 @@ public class CwComponentConfiguration
          */
         private AmazonCloudWatch amazonCwClient;
         /**
+         * To define a proxy protocol when instantiating the SQS client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the CW client
          */
         private String proxyHost;
@@ -213,6 +218,14 @@ public class CwComponentConfiguration
 
         public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
             this.amazonCwClient = amazonCwClient;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {
