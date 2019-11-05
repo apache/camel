@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.kinesis.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
 import org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum;
@@ -155,6 +156,10 @@ public class KinesisComponentConfiguration
          */
         private String region;
         /**
+         * To define a proxy protocol when instantiating the Kinesis client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the DDBStreams client
          */
         private String proxyHost;
@@ -241,6 +246,14 @@ public class KinesisComponentConfiguration
 
         public void setRegion(String region) {
             this.region = region;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {
