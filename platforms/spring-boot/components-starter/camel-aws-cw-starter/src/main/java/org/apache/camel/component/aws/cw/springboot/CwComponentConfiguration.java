@@ -137,7 +137,7 @@ public class CwComponentConfiguration
          */
         private AmazonCloudWatch amazonCwClient;
         /**
-         * To define a proxy protocol when instantiating the SQS client
+         * To define a proxy protocol when instantiating the CW client
          */
         private Protocol proxyProtocol = Protocol.HTTPS;
         /**
