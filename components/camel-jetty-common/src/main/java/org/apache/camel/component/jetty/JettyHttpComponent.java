@@ -481,13 +481,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                         this.removeServerMBean(connectorRef.server);
                         //mbContainer.removeBean(connectorRef.connector);
                     }
-                    if (defaultQueuedThreadPool !=null){
+                    if (defaultQueuedThreadPool != null) {
                         try {
                             defaultQueuedThreadPool.stop();
-                        }catch(Throwable t){
+                        } catch (Throwable t) {
                             defaultQueuedThreadPool.destroy();
-                        }finally {
-                            defaultQueuedThreadPool =null;
+                        } finally {
+                            defaultQueuedThreadPool = null;
                         }
                     }
                 }
