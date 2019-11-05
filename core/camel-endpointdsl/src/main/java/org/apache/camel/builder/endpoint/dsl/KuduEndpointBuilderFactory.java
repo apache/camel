@@ -17,11 +17,9 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Represents a Kudu endpoint. A kudu endpoint allows you to interact with
@@ -35,350 +33,57 @@ public interface KuduEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Apache Kudu component.
-     */
-    public interface KuduEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedKuduEndpointConsumerBuilder advanced() {
-            return (AdvancedKuduEndpointConsumerBuilder) this;
-        }
-        /**
-         * What kind of operation is to be performed in the table.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
-         * 
-         * Group: common
-         */
-        default KuduEndpointConsumerBuilder operation(KuduOperations operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * What kind of operation is to be performed in the table.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
-         * 
-         * Group: common
-         */
-        default KuduEndpointConsumerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default KuduEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default KuduEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Apache Kudu component.
-     */
-    public interface AdvancedKuduEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default KuduEndpointConsumerBuilder basic() {
-            return (KuduEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedKuduEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedKuduEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedKuduEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedKuduEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Apache Kudu component.
-     */
-    public interface KuduEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedKuduEndpointProducerBuilder advanced() {
-            return (AdvancedKuduEndpointProducerBuilder) this;
-        }
-        /**
-         * What kind of operation is to be performed in the table.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
-         * 
-         * Group: common
-         */
-        default KuduEndpointProducerBuilder operation(KuduOperations operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * What kind of operation is to be performed in the table.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
-         * 
-         * Group: common
-         */
-        default KuduEndpointProducerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default KuduEndpointProducerBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default KuduEndpointProducerBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Apache Kudu component.
-     */
-    public interface AdvancedKuduEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default KuduEndpointProducerBuilder basic() {
-            return (KuduEndpointProducerBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedKuduEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Builder for endpoint for the Apache Kudu component.
      */
-    public interface KuduEndpointBuilder
-            extends
-                KuduEndpointConsumerBuilder, KuduEndpointProducerBuilder {
+    public interface KuduEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedKuduEndpointBuilder advanced() {
             return (AdvancedKuduEndpointBuilder) this;
         }
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default KuduEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default KuduEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * What kind of operation is to be performed in the table.
          * 
          * The option is a:
          * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default KuduEndpointBuilder operation(KuduOperations operation) {
             doSetProperty("operation", operation);
@@ -390,7 +95,7 @@ public interface KuduEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default KuduEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -403,7 +108,7 @@ public interface KuduEndpointBuilderFactory {
      */
     public interface AdvancedKuduEndpointBuilder
             extends
-                AdvancedKuduEndpointConsumerBuilder, AdvancedKuduEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default KuduEndpointBuilder basic() {
             return (KuduEndpointBuilder) this;
         }
@@ -475,13 +180,19 @@ public interface KuduEndpointBuilderFactory {
      * Apache Hadoop ecosystem.
      * 
      * Category: cloud,database,iot
-     * Available as of version: 2.25
+     * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
      * 
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
-     * Path parameter: uri
-     * Connection string to Kudu
+     * Path parameter: host
+     * Kudu master to connect to
+     * 
+     * Path parameter: port
+     * Port where kudu service is listening
+     * 
+     * Path parameter: tableName
+     * The name of the table where the rows are stored
      */
     default KuduEndpointBuilder kudu(String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {

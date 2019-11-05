@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * <a href="https://kudu.apache.org/">Apache Kudu</a>, a free and open source
  * column-oriented data store of the Apache Hadoop ecosystem.
  */
-@UriEndpoint(firstVersion = "2.25.0",
+@UriEndpoint(firstVersion = "3.0",
     scheme = "kudu",
     title = "Apache Kudu", syntax = "kudu:host:port/tableName",
     label = "cloud,database,iot", producerOnly = true)
@@ -44,25 +43,20 @@ public class KuduEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);
     private KuduClient kuduClient;
 
-    @Metadata(required = true, description = "Host of the server to connect to")
+    @UriPath(name = "host", displayName = "Host", label = "common", description = "Host of the server to connect to")
     private String host;
 
-    @UriPath(description = "Connection string to Kudu")
-    private String uri;
-
-    @Metadata(required = true)
+    @UriPath(name = "port", displayName = "Port", label = "common", description = "Port of the server to connect to")
     private String port;
 
     @UriParam(description = "Operation to perform")
     private KuduOperations operation;
 
-    @Metadata(description = "Table to connect to")
+    @UriPath(name = "tableName", displayName = "Table Name", label = "common", description = "Table to connect to")
     private String tableName;
 
     public KuduEndpoint(String uri, KuduComponent component) {
         super(uri, component);
-        this.setUri(uri);
-        this.setEndpointUri(uri);
         Pattern p = Pattern.compile("^(\\S+)\\:(\\d+)\\/(\\S+)$");
         Matcher m = p.matcher(uri);
 
@@ -141,6 +135,7 @@ public class KuduEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("You cannot create consumers on this endpoint");
     }
+
     @Override
     public boolean isSingleton() {
         return true;
@@ -159,10 +154,6 @@ public class KuduEndpoint extends DefaultEndpoint {
 
     public KuduOperations getOperation() {
         return operation;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     /**
