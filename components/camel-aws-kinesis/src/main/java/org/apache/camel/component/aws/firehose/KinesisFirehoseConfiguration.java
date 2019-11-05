@@ -42,9 +42,9 @@ public class KinesisFirehoseConfiguration implements Cloneable {
     private AmazonKinesisFirehose amazonKinesisFirehoseClient;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the Kinesis Firehose client")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
+    @UriParam(description = "To define a proxy host when instantiating the Kinesis Firehose client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
+    @UriParam(description = "To define a proxy port when instantiating the Kinesis Firehose client")
     private Integer proxyPort;
     
     public void setAmazonKinesisFirehoseClient(AmazonKinesisFirehose client) {

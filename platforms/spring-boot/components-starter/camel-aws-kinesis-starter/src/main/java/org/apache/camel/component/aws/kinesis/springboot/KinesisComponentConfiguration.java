@@ -160,11 +160,11 @@ public class KinesisComponentConfiguration
          */
         private Protocol proxyProtocol = Protocol.HTTPS;
         /**
-         * To define a proxy host when instantiating the DDBStreams client
+         * To define a proxy host when instantiating the Kinesis client
          */
         private String proxyHost;
         /**
-         * To define a proxy port when instantiating the DDBStreams client
+         * To define a proxy port when instantiating the Kinesis client
          */
         private Integer proxyPort;
 

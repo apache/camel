@@ -134,11 +134,11 @@ public class KinesisFirehoseComponentConfiguration
          */
         private Protocol proxyProtocol = Protocol.HTTPS;
         /**
-         * To define a proxy host when instantiating the DDBStreams client
+         * To define a proxy host when instantiating the Kinesis Firehose client
          */
         private String proxyHost;
         /**
-         * To define a proxy port when instantiating the DDBStreams client
+         * To define a proxy port when instantiating the Kinesis Firehose client
          */
         private Integer proxyPort;
 
