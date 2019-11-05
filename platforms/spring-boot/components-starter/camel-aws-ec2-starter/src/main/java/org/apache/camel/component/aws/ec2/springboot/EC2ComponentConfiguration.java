@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.ec2.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.ec2.AmazonEC2;
 import org.apache.camel.component.aws.ec2.EC2Operations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -123,6 +124,10 @@ public class EC2ComponentConfiguration
          */
         private EC2Operations operation;
         /**
+         * To define a proxy protocol when instantiating the EC2 client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the EC2 client
          */
         private String proxyHost;
@@ -168,6 +173,14 @@ public class EC2ComponentConfiguration
 
         public void setOperation(EC2Operations operation) {
             this.operation = operation;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {
