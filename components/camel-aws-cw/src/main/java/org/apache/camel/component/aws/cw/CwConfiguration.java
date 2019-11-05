@@ -148,7 +148,7 @@ public class CwConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the SQS client
+     * To define a proxy protocol when instantiating the CW client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
