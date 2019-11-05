@@ -669,6 +669,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             InputStream is = new FileInputStream(file);
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             dbf.setIgnoringComments(true);
             dbf.setIgnoringElementContentWhitespace(true);
             dbf.setNamespaceAware(false);
