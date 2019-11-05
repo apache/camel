@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQS;
 
@@ -36,6 +37,8 @@ public class SnsConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
     private String proxyHost;
     @UriParam
@@ -150,6 +153,17 @@ public class SnsConfiguration implements Cloneable {
      */
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the SNS client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {
