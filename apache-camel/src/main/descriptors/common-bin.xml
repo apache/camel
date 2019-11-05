@@ -118,6 +118,7 @@
         <include>org.apache.camel:camel-debezium-mongodb</include>
         <include>org.apache.camel:camel-debezium-mysql</include>
         <include>org.apache.camel:camel-debezium-postgres</include>
+        <include>org.apache.camel:camel-debezium-sqlserver</include>
         <include>org.apache.camel:camel-digitalocean</include>
         <include>org.apache.camel:camel-direct</include>
         <include>org.apache.camel:camel-directvm</include>
@@ -474,6 +475,7 @@
         <include>org.apache.camel:camel-debezium-mongodb-starter</include>
         <include>org.apache.camel:camel-debezium-mysql-starter</include>
         <include>org.apache.camel:camel-debezium-postgres-starter</include>
+        <include>org.apache.camel:camel-debezium-sqlserver-starter</include>
         <include>org.apache.camel:camel-digitalocean-starter</include>
         <include>org.apache.camel:camel-direct-starter</include>
         <include>org.apache.camel:camel-directvm-starter</include>
