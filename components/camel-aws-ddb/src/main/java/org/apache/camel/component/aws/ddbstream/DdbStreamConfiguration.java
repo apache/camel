@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import com.amazonaws.services.dynamodbv2.model.ShardIteratorType;
 
@@ -57,6 +58,8 @@ public class DdbStreamConfiguration implements Cloneable {
             + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
             + " iterator types. Can be a registry reference or a literal sequence number.")
     private SequenceNumberProvider sequenceNumberProvider;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the DDBStreams client")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
@@ -124,6 +127,14 @@ public class DdbStreamConfiguration implements Cloneable {
 
     public void setSequenceNumberProvider(SequenceNumberProvider sequenceNumberProvider) {
         this.sequenceNumberProvider = sequenceNumberProvider;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {

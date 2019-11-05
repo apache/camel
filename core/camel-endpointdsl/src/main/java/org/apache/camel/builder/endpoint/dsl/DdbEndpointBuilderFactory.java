@@ -211,6 +211,29 @@ public interface DdbEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the DDB client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default DdbEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDB client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default DdbEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The provisioned throughput to reserve for reading resources from your
          * table.
          * 
@@ -369,6 +392,14 @@ public interface DdbEndpointBuilderFactory {
         Scan,
         UpdateItem,
         UpdateTable;
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
     /**
      * AWS DynamoDB (camel-aws-ddb)
