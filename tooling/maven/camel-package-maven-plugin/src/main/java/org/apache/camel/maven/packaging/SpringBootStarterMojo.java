@@ -250,6 +250,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         if (project.getFile() != null) {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder builder = dbf.newDocumentBuilder();
             Document originalPom = builder.parse(project.getFile());
 

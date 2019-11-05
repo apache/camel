@@ -65,7 +65,9 @@ public final class FlatpackConverter {
     @Converter
     public static Document toDocument(DataSet dataSet) throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
         Document doc = dbf.newDocumentBuilder().newDocument();
 
         if (dataSet.getIndex() == -1) {

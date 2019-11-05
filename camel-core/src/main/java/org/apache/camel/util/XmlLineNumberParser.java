@@ -108,19 +108,21 @@ public final class XmlLineNumberParser {
         final Document doc;
         SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         parser = factory.newSAXParser();
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         // turn off validator and loading external dtd
         dbf.setValidating(false);
         dbf.setNamespaceAware(true);
-        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         dbf.setFeature("http://xml.org/sax/features/namespaces", false);
         dbf.setFeature("http://xml.org/sax/features/validation", false);
         dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
         dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
         final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         doc = docBuilder.newDocument();
 
