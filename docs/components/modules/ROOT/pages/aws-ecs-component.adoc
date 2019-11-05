@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (10 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +76,7 @@ with the following path and query parameters:
 | *operation* (producer) | *Required* The operation to perform |  | ECSOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the ECS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the ECS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the ECS client | HTTPS | Protocol
 | *region* (producer) | The region in which ECS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -98,7 +99,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 12 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -112,6 +113,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-ecs.configuration.operation* | The operation to perform |  | ECSOperations
 | *camel.component.aws-ecs.configuration.proxy-host* | To define a proxy host when instantiating the ECS client |  | String
 | *camel.component.aws-ecs.configuration.proxy-port* | To define a proxy port when instantiating the ECS client |  | Integer
+| *camel.component.aws-ecs.configuration.proxy-protocol* | To define a proxy protocol when instantiating the ECS client |  | Protocol
 | *camel.component.aws-ecs.configuration.region* | The region in which ECS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-ecs.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ecs.enabled* | Whether to enable auto configuration of the aws-ecs component. This is enabled by default. |  | Boolean

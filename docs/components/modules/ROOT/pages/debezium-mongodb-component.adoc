@@ -191,8 +191,8 @@ The component supports 42 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 For more information about configuration:
-https://debezium.io/documentation/reference/0.9/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.9/operations/embedded.html#engine-properties]
-https://debezium.io/documentation/reference/0.9/connectors/mongodb.html#connector-properties[https://debezium.io/documentation/reference/0.9/connectors/mongodb.html#connector-properties]
+https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties]
+https://debezium.io/documentation/reference/0.10/connectors/mongodb.html#connector-properties[https://debezium.io/documentation/reference/0.10/connectors/mongodb.html#connector-properties]
 
 == Message headers
 
