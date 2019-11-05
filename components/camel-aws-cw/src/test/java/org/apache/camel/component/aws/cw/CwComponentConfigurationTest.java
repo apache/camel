@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.cw;
 
 import java.util.Date;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 
@@ -88,5 +89,22 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+    }
+    
+    @Test
+    public void createEndpointWithComponentEndpointOptionsAndProxy() throws Exception {
+        CwComponent component = new CwComponent(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000");
+        
+        assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
+        assertEquals(new Integer(9000), endpoint.getConfiguration().getProxyPort());
+        assertEquals(Protocol.HTTPS, endpoint.getConfiguration().getProxyProtocol());
     }
 }
