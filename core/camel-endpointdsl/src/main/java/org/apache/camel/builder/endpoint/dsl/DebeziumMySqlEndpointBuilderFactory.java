@@ -847,23 +847,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * MySQL DDL statements can be parsed in different ways:'legacy' parsing
-         * is creating a TokenStream and comparing token by token with an
-         * expected values.The decisions are made by matched token
-         * values.'antlr' (the default) uses generated parser from MySQL grammar
-         * using ANTLR v4 tool which use ALL() algorithm for parsing.This parser
-         * creates a parsing tree for DDL statement, then walks trough it and
-         * apply changes by node types in parsed tree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: mysql
-         */
-        default DebeziumMySqlEndpointBuilder ddlParserMode(String ddlParserMode) {
-            doSetProperty("ddlParserMode", ddlParserMode);
-            return this;
-        }
-        /**
          * Specify how DECIMAL and NUMERIC columns should be represented in
          * change events, including:'precise' (the default) uses
          * java.math.BigDecimal to represent values, which are encoded in the
@@ -1177,6 +1160,26 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * A semicolon-separated list of expressions that match fully-qualified
+         * tables and column(s) to be used as message key. Each expression must
+         * match the pattern ':',where the table names could be defined as
+         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
+         * specific connector,and the key columns are a comma-separated list of
+         * columns representing the custom key. For any table without an
+         * explicit key configuration the table's primary key column(s) will be
+         * used as message key.Example:
+         * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder messageKeyColumns(
+                String messageKeyColumns) {
+            doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
@@ -1323,6 +1326,42 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * This property contains a comma-separated list of fully-qualified
+         * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
+         * thespecific connectors . Select statements for the individual tables
+         * are specified in further configuration properties, one for each
+         * table, identified by the id
+         * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
+         * 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME',
+         * respectively. The value of those properties is the select statement
+         * to use when retrieving data from the specific table during
+         * snapshotting. A possible use case for large append-only tables is
+         * setting a specific point where to start (resume) snapshotting, in
+         * case a previous snapshotting was interrupted.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder snapshotSelectStatementOverrides(
+                String snapshotSelectStatementOverrides) {
+            doSetProperty("snapshotSelectStatementOverrides", snapshotSelectStatementOverrides);
+            return this;
+        }
+        /**
+         * A version of the format of the publicly visible source part in the
+         * message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder sourceStructVersion(
+                String sourceStructVersion) {
+            doSetProperty("sourceStructVersion", sourceStructVersion);
+            return this;
+        }
+        /**
          * Description is not available here, please check Debezium website for
          * corresponding key 'table.blacklist' description.
          * 
@@ -1372,15 +1411,13 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Time, date, and timestamps can be represented with different kinds of
-         * precisions, including:'adaptive_time_microseconds' (the default) like
-         * 'adaptive' mode, but TIME fields always use microseconds
-         * precision;'adaptive' (deprecated) bases the precision of time, date,
-         * and timestamp values on the database column's precision; 'connect'
-         * always represents time, date, and timestamp values using Kafka
-         * Connect's built-in representations for Time, Date, and Timestamp,
-         * which uses millisecond precision regardless of the database columns'
-         * precision.
+         * Time, date and timestamps can be represented with different kinds of
+         * precisions, including:'adaptive_time_microseconds': the precision of
+         * date and timestamp values is based the database column's precision;
+         * but time fields always use microseconds precision;'connect': always
+         * represents time, date and timestamp values using Kafka Connect's
+         * built-in representations for Time, Date, and Timestamp, which uses
+         * millisecond precision regardless of the database columns' precision.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

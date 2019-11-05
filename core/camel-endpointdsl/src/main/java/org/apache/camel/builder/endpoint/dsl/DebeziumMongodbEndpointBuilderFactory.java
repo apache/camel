@@ -442,6 +442,47 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Length of an interval in milli-seconds in in which the connector
+         * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+         * disable heartbeat messages. Disabled by default.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder heartbeatIntervalMs(
+                int heartbeatIntervalMs) {
+            doSetProperty("heartbeatIntervalMs", heartbeatIntervalMs);
+            return this;
+        }
+        /**
+         * Length of an interval in milli-seconds in in which the connector
+         * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+         * disable heartbeat messages. Disabled by default.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder heartbeatIntervalMs(
+                String heartbeatIntervalMs) {
+            doSetProperty("heartbeatIntervalMs", heartbeatIntervalMs);
+            return this;
+        }
+        /**
+         * The prefix that is used to name heartbeat topics.Defaults to
+         * __debezium-heartbeat.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder heartbeatTopicsPrefix(
+                String heartbeatTopicsPrefix) {
+            doSetProperty("heartbeatTopicsPrefix", heartbeatTopicsPrefix);
+            return this;
+        }
+        /**
          * Maximum number of threads used to perform an intial sync of the
          * collections in a replica set. Defaults to 1.
          * 
@@ -734,6 +775,19 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         default DebeziumMongodbEndpointBuilder snapshotMode(String snapshotMode) {
             doSetProperty("snapshotMode", snapshotMode);
+            return this;
+        }
+        /**
+         * A version of the format of the publicly visible source part in the
+         * message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder sourceStructVersion(
+                String sourceStructVersion) {
+            doSetProperty("sourceStructVersion", sourceStructVersion);
             return this;
         }
         /**

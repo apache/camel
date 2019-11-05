@@ -662,6 +662,26 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * A semicolon-separated list of expressions that match fully-qualified
+         * tables and column(s) to be used as message key. Each expression must
+         * match the pattern ':',where the table names could be defined as
+         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
+         * specific connector,and the key columns are a comma-separated list of
+         * columns representing the custom key. For any table without an
+         * explicit key configuration the table's primary key column(s) will be
+         * used as message key.Example:
+         * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder messageKeyColumns(
+                String messageKeyColumns) {
+            doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
          * The name of the Postgres logical decoding plugin installed on the
          * server. Supported values are 'decoderbufs' and 'wal2json'. Defaults
          * to 'decoderbufs'.
@@ -701,8 +721,20 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'schema.blacklist' description.
+         * The name of the Postgres 10 publication used for streaming changes
+         * from a plugin.Defaults to 'dbz_publication'.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder publicationName(
+                String publicationName) {
+            doSetProperty("publicationName", publicationName);
+            return this;
+        }
+        /**
+         * The schemas for which events must not be captured.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -777,6 +809,32 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * How many times to retry connecting to a replication slot when an
+         * attempt fails.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder slotMaxRetries(
+                int slotMaxRetries) {
+            doSetProperty("slotMaxRetries", slotMaxRetries);
+            return this;
+        }
+        /**
+         * How many times to retry connecting to a replication slot when an
+         * attempt fails.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder slotMaxRetries(
+                String slotMaxRetries) {
+            doSetProperty("slotMaxRetries", slotMaxRetries);
+            return this;
+        }
+        /**
          * The name of the Postgres logical decoding slot created for streaming
          * changes from a plugin.Defaults to 'debezium.
          * 
@@ -786,6 +844,32 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          */
         default DebeziumPostgresEndpointBuilder slotName(String slotName) {
             doSetProperty("slotName", slotName);
+            return this;
+        }
+        /**
+         * The number of milli-seconds to wait between retry attempts when the
+         * connector fails to connect to a replication slot.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder slotRetryDelayMs(
+                long slotRetryDelayMs) {
+            doSetProperty("slotRetryDelayMs", slotRetryDelayMs);
+            return this;
+        }
+        /**
+         * The number of milli-seconds to wait between retry attempts when the
+         * connector fails to connect to a replication slot.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder slotRetryDelayMs(
+                String slotRetryDelayMs) {
+            doSetProperty("slotRetryDelayMs", slotRetryDelayMs);
             return this;
         }
         /**
@@ -906,9 +990,10 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * would normally start emitting changes;'never' to specify the
          * connector should never run a snapshot and that upon first startup the
          * connector should read from the last position (LSN) recorded by the
-         * server; and'custom' to specify a custom class with
-         * 'snapshot.custom_class' which will be loaded and used to determine
-         * the snapshot, see docs for more details.
+         * server; and'exported' to specify the connector should run a snapshot
+         * based on the position when the replication slot was created; 'custom'
+         * to specify a custom class with 'snapshot.custom_class' which will be
+         * loaded and used to determine the snapshot, see docs for more details.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -920,15 +1005,17 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * This property contains a comma-separated list of fully-qualified
-         * tables (DB_NAME.TABLE_NAME). Select statements for the individual
-         * tables are specified in further configuration properties, one for
-         * each table, identified by the id
-         * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME'. The value
-         * of those properties is the select statement to use when retrieving
-         * data from the specific table during snapshotting. A possible use case
-         * for large append-only tables is setting a specific point where to
-         * start (resume) snapshotting, in case a previous snapshotting was
-         * interrupted.
+         * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
+         * thespecific connectors . Select statements for the individual tables
+         * are specified in further configuration properties, one for each
+         * table, identified by the id
+         * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
+         * 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME',
+         * respectively. The value of those properties is the select statement
+         * to use when retrieving data from the specific table during
+         * snapshotting. A possible use case for large append-only tables is
+         * setting a specific point where to start (resume) snapshotting, in
+         * case a previous snapshotting was interrupted.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -937,6 +1024,19 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder snapshotSelectStatementOverrides(
                 String snapshotSelectStatementOverrides) {
             doSetProperty("snapshotSelectStatementOverrides", snapshotSelectStatementOverrides);
+            return this;
+        }
+        /**
+         * A version of the format of the publicly visible source part in the
+         * message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder sourceStructVersion(
+                String sourceStructVersion) {
+            doSetProperty("sourceStructVersion", sourceStructVersion);
             return this;
         }
         /**
@@ -1010,6 +1110,21 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify the constant that will be provided by Debezium to indicate
+         * that the original value is a toasted value not provided by the
+         * database.If starts with 'hex:' prefix it is expected that the rest of
+         * the string repesents hexadecimally encoded octets.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder toastedValuePlaceholder(
+                String toastedValuePlaceholder) {
+            doSetProperty("toastedValuePlaceholder", toastedValuePlaceholder);
+            return this;
+        }
+        /**
          * Whether delete operations should be represented by a delete event and
          * a subsquenttombstone event (true) or only by a delete event (false).
          * Emitting the tombstone event (the default behavior) allows Kafka to
@@ -1039,22 +1154,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder tombstonesOnDelete(
                 String tombstonesOnDelete) {
             doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
-            return this;
-        }
-        /**
-         * How events received from the DB should be placed on topics. Options
-         * include'table' (the default) each DB table will have a separate Kafka
-         * topic; 'schema' there will be one Kafka topic per DB schema; events
-         * from multiple topics belonging to the same schema will be placed on
-         * the same topic.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: postgres
-         */
-        default DebeziumPostgresEndpointBuilder topicSelectionStrategy(
-                String topicSelectionStrategy) {
-            doSetProperty("topicSelectionStrategy", topicSelectionStrategy);
             return this;
         }
         /**
