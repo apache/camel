@@ -130,8 +130,11 @@ public class UndertowProducer extends DefaultAsyncProducer {
         // Set the Host header
         final Message message = camelExchange.getIn();
         final String host = message.getHeader(Headers.HOST_STRING, String.class);
-        requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(uri::getAuthority));
-
+        if(endpoint.isPreserveHostHeader()) {
+            requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(uri::getAuthority));
+        }else{
+            requestHeaders.put(Headers.HOST,uri.getAuthority());
+        }
         cookieHeaders.forEach((key, values) -> {
             requestHeaders.putAll(HttpString.tryFromString(key), values);
         });
