@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 302 in 217 JAR artifacts (0 deprecated)
+Number of Components: 302 in 240 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -90,7 +90,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
-| xref:bean-component.adoc[Bean] (@@@ARTIFACTID@@@) | 1.0 | The bean component is for invoking Java beans from Camel.
+| xref:bean-component.adoc[Bean] (camel-bean) | 1.0 | The bean component is for invoking Java beans from Camel.
 
 | xref:bean-validator-component.adoc[Bean Validator] (camel-bean-validator) | 2.3 | The Validator component performs bean validation of the message body using the Java Bean Validation API.
 
@@ -102,7 +102,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:braintree-component.adoc[Braintree] (camel-braintree) | 2.17 | The braintree component is used for integrating with the Braintree Payment System.
 
-| xref:browse-component.adoc[Browse] (@@@ARTIFACTID@@@) | 1.3 | The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.
+| xref:browse-component.adoc[Browse] (camel-browse) | 1.3 | The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.
 
 | xref:caffeine-cache-component.adoc[Caffeine Cache] (camel-caffeine) | 2.20 | The caffeine-cache component is used for integration with Caffeine Cache.
 
@@ -114,7 +114,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:chunk-component.adoc[Chunk] (camel-chunk) | 2.15 | Transforms the message using a Chunk template.
 
-| xref:class-component.adoc[Class] (@@@ARTIFACTID@@@) | 2.4 | The class component is for invoking Java classes (Java beans) from Camel.
+| xref:class-component.adoc[Class] (camel-bean) | 2.4 | The class component is for invoking Java classes (Java beans) from Camel.
 
 | xref:cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
 
@@ -126,7 +126,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:consul-component.adoc[Consul] (camel-consul) | 2.18 | The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.
 
-| xref:controlbus-component.adoc[Control Bus] (@@@ARTIFACTID@@@) | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+| xref:controlbus-component.adoc[Control Bus] (camel-controlbus) | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
 
 | xref:corda-component.adoc[Corda] (camel-corda) | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
 
@@ -142,11 +142,11 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:cxfrs-component.adoc[CXF-RS] (camel-cxf) | 2.0 | The cxfrs component is used for JAX-RS REST services using Apache CXF.
 
-| xref:dataformat-component.adoc[Data Format] (@@@ARTIFACTID@@@) | 2.12 | The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
+| xref:dataformat-component.adoc[Data Format] (camel-dataformat) | 2.12 | The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
 
-| xref:dataset-component.adoc[Dataset] (@@@ARTIFACTID@@@) | 1.3 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
+| xref:dataset-component.adoc[Dataset] (camel-dataset) | 1.3 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
 
-| xref:dataset-test-component.adoc[DataSet Test] (@@@ARTIFACTID@@@) | 1.3 | The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+| xref:dataset-test-component.adoc[DataSet Test] (camel-dataset) | 1.3 | The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
 
 | xref:debezium-mongodb-component.adoc[Debezium MongoDB Connector] (camel-debezium-mongodb) | 3.0 | Represents a Debezium MongoDB endpoint which is used to capture changes in MongoDB database so that that applications can see those changes and respond to them.
 
@@ -156,9 +156,9 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
 
-| xref:direct-component.adoc[Direct] (@@@ARTIFACTID@@@) | 1.0 | The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
+| xref:direct-component.adoc[Direct] (camel-direct) | 1.0 | The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
 
-| xref:direct-vm-component.adoc[Direct VM] (@@@ARTIFACTID@@@) | 2.10 | The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
+| xref:direct-vm-component.adoc[Direct VM] (camel-directvm) | 2.10 | The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
 
 | xref:disruptor-component.adoc[Disruptor] (camel-disruptor) | 2.12 | The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
 
@@ -186,7 +186,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:fhir-component.adoc[FHIR] (camel-fhir) | 2.23 | The fhir component is used for working with the FHIR protocol (health care).
 
-| xref:file-component.adoc[File] (@@@ARTIFACTID@@@) | 1.0 | The file component is used for reading or writing files.
+| xref:file-component.adoc[File] (camel-file) | 1.0 | The file component is used for reading or writing files.
 
 | xref:file-watch-component.adoc[file-watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
 
@@ -268,7 +268,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:hipchat-component.adoc[Hipchat] (camel-hipchat) | 2.15 | The hipchat component supports producing and consuming messages from/to Hipchat service.
 
-| xref:http-component.adoc[HTTP] (@@@ARTIFACTID@@@) | 2.3 | For calling out to external HTTP servers using Apache HTTP Client 4.x.
+| xref:http-component.adoc[HTTP] (camel-http) | 2.3 | For calling out to external HTTP servers using Apache HTTP Client 4.x.
 
 | xref:iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
@@ -312,7 +312,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:jdbc-component.adoc[JDBC] (camel-jdbc) | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
-| xref:jetty-component.adoc[Jetty] (@@@ARTIFACTID@@@) | 1.2 | To use Jetty as a HTTP server as consumer for Camel routes.
+| xref:jetty-component.adoc[Jetty] (camel-jetty) | 1.2 | To use Jetty as a HTTP server as consumer for Camel routes.
 
 | xref:websocket-component.adoc[Jetty Websocket] (camel-websocket) | 2.10 | The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
 
@@ -368,7 +368,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
 
-| xref:language-component.adoc[Language] (@@@ARTIFACTID@@@) | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
+| xref:language-component.adoc[Language] (camel-language) | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
 
 | xref:ldap-component.adoc[LDAP] (camel-ldap) | 1.5 | The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
 
@@ -376,7 +376,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:linkedin-component.adoc[Linkedin] (camel-linkedin) | 2.14 | The linkedin component is used for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
 
-| xref:log-component.adoc[Log] (@@@ARTIFACTID@@@) | 1.1 | The log component logs message exchanges to the underlying logging mechanism.
+| xref:log-component.adoc[Log] (camel-log) | 1.1 | The log component logs message exchanges to the underlying logging mechanism.
 
 | xref:lucene-component.adoc[Lucene] (camel-lucene) | 2.2 | To insert or query from Apache Lucene databases.
 
@@ -396,7 +396,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:mllp-component.adoc[MLLP] (camel-mllp) | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
-| xref:mock-component.adoc[Mock] (@@@ARTIFACTID@@@) | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
+| xref:mock-component.adoc[Mock] (camel-mock) | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
 
 | xref:mongodb-component.adoc[MongoDB] (camel-mongodb) | 2.19 | Component for working with documents stored in MongoDB database.
 
@@ -476,11 +476,11 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:reactive-streams-component.adoc[Reactive Streams] (camel-reactive-streams) | 2.19 | Reactive Camel using reactive streams
 
-| xref:ref-component.adoc[Ref] (@@@ARTIFACTID@@@) | 1.2 | The ref component is used for lookup of existing endpoints bound in the Registry.
+| xref:ref-component.adoc[Ref] (camel-ref) | 1.2 | The ref component is used for lookup of existing endpoints bound in the Registry.
 
-| xref:rest-component.adoc[REST] (@@@ARTIFACTID@@@) | 2.14 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
+| xref:rest-component.adoc[REST] (camel-rest) | 2.14 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
 
-| xref:rest-api-component.adoc[REST API] (@@@ARTIFACTID@@@) | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
+| xref:rest-api-component.adoc[REST API] (camel-rest) | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
 | xref:rest-swagger-component.adoc[REST Swagger] (camel-rest-swagger) | 2.19 | An awesome REST endpoint backed by Swagger specifications.
 
@@ -488,19 +488,19 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:rss-component.adoc[RSS] (camel-rss) | 2.0 | The rss component is used for consuming RSS feeds.
 
-| xref:saga-component.adoc[Saga] (@@@ARTIFACTID@@@) | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
+| xref:saga-component.adoc[Saga] (camel-saga) | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
 
 | xref:salesforce-component.adoc[Salesforce] (camel-salesforce) | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
 
 | xref:sap-netweaver-component.adoc[SAP NetWeaver] (camel-sap-netweaver) | 2.12 | The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
 
-| xref:scheduler-component.adoc[Scheduler] (@@@ARTIFACTID@@@) | 2.15 | The scheduler component is used for generating message exchanges when a scheduler fires.
+| xref:scheduler-component.adoc[Scheduler] (camel-scheduler) | 2.15 | The scheduler component is used for generating message exchanges when a scheduler fires.
 
 | xref:schematron-component.adoc[Schematron] (camel-schematron) | 2.15 | Validates the payload of a message using the Schematron Library.
 
 | xref:scp-component.adoc[SCP] (camel-jsch) | 2.10 | To copy files using the secure copy protocol (SCP).
 
-| xref:seda-component.adoc[SEDA] (@@@ARTIFACTID@@@) | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
+| xref:seda-component.adoc[SEDA] (camel-seda) | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
 | xref:service-component.adoc[Service] (camel-service) | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
 
@@ -536,7 +536,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:spring-batch-component.adoc[Spring Batch] (camel-spring-batch) | 2.10 | The spring-batch component allows to send messages to Spring Batch for further processing.
 
-| xref:spring-event-component.adoc[Spring Event] (@@@ARTIFACTID@@@) | 1.4 | The spring-event component allows to listen for Spring Application Events.
+| xref:spring-event-component.adoc[Spring Event] (camel-spring) | 1.4 | The spring-event component allows to listen for Spring Application Events.
 
 | xref:spring-integration-component.adoc[Spring Integration] (camel-spring-integration) | 1.4 | Bridges Camel with Spring Integration.
 
@@ -560,7 +560,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:string-template-component.adoc[String Template] (camel-stringtemplate) | 1.2 | Transforms the message using a String template.
 
-| xref:stub-component.adoc[Stub] (@@@ARTIFACTID@@@) | 2.10 | The stub component provides a simple way to stub out any physical endpoints while in development or testing.
+| xref:stub-component.adoc[Stub] (camel-stub) | 2.10 | The stub component provides a simple way to stub out any physical endpoints while in development or testing.
 
 | xref:telegram-component.adoc[Telegram] (camel-telegram) | 2.18 | The telegram component provides access to the Telegram Bot API.
 
@@ -568,7 +568,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:tika-component.adoc[Tika] (camel-tika) | 2.19 | This component integrates with Apache Tika to extract content and metadata from thousands of file types.
 
-| xref:timer-component.adoc[Timer] (@@@ARTIFACTID@@@) | 1.0 | The timer component is used for generating message exchanges when a timer fires.
+| xref:timer-component.adoc[Timer] (camel-timer) | 1.0 | The timer component is used for generating message exchanges when a timer fires.
 
 | xref:twilio-component.adoc[Twilio] (camel-twilio) | 2.20 | The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.
 
@@ -580,13 +580,13 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:undertow-component.adoc[Undertow] (camel-undertow) | 2.16 | The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
 
-| xref:validator-component.adoc[Validator] (@@@ARTIFACTID@@@) | 1.1 | Validates the payload of a message using XML Schema and JAXP Validation.
+| xref:validator-component.adoc[Validator] (camel-validator) | 1.1 | Validates the payload of a message using XML Schema and JAXP Validation.
 
 | xref:velocity-component.adoc[Velocity] (camel-velocity) | 1.2 | Transforms the message using a Velocity template.
 
 | xref:vertx-component.adoc[Vert.x] (camel-vertx) | 2.12 | The vertx component is used for sending and receive messages from a vertx event bus.
 
-| xref:vm-component.adoc[VM] (@@@ARTIFACTID@@@) | 1.1 | The vm component provides asynchronous call to another endpoint from the same CamelContext.
+| xref:vm-component.adoc[VM] (camel-vm) | 1.1 | The vm component provides asynchronous call to another endpoint from the same CamelContext.
 
 | xref:weather-component.adoc[Weather] (camel-weather) | 2.12 | Polls the weather information from Open Weather Map.
 
@@ -606,7 +606,7 @@ Number of Components: 302 in 217 JAR artifacts (0 deprecated)
 
 | xref:xquery-component.adoc[XQuery] (camel-saxon) | 1.0 | Transforms the message using a XQuery template using Saxon.
 
-| xref:xslt-component.adoc[XSLT] (@@@ARTIFACTID@@@) | 1.3 | Transforms the message using a XSLT template.
+| xref:xslt-component.adoc[XSLT] (camel-xslt) | 1.3 | Transforms the message using a XSLT template.
 
 | xref:yammer-component.adoc[Yammer] (camel-yammer) | 2.12 | The yammer component allows you to interact with the Yammer enterprise social network.
 
