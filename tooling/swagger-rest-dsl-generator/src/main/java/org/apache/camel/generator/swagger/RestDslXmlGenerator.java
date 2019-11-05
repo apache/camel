@@ -96,6 +96,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         }
 
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         final Transformer transformer = transformerFactory.newTransformer();
 
         final StringWriter writer = new StringWriter();
