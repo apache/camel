@@ -87,6 +87,18 @@ public class DebeziumMySqlComponentConfiguration
          */
         private String snapshotLockingMode = "minimal";
         /**
+         * A semicolon-separated list of expressions that match fully-qualified
+         * tables and column(s) to be used as message key. Each expression must
+         * match the pattern '<fully-qualified table name>:<key columns>',where
+         * the table names could be defined as (DB_NAME.TABLE_NAME) or
+         * (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the
+         * key columns are a comma-separated list of columns representing the
+         * custom key. For any table without an explicit key configuration the
+         * table's primary key column(s) will be used as message key.Example:
+         * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id
+         */
+        private String messageKeyColumns;
+        /**
          * Description is not available here, please check Debezium website for
          * corresponding key 'column.blacklist' description.
          */
@@ -162,6 +174,21 @@ public class DebeziumMySqlComponentConfiguration
          */
         private String gtidSourceExcludes;
         /**
+         * This property contains a comma-separated list of fully-qualified
+         * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
+         * thespecific connectors . Select statements for the individual tables
+         * are specified in further configuration properties, one for each
+         * table, identified by the id
+         * 'snapshot.select.statement.overrides.[DB_NAME].[TABLE_NAME]' or
+         * 'snapshot.select.statement.overrides.[SCHEMA_NAME].[TABLE_NAME]',
+         * respectively. The value of those properties is the select statement
+         * to use when retrieving data from the specific table during
+         * snapshotting. A possible use case for large append-only tables is
+         * setting a specific point where to start (resume) snapshotting, in
+         * case a previous snapshotting was interrupted.
+         */
+        private String snapshotSelectStatementOverrides;
+        /**
          * A list of host/port pairs that the connector will use for
          * establishing the initial connection to the Kafka cluster for
          * retrieving database schema history previously stored by the
@@ -180,6 +207,11 @@ public class DebeziumMySqlComponentConfiguration
          * disable heartbeat messages. Disabled by default.
          */
         private Integer heartbeatIntervalMs = 0;
+        /**
+         * A version of the format of the publicly visible source part in the
+         * message
+         */
+        private String sourceStructVersion = "v2";
         /**
          * Password to unlock the keystore file (store password) specified by
          * 'ssl.trustore' configuration property or the
@@ -210,16 +242,6 @@ public class DebeziumMySqlComponentConfiguration
          * (not purged) gtid position on the server.
          */
         private String gtidNewChannelPosition = "latest";
-        /**
-         * MySQL DDL statements can be parsed in different ways:'legacy' parsing
-         * is creating a TokenStream and comparing token by token with an
-         * expected values.The decisions are made by matched token
-         * values.'antlr' (the default) uses generated parser from MySQL grammar
-         * using ANTLR v4 tool which use ALL(*) algorithm for parsing.This
-         * parser creates a parsing tree for DDL statement, then walks trough it
-         * and apply changes by node types in parsed tree.
-         */
-        private String ddlParserMode = "antlr";
         /**
          * Password of the MySQL database user to be used when connecting to the
          * database.
@@ -385,15 +407,13 @@ public class DebeziumMySqlComponentConfiguration
          */
         private String eventDeserializationFailureHandlingMode = "fail";
         /**
-         * Time, date, and timestamps can be represented with different kinds of
-         * precisions, including:'adaptive_time_microseconds' (the default) like
-         * 'adaptive' mode, but TIME fields always use microseconds
-         * precision;'adaptive' (deprecated) bases the precision of time, date,
-         * and timestamp values on the database column's precision; 'connect'
-         * always represents time, date, and timestamp values using Kafka
-         * Connect's built-in representations for Time, Date, and Timestamp,
-         * which uses millisecond precision regardless of the database columns'
-         * precision.
+         * Time, date and timestamps can be represented with different kinds of
+         * precisions, including:'adaptive_time_microseconds': the precision of
+         * date and timestamp values is based the database column's precision;
+         * but time fields always use microseconds precision;'connect': always
+         * represents time, date and timestamp values using Kafka Connect's
+         * built-in representations for Time, Date, and Timestamp, which uses
+         * millisecond precision regardless of the database columns' precision.
          */
         private String timePrecisionMode = "adaptive_time_microseconds";
         /**
@@ -532,6 +552,14 @@ public class DebeziumMySqlComponentConfiguration
             this.snapshotLockingMode = snapshotLockingMode;
         }
 
+        public String getMessageKeyColumns() {
+            return messageKeyColumns;
+        }
+
+        public void setMessageKeyColumns(String messageKeyColumns) {
+            this.messageKeyColumns = messageKeyColumns;
+        }
+
         public String getColumnBlacklist() {
             return columnBlacklist;
         }
@@ -638,6 +666,15 @@ public class DebeziumMySqlComponentConfiguration
             this.gtidSourceExcludes = gtidSourceExcludes;
         }
 
+        public String getSnapshotSelectStatementOverrides() {
+            return snapshotSelectStatementOverrides;
+        }
+
+        public void setSnapshotSelectStatementOverrides(
+                String snapshotSelectStatementOverrides) {
+            this.snapshotSelectStatementOverrides = snapshotSelectStatementOverrides;
+        }
+
         public String getDatabaseHistoryKafkaBootstrapServers() {
             return databaseHistoryKafkaBootstrapServers;
         }
@@ -661,6 +698,14 @@ public class DebeziumMySqlComponentConfiguration
 
         public void setHeartbeatIntervalMs(Integer heartbeatIntervalMs) {
             this.heartbeatIntervalMs = heartbeatIntervalMs;
+        }
+
+        public String getSourceStructVersion() {
+            return sourceStructVersion;
+        }
+
+        public void setSourceStructVersion(String sourceStructVersion) {
+            this.sourceStructVersion = sourceStructVersion;
         }
 
         public String getDatabaseSslTruststorePassword() {
@@ -695,14 +740,6 @@ public class DebeziumMySqlComponentConfiguration
 
         public void setGtidNewChannelPosition(String gtidNewChannelPosition) {
             this.gtidNewChannelPosition = gtidNewChannelPosition;
-        }
-
-        public String getDdlParserMode() {
-            return ddlParserMode;
-        }
-
-        public void setDdlParserMode(String ddlParserMode) {
-            this.ddlParserMode = ddlParserMode;
         }
 
         public String getDatabasePassword() {

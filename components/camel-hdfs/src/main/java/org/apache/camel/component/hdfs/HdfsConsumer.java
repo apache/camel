@@ -29,6 +29,7 @@ import javax.security.auth.login.Configuration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang.StringUtils;
@@ -148,15 +149,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         Holder<Object> key = new Holder<>();
         Holder<Object> value = new Holder<>();
 
-        if (this.endpointConfig.isStreamDownload()) {
-            key.value = null;
-            value.value = inputStream;
-            // use the input stream as the body
+        while (inputStream.next(key, value) >= 0) {
             processHdfsInputStream(inputStream, key, value, messageCount, totalFiles);
-        } else {
-            while (inputStream.next(key, value) >= 0) {
-                processHdfsInputStream(inputStream, key, value, messageCount, totalFiles);
-            }
         }
     }
 
@@ -201,7 +195,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                     return false;
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
         return true;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 import org.apache.camel.component.aws.s3.S3Operations;
@@ -196,6 +197,10 @@ public class S3ComponentConfiguration
          * using AWS-managed keys. For example use <tt>AES256</tt>.
          */
         private String serverSideEncryption;
+        /**
+         * To define a proxy protocol when instantiating the S3 client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
         /**
          * To define a proxy host when instantiating the SQS client
          */
@@ -399,6 +404,14 @@ public class S3ComponentConfiguration
 
         public void setServerSideEncryption(String serverSideEncryption) {
             this.serverSideEncryption = serverSideEncryption;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

@@ -19,8 +19,8 @@ Additional key features include:
 
 * Plugable Connection Resource Management
 * Session, Consumer, & Producer Pooling & Caching Management
-* Batch Consumers and Producers
-* Transacted Batch Consumers & Producers
+* Batch Consumers
+* Transacted Batch Consumers
 * Support for Customizable Transaction Commit Strategies (Local JMS
 Transactions only)
 
@@ -47,7 +47,7 @@ for this component:
 
 == URI format
 
-[source]
+[source,text]
 ----
 sjms:[queue:|topic:]destinationName[?options]
 ----
@@ -56,14 +56,14 @@ Where `destinationName` is a JMS queue or topic name. By default, the
 `destinationName` is interpreted as a queue name. For example, to
 connect to the queue, `FOO.BAR` use:
 
-[source]
+[source,text]
 ----
 sjms:FOO.BAR
 ----
 
 You can include the optional `queue:` prefix, if you prefer:
 
-[source]
+[source,text]
 ----
 sjms:queue:FOO.BAR
 ----
@@ -71,7 +71,7 @@ sjms:queue:FOO.BAR
 To connect to a topic, you _must_ include the `topic:` prefix. For
 example, to connect to the topic, `Stocks.Prices`, use:
 
-[source]
+[source,text]
 ----
 sjms:topic:Stocks.Prices
 ----
@@ -80,9 +80,6 @@ You append query options to the URI using the following format,
 `?option=value&option=value&...`
 
 == Component Options and Configurations
-
-
-
 
 // component options: START
 The Simple JMS component supports 15 options, which are listed below.
@@ -109,12 +106,6 @@ The Simple JMS component supports 15 options, which are listed below.
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
-
-
-
-
-
-
 
 
 // endpoint options: START
@@ -224,10 +215,6 @@ The component supports 16 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-
-
-
-
 Below is an example of how to configure the `SjmsComponent` with its
 required `ConnectionFactory` provider. It will create a single connection
 by default and store it using the components internal pooling APIs to
@@ -294,7 +281,7 @@ from("direct:start")
 
 === InOnly Consumer - (Default)
 
-The _InOnly_ xonsumer is the default Exchange behavior of the SJMS
+The _InOnly_ consumer is the default Exchange behavior of the SJMS
 Consumer Endpoint.
 
 [source,java]
@@ -318,29 +305,22 @@ from("sjms:queue:in.out.test?exchangePattern=InOut")
 
 === Plugable Connection Resource Management [[SJMS-connectionresource]]
 
-SJMS provides JMS
-http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[`Connection`]
+SJMS provides JMS `Connection`
 resource management through built-in connection pooling. This eliminates
 the need to depend on third party API pooling logic. However there may
 be times that you are required to use an external Connection resource
 manager such as those provided by J2EE or OSGi containers. For this SJMS
 provides an interface that can be used to override the internal SJMS
-Connection pooling capabilities. This is accomplished through the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/jms/ConnectionResource.java[`ConnectionResource`]
-interface.
+Connection pooling capabilities. This is accomplished through the `ConnectionResource` interface.
 
-The
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/jms/ConnectionResource.java[`ConnectionResource`]
+The `ConnectionResource`
 provides methods for borrowing and returning Connections as needed is
-the contract used to provide
-http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[`Connection`]
+the contract used to provide `Connection`
 pools to the SJMS component. A user should use when it is necessary to
 integrate SJMS with an external connection pooling manager.
 
-It is recommended though that for standard
-http://docs.oracle.com/javaee/5/api/javax/jms/ConnectionFactory.html[`ConnectionFactory`]
-providers you use the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[`ConnectionFactoryResource`]
+It is recommended though that for standard JMS `ConnectionFactory`
+providers you use the `ConnectionFactoryResource`
 implementation that is provided with SJMS as-is or extend as it is
 optimized for this component.
 
@@ -395,59 +375,20 @@ component.setConnectionResource(pool);
 camelContext.addComponent("sjms", component);
 ----
 
-To see the full example of its usage please refer to the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[`ConnectionResourceIT`].
-
-=== Batch Message Support
-
-The SjmsProducer supports publishing a collection of messages by
-creating an Exchange that encapsulates a `List`. This SjmsProducer will
-take then iterate through the contents of the List and publish each
-message individually.
-
-If when producing a batch of messages there is the need to set headers
-that are unique to each message you can use the SJMS
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/BatchMessage.java[`BatchMessage`]
-class. When the SjmsProducer encounters a `BatchMessage` list it will
-iterate each `BatchMessage` and publish the included payload and headers.
-
-Below is an example of using the BatchMessage class. First we create a
-list of `BatchMessage`:
-
-[source,java]
-----
-List<BatchMessage<String>> messages = new ArrayList<BatchMessage<String>>();
-for (int i = 1; i <= messageCount; i++) {
-    String body = "Hello World " + i;
-    BatchMessage<String> message = new BatchMessage<String>(body, null);
-    messages.add(message);
-}
-----
-
-Then publish the list:
-
-[source,java]
-----
-template.sendBody("sjms:queue:batch.queue", messages);
-----
-
 === Customizable Transaction Commit Strategies (Local JMS Transactions only)
 
 SJMS provides a developer the means to create a custom and plugable
-transaction strategy through the use of the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/TransactionCommitStrategy.java[`TransactionCommitStrategy`]
+transaction strategy through the use of the `TransactionCommitStrategy`
 interface. This allows a user to define a unique set of circumstances
-that the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/SessionTransactionSynchronization.java[`SessionTransactionSynchronization`]
-will use to determine when to commit the Session. An example of its use
-is the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/BatchTransactionCommitStrategy.java[`BatchTransactionCommitStrategy`]
+that the `SessionTransactionSynchronization`
+will use to determine when to commit the Session.
+An example of its use is the `BatchTransactionCommitStrategy`
 which is detailed further in the next section.
 
-=== Transacted Batch Consumers & Producers
+=== Transacted Batch Consumers
 
 The SJMS component has been designed to support the batching of local JMS
-transactions on both the Producer and Consumer endpoints. How they are
+transactions on the consumer endpoints. How they are
 handled on each is very different though.
 
 The SJMS consumer endpoint is a straightforward implementation that will
@@ -458,7 +399,7 @@ by setting the `transacted` parameter to true and then adding the
 0. For example the following configuration will commit the Session every
 10 messages:
 
-[source]
+[source,text]
 ----
 sjms:queue:transacted.batch.consumer?transacted=true&transactionBatchCount=10
 ----
@@ -480,7 +421,7 @@ default value of 5000ms (minimum of 1000ms) should be adequate for most
 use-cases but if further tuning is necessary simply set the
 `transactionBatchTimeout` parameter.
 
-[source]
+[source,text]
 ----
 sjms:queue:transacted.batch.consumer?transacted=true&transactionBatchCount=10&transactionBatchTimeout=2000
 ----
@@ -489,31 +430,6 @@ The minimal value that will be accepted is 1000ms as the amount of
 context switching may cause unnecessary performance impacts without
 gaining benefit.
 
-The producer endpoint is handled much differently though. With the
-producer after each message is delivered to its destination the Exchange
-is closed and there is no longer a reference to that message. To make a
-available all the messages available for redelivery you simply enable
-transactions on a Producer Endpoint that is publishing BatchMessages.
-The transaction will commit at the conclusion of the exchange which
-includes all messages in the batch list. Nothing additional need be
-configured. For example:
-
-[source,java]
-----
-List<BatchMessage<String>> messages = new ArrayList<BatchMessage<String>>();
-for (int i = 1; i <= messageCount; i++) {
-    String body = "Hello World " + i;
-    BatchMessage<String> message = new BatchMessage<String>(body, null);
-    messages.add(message);
-}
-----
-
-Now publish the List with transactions enabled:
-
-[source,java]
-----
-template.sendBody("sjms:queue:batch.queue?transacted=true", messages);
-----
 
 == Additional Notes
 
@@ -535,12 +451,8 @@ messages:
 ** is replaced by _DOT_ and the reverse replacement when Camel consumes
 the message.
 ** is replaced by _HYPHEN_ and the reverse replacement when Camel
-consumes the message. +
-See also the option `jmsKeyFormatStrategy`, which allows use of your own
-custom strategy for formatting keys.
-
-For the `exchange.in.header`, the following rules apply for the header
-values:
+consumes the message.See also the option `jmsKeyFormatStrategy`,
+which allows use of your own custom strategy for formatting keys.
 
 === Message Content
 
@@ -579,17 +491,13 @@ Transaction API (JTA).
 
 === Does Springless Mean I Can't Use Spring?
 
-Not at all. Below is an example of the SJMS component using the Spring
-DSL:
+Not at all. Below is an example of the SJMS component using the Spring XML:
 
-[source,java]
+[source,xml]
 ----
-<route
-    id="inout.named.reply.to.producer.route">
-    <from
-        uri="direct:invoke.named.reply.to.queue" />
-    <to
-        uri="sjms:queue:named.reply.to.queue?namedReplyTo=my.response.queue&amp;exchangePattern=InOut" />
+<route id="inout.named.reply.to.producer.route">
+    <from uri="direct:invoke.named.reply.to.queue" />
+    <to uri="sjms:queue:named.reply.to.queue?namedReplyTo=my.response.queue&amp;exchangePattern=InOut" />
 </route>
 ----
 

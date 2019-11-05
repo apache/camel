@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.ddb.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import org.apache.camel.component.aws.ddb.DdbOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -148,6 +149,10 @@ public class DdbComponentConfiguration
          */
         private String keyAttributeType;
         /**
+         * To define a proxy protocol when instantiating the DDB client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the DDB client
          */
         private String proxyHost;
@@ -241,6 +246,14 @@ public class DdbComponentConfiguration
 
         public void setKeyAttributeType(String keyAttributeType) {
             this.keyAttributeType = keyAttributeType;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

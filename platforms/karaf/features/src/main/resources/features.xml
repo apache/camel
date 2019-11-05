@@ -888,36 +888,6 @@
     <bundle dependency='true'>wrap:mvn:com.squareup.okhttp3/okhttp/3.5.0</bundle>
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
-  <feature name='camel-debezium-mysql' version='${project.version}' start-level='50'>
-    <feature version="${project.version}">camel-core</feature>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-core/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-embedded/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-connector-mysql/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-api/${kafka-version}</bundle>
-    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-json/${kafka-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-debezium-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-debezium-mysql/${project.version}</bundle>
-  </feature>
-  <feature name='camel-debezium-postgres' version='${project.version}' start-level='50'>
-    <feature version="${project.version}">camel-core</feature>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-core/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-embedded/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-connector-postgres/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-api/${kafka-version}</bundle>
-    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-json/${kafka-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-debezium-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-debezium-postgres/${project.version}</bundle>
-  </feature>
-  <feature name='camel-debezium-mongodb' version='${project.version}' start-level='50'>
-    <feature version="${project.version}">camel-core</feature>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-core/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-embedded/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:io.debezium/debezium-connector-mongodb/${debezium-version}</bundle>
-    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-api/${kafka-version}</bundle>
-    <bundle dependency="true">wrap:mvn:org.apache.kafka/connect-json/${kafka-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-debezium-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-debezium-mongodb/${project.version}</bundle>
-  </feature>
   <feature name='camel-ehcache' version='${project.version}' start-level='50'>
     <feature>scr</feature>
     <feature version="${project.version}">camel-core</feature>

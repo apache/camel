@@ -198,6 +198,29 @@ public interface DdbStreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the DDBStreams client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: consumer
+         */
+        default DdbStreamEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDBStreams client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default DdbStreamEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The region in which DDBStreams client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -801,6 +824,14 @@ public interface DdbStreamEndpointBuilderFactory {
         LATEST,
         AT_SEQUENCE_NUMBER,
         AFTER_SEQUENCE_NUMBER;
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
     /**
      * AWS DynamoDB Streams (camel-aws-ddb)

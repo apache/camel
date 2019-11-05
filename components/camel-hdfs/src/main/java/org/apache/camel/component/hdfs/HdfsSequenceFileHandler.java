@@ -16,58 +16,21 @@
  */
 package org.apache.camel.component.hdfs;
 
-import java.io.Closeable;
 import java.io.IOException;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-class HdfsSequenceFileHandler extends DefaultHdfsFile {
+class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, SequenceFile.Reader> {
 
     @Override
-    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
+    public SequenceFile.Writer createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
-            Holder<Integer> keySize = new Holder<>();
-            Writable keyWritable = getWritable(key, typeConverter, keySize);
-            Holder<Integer> valueSize = new Holder<>();
-            Writable valueWritable = getWritable(value, typeConverter, valueSize);
-            SequenceFile.Writer writer = (SequenceFile.Writer) hdfsOutputStream.getOut();
-            writer.append(keyWritable, valueWritable);
-            writer.sync();
-            return Long.sum(keySize.value, valueSize.value);
-        } catch (Exception ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
-    @Override
-    public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
-        try {
-            SequenceFile.Reader reader = (SequenceFile.Reader) hdfsistr.getIn();
-            Holder<Integer> keySize = new Holder<>();
-            Writable keyWritable = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
-            Holder<Integer> valueSize = new Holder<>();
-            Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
-            if (reader.next(keyWritable, valueWritable)) {
-                key.value = getObject(keyWritable, keySize);
-                value.value = getObject(valueWritable, valueSize);
-                return Long.sum(keySize.value, valueSize.value);
-            } else {
-                return 0;
-            }
-        } catch (Exception ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
-    @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
-        try {
-            Closeable rout;
+            SequenceFile.Writer rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<?> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
@@ -85,9 +48,25 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, Exchange exchange) {
         try {
-            Closeable rin;
+            Holder<Integer> keySize = new Holder<>();
+            Writable keyWritable = getWritable(key, exchange, keySize);
+            Holder<Integer> valueSize = new Holder<>();
+            Writable valueWritable = getWritable(value, exchange, valueSize);
+            SequenceFile.Writer writer = (SequenceFile.Writer) hdfsOutputStream.getOut();
+            writer.append(keyWritable, valueWritable);
+            writer.sync();
+            return Long.sum(keySize.value, valueSize.value);
+        } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
+    @Override
+    public SequenceFile.Reader createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        try {
+            SequenceFile.Reader rin;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             rin = new SequenceFile.Reader(hdfsInfo.getConfiguration(), SequenceFile.Reader.file(hdfsInfo.getPath()));
             return rin;
@@ -95,4 +74,25 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile {
             throw new RuntimeCamelException(ex);
         }
     }
+
+    @Override
+    public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
+        try {
+            SequenceFile.Reader reader = (SequenceFile.Reader) hdfsInputStream.getIn();
+            Holder<Integer> keySize = new Holder<>();
+            Writable keyWritable = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
+            Holder<Integer> valueSize = new Holder<>();
+            Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
+            if (reader.next(keyWritable, valueWritable)) {
+                key.value = getObject(keyWritable, keySize);
+                value.value = getObject(valueWritable, valueSize);
+                return Long.sum(keySize.value, valueSize.value);
+            } else {
+                return 0;
+            }
+        } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
 }
