@@ -148,6 +148,29 @@ public interface SqsEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointConsumerBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
@@ -1373,6 +1396,29 @@ public interface SqsEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointProducerBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointProducerBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
@@ -1923,6 +1969,29 @@ public interface SqsEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SQS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
@@ -2209,6 +2278,14 @@ public interface SqsEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
 
     /**
