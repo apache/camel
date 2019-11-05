@@ -1,6 +1,8 @@
+[[netty4-component]]
 = Netty4 Component
 
 *Available as of Camel version 2.14*
+
 *Available as of Camel version 2.14*
 
 
