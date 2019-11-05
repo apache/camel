@@ -12,6 +12,8 @@ or sharded clusters mode.
 Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
 which may result in receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
 
+*Note:* The Debezium Mongodb component is currently not supported in OSGi
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
 
