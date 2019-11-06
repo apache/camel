@@ -189,9 +189,9 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         Exchange exchange = super.createExchange(pattern);
         SlackMessage slackMessage = new SlackMessage();
         String text = (String)object.get("text");
-        String username = (String)object.get("username");
+        String user = (String)object.get("user");
         slackMessage.setText(text);
-        slackMessage.setUsername(username);
+        slackMessage.setUser(user);
         if (ObjectHelper.isNotEmpty((JSONObject)object.get("icons"))) {
             JSONObject icons = (JSONObject)object.get("icons");
             if (ObjectHelper.isNotEmpty((String)icons.get("emoji"))) {
