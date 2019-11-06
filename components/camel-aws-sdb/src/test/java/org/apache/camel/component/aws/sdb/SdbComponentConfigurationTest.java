@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.sdb;
 
+import com.amazonaws.Protocol;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -126,5 +128,22 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
         
         SdbComponent component = new SdbComponent(context);
         component.createEndpoint("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient");
+    }
+    
+    @Test
+    public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+
+        context.getRegistry().bind("amazonSDBClient", mock);
+        SdbComponent component = new SdbComponent(context);
+        SdbEndpoint endpoint = (SdbEndpoint)component.createEndpoint("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy&region=US_EAST_1&operation=DeleteAttributes&consistentRead=true"  
+            + "&maxNumberOfDomains=5&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
+        assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
+        assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
 }

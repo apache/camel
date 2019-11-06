@@ -121,7 +121,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 15 options, which are listed below.
+The component supports 16 options, which are listed below.
 
 
 
@@ -136,6 +136,7 @@ The component supports 15 options, which are listed below.
 | *camel.component.aws-ddbstream.configuration.max-results-per-request* | Maximum number of records that will be fetched in each poll |  | Integer
 | *camel.component.aws-ddbstream.configuration.proxy-host* | To define a proxy host when instantiating the DDBStreams client |  | String
 | *camel.component.aws-ddbstream.configuration.proxy-port* | To define a proxy port when instantiating the DDBStreams client |  | Integer
+| *camel.component.aws-ddbstream.configuration.proxy-protocol* | To define a proxy protocol when instantiating the DDBStreams client |  | Protocol
 | *camel.component.aws-ddbstream.configuration.region* | The region in which DDBStreams client needs to work |  | String
 | *camel.component.aws-ddbstream.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ddbstream.configuration.sequence-number-provider* | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider

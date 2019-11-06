@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sqs.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.sqs.AmazonSQS;
 import org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy;
 import org.apache.camel.component.aws.sqs.MessageGroupIdStrategy;
@@ -233,6 +234,10 @@ public class SqsComponentConfiguration
          * purposes.
          */
         private String queueUrl;
+        /**
+         * To define a proxy protocol when instantiating the SQS client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
         /**
          * To define a proxy host when instantiating the SQS client
          */
@@ -477,6 +482,14 @@ public class SqsComponentConfiguration
 
         public void setQueueUrl(String queueUrl) {
             this.queueUrl = queueUrl;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

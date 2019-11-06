@@ -118,6 +118,7 @@
         <include>org.apache.camel:camel-debezium-mongodb</include>
         <include>org.apache.camel:camel-debezium-mysql</include>
         <include>org.apache.camel:camel-debezium-postgres</include>
+        <include>org.apache.camel:camel-debezium-sqlserver</include>
         <include>org.apache.camel:camel-digitalocean</include>
         <include>org.apache.camel:camel-direct</include>
         <include>org.apache.camel:camel-directvm</include>
@@ -207,6 +208,7 @@
         <include>org.apache.camel:camel-jt400</include>
         <include>org.apache.camel:camel-kafka</include>
         <include>org.apache.camel:camel-kubernetes</include>
+        <include>org.apache.camel:camel-kudu</include>
         <include>org.apache.camel:camel-kura</include>
         <include>org.apache.camel:camel-language</include>
         <include>org.apache.camel:camel-ldap</include>
@@ -474,6 +476,7 @@
         <include>org.apache.camel:camel-debezium-mongodb-starter</include>
         <include>org.apache.camel:camel-debezium-mysql-starter</include>
         <include>org.apache.camel:camel-debezium-postgres-starter</include>
+        <include>org.apache.camel:camel-debezium-sqlserver-starter</include>
         <include>org.apache.camel:camel-digitalocean-starter</include>
         <include>org.apache.camel:camel-direct-starter</include>
         <include>org.apache.camel:camel-directvm-starter</include>
@@ -562,6 +565,7 @@
         <include>org.apache.camel:camel-jt400-starter</include>
         <include>org.apache.camel:camel-kafka-starter</include>
         <include>org.apache.camel:camel-kubernetes-starter</include>
+        <include>org.apache.camel:camel-kudu-starter</include>
         <include>org.apache.camel:camel-kura-starter</include>
         <include>org.apache.camel:camel-language-starter</include>
         <include>org.apache.camel:camel-ldap-starter</include>

@@ -660,6 +660,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     private static void createJacocoXmlFile(Document document, File file) throws TransformerException {
         String xmlFilePath = file.toString() + "/xmlJacoco.xml";
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource domSource = new DOMSource(document);
         StreamResult streamResult = new StreamResult(new File(xmlFilePath));

@@ -111,7 +111,13 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
         + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
     private String handlers;
-
+    @UriParam(
+            label = "producer", defaultValue = "true",
+            description = "If the option is true, UndertowProducer will set the Host header to the value contained in the current exchange Host header,"
+            + " useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client,"
+            + " this allows applications which use the Host header to generate accurate URL's for a proxied service."
+    )
+    private boolean preserveHostHeader = true;
     public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
         this.component = component;
@@ -408,6 +414,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
      */
     public void setFireWebSocketChannelEvents(boolean fireWebSocketChannelEvents) {
         this.fireWebSocketChannelEvents = fireWebSocketChannelEvents;
+    }
+    public void setPreserveHostHeader(boolean preserveHostHeader) {
+        this.preserveHostHeader = preserveHostHeader;
+    }
+    public boolean isPreserveHostHeader() {
+        return preserveHostHeader;
     }
 
     @Override

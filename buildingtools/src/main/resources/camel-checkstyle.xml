@@ -349,9 +349,6 @@ lengths, if/try depths, etc...
             <property name="message" value="Line has trailing spaces."/>
         </module>
         -->
-        <module name="TodoComment">
-            <property name="format" value="WARNING"/>
-        </module>
 
         <module name="UpperEll"/>
 

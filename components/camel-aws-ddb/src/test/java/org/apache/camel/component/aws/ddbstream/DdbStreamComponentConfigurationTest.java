@@ -29,7 +29,7 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithAccessAndSecretKey() throws Exception {
         DdbStreamComponent component = new DdbStreamComponent(context);
-        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddb://myTable?accessKey=xxxxx&secretKey=yyyyy");
+        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddbstreams://myTable?accessKey=xxxxx&secretKey=yyyyy");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
@@ -41,7 +41,7 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
         DdbStreamComponent component = new DdbStreamComponent(context);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
-        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddb://myTable");
+        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddbstreams://myTable");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
@@ -54,7 +54,7 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
-        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddbstreams://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -68,7 +68,7 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
-        DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+        DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddbstreams://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
