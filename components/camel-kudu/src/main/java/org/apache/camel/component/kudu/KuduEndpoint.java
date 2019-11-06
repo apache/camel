@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "3.0",
     scheme = "kudu",
-    title = "Apache Kudu", syntax = "kudu:host:port/tableName",
+    title = "Kudu", syntax = "kudu:host:port/tableName",
     label = "cloud,database,iot", producerOnly = true)
 public class KuduEndpoint extends DefaultEndpoint {
 
