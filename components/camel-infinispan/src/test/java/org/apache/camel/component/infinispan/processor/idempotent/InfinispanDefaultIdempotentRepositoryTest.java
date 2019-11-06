@@ -17,6 +17,8 @@
 package org.apache.camel.component.infinispan.processor.idempotent;
 
 import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalConfiguration;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.junit.Test;
 
@@ -27,7 +29,8 @@ public class InfinispanDefaultIdempotentRepositoryTest {
 
     @Test
     public void createsRepositoryUsingInternalCache() throws Exception {
-        DefaultCacheManager basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
+        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").build();
+        DefaultCacheManager basicCacheContainer = new DefaultCacheManager(global, new ConfigurationBuilder().build());
         InfinispanIdempotentRepository repository = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, "default");
 
         assertFalse(repository.contains("One"));
