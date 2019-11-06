@@ -1636,6 +1636,12 @@
     <bundle dependency='true'>mvn:io.fabric8/openshift-client/${kubernetes-client-version}/jar/bundle</bundle>
     <bundle>mvn:org.apache.camel/camel-kubernetes/${project.version}</bundle>
   </feature>
+  <feature name='camel-kudu' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.apache.kudu/kudu-client/${kudu-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.yetus/audience-annotations/${yetus-audience-annotations-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-kudu/${project.version}</bundle>
+  </feature>
   <feature name='camel-kura' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature>scr</feature>

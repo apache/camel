@@ -232,6 +232,7 @@
         <module>camel-jt400</module>
         <module>camel-kafka</module>
         <module>camel-kubernetes</module>
+        <module>camel-kudu</module>
         <module>camel-kura</module>
         <module>camel-ldap</module>
         <module>camel-ldif</module>
