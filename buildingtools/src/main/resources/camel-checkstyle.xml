@@ -350,7 +350,7 @@ lengths, if/try depths, etc...
         </module>
         -->
         <module name="TodoComment">
-            <property name="format" value="WARNING"/>
+            <property name="format" value="(TODO)|(FIXME)"/>
         </module>
 
         <module name="UpperEll"/>
