@@ -27,13 +27,13 @@ import org.junit.Test;
 
 public class SlackProducerTest extends CamelTestSupport {
 
+    protected static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
+
     @EndpointInject(uri = "mock:errors")
     MockEndpoint errors;
 
     @EndpointInject(uri = "direct:test")
     DirectEndpoint test;
-    
-    protected static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSlackMessage() throws Exception {
