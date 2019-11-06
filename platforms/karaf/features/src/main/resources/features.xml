@@ -1509,7 +1509,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jgroups-raft/${project.version}</bundle>
-    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-raft-jgroups-version}</bundle>
+    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
     <bundle dependency='true'>mvn:org.jgroups/jgroups-raft/${jgroups-raft-version}</bundle>
     <bundle dependency='true'>mvn:org.fusesource.leveldbjni/leveldbjni-all/${jgroups-raft-leveldbjni-version}</bundle>
     <bundle dependency='true'>mvn:org.mapdb/mapdb/${jgroups-raft-mapdb-version}</bundle>
