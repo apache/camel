@@ -33,7 +33,7 @@ public interface KuduEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Apache Kudu component.
+     * Builder for endpoint for the Kudu component.
      */
     public interface KuduEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedKuduEndpointBuilder advanced() {
@@ -104,7 +104,7 @@ public interface KuduEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Apache Kudu component.
+     * Advanced builder for endpoint for the Kudu component.
      */
     public interface AdvancedKuduEndpointBuilder
             extends
@@ -174,7 +174,7 @@ public interface KuduEndpointBuilderFactory {
         SCAN;
     }
     /**
-     * Apache Kudu (camel-kudu)
+     * Kudu (camel-kudu)
      * Represents a Kudu endpoint. A kudu endpoint allows you to interact with
      * Apache Kudu, a free and open source column-oriented data store of the
      * Apache Hadoop ecosystem.
