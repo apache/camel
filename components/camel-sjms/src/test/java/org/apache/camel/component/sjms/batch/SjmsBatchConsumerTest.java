@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.util.toolbox.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -408,7 +409,8 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         context.addRoutes(new TransactedSendHarness(queueName));
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                ((SimpleRegistry)context.getRegistry()).put("groupedStrategy", AggregationStrategies.groupedBody());
+                SimpleRegistry registry = (SimpleRegistry)((PropertyPlaceholderDelegateRegistry)context.getRegistry()).getRegistry();
+                registry.put("groupedStrategy", AggregationStrategies.groupedBody());
 
                 fromF("sjms-batch:%s?completionSize=%s&aggregationStrategy=#groupedStrategy",
                         queueName, completionSize).routeId("batchConsumer").startupOrder(10)
