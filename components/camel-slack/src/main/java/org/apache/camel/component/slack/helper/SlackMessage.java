@@ -53,14 +53,14 @@ public class SlackMessage {
     }
 
     public String getUser() {
-		return user;
-	}
+        return user;
+    }
 
-	public void setUser(String user) {
-		this.user = user;
-	}
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-	public String getIconUrl() {
+    public String getIconUrl() {
         return iconUrl;
     }
 
@@ -231,18 +231,23 @@ public class SlackMessage {
             public String getTitle() {
                 return title;
             }
+
             public void setTitle(String title) {
                 this.title = title;
             }
+
             public String getValue() {
                 return value;
             }
+
             public void setValue(String value) {
                 this.value = value;
             }
+
             public Boolean isShortValue() {
                 return shortValue;
             }
+
             public void setShortValue(Boolean shortValue) {
                 this.shortValue = shortValue;
             }
@@ -250,4 +255,3 @@ public class SlackMessage {
     }
 
 }
-
