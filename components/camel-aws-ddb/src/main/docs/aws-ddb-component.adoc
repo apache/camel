@@ -103,7 +103,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 18 options, which are listed below.
+The component supports 19 options, which are listed below.
 
 
 
@@ -120,6 +120,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.aws-ddb.configuration.operation* | What operation to perform |  | DdbOperations
 | *camel.component.aws-ddb.configuration.proxy-host* | To define a proxy host when instantiating the DDB client |  | String
 | *camel.component.aws-ddb.configuration.proxy-port* | To define a proxy port when instantiating the DDB client. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | Integer
+| *camel.component.aws-ddb.configuration.proxy-protocol* | To define a proxy protocol when instantiating the DDB client |  | Protocol
 | *camel.component.aws-ddb.configuration.read-capacity* | The provisioned throughput to reserve for reading resources from your table |  | Long
 | *camel.component.aws-ddb.configuration.region* | The region in which DDB client needs to work |  | String
 | *camel.component.aws-ddb.configuration.secret-key* | Amazon AWS Secret Key |  | String

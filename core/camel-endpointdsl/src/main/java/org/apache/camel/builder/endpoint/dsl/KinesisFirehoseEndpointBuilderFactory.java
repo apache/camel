@@ -109,7 +109,8 @@ public interface KinesisFirehoseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis Firehose
+         * client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -120,7 +121,8 @@ public interface KinesisFirehoseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis Firehose
+         * client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -131,7 +133,8 @@ public interface KinesisFirehoseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis Firehose
+         * client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -140,6 +143,33 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          */
         default KinesisFirehoseEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default KinesisFirehoseEndpointBuilder proxyProtocol(
+                Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default KinesisFirehoseEndpointBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -241,6 +271,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
     /**
      * AWS Kinesis Firehose (camel-aws-kinesis)

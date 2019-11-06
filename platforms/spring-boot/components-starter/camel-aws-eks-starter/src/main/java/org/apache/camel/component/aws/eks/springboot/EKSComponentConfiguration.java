@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.eks.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.eks.AmazonEKS;
 import org.apache.camel.component.aws.eks.EKSOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -120,6 +121,10 @@ public class EKSComponentConfiguration
          */
         private EKSOperations operation;
         /**
+         * To define a proxy protocol when instantiating the EKS client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the EKS client
          */
         private String proxyHost;
@@ -165,6 +170,14 @@ public class EKSComponentConfiguration
 
         public void setOperation(EKSOperations operation) {
             this.operation = operation;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

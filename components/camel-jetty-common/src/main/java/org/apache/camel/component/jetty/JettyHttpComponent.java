@@ -134,6 +134,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected boolean useXForwardedForHeader;
     private Integer proxyPort;
     private boolean sendServerVersion = true;
+    private QueuedThreadPool defaultQueuedThreadPool;
 
     public JettyHttpComponent() {
     }
@@ -479,6 +480,15 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     if (mbContainer != null) {
                         this.removeServerMBean(connectorRef.server);
                         //mbContainer.removeBean(connectorRef.connector);
+                    }
+                    if (defaultQueuedThreadPool != null) {
+                        try {
+                            defaultQueuedThreadPool.stop();
+                        } catch (Throwable t) {
+                            defaultQueuedThreadPool.destroy();
+                        } finally {
+                            defaultQueuedThreadPool = null;
+                        }
                     }
                 }
             }
@@ -1305,20 +1315,21 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Server createServer() {
         Server s = null;
         ThreadPool tp = threadPool;
-        QueuedThreadPool qtp = null;
+        defaultQueuedThreadPool = null;
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
                 throw new IllegalArgumentException("You cannot configure both minThreads/maxThreads and a custom threadPool on JettyHttpComponent: " + this);
             }
-            qtp = new QueuedThreadPool();
+            defaultQueuedThreadPool = new QueuedThreadPool();
             if (minThreads != null) {
-                qtp.setMinThreads(minThreads.intValue());
+                defaultQueuedThreadPool.setMinThreads(minThreads.intValue());
             }
             if (maxThreads != null) {
-                qtp.setMaxThreads(maxThreads.intValue());
+                defaultQueuedThreadPool.setMaxThreads(maxThreads.intValue());
             }
-            tp = qtp;
+            tp = defaultQueuedThreadPool;
+
         }
         if (tp != null) {
             try {
@@ -1339,13 +1350,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (s == null) {
             s = new Server();
         }
-        if (qtp != null) {
+        if (defaultQueuedThreadPool != null) {
             // let the thread names indicate they are from the server
-            qtp.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(s) + ")");
+            defaultQueuedThreadPool.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(s) + ")");
             try {
-                qtp.start();
+                defaultQueuedThreadPool.start();
             } catch (Exception e) {
-                throw new RuntimeCamelException("Error starting JettyServer thread pool: " + qtp, e);
+                throw new RuntimeCamelException("Error starting JettyServer thread pool: " + defaultQueuedThreadPool, e);
             }
         }
         ContextHandlerCollection collection = new ContextHandlerCollection();

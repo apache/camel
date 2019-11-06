@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQS;
 
@@ -36,14 +37,12 @@ public class SnsConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
-
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
-    private Protocol proxyProtocol;
-    @UriParam(label = "proxy")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
+    @UriParam
     private String proxyHost;
-    @UriParam(label = "proxy")
+    @UriParam
     private Integer proxyPort;
-
     @UriParam
     private AmazonSQS amazonSQSClient;
     @UriParam
@@ -58,13 +57,13 @@ public class SnsConfiguration implements Cloneable {
     private boolean autoCreateTopic = true;
 
     // Producer only properties
-    @UriParam(label = "producer")
+    @UriParam
     private String subject;
-    @UriParam(label = "producer")
+    @UriParam
     private String policy;
-    @UriParam(label = "producer")
+    @UriParam
     private String messageStructure;
-    @UriParam(label = "producer")
+    @UriParam
     private String region;
 
     public String getSubject() {
@@ -154,6 +153,17 @@ public class SnsConfiguration implements Cloneable {
      */
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the SNS client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {

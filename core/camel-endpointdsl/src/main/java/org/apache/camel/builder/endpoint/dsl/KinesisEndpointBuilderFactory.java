@@ -74,7 +74,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -85,7 +85,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -96,7 +96,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -105,6 +105,31 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointConsumerBuilder proxyProtocol(
+                Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointConsumerBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -864,7 +889,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -875,7 +900,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -886,7 +911,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -895,6 +920,31 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointProducerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointProducerBuilder proxyProtocol(
+                Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointProducerBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -1074,7 +1124,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1085,7 +1135,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -1096,7 +1146,7 @@ public interface KinesisEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1105,6 +1155,29 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -1204,6 +1277,14 @@ public interface KinesisEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
 
     /**

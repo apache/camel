@@ -172,6 +172,7 @@
     <module>camel-debezium-mongodb-starter</module>
     <module>camel-debezium-mysql-starter</module>
     <module>camel-debezium-postgres-starter</module>
+    <module>camel-debezium-sqlserver-starter</module>
     <module>camel-digitalocean-starter</module>
     <module>camel-direct-starter</module>
     <module>camel-directvm-starter</module>
@@ -260,6 +261,7 @@
     <module>camel-jt400-starter</module>
     <module>camel-kafka-starter</module>
     <module>camel-kubernetes-starter</module>
+    <module>camel-kudu-starter</module>
     <module>camel-kura-starter</module>
     <module>camel-language-starter</module>
     <module>camel-ldap-starter</module>

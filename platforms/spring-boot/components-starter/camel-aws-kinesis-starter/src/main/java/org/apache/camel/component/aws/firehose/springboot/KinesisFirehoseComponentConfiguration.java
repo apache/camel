@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.firehose.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -128,11 +129,16 @@ public class KinesisFirehoseComponentConfiguration
          */
         private String region;
         /**
-         * To define a proxy host when instantiating the DDBStreams client
+         * To define a proxy protocol when instantiating the Kinesis Firehose
+         * client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
+         * To define a proxy host when instantiating the Kinesis Firehose client
          */
         private String proxyHost;
         /**
-         * To define a proxy port when instantiating the DDBStreams client
+         * To define a proxy port when instantiating the Kinesis Firehose client
          */
         private Integer proxyPort;
 
@@ -175,6 +181,14 @@ public class KinesisFirehoseComponentConfiguration
 
         public void setRegion(String region) {
             this.region = region;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

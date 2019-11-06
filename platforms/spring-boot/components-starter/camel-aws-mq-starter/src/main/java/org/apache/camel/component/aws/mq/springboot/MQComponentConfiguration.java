@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.mq.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.mq.AmazonMQ;
 import org.apache.camel.component.aws.mq.MQOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -121,6 +122,10 @@ public class MQComponentConfiguration
          */
         private MQOperations operation;
         /**
+         * To define a proxy protocol when instantiating the MQ client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the MQ client
          */
         private String proxyHost;
@@ -166,6 +171,14 @@ public class MQComponentConfiguration
 
         public void setOperation(MQOperations operation) {
             this.operation = operation;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

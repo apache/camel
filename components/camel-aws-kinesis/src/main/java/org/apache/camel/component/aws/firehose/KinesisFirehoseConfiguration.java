@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.firehose;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,12 +40,11 @@ public class KinesisFirehoseConfiguration implements Cloneable {
     private String region;
     @UriParam(description = "Amazon Kinesis Firehose client to use for all requests for this endpoint")
     private AmazonKinesisFirehose amazonKinesisFirehoseClient;
-	
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
-    private Protocol proxyProtocol;
-    @UriParam(label = "proxy", description = "To define a proxy host when instantiating the DDBStreams client")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the Kinesis Firehose client")
+    private Protocol proxyProtocol = Protocol.HTTPS;
+    @UriParam(description = "To define a proxy host when instantiating the Kinesis Firehose client")
     private String proxyHost;
-    @UriParam(label = "proxy", description = "To define a proxy port when instantiating the DDBStreams client")
+    @UriParam(description = "To define a proxy port when instantiating the Kinesis Firehose client")
     private Integer proxyPort;
     
     public void setAmazonKinesisFirehoseClient(AmazonKinesisFirehose client) {
@@ -86,6 +86,14 @@ public class KinesisFirehoseConfiguration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
+
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
+    }    
 
     public String getProxyHost() {
         return proxyHost;

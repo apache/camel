@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.ecs.springboot;
 
 import javax.annotation.Generated;
+import com.amazonaws.Protocol;
 import com.amazonaws.services.ecs.AmazonECS;
 import org.apache.camel.component.aws.ecs.ECSOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -120,6 +121,10 @@ public class ECSComponentConfiguration
          */
         private ECSOperations operation;
         /**
+         * To define a proxy protocol when instantiating the ECS client
+         */
+        private Protocol proxyProtocol = Protocol.HTTPS;
+        /**
          * To define a proxy host when instantiating the ECS client
          */
         private String proxyHost;
@@ -165,6 +170,14 @@ public class ECSComponentConfiguration
 
         public void setOperation(ECSOperations operation) {
             this.operation = operation;
+        }
+
+        public Protocol getProxyProtocol() {
+            return proxyProtocol;
+        }
+
+        public void setProxyProtocol(Protocol proxyProtocol) {
+            this.proxyProtocol = proxyProtocol;
         }
 
         public String getProxyHost() {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.lambda;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.lambda.AWSLambda;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,14 +40,12 @@ public class LambdaConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(label = "producer")
     private String region;
-
-    @UriParam(label = "producer,proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
-    private Protocol proxyProtocol;
-    @UriParam(label = "producer,proxy")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam(label = "producer,proxy")
+    @UriParam(label = "proxy")
     private Integer proxyPort;
-
     @UriParam(label = "advanced")
     private AWSLambda awsLambdaClient;
 
@@ -115,6 +114,17 @@ public class LambdaConfiguration implements Cloneable {
      */
     public void setOperation(LambdaOperations operation) {
         this.operation = operation;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the Lambda client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {
