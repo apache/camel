@@ -553,7 +553,6 @@
         <saxon-bundle-version>9.9.1-5_1</saxon-bundle-version>
         <saxon-version>9.9.1-5</saxon-version>
         <scala-version>2.11.7</scala-version>
-        <scala-maven-plugin-version>3.2.2</scala-maven-plugin-version>
         <scribe-version>1.3.7</scribe-version>
         <scribe-bundle-version>1.3.7_1</scribe-bundle-version>
         <serp-bundle-version>1.14.1_1</serp-bundle-version>
@@ -5288,24 +5287,6 @@
                             <manifestFile>${camel.osgi.manifest}</manifestFile>
                         </archive>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>net.alchim31.maven</groupId>
-                    <artifactId>scala-maven-plugin</artifactId>
-                    <version>${scala-maven-plugin-version}</version>
-                    <configuration>
-                        <args>
-                            <arg>-deprecation</arg>
-                        </args>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>compile</goal>
-                                <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.cxf</groupId>
