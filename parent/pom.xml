@@ -373,8 +373,6 @@
         <johnzon-version>1.2.1</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <josql-bundle-version>1.5_5</josql-bundle-version>
-        <!-- Upgrade to 1.7.26 causes stability issues. See CAMEL-10477 -->
-        <jruby-version>1.7.18</jruby-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jsmpp-version>2.3.7</jsmpp-version>
         <jsch-version>0.1.55</jsch-version>
@@ -5067,16 +5065,6 @@
                 <groupId>com.google.code.scriptengines</groupId>
                 <artifactId>scriptengines-jruby</artifactId>
                 <version>${scriptengines-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby</artifactId>
-                <version>${jruby-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby-complete</artifactId>
-                <version>${jruby-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.python</groupId>
