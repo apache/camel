@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 303 in 241 JAR artifacts (0 deprecated)
+Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -20,7 +20,7 @@ Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 
 | xref:amqp-component.adoc[AMQP] (camel-amqp) | 1.2 | Messaging with AMQP protocol using Apache QPid Client.
 
-| xref:kudu-component.adoc[Apache Kudu] (camel-kudu) | 2.25 | Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+| xref:kudu-component.adoc[Apache Kudu] (camel-kudu) | 3.0 | Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
 | xref:apns-component.adoc[APNS] (camel-apns) | 2.8 | For sending notifications to Apple iOS devices.
 
