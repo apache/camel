@@ -20,8 +20,6 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:amqp-component.adoc[AMQP] (camel-amqp) | 1.2 | Messaging with AMQP protocol using Apache QPid Client.
 
-| xref:kudu-component.adoc[Apache Kudu] (camel-kudu) | 3.0 | Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
-
 | xref:apns-component.adoc[APNS] (camel-apns) | 2.8 | For sending notifications to Apple iOS devices.
 
 | xref:as2-component.adoc[AS2] (camel-as2) | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
@@ -371,6 +369,8 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 | xref:kubernetes-service-accounts-component.adoc[Kubernetes Service Account] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
 
 | xref:kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
+
+| xref:kudu-component.adoc[Kudu] (camel-kudu) | 3.0 | Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
 | xref:language-component.adoc[Language] (camel-language) | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
 

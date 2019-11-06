@@ -222,7 +222,7 @@
 * xref:kubernetes.adoc[Kubernetes Components]
 * xref:openshift-build-configs-component.adoc[Openshift Build Config Component]
 * xref:openshift-builds-component.adoc[Openshift Builds Component]
-* xref:kudu-component.adoc[Apache Kudu Component]
+* xref:kudu-component.adoc[Kudu Component]
 * xref:kura.adoc[Eclipse Kura component]
 * xref:language-component.adoc[Language Component]
 * xref:ldap-component.adoc[LDAP Component]

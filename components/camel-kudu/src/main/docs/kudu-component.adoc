@@ -1,6 +1,8 @@
+[[kudu-component]]
 = Kudu Component
 
 *Since Camel 3.0*
+
 *Since Camel 3.0*
 
 

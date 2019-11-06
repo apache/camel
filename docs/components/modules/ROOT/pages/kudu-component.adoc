@@ -1,8 +1,11 @@
 [[kudu-component]]
-= Apache Kudu Component
+= Kudu Component
 :page-source: components/camel-kudu/src/main/docs/kudu-component.adoc
 
 *Since Camel 3.0*
+
+*Since Camel 3.0*
+
 
 The Kudu component supports storing and retrieving data from/to https://kudu.apache.org/[Apache Kudu], a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
@@ -12,7 +15,7 @@ You must have a valid Kudu instance running. More information are available at h
 
 
 // component options: START
-The Apache Kudu component supports 1 options, which are listed below.
+The Kudu component supports 1 options, which are listed below.
 
 
 
@@ -24,7 +27,7 @@ The Apache Kudu component supports 1 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The Apache Kudu endpoint is configured using URI syntax:
+The Kudu endpoint is configured using URI syntax:
 
 ----
 kudu:host:port/tableName
