@@ -89,7 +89,7 @@ public final class Scanner implements Iterator<String>, Closeable {
     
     public Scanner(String source, Pattern pattern) {
         this(new StringReader(Objects.requireNonNull(source, "source")), pattern);
-  }
+    }
 
     public Scanner(ReadableByteChannel source, String charsetName, String pattern) {
         this(Channels.newReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName), -1), cachePattern(pattern));
