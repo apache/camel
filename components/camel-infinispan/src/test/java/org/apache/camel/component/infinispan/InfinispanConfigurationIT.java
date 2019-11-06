@@ -17,23 +17,35 @@
 package org.apache.camel.component.infinispan;
 
 import org.infinispan.client.hotrod.RemoteCache;
+import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalConfiguration;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.jgroups.util.UUID;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class InfinispanConfigurationTestIT {
+public class InfinispanConfigurationIT {
+
+    @Before
+    public void setupCache() {
+        RemoteCacheManager manager = new RemoteCacheManager();
+        RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("misc_cache", (String) null);
+        assertNotNull(cache);
+    }
 
     @Test
     public void embeddedCacheWithFlagsTest() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
         configuration.setHosts("localhost");
-        configuration.setCacheContainer(new DefaultCacheManager(new ConfigurationBuilder().build(), true));
+        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").build();
+        configuration.setCacheContainer(new DefaultCacheManager(global, new ConfigurationBuilder().build(), true));
 
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
@@ -62,7 +74,6 @@ public class InfinispanConfigurationTestIT {
         String key = UUID.randomUUID().toString();
         assertNull(remoteCache.put(key, "val1"));
         assertNull(remoteCache.put(key, "val2"));
-
         manager.stop();
     }
 

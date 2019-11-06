@@ -22,6 +22,7 @@ import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.commons.time.TimeService;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.test.TestingUtil;
 import org.infinispan.util.ControlledTimeService;
@@ -40,7 +41,7 @@ public class InfinispanTestSupport extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
+        basicCacheContainer = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(), new ConfigurationBuilder().build());
         basicCacheContainer.start();
         super.setUp();
     }
@@ -60,7 +61,7 @@ public class InfinispanTestSupport extends CamelTestSupport {
     }
 
     protected void injectTimeService() {
-        ts = new ControlledTimeService(0);
+        ts = new ControlledTimeService();
         TestingUtil.replaceComponent((DefaultCacheManager) basicCacheContainer, TimeService.class, ts, true);
     }
 }

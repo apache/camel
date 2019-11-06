@@ -27,6 +27,7 @@ import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.test.MultipleCacheManagersTest;
+import org.infinispan.test.TestDataSCI;
 import org.infinispan.test.TestingUtil;
 import org.infinispan.transaction.TransactionMode;
 import org.infinispan.util.ControlledTimeService;
@@ -74,9 +75,9 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
                 builderUsed.clustering().hash().numOwners(1);
             }
             if (cacheName != null) {
-                createClusteredCaches(clusterSize, cacheName, builderUsed);
+                createClusteredCaches(clusterSize, cacheName, TestDataSCI.INSTANCE, builderUsed);
             } else {
-                createClusteredCaches(clusterSize, builderUsed);
+                createClusteredCaches(clusterSize, TestDataSCI.INSTANCE, builderUsed);
             }
         }
     }
@@ -127,9 +128,9 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
     }
 
     protected void injectTimeService() {
-        ts0 = new ControlledTimeService(0);
+        ts0 = new ControlledTimeService();
         TestingUtil.replaceComponent(clusteredCacheContainers.get(0), TimeService.class, ts0, true);
-        ts1 = new ControlledTimeService(0);
+        ts1 = new ControlledTimeService();
         TestingUtil.replaceComponent(clusteredCacheContainers.get(1), TimeService.class, ts1, true);
     }
 }
