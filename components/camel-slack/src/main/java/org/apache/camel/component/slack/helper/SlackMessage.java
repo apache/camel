@@ -23,6 +23,7 @@ public class SlackMessage {
     private String text;
     private String channel;
     private String username;
+    private String user;
     private String iconUrl;
     private String iconEmoji;
     private List<Attachment> attachments;
@@ -51,7 +52,15 @@ public class SlackMessage {
         this.username = username;
     }
 
-    public String getIconUrl() {
+    public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getIconUrl() {
         return iconUrl;
     }
 
