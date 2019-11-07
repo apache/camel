@@ -1425,6 +1425,11 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-parser/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:com.github.javaparser/javaparser-core/3.13.10</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/kie-pmml/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
@@ -1964,6 +1969,11 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-parser/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:com.github.javaparser/javaparser-core/3.13.10</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${drools-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-xjc/${jaxb-bundle-version}</bundle>
