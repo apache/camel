@@ -199,7 +199,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
             // use a temporary queue to gather the reply message
             synchronized (refreshWanted) {
-                if (queue == null || refreshWanted.compareAndSet(true, false)) {
+                if (queue == null || refreshWanted.get()) {
+                    refreshWanted.set(false);
                     queue = session.createTemporaryQueue();
                     setReplyTo(queue);
                     if (log.isDebugEnabled()) {
@@ -218,8 +219,11 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         public void destinationReady() throws InterruptedException {
             if (refreshWanted.get()) {
                 synchronized (refreshWanted) {
-                    log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
-                    refreshWanted.wait();
+                    //check if requestWanted is still true
+                    if (refreshWanted.get()) {
+                        log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
+                        refreshWanted.wait();
+                    }
                 }
             }
         }
