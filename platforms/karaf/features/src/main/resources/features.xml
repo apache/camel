@@ -563,7 +563,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${azure-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${azure-guava-osgi-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.azure-storage/${azure-storage-java-sdk-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-azure/${project.version}</bundle>
   </feature>
@@ -1195,7 +1195,7 @@
     <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-tcnative-boringssl-static/${grpc-netty-tcnative-boringssl-static-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${grpc-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${grpc-guava-osgi-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.errorprone/error_prone_annotations/${grpc-errorprone-version}</bundle>
     <!-- Third party dependencies -->
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
@@ -1356,7 +1356,7 @@
   </feature>
   <feature name='camel-influxdb' version='${project.version}' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.influxdb-java/${influx-java-driver-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${influx-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${influx-guava-osgi-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.retrofit/${squareup-retrofit2-bundle-version}</bundle>
@@ -1701,7 +1701,7 @@
   </feature>
   <feature name='camel-leveldb-java' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${leveldb-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${leveldb-guava-osgi-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.iq80.leveldb/leveldb-api/${leveldb-api-version}$Bundle-Version=${leveldb-api-version}&amp;Export-Package=*;-noimport:=true;version="${leveldb-api-version}"</bundle>
     <bundle dependency='true'>wrap:mvn:org.iq80.leveldb/leveldb/${leveldb-version}$Bundle-Version=${leveldb-version}&amp;Export-Package=*;-noimport:=true;version="${leveldb-version}"</bundle>
     <bundle dependency='true'>mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
@@ -1826,7 +1826,7 @@
   <feature name='camel-mustache' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mustache-compiler/${mustache-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${mustache-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${mustache-guava-osgi-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mustache/${project.version}</bundle>
   </feature>
   <feature name='camel-mvel' version='${project.version}' start-level='50'>
@@ -2056,7 +2056,7 @@
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java-util/${protobuf-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${protobuf-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${protobuf-guava-osgi-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-protobuf/${project.version}</bundle>
   </feature>
@@ -2122,7 +2122,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jsonSchema/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-java-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-core/${swagger-java-version}</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-annotations/${swagger-java-version}</bundle>
@@ -2454,7 +2454,7 @@
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-java-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-core/${swagger-java-version}</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-annotations/${swagger-java-version}</bundle>
