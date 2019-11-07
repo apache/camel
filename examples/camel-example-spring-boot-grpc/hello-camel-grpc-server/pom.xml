@@ -32,8 +32,6 @@
     <description>An example showing a simple gRPC server</description>
 
     <properties>
-        <!-- gRPC requires strong own of the Google Guava version -->
-        <google-guava-version>${grpc-guava-version}</google-guava-version>
     </properties>
 
     <dependencies>

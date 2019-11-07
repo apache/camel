@@ -49,7 +49,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${jira-guava-version}</version>
+            <version>${google-guava-version}</version>
         </dependency>
 
         <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->

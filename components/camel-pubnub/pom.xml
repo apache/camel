@@ -48,9 +48,14 @@
             <version>${pubnub-version}</version>
         </dependency>
         <dependency>
-        	<groupId>com.squareup.okhttp3</groupId>
-        	<artifactId>okhttp</artifactId>
-        	<version>${squareup-okhttp-pubnub-version}</version>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${squareup-okhttp-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>${squareup-okio-version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
