@@ -327,6 +327,16 @@ also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
 
+=== XML Security DataFormat
+
+The default encryption key for the XML Security DataFormat has been removed,
+so it is now mandatory to supply the key String/bytes if you are using
+symmetric encryption. This means that some of the methods are removed that
+used the XMLSecurityDataFormat without specifying a key.
+
+In addition, the default symmetric encryption algorithm has changed from
+Triple DES to AES-256 in GCM mode.
+
 === Zip and GZip DataFormat
 
 The zip and gzip dataformat has been renamed to zipdeflater and gzipdeflater as they are for deflating using the zip/gzip compression; and not for working with zip/gzip files. Instead use camel-zipfile dataformat. Also these dataformats has been moved out of `camel-core` into `camel-zip-deflater` JAR. The XML and Java DSL has also been modified so you should migrate there too to use their new names. And if you use these data formats you need to add the `camel-zip-deflater` as dependency as they are no longer included as transitive dependency with `camel-core`.
