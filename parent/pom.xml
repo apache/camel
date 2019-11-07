@@ -314,6 +314,7 @@
         <jnats-version>2.6.6</jnats-version>
         <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
+        <javaparser-version>3.13.10</javaparser-version>
         <javapoet-version>1.11.1</javapoet-version>
         <javassist-version>3.20.0-GA</javassist-version>
         <javax-el3-version>3.0.0</javax-el3-version>
