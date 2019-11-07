@@ -23,7 +23,7 @@ import org.apache.camel.spi.DataFormat;
 
 public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityDataFormat> {
 
-    private static final String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
+    private static final String DEFAULT_ENCRYPTION_ALG = "http://www.w3.org/2009/xmlenc11#aes256-gcm";
 
     public XMLSecurityDataFormatReifier(DataFormatDefinition definition) {
         super((XMLSecurityDataFormat)definition);
@@ -40,19 +40,15 @@ public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityD
         boolean isSecureTagContents = definition.getSecureTagContents() != null && definition.getSecureTagContents();
         setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents);
 
-        if (definition.getPassPhrase() != null || definition.getPassPhraseByte() != null) {
-            if (definition.getPassPhraseByte() != null) {
-                setProperty(camelContext, dataFormat, "passPhrase", definition.getPassPhraseByte());
-            } else {
-                setProperty(camelContext, dataFormat, "passPhrase", definition.getPassPhrase().getBytes());
-            }
-        } else {
-            setProperty(camelContext, dataFormat, "passPhrase", "Just another 24 Byte key".getBytes());
+        if (definition.getPassPhrase() != null) {
+            setProperty(camelContext, dataFormat, "passPhrase", definition.getPassPhrase().getBytes());
+        } else if (definition.getPassPhraseByte() != null) {
+            setProperty(camelContext, dataFormat, "passPhrase", definition.getPassPhraseByte());
         }
         if (definition.getXmlCipherAlgorithm() != null) {
             setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", definition.getXmlCipherAlgorithm());
         } else {
-            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", TRIPLEDES);
+            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", DEFAULT_ENCRYPTION_ALG);
         }
         if (definition.getKeyCipherAlgorithm() != null) {
             setProperty(camelContext, dataFormat, "keyCipherAlgorithm", definition.getKeyCipherAlgorithm());
