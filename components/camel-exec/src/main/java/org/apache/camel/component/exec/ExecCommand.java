@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.camel.LoggingLevel;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -62,10 +63,15 @@ public class ExecCommand implements Serializable {
      */
     private final InputStream input;
 
+    /**
+     * Log level for commands during execution
+     */
+    private final LoggingLevel commandLogLevel;
+
     private final boolean useStderrOnEmptyStdout;
 
     public ExecCommand(String executable, List<String> args, String workingDir, Long timeout,
-                       InputStream input, File outFile, boolean useStderrOnEmptyStdout) {
+                       InputStream input, File outFile, boolean useStderrOnEmptyStdout, LoggingLevel commandLogLevel) {
         notNull(executable, "command executable");
         this.executable = executable;
         this.args = unmodifiableOrEmptyList(args);
@@ -74,6 +80,7 @@ public class ExecCommand implements Serializable {
         this.input = input;
         this.outFile = outFile;
         this.useStderrOnEmptyStdout = useStderrOnEmptyStdout;
+        this.commandLogLevel = commandLogLevel;
     }
 
     public List<String> getArgs() {
@@ -104,12 +111,16 @@ public class ExecCommand implements Serializable {
         return useStderrOnEmptyStdout;
     }
 
+    public LoggingLevel getCommandLogLevel() {
+        return commandLogLevel;
+    }
+
     @Override
     public String toString() {
         String dirToPrint = workingDir == null ? "null" : workingDir;
         String outFileToPrint = outFile == null ? "null" : outFile.getPath();
         return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout + ", outFile="
-                + outFileToPrint + ", workingDir=" + dirToPrint + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
+                + outFileToPrint + ", workingDir=" + dirToPrint + ", commandLogLevel=" + commandLogLevel + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
     }
 
     private <T> List<T> unmodifiableOrEmptyList(List<T> list) {
