@@ -419,7 +419,7 @@ public class RestProducer extends DefaultAsyncProducer {
             query = URISupport.createQueryString(params);
             // remove any dangling & caused by the absence of optional parameters
             while (query.endsWith("&")) {
-              query = query.substring(0, query.length() - 1);
+                query = query.substring(0, query.length() - 1);
             }
         }
 
