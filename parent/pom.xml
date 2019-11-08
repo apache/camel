@@ -599,7 +599,6 @@
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.2.1.RELEASE</spring5-version>
         <spring-security-version>5.1.6.RELEASE</spring-security-version>
-        <spring-security-bundle-version>5.1.6.RELEASE_1</spring-security-bundle-version>
         <spring-ws-version>3.0.7.RELEASE</spring-ws-version>
         <spring-ws-bundle-version>3.0.7.RELEASE_1</spring-ws-bundle-version>
         <spring-xml-bundle-version>3.0.7.RELEASE_1</spring-xml-bundle-version>
