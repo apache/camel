@@ -195,9 +195,8 @@ filename2.txt   2897651254
 === *findOne*
 
 Finds a file in the GridFS system and sets the body to an InputStream of
-the content.   Also provides the metadata has headers.  It uses
-Exchange.FILE_NAME from the incoming headers to determine the file to
-find.
+the content. Also provides the metadata has headers. It uses
+Exchange.FILE_NAME from the incoming headers to determine the file to find.
 
 [source,java]
 -------------------------------------------------------------------------------------------------
@@ -236,14 +235,3 @@ headers.put(Exchange.FILE_NAME, "filename.txt");
 template.requestBodyAndHeaders("direct:remove", "", headers);
 ------------------------------------------------------------------------
 
-== GridFS Consumer
-
-See also
-
-* http://www.mongodb.org/[MongoDB website]
-* http://en.wikipedia.org/wiki/NoSQL[NoSQL Wikipedia article]
-* http://api.mongodb.org/java/current/[MongoDB Java driver API docs -
-current version]
-*
-http://svn.apache.org/viewvc/camel/trunk/components/camel-mongodb/src/test/[Unit
-tests] for more examples of usage

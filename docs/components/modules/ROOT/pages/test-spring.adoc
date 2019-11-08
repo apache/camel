@@ -92,51 +92,49 @@ You are responsible for the instantiation of the Spring context in the method im
 
 In this approach, your test classes directly inherit from the Spring Test abstract test classes or use the JUnit 4.x test runner provided in Spring Test.  This approach supports dependency injection into your test class and the full suite of Spring Test annotations. However, it does not support the features provided by the `CamelSpringTestSupport` classes.
 
-=== Plain Spring Test using JUnit 3.x with XML Config Example
+=== Plain Spring Test using JUnit 4.x with XML Config Example
 
-Here is a simple unit test using JUnit 3.x support from Spring Test using http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[XML Config].
+Here is a simple unit test using JUnit 4.x support from Spring Test:
 [source,java]
 ----
-// tag::example[]
 @ContextConfiguration
 public class FilterTest extends SpringRunWithTestSupport {
- 
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
- 
+
     @Produce("direct:start")
     protected ProducerTemplate template;
- 
+
     @DirtiesContext
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
- 
+
         resultEndpoint.expectedBodiesReceived(expectedBody);
- 
+
         template.sendBodyAndHeader(expectedBody, "foo", "bar");
- 
+
         resultEndpoint.assertIsSatisfied();
     }
- 
+
     @DirtiesContext
     @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
- 
+
         template.sendBodyAndHeader("<notMatched/>", "foo", "notMatchedHeaderValue");
- 
+
         resultEndpoint.assertIsSatisfied();
     }
 }
-// end::example[]
 ----
 Notice that we use `@DirtiesContext` on the test methods to force Spring Testing to automatically reload the http://camel.apache.org/camelcontext.html[CamelContext] after each test method - this ensures that the tests don't clash with each other, e.g., one test method sending to an endpoint that is then reused in another test method.
 
-Also notice the use of `@ContextConfiguration` to indicate that by default we should look for the file http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[FilterTest-context.xml on the classpath] to configure the test case. The test context looks like:
+Also notice the use of `@ContextConfiguration` to indicate that by default we should look for the file
+`FilterTest-context.xml` to configure the test case. The test context looks like:
 [source,xml]
 ----
-<!-- tag::example[] -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -144,7 +142,7 @@ Also notice the use of `@ContextConfiguration` to indicate that by default we sh
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
- 
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
@@ -154,9 +152,8 @@ Also notice the use of `@ContextConfiguration` to indicate that by default we sh
       </filter>
     </route>
   </camelContext>
- 
+
 </beans>
-<!-- end::example[] -->
 ----
 This test will load a Spring XML configuration file called `FilterTest-context.xml` from the classpath in the same package structure as the `FilterTest` class and initialize it along with any Camel routes we define inside it, then inject the `CamelContext` instance into our test case.
 
@@ -169,10 +166,10 @@ src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml
 
 === Plain Spring Test Using JUnit 4.x With Java Config Example
 
-You can completely avoid using an XML configuration file by using http://camel.apache.org/spring-java-config.html[Spring Java Config].  Here is a unit test using JUnit 4.x support from Spring Test using http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[Java Config].
-[source,text]
+You can completely avoid using an XML configuration file by using Spring Java Config.
+
+[source,java]
 ----
-// tag::example[]
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {FilterTest.ContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class FilterTest extends AbstractJUnit4SpringContextTests {
@@ -217,44 +214,13 @@ public class FilterTest extends AbstractJUnit4SpringContextTests {
         }
     }
 }
-// end::example[]
 ----
 
 This is similar to the XML Config example above except that there is no XML file and instead the nested `ContextConfig` class does all of the configuration; so your entire test case is contained in a single Java class. We currently have to reference by class name this class in the `@ContextConfiguration` which is a bit ugly. Please vote for http://jira.springframework.org/browse/SJC-238[SJC-238] to address this and make Spring Test work more cleanly with Spring JavaConfig.
 
-=== Plain Spring Test Using JUnit 4.0.x Runner With XML Config
+=== Plain Spring Test Using JUnit Runner With XML Config
 
 You can avoid extending Spring classes by using the `SpringJUnit4ClassRunner` provided by Spring Test.  This custom JUnit runner means you are free to choose your own class hierarchy while retaining all the capabilities of Spring Test.
-
-TIP: This is for Spring 4.0.x. If you use Spring 4.1 or newer, then see the next section.
-
-[source,java]
-----
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
-public class MyCamelTest {
-    @Autowired
-    protected CamelContext camelContext;
- 
-    @EndpointInject("mock:foo")
-    protected MockEndpoint foo;
- 
-    @Test
-    @DirtiesContext
-    public void testMocksAreValid() throws Exception {
-        // ...       
- 
-        foo.message(0).header("bar").isEqualTo("ABC");
-        MockEndpoint.assertIsSatisfied(camelContext);
-    }
-}
-----
-
-=== Plain Spring Test Using JUnit 4.1.x Runner With XML Config
-
-You can avoid extending Spring classes by using the `SpringJUnit4ClassRunner` provided by Spring Test.  This custom JUnit runner means you are free to choose your own class hierarchy while retaining all the capabilities of Spring Test.
-
-TIP: From *Spring 4.1*, you need to use the `@BootstrapWith` annotation to configure it to use Camel testing, as shown below.
 
 [source,java]
 ----
@@ -305,7 +271,8 @@ Triggers the auto-mocking of endpoints whose URIs match the provided filter.  Th
 Not enabled a|All endpoints are sniffed and recorded in a mock endpoint.
 
 |org.apache.camel.test.spring.MockEndpointsAndSkip a|Class a|
-Triggers the auto-mocking of endpoints whose URIs match the provided filter.  The default filter is `"*"`, which matches all endpoints.  See http://svn.apache.org/viewvc/camel/trunk/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToMockEndpointStrategy.java?view=markup[org.apache.camel.impl.InterceptSendToMockEndpointStrategy] for more details on the registration of the mock endpoints.  This annotation will also skip sending the message to matched endpoints as well. a|
+Triggers the auto-mocking of endpoints whose URIs match the provided filter.  The default filter is `"*"`, which matches all endpoints.
+This annotation will also skip sending the message to matched endpoints as well. a|
 Not enabled a|All endpoints are sniffed and recorded in a mock endpoint. The original endpoint is not invoked.
 
 |org.apache.camel.test.spring.ProvidesBreakpoint a|Method a|
@@ -364,8 +331,8 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
  
         MockEndpoint.assertIsSatisfied(camelContext);
     }
+}
 ----
-
 
 == Adding More Mock Expectations
 

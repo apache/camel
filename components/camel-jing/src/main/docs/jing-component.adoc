@@ -14,7 +14,7 @@ Syntax]
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
-[source,java]
+[source,xml]
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
@@ -29,7 +29,7 @@ syntax.
 
 == URI format
 
-[source,java]
+[source,text]
 ------------------------------
 jing:someLocalOrRemoteResource
 ------------------------------
@@ -119,11 +119,28 @@ The component supports 2 options, which are listed below.
 
 == Example
 
-The following
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-jing/src/test/resources/org/apache/camel/component/validator/jing/rnc-context.xml[example]
-shows how to configure a route from the endpoint *direct:start* which
+The following example shows how to configure a route from the endpoint *direct:start* which
 then goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given
-http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
-Syntax] schema (which is supplied on the classpath).
+http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact Syntax]
+schema (which is supplied on the classpath).
 
+[source,xml]
+----
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <doTry>
+                <to uri="jing:org/apache/camel/component/validator/jing/schema.rnc?compactSyntax=true"/>
+                <to uri="mock:valid"/>
+                <doCatch>
+                    <exception>org.apache.camel.ValidationException</exception>
+                    <to uri="mock:invalid"/>
+                </doCatch>
+                <doFinally>
+                    <to uri="mock:finally"/>
+                </doFinally>
+            </doTry>
+        </route>
+    </camelContext>
+----
