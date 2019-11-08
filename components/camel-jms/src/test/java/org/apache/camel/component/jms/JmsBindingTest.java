@@ -23,8 +23,9 @@ import java.util.Date;
 
 import org.apache.activemq.command.ActiveMQBlobMessage;
 import org.apache.activemq.command.ActiveMQTextMessage;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +63,7 @@ public class JmsBindingTest {
         ActiveMQTextMessage message = new ActiveMQTextMessage();
         message.setText("test");
         DefaultCamelContext camelContext = new DefaultCamelContext();
-        DefaultExchange exchange = new DefaultExchange(camelContext);
+        Exchange exchange = camelContext.getEndpoint("jms:queue:foo").createExchange();
         exchange.getIn().setBody("test");
         exchange.getIn().setHeader("JMSCorrelationID", null);
         testBindingWithoutEndpoint.appendJmsProperties(message, exchange);
