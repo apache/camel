@@ -332,6 +332,11 @@ is now SHA256withRSA (before it was SHA1WithDSA).
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
 
+=== Shiro Component
+
+The default encryption key for the Shiro component has been removed, so now it
+is mandatory to supply the key/passphrase.
+
 === XML Security Component
 
 The default signature algorithm has changed for the XML Security Component - it
