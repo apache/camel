@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.component.exec.ExecBinding;
 import org.apache.camel.component.exec.ExecCommand;
@@ -53,6 +54,7 @@ public class DefaultExecBinding implements ExecBinding {
         long timeout = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
         String outFilePath = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
         boolean useStderrOnEmptyStdout = getAndRemoveHeader(exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT, endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
+        LoggingLevel commandLogLevel = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_LOG_LEVEL, endpoint.getCommandLogLevel(), LoggingLevel.class);
         InputStream input = exchange.getIn().getBody(InputStream.class);
 
         // If the args is a list of strings already..
@@ -73,7 +75,7 @@ public class DefaultExecBinding implements ExecBinding {
         }
 
         File outFile = outFilePath == null ? null : new File(outFilePath);
-        return new ExecCommand(cmd, argsList, dir, timeout, input, outFile, useStderrOnEmptyStdout);
+        return new ExecCommand(cmd, argsList, dir, timeout, input, outFile, useStderrOnEmptyStdout, commandLogLevel);
     }
 
     private boolean isListOfStrings(Object o) {
