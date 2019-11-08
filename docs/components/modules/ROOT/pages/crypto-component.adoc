@@ -120,7 +120,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *algorithm* (producer) | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
+| *algorithm* (producer) | Sets the JCE name of the Algorithm that should be used for the signer. | SHA256withRSA | String
 | *alias* (producer) | Sets the alias used to query the KeyStore for keys and {link java.security.cert.Certificate Certificates} to be used in signing and verifying exchanges. This value can be provided at runtime via the message header org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS |  | String
 | *certificateName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
 | *keystore* (producer) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
@@ -167,7 +167,7 @@ The component supports 33 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.crypto.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
+| *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA256withRSA | String
 | *camel.component.crypto.configuration.alias* | Sets the alias used to query the KeyStore for keys and {@link java.security.cert.Certificate Certificates} to be used in signing and verifying exchanges. This value can be provided at runtime via the message header {@link org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS} |  | String
 | *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
 | *camel.component.crypto.configuration.certificate* | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
