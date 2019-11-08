@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -47,6 +48,7 @@ public class StreamProducer extends DefaultProducer {
     private StreamEndpoint endpoint;
     private String uri;
     private OutputStream outputStream;
+    private URLConnection urlConnection;
     private AtomicInteger count = new AtomicInteger();
 
     public StreamProducer(StreamEndpoint endpoint, String uri) throws Exception {
@@ -86,18 +88,18 @@ public class StreamProducer extends DefaultProducer {
         log.debug("About to write to url: {}", u);
 
         URL url = new URL(u);
-        URLConnection c = url.openConnection();
-        c.setDoOutput(true);
+        urlConnection = url.openConnection();
+        urlConnection.setDoOutput(true);
         if (endpoint.getConnectTimeout() > 0) {
-            c.setConnectTimeout(endpoint.getConnectTimeout());
+            urlConnection.setConnectTimeout(endpoint.getConnectTimeout());
         }
         if (endpoint.getReadTimeout() > 0) {
-            c.setReadTimeout(endpoint.getReadTimeout());
+            urlConnection.setReadTimeout(endpoint.getReadTimeout());
         }
         if (endpoint.getHttpHeaders() != null) {
-            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
+            endpoint.getHttpHeaders().forEach((k, v) -> urlConnection.addRequestProperty(k, v.toString()));
         }
-        return c.getOutputStream();
+        return urlConnection.getOutputStream();
     }
 
     private OutputStream resolveStreamFromFile() throws IOException {
@@ -203,8 +205,20 @@ public class StreamProducer extends DefaultProducer {
 
         // never ever close a system stream
         if (!systemStream && expiredStream) {
+
+            if (urlConnection != null) {
+                // force a flush as it may first send data over the wire when we are done
+                try {
+                    InputStream is = urlConnection.getInputStream();
+                    IOHelper.close(is);
+                } catch (Throwable e) {
+                    // ignore
+                }
+            }
+
             outputStream.close();
             outputStream = null;
+            urlConnection = null;
             log.debug("Closed stream '{}'", endpoint.getEndpointKey());
         }
     }
