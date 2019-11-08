@@ -328,6 +328,12 @@ also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code
 The default signature algorithm has changed for the Crypto (JCE) Component - it
 is now SHA256withRSA (before it was SHA1WithDSA).
 
+=== Crypto DataFormat
+
+The default encryption algorithm has changed for the Crypto (JCE) DataFormat - 
+it is now required to set a value for it (meaning that the default is null).
+Before the default value was "DES/CBC/PKCS5Padding". 
+
 === JSon DataFormat
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.

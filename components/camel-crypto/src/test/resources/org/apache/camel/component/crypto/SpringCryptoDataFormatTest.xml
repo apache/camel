@@ -66,6 +66,10 @@
       <!-- START SNIPPET: aes-128-ecb-encryption -->
       <crypto id="aes-128-ecb-encryption" algorithm="AES/ECB/PKCS5Padding" keyRef="aesKey" />
       <!-- END SNIPPET: aes-128-ecb-encryption -->
+      
+      <crypto id="aes-gcm-encryption" algorithm="AES/GCM/NoPadding" keyRef="aesKey" algorithmParameterRef="gcmParamSpec" />
+      
+      <crypto id="des-no-algorithm" keyRef="desKey" initVectorRef="initializationVector" />
     </dataFormats>
     
     <route>
@@ -158,11 +162,28 @@
       <to uri="mock:unencrypted" />
     </route>
     
+    <route>
+      <from uri="direct:aes-gcm-encryption" />
+      <marshal><custom ref="aes-gcm-encryption" /></marshal>
+      <to uri="mock:encrypted" />
+      <unmarshal><custom ref="aes-gcm-encryption" /></unmarshal>
+      <to uri="mock:unencrypted" />
+    </route>
+    
+    <route>
+      <from uri="direct:no-algorithm" />
+      <marshal><custom ref="des-no-algorithm" /></marshal>
+      <to uri="mock:encrypted" />
+      <unmarshal><custom ref="des-no-algorithm" /></unmarshal>
+      <to uri="mock:unencrypted" />
+    </route>
+    
   </camelContext>
   
   <bean id="desKey" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getDesKey" />
   <bean id="desEdeKey" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getDesEdeKey" />
   <bean id="aesKey" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getAESKey" />
   <bean id="initializationVector" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getIV" />
+  <bean id="gcmParamSpec" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getGCMParameterSpec" />
   
 </beans>

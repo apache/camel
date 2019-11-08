@@ -39,9 +39,9 @@ public class CryptoDataFormatConfiguration
     private Boolean enabled;
     /**
      * The JCE algorithm name indicating the cryptographic algorithm that will
-     * be used. Is by default DES/CBC/PKCS5Padding.
+     * be used.
      */
-    private String algorithm = "DES/CBC/PKCS5Padding";
+    private String algorithm;
     /**
      * The name of the JCE Security Provider that should be used.
      */
