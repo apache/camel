@@ -327,6 +327,11 @@ also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
 
+=== XML Security Component
+
+The default signature algorithm has changed for the XML Security Component - it
+is now RSA-SHA256 (before it was RSA-SHA1).
+
 === XML Security DataFormat
 
 The default encryption key for the XML Security DataFormat has been removed,
