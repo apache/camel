@@ -22,6 +22,9 @@ import java.time.Instant;
 import java.util.Date;
 
 import org.apache.activemq.command.ActiveMQBlobMessage;
+import org.apache.activemq.command.ActiveMQTextMessage;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +54,18 @@ public class JmsBindingTest {
         when(mockJmsConfiguration.isMapJmsMessage()).thenReturn(true);
         when(mockJmsEndpoint.getConfiguration()).thenReturn(mockJmsConfiguration);
         jmsBindingUnderTest = new JmsBinding(mockJmsEndpoint);
+    }
+
+    @Test
+    public void noEndpointTest() throws Exception {
+        JmsBinding testBindingWithoutEndpoint = new JmsBinding();
+        ActiveMQTextMessage message = new ActiveMQTextMessage();
+        message.setText("test");
+        DefaultCamelContext camelContext = new DefaultCamelContext();
+        DefaultExchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setBody("test");
+        exchange.getIn().setHeader("JMSCorrelationID", null);
+        testBindingWithoutEndpoint.appendJmsProperties(message, exchange);
     }
 
     @Test
