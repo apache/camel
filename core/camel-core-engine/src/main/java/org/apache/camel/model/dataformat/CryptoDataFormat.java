@@ -33,7 +33,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    @Metadata(defaultValue = "DES/CBC/PKCS5Padding")
     private String algorithm;
     @XmlAttribute
     private String cryptoProvider;
@@ -65,7 +64,6 @@ public class CryptoDataFormat extends DataFormatDefinition {
      * The JCE algorithm name indicating the cryptographic algorithm that will
      * be used.
      * <p/>
-     * Is by default DES/CBC/PKCS5Padding.
      */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;

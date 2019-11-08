@@ -76,7 +76,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
 
     private static final Logger LOG = LoggerFactory.getLogger(CryptoDataFormat.class);
     private static final String INIT_VECTOR = "CamelCryptoInitVector";
-    private String algorithm = "DES/CBC/PKCS5Padding";
+    private String algorithm;
     private String cryptoProvider;
     private Key configuredkey;
     private int bufferSize = 4096;
