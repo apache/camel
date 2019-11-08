@@ -26,9 +26,29 @@ them with a comma-separated list in the *`getBlueprintDescriptor`*
 method. Notice that only **one** `CamelContext` is supported per blueprint bundle,
 so if you have multiple XML files then only one of them should have `<camelContext>`.
 
-Here's the
-http://svn.apache.org/viewvc/camel/trunk/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml?view=markup[Blueprint
-XML file]:
+Here's the XML file]:
+
+[source,xml]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <route>
+      <from uri="direct:start"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="mock:a"/>
+    </route>
+
+  </camelContext>
+
+</blueprint>
+----
 
 In order to define blueprint tests, add the following dependency to your
 pom:
@@ -68,8 +88,6 @@ way of filtering out bundles you don't want to start during the test.
 
 == Setting timeout when getting CamelContext
 
-*Available as of Camel 2.13.0/2.12.1/2.11.2*
-
 `CamelBlueprintTestSupport` waits 30 seconds for Camel Context to be
 ready by default, now you can override this value in two ways:
 
@@ -80,8 +98,6 @@ property.
 method.
 
 == Adding services on startup
-
-*Available as of Camel 2.11.2/2.12.0*
 
 When using `camel-test-blueprint` you may do unit tests which requires
 using shared services which are not available during unit testing, but
@@ -149,9 +165,7 @@ And in the route we use the FQN name:
     </route>
 ----------------------------------------------------------------
 
- 
-
-From *Camel 2.16.0*, an additional `addServicesOnStartup` method is
+An additional `addServicesOnStartup` method is
 available to be overridden making it ideal for when needing to specify
 multiple services with the same interface. 
 

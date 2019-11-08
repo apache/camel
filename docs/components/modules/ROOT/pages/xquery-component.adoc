@@ -9,12 +9,9 @@ Expression or Predicate to be
 used in the DSL or xref:manual::xml-configuration.adoc[Xml
 Configuration]. For example you could use XQuery to create an
 Predicate in a xref:manual::filter-eip.adoc[Message
-Filter] or as an Expression for a
-Recipient List.
+Filter] or as an Expression for a Recipient List.
 
 == Options
-
-
 
 // component options: START
 The XQuery component supports 4 options, which are listed below.
@@ -133,9 +130,9 @@ The component supports 8 options, which are listed below.
 
 [source,java]
 ---------------------------
-from("queue:foo").filter().
-  xquery("//foo").
-  to("queue:bar")
+from("queue:foo")
+  .filter().xquery("//foo")
+    .to("queue:bar")
 ---------------------------
 
 You can also use functions inside your query, in which case you need an
@@ -145,8 +142,8 @@ HIERARCHY_REQUEST_ERR) by passing the Class as a second argument to the
 
 [source,java]
 -----------------------------------------------------------------------------
-from("direct:start").
-  recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
+from("direct:start")
+  .recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
 -----------------------------------------------------------------------------
 
 == Variables
@@ -257,7 +254,7 @@ templates.
 The following example shows how to take a message of an ActiveMQ queue
 (MyQueue) and transform it using XQuery and send it to MQSeries.
 
-[source,java]
+[source,xml]
 -------------------------------------------------------------------------
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
@@ -270,32 +267,36 @@ The following example shows how to take a message of an ActiveMQ queue
 
 == Examples
 
-Here is a simple
-https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
-using an XQuery expression as a predicate in a
-Message Filter
+Here is a simple using an XQuery expression as a predicate in a Message Filter
 
-This
-https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
-uses XQuery with namespaces as a predicate in a
-Message Filter
+[source,java]
+----
+from("direct:start")
+  .filter().xquery("/person[@name='James']")
+  .to("mock:result");
+----
+
+This uses XQuery with namespaces as a predicate in a Message Filter
+
+[source,java]
+----
+Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
+
+from("direct:start")
+  .filter().xquery("/c:person[@name='James']", ns)
+  .to("mock:result");
+----
 
 == Learning XQuery
 
 XQuery is a very powerful language for querying, searching, sorting and
 returning XML. For help learning XQuery try these tutorials
 
-* Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery
-Primer]
-* the W3Schools http://www.w3schools.com/xquery/default.asp[XQuery
-Tutorial]
-
-You might also find the http://www.w3.org/TR/xpath-functions/[XQuery
-function reference] useful
+* Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery Primer]
+* The W3Schools http://www.w3schools.com/xquery/default.asp[XQuery Tutorial]
+* XQuery reference http://www.w3.org/TR/xpath-functions/[XQuery function reference]
 
 == Loading script from external resource
-
-*Available as of Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -313,10 +314,9 @@ To use XQuery in your camel routes you need to add the a dependency on
 *camel-saxon* which implements the XQuery language.
 
 If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+substituting the version number for the latest & greatest release.
 
-[source,java]
+[source,xml]
 --------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>

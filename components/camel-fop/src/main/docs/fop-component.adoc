@@ -21,7 +21,7 @@ for this component:
 
 == URI format
 
-[source,java]
+[source,text]
 ----------------------------
 fop://outputFormat?[options]
 ----------------------------
@@ -57,8 +57,7 @@ supported:
 |TXT |text/plain |Text
 |=======================================================================
 
-The complete list of valid output formats can be found
-http://svn.apache.org/repos/asf/xmlgraphics/commons/trunk/src/java/org/apache/xmlgraphics/util/MimeConstants.java[here]
+The complete list of valid output formats can be found in the `MimeConstants.java` source file.
 
 == Endpoint Options
 
@@ -145,13 +144,6 @@ default. You can use `file:`, or `classpath:` as prefix to load the
 resource from file or classpath. In previous releases the file is always
 loaded from file system.
 
-fopFactory
-
- 
-
-Allows to use a custom configured or implementation of
-`org.apache.fop.apps.FopFactory`.
-
 == Message Operations
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -199,6 +191,4 @@ from("file:source/data/xml")
     .to("fop:application/pdf")
     .to("file:target/data");
 ---------------------------------
-
-For more information, see these resources...
 
