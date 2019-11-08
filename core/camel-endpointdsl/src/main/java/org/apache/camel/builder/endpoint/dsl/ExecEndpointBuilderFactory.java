@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -102,6 +103,33 @@ public interface ExecEndpointBuilderFactory {
          */
         default ExecEndpointBuilder commandExecutor(String commandExecutor) {
             doSetProperty("commandExecutor", commandExecutor);
+            return this;
+        }
+        /**
+         * Logging level to be used for commands during execution. The default
+         * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
+         * or OFF. (Values of ExecCommandLogLevelType enum).
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: producer
+         */
+        default ExecEndpointBuilder commandLogLevel(LoggingLevel commandLogLevel) {
+            doSetProperty("commandLogLevel", commandLogLevel);
+            return this;
+        }
+        /**
+         * Logging level to be used for commands during execution. The default
+         * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
+         * or OFF. (Values of ExecCommandLogLevelType enum).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: producer
+         */
+        default ExecEndpointBuilder commandLogLevel(String commandLogLevel) {
+            doSetProperty("commandLogLevel", commandLogLevel);
             return this;
         }
         /**
