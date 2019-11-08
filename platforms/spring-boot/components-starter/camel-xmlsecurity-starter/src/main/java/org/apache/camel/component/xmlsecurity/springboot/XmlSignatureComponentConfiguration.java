@@ -121,7 +121,7 @@ public class XmlSignatureComponentConfiguration
          * Signature algorithm. Default value is
          * "http://www.w3.org/2000/09/xmldsig#rsa-sha1".
          */
-        private String signatureAlgorithm = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+        private String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
         /**
          * Digest algorithm URI. Optional parameter. This digest algorithm is
          * used for calculating the digest of the input message. If this digest
