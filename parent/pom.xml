@@ -362,7 +362,7 @@
         <libthrift-version>0.12.0</libthrift-version>
         <jing-bundle-version>20030619_5</jing-bundle-version>
         <jing-version>20030619</jing-version>
-        <jmh-version>1.21</jmh-version>
+        <jmh-version>1.22</jmh-version>
         <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
         <jodatime2-bundle-version>2.10.4</jodatime2-bundle-version>
         <jota-version>1.0.0-beta3</jota-version>
