@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${google-guava-version}</version>
+            <version>${swagger-java-guava-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
