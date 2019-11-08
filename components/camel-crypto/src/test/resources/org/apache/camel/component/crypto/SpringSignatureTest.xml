@@ -82,8 +82,8 @@
         <!-- START SNIPPET: provider -->
         <route>
             <from uri="direct:provider"/>
-            <to uri="crypto:sign:provider?privateKey=#myPrivateKey&amp;provider=SUN" />
-            <to uri="crypto:verify:provider?publicKey=#myPublicKey&amp;provider=SUN" />
+            <to uri="crypto:sign:provider?algorithm=SHA1withDSA&amp;privateKey=#dsaPrivateKey&amp;provider=SUN" />
+            <to uri="crypto:verify:provider?algorithm=SHA1withDSA&amp;publicKey=#dsaPublicKey&amp;provider=SUN" />
             <to uri="mock:result"/>
         </route>        
         <!-- END SNIPPET: provider -->
@@ -163,6 +163,8 @@
     <bean id="myPublicKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="publicKey"/>
     <bean id="rsaPrivateKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="privateRSAKey"/>
     <bean id="rsaPublicKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="publicRSAKey"/>
+    <bean id="dsaPrivateKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="privateDSAKey"/>
+    <bean id="dsaPublicKey" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="publicDSAKey"/>
     <bean id="someRandom" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="random"/>
 
     <keyStoreParameters xmlns="http://camel.apache.org/schema/spring" id="signatureParams" 

@@ -81,7 +81,7 @@ public class DigitalSignatureComponentConfiguration
          * Sets the JCE name of the Algorithm that should be used for the
          * signer.
          */
-        private String algorithm = "SHA1WithDSA";
+        private String algorithm = "SHA256withRSA";
         /**
          * Sets the alias used to query the KeyStore for keys and {@link
          * java.security.cert.Certificate Certificates} to be used in signing
