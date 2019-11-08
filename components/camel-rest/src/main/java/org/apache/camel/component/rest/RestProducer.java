@@ -428,7 +428,7 @@ public class RestProducer extends DefaultAsyncProducer {
                             key = key.substring(0, key.length() - 1);
                             optional = true;
                         }
-                        String value = inMessage.getHeader(key, String.class);
+                        Object value = inMessage.getHeader(key);
                         if (value != null) {
                             params.put(entry.getKey(), value);
                         } else if (!optional) {
@@ -441,7 +441,12 @@ public class RestProducer extends DefaultAsyncProducer {
                 }
             }
             query = URISupport.createQueryString(params);
+            // remove any dangling & caused by the absence of optional parameters
+            while (query.endsWith("&")) {
+              query = query.substring(0, query.length() - 1);
+            }
         }
+
         return query;
     }
 }
