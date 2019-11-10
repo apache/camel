@@ -22,7 +22,7 @@ The Crypto (Java Cryptographic Extension) dataformat supports 10 options, which 
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| algorithm | DES/CBC/PKCS5Padding | String | The JCE algorithm name indicating the cryptographic algorithm that will be used. Is by default DES/CBC/PKCS5Padding.
+| algorithm |  | String | The JCE algorithm name indicating the cryptographic algorithm that will be used.
 | cryptoProvider |  | String | The name of the JCE Security Provider that should be used.
 | keyRef |  | String | Refers to the secret key to lookup from the register to use.
 | initVectorRef |  | String | Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
@@ -79,7 +79,7 @@ The component supports 33 options, which are listed below.
 | *camel.component.crypto.configuration.secure-random-name* | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.signature-header-name* | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
 | *camel.component.crypto.enabled* | Enable crypto component | true | Boolean
-| *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. Is by default DES/CBC/PKCS5Padding. | DES/CBC/PKCS5Padding | String
+| *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. |  | String
 | *camel.dataformat.crypto.algorithm-parameter-ref* | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type. |  | String
 | *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | Integer
 | *camel.dataformat.crypto.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
