@@ -146,6 +146,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     updated = updateLink(file, componentName + "-component");
                     updated |= updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
+                    updated |= updateComponentHeader(file, model);
 
                     // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
                     boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
@@ -479,17 +480,70 @@ public class UpdateReadmeMojo extends AbstractMojo {
         return updated;
     }
 
+    private boolean updateComponentHeader(final File file, final ComponentModel model) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        final String markerStart = "// HEADER START";
+        final String markerEnd = "// HEADER END";
+
+        final String headerText = generateHeaderTextData(model);
+
+        try (InputStream fileStream = new FileInputStream(file)) {
+            final String loadedText = loadText(fileStream);
+
+            String existing = StringHelper.between(loadedText, markerStart, markerEnd);
+
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                if (existing.equals(headerText)) {
+                    return false;
+                }
+
+                final String before = StringHelper.before(loadedText, markerStart);
+                final String after = StringHelper.after(loadedText, markerEnd);
+                final String updatedHeaderText = before + markerStart + "\n" + headerText + "\n" + markerEnd + after;
+
+                writeText(file, updatedHeaderText);
+                return true;
+            } else {
+                // so we don't have the marker, so we add it somewhere after the camel version
+                final String sinceVersion = "*Since Camel " + shortenVersion(model.getFirstVersion()) + "*";
+                final String before = StringHelper.before(loadedText, sinceVersion);
+                final String after = StringHelper.after(loadedText, sinceVersion);
+                final String updatedHeaderText = before + sinceVersion + "\n\n" + markerStart + "\n" + headerText + "\n" + markerEnd + after;
+
+                writeText(file, updatedHeaderText);
+                return true;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private static String generateHeaderTextData(final ComponentModel model) {
+        final boolean consumerOnly = Boolean.parseBoolean(model.getConsumerOnly());
+        final boolean producerOnly = Boolean.parseBoolean(model.getProducerOnly());
+        // if we have only producer support
+        if (!consumerOnly && producerOnly) {
+            return "*Only Producer is supported*";
+        }
+        // if we have only consumer support
+        if (consumerOnly && !producerOnly) {
+            return "*Only Consumer is supported*";
+        }
+
+        return "*Both Producer and Consumer are supported*";
+    }
+
     private static boolean updateAvailableFrom(final File file, final String firstVersion) throws MojoExecutionException {
         if (firstVersion == null || !file.exists()) {
             return false;
         }
 
-        String version = firstVersion;
-        // cut last digit so its not 2.18.0 but 2.18
-        String[] parts = firstVersion.split("\\.");
-        if (parts.length == 3 && parts[2].equals("0")) {
-            version = parts[0] + "." + parts[1];
-        }
+        final String version = shortenVersion(firstVersion);
 
         boolean updated = false;
 
@@ -541,6 +595,16 @@ public class UpdateReadmeMojo extends AbstractMojo {
         }
 
         return updated;
+    }
+
+    private static String shortenVersion(final String firstVersion) {
+        String version = firstVersion;
+        // cut last digit so its not 2.18.0 but 2.18
+        String[] parts = firstVersion.split("\\.");
+        if (parts.length == 3 && parts[2].equals("0")) {
+            version = parts[0] + "." + parts[1];
+        }
+        return version;
     }
 
     private boolean updateOptionsIn(final File file, final String kind, final String changed) throws MojoExecutionException {
