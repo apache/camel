@@ -968,16 +968,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-linkedin</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-linkedin-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-log</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2553,11 +2543,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-leveldb-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-linkedin-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

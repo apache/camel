@@ -1664,35 +1664,6 @@
     <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ldif/${project.version}</bundle>
   </feature>
-  <feature name='camel-linkedin' version='${project.version}' start-level='50'>
-    <feature>aries-blueprint</feature>
-    <feature>pax-http-whiteboard</feature>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${cxf-version-range}'>cxf-core</feature>
-    <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-api/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-common/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-client/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.httpcomponents/httpmime/${httpclient4-version}$Export-Package=org.apache.http.*;version=${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.htmlunit/${htmlunit-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.w3c.css/sac/1.3</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-linkedin-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-linkedin/${project.version}</bundle>
-  </feature>
   <feature name='camel-leveldb' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:org.fusesource.leveldbjni/leveldbjni-all/${leveldbjni-version}$Bundle-Version=${leveldbjni-version}&amp;Export-Package=*;-noimport:=true;version="${leveldbjni-version}"</bundle>

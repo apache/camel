@@ -378,8 +378,6 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:ldif-component.adoc[LDIF] (camel-ldif) | 2.20 | The ldif component allows you to do updates on an LDAP server from a LDIF body content.
 
-| xref:linkedin-component.adoc[Linkedin] (camel-linkedin) | 2.14 | The linkedin component is used for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
-
 | xref:log-component.adoc[Log] (camel-log) | 1.1 | The log component logs message exchanges to the underlying logging mechanism.
 
 | xref:lucene-component.adoc[Lucene] (camel-lucene) | 2.2 | To insert or query from Apache Lucene databases.
