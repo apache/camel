@@ -3,6 +3,10 @@
 
 *Since Camel 2.8*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The S3 component supports storing and retrieving objects from/to
 https://aws.amazon.com/s3[Amazon's S3] service.
 

@@ -3,6 +3,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 According to IOTA Official site: "IOTA is the first open-source distributed ledger that is being built to power the future of the Internet of Things with feeless microtransactions and data integrity for machines."
 
 Maven users will need to add the following dependency to their `pom.xml`

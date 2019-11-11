@@ -3,6 +3,10 @@
 
 *Since Camel 2.2*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 This component provides access to an SMSC (Short Message Service Center)
 over the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP] protocol to
 send and receive SMS. The http://jsmpp.org[JSMPP] library is used for

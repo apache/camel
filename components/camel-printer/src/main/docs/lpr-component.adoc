@@ -3,6 +3,10 @@
 
 *Since Camel 2.1*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Printer component provides a way to direct payloads on a route to
 a printer. Obviously the payload has to be a formatted piece of payload
 in order for the component to appropriately print it. The objective is

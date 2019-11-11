@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 http://cassandra.apache.org[Apache Cassandra] is an open source NoSQL
 database designed to handle large amounts on commodity hardware. Like
 Amazon's DynamoDB, Cassandra has a peer-to-peer and master-less

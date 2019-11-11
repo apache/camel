@@ -3,6 +3,10 @@
 
 *Since Camel 2.21*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
 
 Currently only the **Posts** and **Users** operations are supported.

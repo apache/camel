@@ -3,6 +3,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The *IEC 60870-5-104 Server* component provides access to IEC 60870 servers using the
 http://eclipse.org/eclipsescada[Eclipse NeoSCADA™] implementation.
 

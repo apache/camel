@@ -3,6 +3,10 @@
 
 *Since Camel 2.8*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The SNS component allows messages to be sent to an
 https://aws.amazon.com/sns[Amazon Simple Notification] Topic. The
 implementation of the Amazon API is provided by

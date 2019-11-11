@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The GitHub component interacts with the GitHub API by
 encapsulating http://org.eclipse.egit.github.core[egit-github]. It
 currently provides polling for new pull requests, pull request comments,

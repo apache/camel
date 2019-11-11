@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Scheduler component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
  xref:timer-component.adoc[Timer] component, but it offers more functionality in

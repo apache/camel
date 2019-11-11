@@ -3,6 +3,10 @@
 
 *Since Camel 2.11*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The cmis component uses the
 http://chemistry.apache.org/java/opencmis.html[Apache Chemistry] client
 API and allows you to add/read nodes to/from a CMIS compliant content

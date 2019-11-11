@@ -3,6 +3,10 @@
 
 *Since Camel 1.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The JPA component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),
 which is a standard interface layer that wraps Object/Relational Mapping

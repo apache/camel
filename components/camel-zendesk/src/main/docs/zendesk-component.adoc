@@ -3,6 +3,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Zendesk component provides access to all of the zendesk.com APIs accessible
 using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It
 allows producing messages to manage Zendesk ticket, user, organization, etc.

@@ -3,6 +3,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Lambda component supports create, get, list, delete and invoke
 https://aws.amazon.com/lambda/[AWS Lambda] functions.
 

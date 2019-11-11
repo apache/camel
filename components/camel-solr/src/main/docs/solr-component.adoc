@@ -3,6 +3,10 @@
 
 *Since Camel 2.9*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Solr component allows you to interface with an
 http://lucene.apache.org/solr/[Apache Lucene Solr] server (based on
 SolrJ 3.5.0).

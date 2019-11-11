@@ -3,6 +3,10 @@
 
 *Since Camel 2.11*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Simple JMS Component, or SJMS, is a JMS client for use with Camel
 that uses well known best practices when it comes to JMS client creation
 and configuration. SJMS contains a brand new JMS client API written

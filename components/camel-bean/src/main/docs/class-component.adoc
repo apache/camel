@@ -3,6 +3,10 @@
 
 *Since Camel 2.4*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Class component binds beans to Camel message exchanges. It works
 in the same way as the xref:bean-component.adoc[Bean] component but instead of
 looking up beans from a Registry it creates the bean

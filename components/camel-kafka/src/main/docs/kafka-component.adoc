@@ -3,6 +3,10 @@
 
 *Since Camel 2.13*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Kafka component is used for communicating with
 http://kafka.apache.org/[Apache Kafka] message broker.
 

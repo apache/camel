@@ -3,6 +3,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Spring Batch component and support classes provide integration
 bridge between Camel and http://www.springsource.org/spring-batch[Spring
 Batch] infrastructure.

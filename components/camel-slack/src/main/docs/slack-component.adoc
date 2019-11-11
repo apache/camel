@@ -3,6 +3,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Slack component allows you to connect to an instance
 of http://www.slack.com/[Slack] and delivers a message contained in the
 message body via a pre

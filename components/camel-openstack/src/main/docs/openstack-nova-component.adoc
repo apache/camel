@@ -3,6 +3,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Openstack Nova component allows messages to be sent to an OpenStack compute services.
 
 == Dependencies

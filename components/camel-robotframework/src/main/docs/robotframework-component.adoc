@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 
 The *robotframework:* component allows for processing camel exchanges
 in acceptence test suites which are already implemented with its own DSL. 

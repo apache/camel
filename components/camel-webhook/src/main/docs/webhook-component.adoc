@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 
 The Webhook meta component allows other Camel components to configure webhooks on a remote webhook provider and
 listening for them.

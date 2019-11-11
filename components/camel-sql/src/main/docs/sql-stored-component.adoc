@@ -3,6 +3,10 @@
 
 *Since Camel 2.17*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The SQL Stored component allows you to work with databases using JDBC
 Stored Procedure queries. This component is an extension to
 the xref:sql-component.adoc[SQL Component] but specialized for calling

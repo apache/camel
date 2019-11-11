@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 *Since Camel 3.0*
 
 

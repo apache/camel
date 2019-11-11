@@ -3,6 +3,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The WebSocket component provides websocket
 endpoints for communicating with clients using
 websocket. The component uses Eclipse Jetty Server which implements the

@@ -3,6 +3,10 @@
 
 *Since Camel 2.8*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The APNS component is used for sending notifications to iOS devices.
 The APNS components use https://github.com/notnoop/java-apns[javapns]
 library. +

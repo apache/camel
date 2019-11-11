@@ -3,6 +3,10 @@
 
 *Since Camel 2.9*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses
 http://code.google.com/p/jclouds[jclouds] which is +

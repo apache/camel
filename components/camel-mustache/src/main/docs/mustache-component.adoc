@@ -3,6 +3,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Mustache component allows for processing a message using a
 http://mustache.github.io/[Mustache] template. This can be ideal when
 using Templating to generate responses for

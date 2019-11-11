@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The JOOQ component enables you to store and retrieve Java objects from persistent storage using JOOQ library.
 
 JOOQ provides DSL to create queries.

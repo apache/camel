@@ -3,6 +3,10 @@
 
 *Since Camel 2.2*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Lucene component is based on the Apache Lucene project. Apache
 Lucene is a powerful high-performance, full-featured text search engine
 library written entirely in Java. For more details about Lucene, please

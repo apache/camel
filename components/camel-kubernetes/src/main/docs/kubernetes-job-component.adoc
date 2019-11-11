@@ -3,6 +3,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Kubernetes Job component is one of xref:kubernetes.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes job operations.
  

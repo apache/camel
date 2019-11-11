@@ -3,6 +3,10 @@
 
 *Since Camel 2.9*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The sdb component supports storing and retrieving data from/to
 https://aws.amazon.com/sdb[Amazon's SDB] service.
 

@@ -3,6 +3,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The *couchbase:* component allows you to treat
 https://www.couchbase.com/[CouchBase] instances as a producer or consumer
 of messages.

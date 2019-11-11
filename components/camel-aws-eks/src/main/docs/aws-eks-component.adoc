@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The EKS component supports create, delete, describe and list
 https://aws.amazon.com/eks/[AWS EKS] clusters instances.
 

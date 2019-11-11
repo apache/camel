@@ -3,6 +3,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Vert.x component is for working with the http://vertx.io/[Vertx]
 https://vertx.io/docs/vertx-core/java/#event_bus[EventBus].
 

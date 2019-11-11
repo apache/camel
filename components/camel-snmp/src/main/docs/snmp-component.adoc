@@ -3,6 +3,10 @@
 
 *Since Camel 2.1*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The SNMP component gives you the ability to poll SNMP capable devices
 or receiving traps
 

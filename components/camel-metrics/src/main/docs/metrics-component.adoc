@@ -1,16 +1,11 @@
 [[metrics-component]]
 = Metrics Component
-ifdef::env-github[]
-*Since Camel 2.14.0*
 
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
+*Since Camel 2.14*
 
-== Metrics Component
+// HEADER START
+*Only Producer is supported*
+// HEADER END
 
 The Metrics component allows to collect various metrics directly
 from Camel routes. Supported metric types

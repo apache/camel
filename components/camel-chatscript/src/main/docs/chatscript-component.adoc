@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The ChatScript component allows you to interact with ChatScript Server and have conversations. This component is stateless and relies on ChatScript to maintain chat history.
 
 Original ChatScript is available here : https://github.com/bwilcox-1234/ChatScript

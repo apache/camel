@@ -3,6 +3,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The REST Swagger* configures rest producers from
 http://swagger.io/[Swagger] (Open API) specification document and
 delegates to a component implementing the _RestProducerFactory_

@@ -3,6 +3,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Geocoder component is used for looking up geocodes (latitude and
 longitude) for a given address, or reverse lookup. The component uses
 the https://code.google.com/p/geocoder-java/[Java API for Google
