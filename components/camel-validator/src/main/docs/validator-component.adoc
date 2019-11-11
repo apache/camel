@@ -3,6 +3,10 @@
 
 *Since Camel 1.1*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML
 schema languages, which defaults to http://www.w3.org/XML/Schema[XML

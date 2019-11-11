@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 http://www.schematron.com/index.html[Schematron] is an XML-based
 language for validating XML instance documents. It is used to make
 assertions about data in an XML document and it is also used to express

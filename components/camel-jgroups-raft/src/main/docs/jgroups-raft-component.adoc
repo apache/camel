@@ -3,6 +3,10 @@
 
 *Since Camel 2.24*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 http://belaban.github.io/jgroups-raft/[JGroups-raft] is a https://raftconsensus.github.io/[Raft] implementation in http://www.jgroups.org/[JGroups].
 The *jgroups-raft:* component provides interoperability between camel and a JGroups-raft clusters.
 

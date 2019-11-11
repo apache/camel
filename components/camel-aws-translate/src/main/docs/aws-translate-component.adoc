@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Translate component supports translate a text in multiple languages.
 https://aws.amazon.com/translate/[AWS Translate] clusters instances.
 

@@ -3,6 +3,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 Paho component provides connector for the MQTT messaging protocol using
 the https://eclipse.org/paho/[Eclipse Paho] library. Paho is one of the
 most popular MQTT libraries, so if you would like to integrate it with

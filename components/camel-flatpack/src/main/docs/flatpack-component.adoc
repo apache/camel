@@ -3,6 +3,10 @@
 
 *Since Camel 1.4*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Flatpack component supports fixed width and delimited file parsing
 via the http://flatpack.sourceforge.net[FlatPack library]. +
  *Notice:* This component only supports consuming from flatpack files to

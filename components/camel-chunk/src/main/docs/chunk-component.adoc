@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Chunk component allows for processing a message using a
 http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
 This can be ideal when using Templating to

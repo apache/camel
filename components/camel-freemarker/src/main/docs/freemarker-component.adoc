@@ -3,6 +3,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The *freemarker:* component allows for processing a message using a
 http://freemarker.org/[FreeMarker] template. This can be ideal when
 using Templating to generate responses for

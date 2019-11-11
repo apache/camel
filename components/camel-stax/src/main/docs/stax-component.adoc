@@ -3,6 +3,10 @@
 
 *Since Camel 2.9*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The StAX component allows messages to be process through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
 Another feature of this component is to allow to iterate over JAXB

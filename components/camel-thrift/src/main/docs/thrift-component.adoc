@@ -3,6 +3,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Thrift component allows you to call or expose Remote Procedure Call (RPC) services
 using https://thrift.apache.org/[Apache Thrift] binary communication protocol and serialization mechanism.
 

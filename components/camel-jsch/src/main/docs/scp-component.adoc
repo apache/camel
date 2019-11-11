@@ -3,6 +3,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Camel-Jsch component supports the
 http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
 API of the http://www.jcraft.com/jsch/[Jsch] project. Jsch is already

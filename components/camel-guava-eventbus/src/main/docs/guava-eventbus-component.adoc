@@ -3,6 +3,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The
 https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] allows publish-subscribe-style communication between

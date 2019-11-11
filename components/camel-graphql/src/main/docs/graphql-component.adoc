@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The GraphQL component is a GraphQL client that communicates over HTTP and supports queries and mutations, but not subscriptions. It uses the https://hc.apache.org/httpcomponents-client-4.5.x/index.html[Apache HttpClient] library.
 
 Maven users will need to add the following dependency to their `pom.xml`

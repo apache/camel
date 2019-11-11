@@ -3,6 +3,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The DynamoDB component supports storing and retrieving data from/to
 https://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
 

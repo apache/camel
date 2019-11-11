@@ -3,6 +3,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Direct-Vm component provides direct, synchronous invocation of
 any consumers in the JVM when a producer sends a message exchange. +
  This endpoint can be used to connect existing routes in the same camel

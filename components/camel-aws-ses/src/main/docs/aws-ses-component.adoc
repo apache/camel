@@ -3,6 +3,10 @@
 
 *Since Camel 2.9*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The ses component supports sending emails with
 https://aws.amazon.com/ses[Amazon's SES] service.
 

@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 This is a component for Apache Camel which allows for
 Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY
 commands added since PostgreSQL 8.3.

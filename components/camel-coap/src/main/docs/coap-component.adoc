@@ -3,6 +3,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 Camel-CoAP is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with CoAP, a lightweight REST-type protocol for machine-to-machine operation. 
 http://coap.technology/[CoAP], Constrained Application Protocol is a specialized web transfer protocol 

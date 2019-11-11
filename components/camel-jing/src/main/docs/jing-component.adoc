@@ -3,6 +3,10 @@
 
 *Since Camel 1.1*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Jing component uses the
 http://www.thaiopensource.com/relaxng/jing.html[Jing Library] to perform
 XML validation of the message body using either

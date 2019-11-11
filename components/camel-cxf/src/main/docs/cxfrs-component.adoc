@@ -3,6 +3,10 @@
 
 *Since Camel 2.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The CXFRS component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
 services hosted in CXF.

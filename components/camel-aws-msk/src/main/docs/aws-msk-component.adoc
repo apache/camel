@@ -3,6 +3,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The AWS MSK component supports create, run, start, stop and terminate
 https://aws.amazon.com/msk/[AWS MSK] instances.
 

@@ -3,6 +3,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Simple JMS 2.0 Component, or SJMS2, is a JMS client for use with Camel
 that uses well known best practices when it comes to JMS client creation
 and configuration. SJMS2 contains a brand new JMS 2.0 client API written

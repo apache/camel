@@ -3,6 +3,10 @@
 
 *Since Camel 2.13*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 http://www.jgroups.org[JGroups] is a toolkit for reliable multicast
 communication. The *jgroups:* component provides exchange of messages
 between Camel infrastructure and http://jgroups.org[JGroups] clusters.

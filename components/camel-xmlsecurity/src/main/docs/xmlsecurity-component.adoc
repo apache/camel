@@ -3,6 +3,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 With this Apache Camel component, you can generate and validate XML
 signatures as described in the W3C standard
 http://www.w3.org/TR/xmldsig-core/[XML Signature Syntax and Processing]

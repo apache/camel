@@ -3,6 +3,10 @@
 
 *Since Camel 1.1*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
 

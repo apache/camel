@@ -3,6 +3,10 @@
 
 *Since Camel 2.18*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 

@@ -3,6 +3,10 @@
 
 *Since Camel 2.11*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 This component allows sending and receiving messages from
 https://redis.io/[Redis]. Redis is advanced key-value store where
 keys can contain strings, hashes, lists, sets and sorted sets. In

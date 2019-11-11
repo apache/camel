@@ -3,6 +3,10 @@
 
 *Since Camel 2.5*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Language component allows you to send Exchange
 to an endpoint which executes a script by any of the supported
 Languages in Camel. +

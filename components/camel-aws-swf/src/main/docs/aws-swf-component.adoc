@@ -3,6 +3,10 @@
 
 *Since Camel 2.13*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Simple Workflow component supports managing workflows from
 https://aws.amazon.com/swf/[Amazon's Simple Workflow] service.
 
