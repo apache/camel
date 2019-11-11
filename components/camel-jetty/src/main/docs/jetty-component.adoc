@@ -49,7 +49,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty component supports 33 options, which are listed below.
+The Jetty component supports 31 options, which are listed below.
 
 
 
@@ -62,8 +62,6 @@ The Jetty component supports 33 options, which are listed below.
 | *errorHandler* (advanced) | This option is used to set the ErrorHandler that Jetty server uses. |  | ErrorHandler
 | *sslSocketConnectors* (security) | A map which contains per port number specific SSL connectors. |  | Map
 | *socketConnectors* (security) | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors. |  | Map
-| *httpClientMinThreads* (producer) | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *httpClientMaxThreads* (producer) | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *minThreads* (consumer) | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *maxThreads* (consumer) | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *threadPool* (consumer) | To use a custom thread pool for the server. This option should only be used in special circumstances. |  | ThreadPool

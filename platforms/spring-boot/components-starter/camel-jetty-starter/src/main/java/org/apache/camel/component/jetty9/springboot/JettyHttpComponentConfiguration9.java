@@ -70,16 +70,6 @@ public class JettyHttpComponentConfiguration9
      */
     private Map<Integer, Connector> socketConnectors;
     /**
-     * To set a value for minimum number of threads in HttpClient thread pool.
-     * Notice that both a min and max size must be configured.
-     */
-    private Integer httpClientMinThreads;
-    /**
-     * To set a value for maximum number of threads in HttpClient thread pool.
-     * Notice that both a min and max size must be configured.
-     */
-    private Integer httpClientMaxThreads;
-    /**
      * To set a value for minimum number of threads in server thread pool.
      * Notice that both a min and max size must be configured.
      */
@@ -258,22 +248,6 @@ public class JettyHttpComponentConfiguration9
 
     public void setSocketConnectors(Map<Integer, Connector> socketConnectors) {
         this.socketConnectors = socketConnectors;
-    }
-
-    public Integer getHttpClientMinThreads() {
-        return httpClientMinThreads;
-    }
-
-    public void setHttpClientMinThreads(Integer httpClientMinThreads) {
-        this.httpClientMinThreads = httpClientMinThreads;
-    }
-
-    public Integer getHttpClientMaxThreads() {
-        return httpClientMaxThreads;
-    }
-
-    public void setHttpClientMaxThreads(Integer httpClientMaxThreads) {
-        this.httpClientMaxThreads = httpClientMaxThreads;
     }
 
     public Integer getMinThreads() {
