@@ -4,6 +4,10 @@
 
 *Since Camel 2.11*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The *couchdb:* component allows you to treat
 http://couchdb.apache.org/[CouchDB] instances as a producer or consumer
 of messages. Using the lightweight LightCouch API, this camel component

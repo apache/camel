@@ -4,6 +4,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The FHIR component integrates with the
 http://hapifhir.io/[HAPI-FHIR] library which is an open-source implementation of the
 http://hl7.org/implement/standards/fhir/[FHIR] (Fast Healthcare Interoperability Resources) specification in Java.

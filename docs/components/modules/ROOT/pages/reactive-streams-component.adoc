@@ -4,6 +4,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Reactive Streams component allows you to exchange messages with reactive
 stream processing libraries compatible with the
 http://www.reactive-streams.org/[reactive streams] standard.

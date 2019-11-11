@@ -4,6 +4,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The EC2 component supports the ability to create, run, start, stop and terminate
 https://aws.amazon.com/ec2/[AWS EC2] instances.
 

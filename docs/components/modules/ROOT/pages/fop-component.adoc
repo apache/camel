@@ -4,6 +4,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The FOP component allows you to render a message into different output
 formats using http://xmlgraphics.apache.org/fop/index.html[Apache FOP].
 

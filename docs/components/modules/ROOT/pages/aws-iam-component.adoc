@@ -4,6 +4,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The KMS component supports create, run, start, stop and terminate
 https://aws.amazon.com/iam/[AWS IAM] instances.
 

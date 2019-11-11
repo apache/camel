@@ -1,17 +1,12 @@
 [[micrometer-component]]
 = Micrometer Component
 :page-source: components/camel-micrometer/src/main/docs/micrometer-component.adoc
-ifdef::env-github[]
-*Since Camel 2.22.0*
 
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
+*Since Camel 2.22*
 
-== Micrometer Component
+// HEADER START
+*Only Producer is supported*
+// HEADER END
 
 The Micrometer component allows to collect various metrics directly
 from Camel routes. Supported metric types

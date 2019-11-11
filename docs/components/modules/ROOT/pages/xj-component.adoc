@@ -4,6 +4,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The XJ component allows you to convert XML and JSON documents directly forth and back without the need of
 intermediate java objects. You can even specify an XSLT stylesheet to convert directly to the target
 JSON / XML (domain) model.

@@ -4,6 +4,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The camel Atomix-Map component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedMap/[Distributed Map] collection.
 
 Maven users will need to add the following dependency to their pom.xml for this component:

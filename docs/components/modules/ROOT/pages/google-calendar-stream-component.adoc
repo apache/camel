@@ -4,6 +4,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Google Calendar component provides access
 to https://calendar.google.com[Calendar] via
 the https://developers.google.com/calendar/overview[Google Calendar

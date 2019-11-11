@@ -4,6 +4,10 @@
 
 *Since Camel 2.22*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Google Mail component provides access
 to http://gmail.com/[Gmail] via
 the https://developers.google.com/gmail/api/v1/reference/[Google Mail

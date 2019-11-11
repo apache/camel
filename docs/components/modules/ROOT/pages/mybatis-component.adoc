@@ -4,6 +4,10 @@
 
 *Since Camel 2.7*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The MyBatis component allows you to query, poll, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis].
 

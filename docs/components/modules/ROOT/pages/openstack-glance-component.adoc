@@ -4,6 +4,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Openstack Glance component allows messages to be sent to an OpenStack image services.
 
 == Dependencies

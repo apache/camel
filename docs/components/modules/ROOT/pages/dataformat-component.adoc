@@ -4,6 +4,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Dataformat component allows to use xref:manual::data-format.adoc[Data
 Format] as a Camel Component.
 

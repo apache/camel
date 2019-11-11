@@ -4,6 +4,10 @@
 
 *Since Camel 2.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Cometd component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the
 http://docs.codehaus.org/display/JETTY/Cometd+%28aka+Bayeux%29[cometd/bayeux

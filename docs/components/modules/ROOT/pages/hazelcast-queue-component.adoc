@@ -4,6 +4,10 @@
 
 *Since Camel 2.7*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The http://www.hazelcast.com/[Hazelcast] Queue component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed queue.
 
 

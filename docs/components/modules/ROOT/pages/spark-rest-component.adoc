@@ -4,6 +4,10 @@
 
 *Since Camel 2.14*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Spark-rest component allows to define REST endpoints using the
 http://sparkjava.com/[Spark REST Java library] using the
 Rest DSL.

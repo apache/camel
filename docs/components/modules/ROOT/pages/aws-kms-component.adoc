@@ -4,6 +4,10 @@
 
 *Since Camel 2.21*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The KMS component supports the ability to work with keys stored in
 https://aws.amazon.com/kms/[AWS KMS] instances.
 

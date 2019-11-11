@@ -4,6 +4,10 @@
 
 *Since Camel 1.2*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The JDBC component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
 the message body. This component uses the standard JDBC API, unlike the

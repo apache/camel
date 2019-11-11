@@ -4,6 +4,10 @@
 
 *Since Camel 1.2*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Jetty component provides HTTP-based endpoints
 for consuming and producing HTTP requests. That is, the Jetty component
 behaves as a simple Web server.

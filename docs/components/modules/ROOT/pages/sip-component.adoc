@@ -4,6 +4,10 @@
 
 *Since Camel 2.5*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The SIP component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).
 

@@ -4,6 +4,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The RabbitMQ component allows you produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
 client, this component offers a pure RabbitMQ approach over the generic

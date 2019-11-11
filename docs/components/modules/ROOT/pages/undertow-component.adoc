@@ -4,6 +4,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Undertow component provides HTTP and WebSocket based endpoints for consuming
 and producing HTTP/WebSocket requests.
 

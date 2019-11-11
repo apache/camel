@@ -4,6 +4,10 @@
 
 *Since Camel 2.14*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Box component provides access to all of the Box.com APIs accessible
 using https://github.com/box/box-java-sdk/[https://github.com/box/box-java-sdk]. It
 allows producing messages to upload and download files, create, edit,

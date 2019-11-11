@@ -4,6 +4,10 @@
 
 *Since Camel 2.18*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The ServiceNow component provides access to ServiceNow platform through their REST API.
 
 The component supports multiple version of ServiceNow platform with default to Helsinki. Supported version are <<ServiceNow-Fuji>> and <<ServiceNow-Helsinki>>

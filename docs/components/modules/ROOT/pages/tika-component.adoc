@@ -4,6 +4,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The *Tika*: components provides the ability to detect and parse documents with 
 Apache Tika. This component uses
 https://tika.apache.org/[Apache Tika] as underlying library to work

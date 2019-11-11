@@ -4,6 +4,10 @@
 
 *Since Camel 2.11*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 EIP patterns allows for the
 integration system to be monitored and managed from within the

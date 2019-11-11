@@ -4,6 +4,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Google Bigquery component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
 the https://developers.google.com/api-client-library/java/apis/bigquery/v2[Google Client Services API].

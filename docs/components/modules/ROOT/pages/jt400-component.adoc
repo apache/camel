@@ -4,6 +4,10 @@
 
 *Since Camel 1.5*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The JT400 component allows you to exchanges messages with an AS/400
 system using data queues.
 

@@ -4,6 +4,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Twitter Direct Message Component consumes/produces a user's direct messages.
 
 == Component Options

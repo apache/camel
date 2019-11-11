@@ -4,6 +4,10 @@
 
 *Since Camel 2.22*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 
 == Using the service endpoint
 

@@ -4,6 +4,10 @@
 
 *Since Camel 2.14*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Netty HTTP component is an extension to xref:netty-component.adoc[Netty]
 component to facilitiate HTTP transport with xref:netty-component.adoc[Netty].
 

@@ -558,7 +558,7 @@ Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 
 | xref:stomp-component.adoc[Stomp] (camel-stomp) | 2.12 | The stomp component is used for communicating with Stomp compliant message brokers.
 
-| xref:stream-component.adoc[Stream] (camel-stream) | 1.3 | The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
+| xref:stream-component.adoc[Stream] (camel-stream) | 1.3 | The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file.
 
 | xref:string-template-component.adoc[String Template] (camel-stringtemplate) | 1.2 | Transforms the message using a String template.
 

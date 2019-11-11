@@ -4,6 +4,10 @@
 
 *Since Camel 1.0*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Timer component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.
 

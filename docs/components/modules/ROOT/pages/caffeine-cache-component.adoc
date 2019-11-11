@@ -4,6 +4,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Caffeine Cache component enables you to perform caching operations using
 the simple cache from Caffeine.
 

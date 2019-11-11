@@ -4,6 +4,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The **zookeeper-master:** endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;
 with automatic failover if that JVM dies.
 

@@ -1,17 +1,12 @@
 [[jmx-component]]
 = JMX Component
 :page-source: components/camel-jmx/src/main/docs/jmx-component.adoc
-ifdef::env-github[]
-*Since Camel 2.6.0*
 
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
+*Since Camel 2.6*
 
-== Camel JMX
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
 
 Apache Camel has extensive support for JMX to allow you to monitor and
 control the Camel managed objects with a JMX client.

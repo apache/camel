@@ -4,6 +4,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Jolt component allows you to process a JSON messages using an
 https://github.com/bazaarvoice/jolt[JOLT] specification. This can be
 ideal when doing JSON to JSON transformation.

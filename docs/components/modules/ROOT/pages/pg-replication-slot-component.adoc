@@ -4,6 +4,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 This is a component for Apache Camel which allows for
 consuming from PostgreSQL replication slots. The component works with PostgreSQL 10 or later.
 

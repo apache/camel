@@ -4,6 +4,10 @@
 
 *Since Camel 2.13*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Splunk component provides access to
 http://docs.splunk.com/Documentation/Splunk/latest[Splunk] using the
 Splunk provided https://github.com/splunk/splunk-sdk-java[client] api,

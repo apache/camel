@@ -4,6 +4,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Twilio component provides access to Version 2010-04-01 of Twilio REST APIs accessible
 using https://github.com/twilio/twilio-java[Twilio Java SDK].
 

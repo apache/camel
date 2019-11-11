@@ -4,6 +4,10 @@
 
 *Since Camel 2.6*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Spring WS component allows you to integrate with
 http://static.springsource.org/spring-ws/sites/1.5/[Spring Web
 Services]. It offers both _client_-side support, for accessing web

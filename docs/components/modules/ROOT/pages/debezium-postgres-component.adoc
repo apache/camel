@@ -4,6 +4,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 
 *Since Camel 3.0*
 

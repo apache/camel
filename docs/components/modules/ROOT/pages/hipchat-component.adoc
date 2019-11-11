@@ -4,6 +4,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Hipchat component supports producing and consuming messages from/to
 https://www.hipchat.com[Hipchat] service.
 

@@ -4,6 +4,10 @@
 
 *Since Camel 2.1*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Quickfix component adapts the
 http://www.quickfixj.org/[QuickFIX/J] FIX engine for using in Camel .
 This component uses the standard http://www.fixprotocol.org/[Financial
