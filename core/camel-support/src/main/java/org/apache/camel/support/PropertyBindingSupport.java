@@ -16,7 +16,9 @@
  */
 package org.apache.camel.support;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +34,7 @@ import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -49,7 +52,9 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType.
  *                               The class is created using a default no-arg constructor, however if you need to create the instance via a factory method
- *                               then you specify the method as shown: #class:com.foo.MyClassType#myFactoryMethod</li>.
+ *                               then you specify the method as shown: #class:com.foo.MyClassType#myFactoryMethod.
+ *                               Or if you need to create the instance via constructor parameters then you can specify the parameters as shown:
+ *                               #class:com.foo.MyClass('Hello World', 5, true)</li>.
  *     <li>ignore case - Whether to ignore case for property keys<li>
  * </ul>
  */
@@ -211,7 +216,7 @@ public final class PropertyBindingSupport {
         /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
-         * @return  true if one or more properties was bound
+         * @return true if one or more properties was bound
          */
         public boolean bind() {
             // mandatory parameters
@@ -226,10 +231,10 @@ public final class PropertyBindingSupport {
         /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
-         * @param camelContext  the camel context
-         * @param target        the target object
-         * @param properties    the properties where the bound properties will be removed from
-         * @return              true if one or more properties was bound
+         * @param camelContext the camel context
+         * @param target       the target object
+         * @param properties   the properties where the bound properties will be removed from
+         * @return true if one or more properties was bound
          */
         public boolean bind(CamelContext camelContext, Object target, Map<String, Object> properties) {
             CamelContext context = camelContext != null ? camelContext : this.camelContext;
@@ -248,11 +253,11 @@ public final class PropertyBindingSupport {
         /**
          * Binds the property to the target object.
          *
-         * @param camelContext  the camel context
-         * @param target        the target object
-         * @param key           the property key
-         * @param value         the property value
-         * @return              true if the property was bound
+         * @param camelContext the camel context
+         * @param target       the target object
+         * @param key          the property key
+         * @param value        the property value
+         * @return true if the property was bound
          */
         public boolean bind(CamelContext camelContext, Object target, String key, Object value) {
             org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
@@ -282,10 +287,10 @@ public final class PropertyBindingSupport {
         /**
          * Callback when a property was autowired on a bean
          *
-         * @param target        the targeted bean
-         * @param propertyName  the name of the property
-         * @param propertyType  the type of the property
-         * @param value         the property value
+         * @param target       the targeted bean
+         * @param propertyName the name of the property
+         * @param propertyType the type of the property
+         * @param value        the property value
          */
         void onAutowire(Object target, String propertyName, Class propertyType, Object value);
 
@@ -297,9 +302,9 @@ public final class PropertyBindingSupport {
      * This is used for convention over configuration to automatic configure resources such as DataSource, Amazon Logins and
      * so on.
      *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @return              true if one ore more properties was auto wired
+     * @param camelContext the camel context
+     * @param target       the target object
+     * @return true if one ore more properties was auto wired
      */
     public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target) {
         return autowireSingletonPropertiesFromRegistry(camelContext, target, false, false, null);
@@ -311,14 +316,14 @@ public final class PropertyBindingSupport {
      * This is used for convention over configuration to automatic configure resources such as DataSource, Amazon Logins and
      * so on.
      *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param bindNullOnly  whether to only autowire if the property has no default value or has not been configured explicit
-     * @param deepNesting   whether to attempt to walk as deep down the object graph by creating new empty objects on the way if needed (Camel can only create
-     *                      new empty objects if they have a default no-arg constructor, also mind that this may lead to creating many empty objects, even
-     *                      if they will not have any objects autowired from the registry, so use this with caution)
-     * @param callback      optional callback when a property was auto wired
-     * @return              true if one ore more properties was auto wired
+     * @param camelContext the camel context
+     * @param target       the target object
+     * @param bindNullOnly whether to only autowire if the property has no default value or has not been configured explicit
+     * @param deepNesting  whether to attempt to walk as deep down the object graph by creating new empty objects on the way if needed (Camel can only create
+     *                     new empty objects if they have a default no-arg constructor, also mind that this may lead to creating many empty objects, even
+     *                     if they will not have any objects autowired from the registry, so use this with caution)
+     * @param callback     optional callback when a property was auto wired
+     * @return true if one ore more properties was auto wired
      */
     public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target,
                                                                   boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) {
@@ -422,11 +427,10 @@ public final class PropertyBindingSupport {
      * the fluent builder {@link #build()} where each option can be customized, such as whether parameter
      * should be removed, or whether options are mandatory etc.
      *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param properties    the properties where the bound properties will be removed from
-     * @return              true if one or more properties was bound
-     *
+     * @param camelContext the camel context
+     * @param target       the target object
+     * @param properties   the properties where the bound properties will be removed from
+     * @return true if one or more properties was bound
      * @see #build()
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
@@ -442,22 +446,22 @@ public final class PropertyBindingSupport {
      * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
      * Note that the prefix is removed from the key before the property is bound.
      *
-     * @param camelContext        the camel context
-     * @param target              the target object
-     * @param properties          the properties where the bound properties will be removed from
-     * @param optionPrefix        the prefix used to filter properties
-     * @param ignoreCase          whether to ignore case for property keys
-     * @param removeParameter     whether to remove bound parameters
-     * @param mandatory           whether all parameters must be bound
-     * @param nesting             whether nesting is in use
-     * @param deepNesting         whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
-     *                            a property has a setter and the object can be created from a default no-arg constructor.
-     * @param fluentBuilder       whether fluent builder is allowed as a valid getter/setter
-     * @param allowPrivateSetter  whether autowiring components allows to use private setter method when setting the value
-     * @param reference           whether reference parameter (syntax starts with #) is in use
-     * @param placeholder         whether to use Camels property placeholder to resolve placeholders on keys and values
-     * @param configurer          to use an optional {@link org.apache.camel.spi.PropertyConfigurer} to configure the properties
-     * @return                    true if one or more properties was bound
+     * @param camelContext       the camel context
+     * @param target             the target object
+     * @param properties         the properties where the bound properties will be removed from
+     * @param optionPrefix       the prefix used to filter properties
+     * @param ignoreCase         whether to ignore case for property keys
+     * @param removeParameter    whether to remove bound parameters
+     * @param mandatory          whether all parameters must be bound
+     * @param nesting            whether nesting is in use
+     * @param deepNesting        whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
+     *                           a property has a setter and the object can be created from a default no-arg constructor.
+     * @param fluentBuilder      whether fluent builder is allowed as a valid getter/setter
+     * @param allowPrivateSetter whether autowiring components allows to use private setter method when setting the value
+     * @param reference          whether reference parameter (syntax starts with #) is in use
+     * @param placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @param configurer         to use an optional {@link org.apache.camel.spi.PropertyConfigurer} to configure the properties
+     * @return true if one or more properties was bound
      */
     private static boolean doBindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
                                             String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean mandatory,
@@ -486,7 +490,7 @@ public final class PropertyBindingSupport {
                     // not resolve property placeholders eventually defined in the value before invoking
                     // the setter.
                     if (value instanceof String) {
-                        value = camelContext.resolvePropertyPlaceholders((String)value);
+                        value = camelContext.resolvePropertyPlaceholders((String) value);
                     }
                     try {
                         value = resolveValue(camelContext, target, key, value, ignoreCase, fluentBuilder, allowPrivateSetter);
@@ -559,13 +563,22 @@ public final class PropertyBindingSupport {
                 // its a new class to be created
                 String className = value.toString().substring(7);
                 String factoryMethod = null;
-                if (className.indexOf('#') != -1) {
+                String parameters = null;
+                if (className.endsWith(")") && className.indexOf('(') != -1) {
+                    parameters = StringHelper.after(className, "(");
+                    parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+                    className = StringHelper.before(className, "(");
+                }
+                if (className != null && className.indexOf('#') != -1) {
                     factoryMethod = StringHelper.after(className, "#");
                     className = StringHelper.before(className, "#");
                 }
                 Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
                 if (factoryMethod != null) {
                     value = context.getInjector().newInstance(type, factoryMethod);
+                } else if (parameters != null) {
+                    // special to support constructor parameters
+                    value = newInstanceConstructorParameters(context, type, parameters);
                 } else {
                     value = context.getInjector().newInstance(type);
                 }
@@ -800,5 +813,152 @@ public final class PropertyBindingSupport {
         return parameter != null && parameter.trim().startsWith("#");
     }
 
+    private static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters) throws Exception {
+        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
+        Constructor found = findMatchingConstructor(type.getConstructors(), params);
+        if (found != null) {
+            Object[] arr = new Object[found.getParameterCount()];
+            for (int i = 0; i < found.getParameterCount(); i++) {
+                Class<?> paramType = found.getParameterTypes()[i];
+                Object param = params[i];
+                Object val = camelContext.getTypeConverter().convertTo(paramType, param);
+                // unquote text
+                if (val instanceof String) {
+                    val = StringHelper.removeLeadingAndEndingQuotes((String) val);
+                }
+                arr[i] = val;
+            }
+            return found.newInstance(arr);
+        }
+        return null;
+    }
+
+    /**
+     * Finds the best matching constructor for the given parameters.
+     * <p/>
+     * This implementation is similar to the logic in camel-bean.
+     *
+     * @param constructors the constructors
+     * @param params       the parameters
+     * @return the constructor, or null if no matching constructor can be found
+     */
+    private static Constructor findMatchingConstructor(Constructor<?>[] constructors, String[] params) {
+        List<Constructor> candidates = new ArrayList<>();
+        Constructor fallbackCandidate = null;
+
+        for (Constructor ctr : constructors) {
+            if (ctr.getParameterCount() != params.length) {
+                continue;
+            }
+
+            boolean matches = true;
+            for (int i = 0; i < ctr.getParameterCount(); i++) {
+                String parameter = params[i];
+                if (parameter != null) {
+                    // must trim
+                    parameter = parameter.trim();
+                }
+
+                Class<?> parameterType = getValidParameterType(parameter);
+                Class<?> expectedType = ctr.getParameterTypes()[i];
+
+                if (parameterType != null && expectedType != null) {
+                    // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
+                    if (Object.class.equals(expectedType)) {
+                        fallbackCandidate = ctr;
+                        matches = false;
+                        break;
+                    }
+
+                    boolean matchingTypes = isParameterMatchingType(parameterType, expectedType);
+                    if (!matchingTypes) {
+                        matches = false;
+                        break;
+                    }
+                }
+            }
+
+            if (matches) {
+                candidates.add(ctr);
+            }
+        }
+
+        return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+    }
+
+    /**
+     * Determines and maps the given value is valid according to the supported
+     * values by the bean component.
+     * <p/>
+     * This implementation is similar to the logic in camel-bean.
+     *
+     * @param value the value
+     * @return the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
+     */
+    private static Class<?> getValidParameterType(String value) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(value)) {
+            return null;
+        }
+
+        // trim value
+        value = value.trim();
+
+        // single quoted is valid
+        if (value.startsWith("'") && value.endsWith("'")) {
+            return String.class;
+        }
+
+        // double quoted is valid
+        if (value.startsWith("\"") && value.endsWith("\"")) {
+            return String.class;
+        }
+
+        // true or false is valid (boolean)
+        if (value.equals("true") || value.equals("false")) {
+            return Boolean.class;
+        }
+
+        // null is valid (to force a null value)
+        if (value.equals("null")) {
+            return Object.class;
+        }
+
+        // simple language tokens is valid
+        if (StringHelper.hasStartToken(value, "simple")) {
+            return Object.class;
+        }
+
+        // numeric is valid
+        boolean numeric = true;
+        for (char ch : value.toCharArray()) {
+            if (!Character.isDigit(ch)) {
+                numeric = false;
+                break;
+            }
+        }
+        if (numeric) {
+            return Number.class;
+        }
+
+        // not valid
+        return null;
+    }
+
+    private static boolean isParameterMatchingType(Class<?> parameterType, Class<?> expectedType) {
+        if (Number.class.equals(parameterType)) {
+            // number should match long/int/etc.
+            if (Integer.class.isAssignableFrom(expectedType) || Long.class.isAssignableFrom(expectedType)
+                    || int.class.isAssignableFrom(expectedType) || long.class.isAssignableFrom(expectedType)) {
+                return true;
+            }
+        }
+        if (Boolean.class.equals(parameterType)) {
+            // boolean should match both Boolean and boolean
+            if (Boolean.class.isAssignableFrom(expectedType) || boolean.class.isAssignableFrom(expectedType)) {
+                return true;
+            }
+        }
+        return parameterType.isAssignableFrom(expectedType);
+    }
 
 }
