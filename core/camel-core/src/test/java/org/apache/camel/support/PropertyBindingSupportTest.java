@@ -360,6 +360,18 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
+    public void testNestedClassConstructorParameterPlaceholder() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('{{companyName}}', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Acme", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
     public void testNestedClassConstructorParameterTwoParameter() throws Exception {
         Foo foo = new Foo();
 
