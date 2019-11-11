@@ -4,6 +4,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Weather component is used for polling weather information from
 http://openweathermap.org[Open Weather Map] - a site that provides free
 global weather and forecast information. The information is returned as

@@ -4,6 +4,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 This component provides an idemptotent repository, producers and
 consumers for http://hbase.apache.org/[Apache HBase].
 

@@ -4,6 +4,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The PDF components provides the ability to create, modify or extract
 content from PDF documents. This component uses
 https://pdfbox.apache.org/[Apache PDFBox] as underlying library to work

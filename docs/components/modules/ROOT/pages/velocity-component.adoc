@@ -4,6 +4,10 @@
 
 *Since Camel 1.2*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Velocity component allows you to process a message using an
 http://velocity.apache.org/[Apache Velocity] template. This can be ideal
 when using Templating to generate responses for

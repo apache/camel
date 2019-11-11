@@ -4,6 +4,10 @@
 
 *Since Camel 1.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 TIP: When using CXF in streaming modes (see DataFormat option), then also
 read about Stream caching.
 

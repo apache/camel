@@ -4,6 +4,10 @@
 
 *Since Camel 2.3*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The xref:nagios-component.adoc[Nagios] component allows you to send passive checks
 to http://nagios.org[Nagios].
 

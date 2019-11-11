@@ -4,6 +4,10 @@
 
 *Since Camel 1.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The XMPP component implements an XMPP (Jabber) transport.
 
 Maven users will need to add the following dependency to their `pom.xml`

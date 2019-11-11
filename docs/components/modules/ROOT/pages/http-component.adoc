@@ -4,6 +4,10 @@
 
 *Since Camel 2.3*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The HTTP component provides HTTP based endpoints
 for calling external HTTP resources (as a client to call external
 servers using HTTP).

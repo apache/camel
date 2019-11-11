@@ -4,6 +4,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Kubernetes HPA component is one of xref:kubernetes.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes hpa operations and a consumer to consume kubernetes
 hpa events.

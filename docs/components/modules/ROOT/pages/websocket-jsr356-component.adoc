@@ -4,6 +4,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The JSR356 component provides websocket
 endpoints for communicating with clients using
 JSR356 (javax).

@@ -4,6 +4,10 @@
 
 *Since Camel 2.9*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The ZooKeeper component allows interaction with a
 http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the
 following features to Camel:

@@ -4,6 +4,10 @@
 
 *Since Camel 2.17*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with https://apacheignite.readme.io/docs/id-generator[Ignite Atomic Sequences and ID Generators].
 
 This endpoint only supports producers.

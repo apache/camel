@@ -4,6 +4,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Google Sheets component provides access
 to https://sheets.google.com/[Sheets] via
 the https://developers.google.com/sheets/api/reference/rest/[Google Sheets

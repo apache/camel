@@ -4,6 +4,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Debezium MongoDB component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from MongoDB database using Debezium without the need for Kafka or Kafka Connect.
 
 *Note:* The Debezium MongoDB connector uses MongoDB’s oplog to capture the changes, so the connector works only with MongoDB replica sets or with sharded clusters where each shard is a separate replica set, therefore you will need to have your MongoDB instance running either in replica set mode

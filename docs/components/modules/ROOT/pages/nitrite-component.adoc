@@ -4,6 +4,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 Nitrite component is used to access https://github.com/dizitart/nitrite-database[Nitrite NoSQL database]
 
 Maven users will need to add the following dependency to their `pom.xml`

@@ -4,6 +4,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Milo Client component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 

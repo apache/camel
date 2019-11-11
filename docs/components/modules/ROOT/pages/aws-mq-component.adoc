@@ -4,6 +4,10 @@
 
 *Since Camel 2.21*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The MQ component supports create, run, start, stop and terminate
 https://aws.amazon.com/amazon-mq/[AWS MQ] instances.
 

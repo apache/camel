@@ -4,6 +4,10 @@
 
 *Since Camel 2.22*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Ethereum blockchain component uses the
 https://github.com/web3j/web3j[web3j] client
 API and allows you to interact with Ethereum compatible nodes such as https://github.com/ethereum/go-ethereum/wiki/geth[Geth], https://github.com/paritytech/parity[Parity], https://github.com/jpmorganchase/quorum/wiki[Quorum], https://infura.io[Infura], etc.

@@ -4,6 +4,10 @@
 
 *Since Camel 2.23*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The IPFS component provides access to the Interplanetary File System https://ipfs.io/[(IPFS)].
 
 Maven users will need to add the following dependency to their `pom.xml`

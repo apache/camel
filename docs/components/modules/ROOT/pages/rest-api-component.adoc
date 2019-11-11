@@ -4,6 +4,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The REST API component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
 == URI Options

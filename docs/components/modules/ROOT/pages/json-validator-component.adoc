@@ -4,6 +4,10 @@
 
 *Since Camel 2.20*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The JSON Schema Validator component performs bean validation of the message body
 against JSON Schemas v4 draft using the NetworkNT JSON Schema library
 (https://github.com/networknt/json-schema-validator).

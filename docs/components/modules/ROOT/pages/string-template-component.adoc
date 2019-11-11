@@ -4,6 +4,10 @@
 
 *Since Camel 1.2*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The String Template component allows you to process a message using a
 http://www.stringtemplate.org/[String Template]. This can be ideal when
 using Templating to generate responses for

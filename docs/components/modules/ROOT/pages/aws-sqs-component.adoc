@@ -4,6 +4,10 @@
 
 *Since Camel 2.6*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The sqs component supports sending and receiving messages to
 https://aws.amazon.com/sqs[Amazon's SQS] service.
 

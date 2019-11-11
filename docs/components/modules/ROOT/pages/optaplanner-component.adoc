@@ -4,6 +4,10 @@
 
 *Since Camel 2.13*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Optaplanner component solves the planning problem contained in a
 message with http://www.optaplanner.org/[OptaPlanner]. +
  For example: feed it an unsolved Vehicle Routing problem and it solves

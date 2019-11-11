@@ -4,6 +4,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The Stub component provides a simple way to stub out any physical
 endpoints while in development or testing, allowing you for example to
 run a route without needing to actually connect to a specific

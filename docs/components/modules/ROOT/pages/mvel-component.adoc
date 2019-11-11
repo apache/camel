@@ -4,6 +4,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 The MVEL component allows you to process a message using an
 http://mvel.codehaus.org/[MVEL] template. This can be ideal when using
 Templating to generate responses for requests.

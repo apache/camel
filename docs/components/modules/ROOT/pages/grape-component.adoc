@@ -4,6 +4,10 @@
 
 *Since Camel 2.16*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 http://docs.groovy-lang.org/latest/html/documentation/grape.html[Grape]
 component allows you to fetch, load and manage additional jars when
 `CamelContext` is running. In practice with Camel Grape component you

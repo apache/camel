@@ -4,6 +4,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Both Producer and Consumer are supported*
+// HEADER END
+
 The JIRA component interacts with the JIRA API by encapsulating
 Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST
 Java Client for JIRA]. It currently provides polling for new issues and

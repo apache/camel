@@ -4,6 +4,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 Provides a mechanism to send a value (the message body) as a metric to
 the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
 library.  Can be used in conjunction with standard

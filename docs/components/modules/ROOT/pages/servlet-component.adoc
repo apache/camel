@@ -4,6 +4,10 @@
 
 *Since Camel 2.0*
 
+// HEADER START
+*Only Consumer is supported*
+// HEADER END
+
 The Servlet component provides HTTP based
 endpoints for consuming HTTP requests that arrive at
 a HTTP endpoint that is bound to a published Servlet.

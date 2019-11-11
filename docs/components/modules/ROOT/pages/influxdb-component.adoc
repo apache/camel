@@ -4,6 +4,10 @@
 
 *Since Camel 2.18*
 
+// HEADER START
+*Only Producer is supported*
+// HEADER END
+
 This component allows you to interact with InfluxDB
 https://influxdata.com/time-series-platform/influxdb/ a time series database. The native body type for this component is
 Point (the native influxdb class), but it can also accept Map<String, Object> as message body and it will get converted
