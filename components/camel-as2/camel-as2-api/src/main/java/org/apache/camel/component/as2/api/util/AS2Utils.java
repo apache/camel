@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +53,7 @@ public final class AS2Utils {
 
     public static final Pattern AS_NAME_PATTERN = Pattern.compile(AS2_NAME);
 
-    private static Random generator = new Random();
+    private static SecureRandom generator = new SecureRandom();
 
     private AS2Utils() {
     }
