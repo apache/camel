@@ -50,7 +50,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty component supports 33 options, which are listed below.
+The Jetty component supports 31 options, which are listed below.
 
 
 
@@ -63,8 +63,6 @@ The Jetty component supports 33 options, which are listed below.
 | *errorHandler* (advanced) | This option is used to set the ErrorHandler that Jetty server uses. |  | ErrorHandler
 | *sslSocketConnectors* (security) | A map which contains per port number specific SSL connectors. |  | Map
 | *socketConnectors* (security) | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors. |  | Map
-| *httpClientMinThreads* (producer) | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *httpClientMaxThreads* (producer) | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *minThreads* (consumer) | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *maxThreads* (consumer) | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *threadPool* (consumer) | To use a custom thread pool for the server. This option should only be used in special circumstances. |  | ThreadPool
@@ -178,7 +176,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 34 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
@@ -193,8 +191,6 @@ The component supports 34 options, which are listed below.
 | *camel.component.jetty.error-handler* | This option is used to set the ErrorHandler that Jetty server uses. The option is a org.eclipse.jetty.server.handler.ErrorHandler type. |  | String
 | *camel.component.jetty.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.jetty.http-binding* | Not to be used - use JettyHttpBinding instead. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
-| *camel.component.jetty.http-client-max-threads* | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *camel.component.jetty.http-client-min-threads* | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *camel.component.jetty.http-configuration* | Jetty component does not use HttpConfiguration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
 | *camel.component.jetty.jetty-http-binding* | To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer. The option is a org.apache.camel.component.jetty.JettyHttpBinding type. |  | String
 | *camel.component.jetty.keystore* | Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry. |  | String
