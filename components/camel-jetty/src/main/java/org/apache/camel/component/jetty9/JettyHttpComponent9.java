@@ -23,12 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.jetty.CamelHttpClient;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
@@ -44,11 +42,6 @@ import org.slf4j.LoggerFactory;
 public class JettyHttpComponent9 extends JettyHttpComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent9.class);
-
-    @Override
-    protected CamelHttpClient createCamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
-        return new CamelHttpClient9(transport, sslContextFactory);
-    }
 
     @Override
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
