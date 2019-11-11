@@ -4,7 +4,7 @@
 *Since Camel 1.3*
 
 The Stream component provides access to the `System.in`, `System.out`
-and `System.err` streams as well as allowing streaming of file and URL.
+and `System.err` streams as well as allowing streaming of file.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -21,21 +21,14 @@ for this component:
 
 == URI format
 
-[source,java]
+[source,text]
 -----------------------
 stream:in[?options]
 stream:out[?options]
 stream:err[?options]
 stream:header[?options]
------------------------
-
-In addition, the `file` and `url` endpoint URIs are supported:
-
-[source,java]
----------------------------------
 stream:file?fileName=/foo/bar.txt
-stream:url[?options]
----------------------------------
+-----------------------
 
 If the `stream:header` URI is specified, the `stream` header is used to
 find the stream to write to. This option is available only for stream
@@ -80,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (24 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +81,6 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *encoding* (common) | You can configure the encoding (is a charset name) to use text-based streams (for example, message body is a String object). If not provided, Camel uses the JVM default Charset. |  | String
 | *fileName* (common) | When using the stream:file URI format, this option specifies the filename to stream to/from. |  | String
-| *url* (common) | When using the stream:url URI format, this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *fileWatcher* (consumer) | To use JVM file watcher to listen for file change events to support re-loading files that may be overwritten, somewhat like tail --retry | false | boolean
 | *groupLines* (consumer) | To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange with 10 lines, instead of 1 Exchange per line. |  | int
@@ -106,8 +98,6 @@ with the following path and query parameters:
 | *delay* (producer) | Initial delay in milliseconds before producing the stream. |  | long
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *connectTimeout* (advanced) | Sets a specified timeout value, in milliseconds, to be used when opening a communications link to the resource referenced by this URLConnection. If the timeout expires before the connection can be established, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an infinite timeout. |  | int
-| *httpHeaders* (advanced) | Optional http headers to use in request when using HTTP URL. |  | Map
 | *readTimeout* (advanced) | Sets the read timeout to a specified timeout, in milliseconds. A non-zero value specifies the timeout when reading from Input stream when a connection is established to a resource. If the timeout expires before there is data available for read, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an infinite timeout. |  | int
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
