@@ -156,6 +156,11 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
+        // global endpoint configurations
+        camelContext.getGlobalEndpointConfiguration().setBasicPropertyBinding(config.isEndpointBasicPropertyBinding());
+        camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
+        camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
+
         camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingPattern(config.getTracingPattern());
