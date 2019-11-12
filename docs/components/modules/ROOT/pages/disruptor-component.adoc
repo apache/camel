@@ -100,7 +100,7 @@ All the following options are valid for both the **disruptor:** and
 
 
 // component options: START
-The Disruptor component supports 8 options, which are listed below.
+The Disruptor component supports 10 options, which are listed below.
 
 
 
@@ -115,6 +115,8 @@ The Disruptor component supports 8 options, which are listed below.
 | *queueSize* (common) | *Deprecated* To configure the ring buffer size |  | int
 | *bufferSize* (common) | To configure the ring buffer size | 1024 | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -178,7 +180,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 18 options, which are listed below.
+The component supports 22 options, which are listed below.
 
 
 
@@ -186,6 +188,7 @@ The component supports 18 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.disruptor-vm.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.disruptor-vm.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.disruptor-vm.buffer-size* | To configure the ring buffer size | 1024 | Integer
 | *camel.component.disruptor-vm.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
 | *camel.component.disruptor-vm.default-concurrent-consumers* | To configure the default number of concurrent consumers | 1 | Integer
@@ -193,7 +196,9 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor-vm.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
 | *camel.component.disruptor-vm.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor-vm.enabled* | Enable disruptor-vm component | true | Boolean
+| *camel.component.disruptor-vm.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.disruptor.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.disruptor.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.disruptor.buffer-size* | To configure the ring buffer size | 1024 | Integer
 | *camel.component.disruptor.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
 | *camel.component.disruptor.default-concurrent-consumers* | To configure the default number of concurrent consumers | 1 | Integer
@@ -201,6 +206,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
 | *camel.component.disruptor.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor.enabled* | Enable disruptor component | true | Boolean
+| *camel.component.disruptor.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.disruptor-vm.queue-size* | *Deprecated* To configure the ring buffer size |  | Integer
 | *camel.component.disruptor.queue-size* | *Deprecated* To configure the ring buffer size |  | Integer
 |===

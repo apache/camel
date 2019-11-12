@@ -59,6 +59,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
     private boolean endpointRuntimeStatisticsEnabled;
+    private boolean endpointLazyStartProducer;
+    private boolean endpointBridgeErrorHandler;
+    private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
@@ -519,6 +522,53 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+    }
+
+    public boolean isEndpointLazyStartProducer() {
+        return endpointLazyStartProducer;
+    }
+
+    /**
+     * Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup
+     * in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then
+     * the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed
+     * then creating and starting the producer may take a little time and prolong the total processing time of the processing.
+     *
+     * The default value is false.
+     */
+    public void setEndpointLazyStartProducer(boolean endpointLazyStartProducer) {
+        this.endpointLazyStartProducer = endpointLazyStartProducer;
+    }
+
+    public boolean isEndpointBridgeErrorHandler() {
+        return endpointBridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     *
+     * The default value is false.
+     */
+    public void setEndpointBridgeErrorHandler(boolean endpointBridgeErrorHandler) {
+        this.endpointBridgeErrorHandler = endpointBridgeErrorHandler;
+    }
+
+    public boolean isEndpointBasicPropertyBinding() {
+        return endpointBasicPropertyBinding;
+    }
+
+    /**
+     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     *
+     * The default value is false.
+     */
+    public void setEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
+        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
     }
 
     public boolean isUseDataType() {
@@ -1133,6 +1183,44 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup
+     * in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then
+     * the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed
+     * then creating and starting the producer may take a little time and prolong the total processing time of the processing.
+     *
+     * The default value is false.
+     */
+    public T withEndpointLazyStartProducer(boolean endpointLazyStartProducer) {
+        this.endpointLazyStartProducer = endpointLazyStartProducer;
+        return (T) this;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     *
+     * The default value is false.
+     */
+    public T withEndpointBridgeErrorHandler(boolean endpointBridgeErrorHandler) {
+        this.endpointBridgeErrorHandler = endpointBridgeErrorHandler;
+        return (T) this;
+    }
+
+    /**
+     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     *
+     * The default value is false.
+     */
+    public T withEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
+        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
         return (T) this;
     }
 

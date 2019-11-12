@@ -46,7 +46,7 @@ for this component:
 
 
 // component options: START
-The MLLP component supports 5 options, which are listed below.
+The MLLP component supports 7 options, which are listed below.
 
 
 
@@ -58,6 +58,8 @@ The MLLP component supports 5 options, which are listed below.
 | *defaultCharset* (advanced) | Set the default character set to use for byte to/from String conversions. | ISO-8859-1 | String
 | *configuration* (common) | Sets the default configuration to use when creating MLLP endpoints. |  | MllpConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -141,7 +143,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 31 options, which are listed below.
+The component supports 33 options, which are listed below.
 
 
 
@@ -149,6 +151,7 @@ The component supports 31 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.mllp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.mllp.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.mllp.configuration.accept-timeout* | Timeout (in milliseconds) while waiting for a TCP connection <p/> TCP Server Only | 60000 | Integer
 | *camel.component.mllp.configuration.auto-ack* | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only | true | Boolean
 | *camel.component.mllp.configuration.backlog* | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused. | 5 | Integer
@@ -175,6 +178,7 @@ The component supports 31 options, which are listed below.
 | *camel.component.mllp.configuration.validate-payload* | Enable/Disable the validation of HL7 Payloads If enabled, HL7 Payloads received from external systems will be validated (see Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation). If and invalid payload is detected, a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown. | false | Boolean
 | *camel.component.mllp.default-charset* | Set the default character set to use for byte to/from String conversions. | ISO-8859-1 | String
 | *camel.component.mllp.enabled* | Enable mllp component | true | Boolean
+| *camel.component.mllp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | Boolean
 | *camel.component.mllp.log-phi-max-bytes* | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
 | *camel.component.mllp.configuration.buffer-writes* | *Deprecated* Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean

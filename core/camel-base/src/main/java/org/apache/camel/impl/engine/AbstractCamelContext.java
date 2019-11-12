@@ -54,6 +54,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.GlobalEndpointConfiguration;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NoFactoryAvailableException;
@@ -173,6 +174,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private ClassLoader applicationContextClassLoader;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
+    private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
     private final List<Service> servicesToStop = new CopyOnWriteArrayList<>();
@@ -1022,6 +1024,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         } else {
             return new EndpointKey(uri);
         }
+    }
+
+    @Override
+    public GlobalEndpointConfiguration getGlobalEndpointConfiguration() {
+        return globalEndpointConfiguration;
     }
 
     // Route Management Methods

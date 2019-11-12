@@ -134,6 +134,24 @@
 			"description":"To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Camel for a short while."
 		},
 		{
+			"name":"camel.main.endpoint-basic-property-binding",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities. The default value is false."
+		},
+		{
+			"name":"camel.main.endpoint-bridge-error-handler",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN\/ERROR level and ignored. The default value is false."
+		},
+		{
+			"name":"camel.main.endpoint-lazy-start-producer",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. The default value is false."
+		},
+		{
 			"name":"camel.main.endpoint-runtime-statistics-enabled",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
