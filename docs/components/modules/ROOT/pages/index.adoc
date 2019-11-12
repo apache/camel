@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 300 in 238 JAR artifacts (0 deprecated)
+Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -314,6 +314,8 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 | xref:jdbc-component.adoc[JDBC] (camel-jdbc) | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
+| xref:jetty-component.adoc[Jetty] (camel-jetty) | 1.2 | To use Jetty as a HTTP server as consumer for Camel routes.
+
 | xref:websocket-component.adoc[Jetty Websocket] (camel-websocket) | 2.10 | The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
 
 | xref:jgroups-component.adoc[JGroups] (camel-jgroups) | 2.13 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
@@ -506,6 +508,8 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 | xref:servicenow-component.adoc[ServiceNow] (camel-servicenow) | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
 
+| xref:servlet-component.adoc[Servlet] (camel-servlet) | 2.0 | To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
+
 | xref:sftp-component.adoc[SFTP] (camel-ftp) | 1.1 | The \sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
 
 | xref:sjms-component.adoc[Simple JMS] (camel-sjms) | 2.11 | The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).
@@ -533,6 +537,8 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 | xref:splunk-component.adoc[Splunk] (camel-splunk) | 2.13 | The splunk component allows to publish or search for events in Splunk.
 
 | xref:spring-batch-component.adoc[Spring Batch] (camel-spring-batch) | 2.10 | The spring-batch component allows to send messages to Spring Batch for further processing.
+
+| xref:spring-event-component.adoc[Spring Event] (camel-spring) | 1.4 | The spring-event component allows to listen for Spring Application Events.
 
 | xref:spring-integration-component.adoc[Spring Integration] (camel-spring-integration) | 1.4 | Bridges Camel with Spring Integration.
 
@@ -618,7 +624,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 == Data Formats
 
 // dataformats: START
-Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
+Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -670,6 +676,8 @@ Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 
 | xref:json-gson-dataformat.adoc[JSon GSon] (camel-gson) | 2.10 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
+| xref:json-jackson-dataformat.adoc[JSon Jackson] (camel-jackson) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+
 | xref:json-johnzon-dataformat.adoc[JSon Johnzon] (camel-johnzon) | 2.18 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
 | xref:json-xstream-dataformat.adoc[JSon XStream] (camel-xstream) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
@@ -717,7 +725,7 @@ Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 == Expression Languages
 
 // languages: START
-Number of Languages: 16 in 10 JAR artifacts (0 deprecated)
+Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -746,6 +754,8 @@ Number of Languages: 16 in 10 JAR artifacts (0 deprecated)
 | xref:ref-language.adoc[Ref] (camel-base) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
 
 | xref:simple-language.adoc[Simple] (camel-base) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+
+| xref:spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
 
 | xref:tokenize-language.adoc[Tokenize] (camel-base) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
