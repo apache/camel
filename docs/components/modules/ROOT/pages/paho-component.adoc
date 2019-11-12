@@ -56,7 +56,7 @@ Where *topic* is the name of the topic.
 == Options
 
 // component options: START
-The Paho component supports 4 options, which are listed below.
+The Paho component supports 6 options, which are listed below.
 
 
 
@@ -67,6 +67,8 @@ The Paho component supports 4 options, which are listed below.
 | *client* (advanced) | To use a shared Paho client |  | MqttClient
 | *brokerUrl* (common) | The URL of the MQTT broker. |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -147,7 +149,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 30 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
@@ -155,6 +157,7 @@ The component supports 30 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.paho.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.paho.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.paho.broker-url* | The URL of the MQTT broker. |  | String
 | *camel.component.paho.client* | To use a shared Paho client. The option is a org.eclipse.paho.client.mqttv3.MqttClient type. |  | String
 | *camel.component.paho.configuration.automatic-reconnect* | Sets whether the client will automatically attempt to reconnect to the server if the connection is lost. <ul> <li>If set to false, the client will not attempt to automatically reconnect to the server in the event that the connection is lost.</li> <li>If set to true, in the event that the connection is lost, the client will attempt to reconnect to the server. It will initially wait 1 second before it attempts to reconnect, for every failed reconnect attempt, the delay will double until it is at 2 minutes at which point the delay will stay at 2 minutes.</li> </ul> | true | Boolean
@@ -184,6 +187,7 @@ The component supports 30 options, which are listed below.
 | *camel.component.paho.configuration.will-retained* | Sets the "Last Will and Testament" (LWT) for the connection. In the event that this client unexpectedly loses its connection to the server, the server will publish a message to itself using the supplied details. The topic to publish to The byte payload for the message. The quality of service to publish the message at (0, 1 or 2). Whether or not the message should be retained. | false | Boolean
 | *camel.component.paho.configuration.will-topic* | Sets the "Last Will and Testament" (LWT) for the connection. In the event that this client unexpectedly loses its connection to the server, the server will publish a message to itself using the supplied details. The topic to publish to The byte payload for the message. The quality of service to publish the message at (0, 1 or 2). Whether or not the message should be retained. |  | String
 | *camel.component.paho.enabled* | Enable paho component | true | Boolean
+| *camel.component.paho.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

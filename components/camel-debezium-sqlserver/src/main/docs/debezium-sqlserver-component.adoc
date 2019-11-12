@@ -39,7 +39,7 @@ debezium-sqlserver:name[?options]
 
 
 // component options: START
-The Debezium SQL Server Connector component supports 2 options, which are listed below.
+The Debezium SQL Server Connector component supports 4 options, which are listed below.
 
 
 
@@ -48,6 +48,8 @@ The Debezium SQL Server Connector component supports 2 options, which are listed
 | Name | Description | Default | Type
 | *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | SqlServerConnectorEmbeddedDebeziumConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -140,7 +142,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 44 options, which are listed below.
+The component supports 46 options, which are listed below.
 
 
 
@@ -148,6 +150,7 @@ The component supports 44 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.debezium-sqlserver.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.debezium-sqlserver.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.debezium-sqlserver.configuration.column-blacklist* | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
 | *camel.component.debezium-sqlserver.configuration.connector-class* | The name of the Java class for the connector |  | Class
 | *camel.component.debezium-sqlserver.configuration.database-dbname* | The name of the database the connector should be monitoring. When working with a multi-tenant set-up, must be set to the CDB name. |  | String
@@ -191,6 +194,7 @@ The component supports 44 options, which are listed below.
 | *camel.component.debezium-sqlserver.configuration.table-whitelist* | The tables for which changes are to be captured |  | String
 | *camel.component.debezium-sqlserver.configuration.time-precision-mode* | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
 | *camel.component.debezium-sqlserver.enabled* | Whether to enable auto configuration of the debezium-sqlserver component. This is enabled by default. |  | Boolean
+| *camel.component.debezium-sqlserver.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -89,7 +89,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 140 options, which are listed below.
+The component supports 143 options, which are listed below.
 
 
 
@@ -162,6 +162,9 @@ The component supports 140 options, which are listed below.
 | *camel.springboot.duration-max-idle-seconds* | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
 | *camel.springboot.duration-max-messages* | To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
 | *camel.springboot.duration-max-seconds* | To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
+| *camel.springboot.endpoint-basic-property-binding* | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities. The default value is false. | false | Boolean
+| *camel.springboot.endpoint-bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. <p/> By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. The default value is false. | false | Boolean
+| *camel.springboot.endpoint-lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. The default value is false. | false | Boolean
 | *camel.springboot.endpoint-runtime-statistics-enabled* | Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false. | false | Boolean
 | *camel.springboot.file-configurations* | Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You must use either file: or classpath: as prefix to load from file system or classpath. Then you can specify a pattern to load from sub directories and a name pattern such as file:/var/app/secret/*.properties |  | String
 | *camel.springboot.include-non-singletons* | Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances. By default only singleton beans is included in the context scan. | false | Boolean

@@ -47,7 +47,7 @@ You can append query options to the URI in the following format,
 === Options
 
 // component options: START
-The Robot Framework component supports 2 options, which are listed below.
+The Robot Framework component supports 4 options, which are listed below.
 
 
 
@@ -56,6 +56,8 @@ The Robot Framework component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | The configuration |  | RobotFrameworkCamelConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -171,7 +173,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 47 options, which are listed below.
+The component supports 49 options, which are listed below.
 
 
 
@@ -179,6 +181,7 @@ The component supports 47 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.robotframework.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.robotframework.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.robotframework.configuration.argument-file* | A text file to read more arguments from. |  | File
 | *camel.component.robotframework.configuration.combined-tag-stats* | Creates combined statistics based on tags. Use the format "tags:title" List<String> |  | String
 | *camel.component.robotframework.configuration.critical-tags* | Tests that have the given tags are considered critical. List<String> |  | String
@@ -225,6 +228,7 @@ The component supports 47 options, which are listed below.
 | *camel.component.robotframework.configuration.warn-on-skipped-files* | Show a warning when an invalid file is skipped. | false | Boolean
 | *camel.component.robotframework.configuration.xunit-file* | Sets the path to the generated XUnit compatible result file, relative to outputDirectory. The file is in xml format. By default, the file name is derived from the testCasesDirectory parameter, replacing blanks in the directory name by underscores. |  | File
 | *camel.component.robotframework.enabled* | Whether to enable auto configuration of the robotframework component. This is enabled by default. |  | Boolean
+| *camel.component.robotframework.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

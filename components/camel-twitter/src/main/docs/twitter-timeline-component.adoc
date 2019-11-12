@@ -12,7 +12,7 @@ The Twitter Timeline component consumes twitter timeline or update the status of
 == Component Options
 
 // component options: START
-The Twitter Timeline component supports 9 options, which are listed below.
+The Twitter Timeline component supports 11 options, which are listed below.
 
 
 
@@ -28,6 +28,8 @@ The Twitter Timeline component supports 9 options, which are listed below.
 | *httpProxyPassword* (proxy) | The http proxy password which can be used for the camel-twitter. |  | String
 | *httpProxyPort* (proxy) | The http proxy port which can be used for the camel-twitter. |  | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -122,7 +124,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 12 options, which are listed below.
 
 
 
@@ -132,6 +134,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.twitter-timeline.access-token* | The access token |  | String
 | *camel.component.twitter-timeline.access-token-secret* | The access token secret |  | String
 | *camel.component.twitter-timeline.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.twitter-timeline.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.twitter-timeline.consumer-key* | The consumer key |  | String
 | *camel.component.twitter-timeline.consumer-secret* | The consumer secret |  | String
 | *camel.component.twitter-timeline.enabled* | Whether to enable auto configuration of the twitter-timeline component. This is enabled by default. |  | Boolean
@@ -139,6 +142,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.twitter-timeline.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
 | *camel.component.twitter-timeline.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
 | *camel.component.twitter-timeline.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
+| *camel.component.twitter-timeline.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
