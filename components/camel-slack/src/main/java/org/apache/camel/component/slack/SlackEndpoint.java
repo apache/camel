@@ -183,7 +183,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     public Exchange createExchange(ExchangePattern pattern, JsonObject object) {
         Exchange exchange = super.createExchange(pattern);
         SlackMessage slackMessage = new SlackMessage();
-        String text = object.getString("text");
+        String text = object.getString(SlackConstants.SLACK_TEXT_FIELD);
         String user = object.getString("user");
         slackMessage.setText(text);
         slackMessage.setUser(user);

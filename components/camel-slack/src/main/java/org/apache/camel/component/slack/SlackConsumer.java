@@ -61,7 +61,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/channels.history");
         List<BasicNameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("channel", channelId));
+        params.add(new BasicNameValuePair(SlackConstants.SLACK_CHANNEL_FIELD, channelId));
         if (ObjectHelper.isNotEmpty(timestamp)) {
             params.add(new BasicNameValuePair("oldest", timestamp));
         }
