@@ -542,7 +542,7 @@
         <rescu-version>2.0.2</rescu-version>
         <rest-assured-version>4.1.2</rest-assured-version>
         <revapi-java-version>0.20.0</revapi-java-version>
-        <revapi-maven-plugin-version>0.11.1</revapi-maven-plugin-version>
+        <revapi-maven-plugin-version>0.11.2</revapi-maven-plugin-version>
         <rhino-version>1.7.7.1</rhino-version>
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
