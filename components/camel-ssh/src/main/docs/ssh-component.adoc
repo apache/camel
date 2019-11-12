@@ -35,7 +35,7 @@ ssh:[username[:password]@]host[:port][?options]
 
 
 // component options: START
-The SSH component supports 15 options, which are listed below.
+The SSH component supports 17 options, which are listed below.
 
 
 
@@ -57,6 +57,8 @@ The SSH component supports 15 options, which are listed below.
 | *shellPrompt* (advanced) | Sets the shellPrompt to be dropped when response is read after command execution |  | String
 | *sleepForShellPrompt* (advanced) | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. |  | long
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -142,7 +144,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 31 options, which are listed below.
+The component supports 33 options, which are listed below.
 
 
 
@@ -150,6 +152,7 @@ The component supports 31 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.ssh.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.ssh.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.ssh.cert-resource* | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
 | *camel.component.ssh.cert-resource-password* | Sets the password to use in loading certResource, if certResource is an encrypted key. |  | String
 | *camel.component.ssh.channel-type* | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. |  | String
@@ -172,6 +175,7 @@ The component supports 31 options, which are listed below.
 | *camel.component.ssh.host* | Sets the hostname of the remote SSH server. |  | String
 | *camel.component.ssh.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. The option is a org.apache.sshd.common.keyprovider.KeyPairProvider type. |  | String
 | *camel.component.ssh.key-type* | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. |  | String
+| *camel.component.ssh.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.ssh.password* | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
 | *camel.component.ssh.poll-command* | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer, i.e. from(ssh://...). You may need to end your command with a newline, and that must be URL encoded %0A |  | String
 | *camel.component.ssh.port* | Sets the port number for the remote SSH server. |  | Integer

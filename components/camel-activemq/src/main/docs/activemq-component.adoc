@@ -48,7 +48,7 @@ activemq:foo
 == Component options
 
 // component options: START
-The ActiveMQ component supports 85 options, which are listed below.
+The ActiveMQ component supports 87 options, which are listed below.
 
 
 
@@ -140,6 +140,8 @@ The ActiveMQ component supports 85 options, which are listed below.
 | *formatDateHeadersTo Iso8601* (producer) | Sets whether date headers should be formatted according to the ISO 8601 standard. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -284,7 +286,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 86 options, which are listed below.
+The component supports 88 options, which are listed below.
 
 
 
@@ -303,6 +305,7 @@ The component supports 86 options, which are listed below.
 | *camel.component.activemq.async-stop-listener* | Whether to stop the JmsConsumer message listener asynchronously, when stopping a route. | false | Boolean
 | *camel.component.activemq.auto-startup* | Specifies whether the consumer container should auto-startup. | true | Boolean
 | *camel.component.activemq.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.activemq.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.activemq.broker-u-r-l* | Sets the broker URL to use to connect to ActiveMQ using the ActiveMQ URI format |  | String
 | *camel.component.activemq.cache-level* | Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details. |  | Integer
 | *camel.component.activemq.cache-level-name* | Sets the cache level by name for the underlying JMS resources. Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER, CACHE_NONE, and CACHE_SESSION. The default setting is CACHE_AUTO. See the Spring documentation and Transactions Cache Levels for more information. | CACHE_AUTO | String
@@ -336,6 +339,7 @@ The component supports 86 options, which are listed below.
 | *camel.component.activemq.jms-key-format-strategy* | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation. The option is a org.apache.camel.component.jms.JmsKeyFormatStrategy type. |  | String
 | *camel.component.activemq.jms-operations* | Allows you to use your own implementation of the org.springframework.jms.core.JmsOperations interface. Camel uses JmsTemplate as default. Can be used for testing purpose, but not used much as stated in the spring API docs. The option is a org.springframework.jms.core.JmsOperations type. |  | String
 | *camel.component.activemq.lazy-create-transaction-manager* | If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true. | true | Boolean
+| *camel.component.activemq.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.activemq.map-jms-message* | Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc. See section about how mapping works below for more details. | true | Boolean
 | *camel.component.activemq.max-concurrent-consumers* | Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS). See also the maxMessagesPerTask option to control dynamic scaling up/down of threads. When doing request/reply over JMS then the option replyToMaxConcurrentConsumers is used to control number of concurrent consumers on the reply message listener. |  | Integer
 | *camel.component.activemq.max-messages-per-task* | The number of messages per task. -1 is unlimited. If you use a range for concurrent consumers (eg min max), then this option can be used to set a value to eg 100 to control how fast the consumers will shrink when less work is required. | -1 | Integer

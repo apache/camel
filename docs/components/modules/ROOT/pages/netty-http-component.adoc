@@ -93,7 +93,7 @@ related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 9 options, which are listed below.
+The Netty HTTP component supports 11 options, which are listed below.
 
 
 
@@ -109,6 +109,8 @@ The Netty HTTP component supports 9 options, which are listed below.
 | *executorService* (advanced) | To use the given EventExecutorGroup. |  | EventExecutorGroup
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -246,7 +248,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 33 options, which are listed below.
+The component supports 35 options, which are listed below.
 
 
 
@@ -254,6 +256,7 @@ The component supports 33 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.netty-http.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.netty-http.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.netty-http.configuration.bridge-endpoint* | If the option is true, the producer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange). | false | Boolean
 | *camel.component.netty-http.configuration.chunked-max-content-length* | Value in bytes the max content length per chunked frame received on the Netty HTTP server. | 1048576 | Integer
 | *camel.component.netty-http.configuration.compression* | Allow using gzip/deflate for compression on the Netty HTTP server if the client supports it from the HTTP headers. | false | Boolean
@@ -275,6 +278,7 @@ The component supports 33 options, which are listed below.
 | *camel.component.netty-http.enabled* | Whether to enable auto configuration of the netty-http component. This is enabled by default. |  | Boolean
 | *camel.component.netty-http.executor-service* | To use the given EventExecutorGroup. The option is a io.netty.util.concurrent.EventExecutorGroup type. |  | String
 | *camel.component.netty-http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.netty-http.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.netty-http.maximum-pool-size* | The thread pool size for the EventExecutorGroup if its in use. The default value is 16. | 16 | Integer
 | *camel.component.netty-http.netty-http-binding* | To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API. The option is a org.apache.camel.component.netty.http.NettyHttpBinding type. |  | String
 | *camel.component.netty-http.security-configuration.authenticate* | Whether to enable authentication <p/> This is by default enabled. |  | Boolean
