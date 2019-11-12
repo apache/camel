@@ -67,6 +67,16 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     @Metadata(label = "advanced",
         description = "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
     private boolean basicPropertyBinding;
+    @Metadata(label = "consumer", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
+            + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+            + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
+    private boolean bridgeErrorHandler;
+    @Metadata(label = "producer",
+            description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
+                    + " in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then"
+                    + " the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed"
+                    + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
+    private boolean lazyStartProducer;
 
     public DefaultComponent() {
     }
@@ -211,12 +221,31 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // inject camel context
         endpoint.setCamelContext(getCamelContext());
 
-        // setup whether to use basic property binding or not which must be done before we set properties
-        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding);
+        // setup global options
         if (endpoint instanceof DefaultEndpoint) {
-            ((DefaultEndpoint) endpoint).setBasicPropertyBinding(basic);
+            DefaultEndpoint de = (DefaultEndpoint) endpoint;
+            de.setBasicPropertyBinding(getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());;
+            de.setBridgeErrorHandler(getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());;
+            de.setLazyStartProducer(getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());;
         }
 
+        // setup global options which must be done before we set properties
+        if (endpoint instanceof DefaultEndpoint) {
+            DefaultEndpoint de = (DefaultEndpoint) endpoint;
+            boolean defaultBasic = basicPropertyBinding ? basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding();
+            boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, defaultBasic);
+            de.setBasicPropertyBinding(basic);
+
+            boolean defaultBridge = bridgeErrorHandler ? bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler();
+            boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, defaultBridge);
+            de.setBridgeErrorHandler(bridge);
+
+            boolean defaultLazy = lazyStartProducer ? lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer();
+            boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, defaultLazy);
+            de.setLazyStartProducer(lazy);
+        }
+
+        // configure parameters
         endpoint.configureProperties(parameters);
         if (useIntrospectionOnEndpoint()) {
             setProperties(endpoint, parameters);
@@ -250,6 +279,36 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     public void setBasicPropertyBinding(boolean basicPropertyBinding) {
         this.basicPropertyBinding = basicPropertyBinding;
+    }
+
+    public boolean isLazyStartProducer() {
+        return lazyStartProducer;
+    }
+
+    /**
+     * Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup
+     * in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then
+     * the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed
+     * then creating and starting the producer may take a little time and prolong the total processing time of the processing.
+     */
+    public void setLazyStartProducer(boolean lazyStartProducer) {
+        this.lazyStartProducer = lazyStartProducer;
+    }
+
+    public boolean isBridgeErrorHandler() {
+        return bridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     */
+    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
+        this.bridgeErrorHandler = bridgeErrorHandler;
     }
 
     /**

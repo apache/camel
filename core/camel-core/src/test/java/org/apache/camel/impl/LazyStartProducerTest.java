@@ -18,7 +18,10 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.log.LogComponent;
+import org.apache.camel.component.log.LogEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.LazyStartProducer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.Test;
@@ -65,4 +68,32 @@ public class LazyStartProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+
+    @Test
+    public void lazyStartProducerGlobal() throws Exception {
+        context.getGlobalEndpointConfiguration().setLazyStartProducer(true);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        assertTrue(mock.isLazyStartProducer());
+
+        LogEndpoint log = getMandatoryEndpoint("log:foo", LogEndpoint.class);
+        assertTrue(log.isLazyStartProducer());
+    }
+
+    @Test
+    public void lazyStartProducerComponent() throws Exception {
+        context.getComponent("log", LogComponent.class).setLazyStartProducer(true);
+
+        LogEndpoint log = getMandatoryEndpoint("log:foo", LogEndpoint.class);
+        assertTrue(log.isLazyStartProducer());
+
+        // but mock is false
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        assertFalse(mock.isLazyStartProducer());
+
+        // but we can override this via parameter
+        MockEndpoint mock2 = getMockEndpoint("mock:foo?lazyStartProducer=true");
+        assertTrue(mock2.isLazyStartProducer());
+    }
+
 }
