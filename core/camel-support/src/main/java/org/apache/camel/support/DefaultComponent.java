@@ -138,17 +138,32 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // but at debug level only output sanitized uris
             log.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
         }
+
+        // extract these global options and infer their value based on global/component level configuration
+        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding ?
+                basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());
+        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler ?
+                bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());
+        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer ?
+                lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());
+
+        // create endpoint
         Endpoint endpoint = createEndpoint(uri, path, parameters);
         if (endpoint == null) {
             return null;
         }
+        // inject camel context
+        endpoint.setCamelContext(getCamelContext());
 
-        // setup whether to use basic property binding or not which must be done before we set properties
-        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding);
+        // and setup those global options afterwards
         if (endpoint instanceof DefaultEndpoint) {
-            ((DefaultEndpoint) endpoint).setBasicPropertyBinding(basic);
+            DefaultEndpoint de = (DefaultEndpoint) endpoint;
+            de.setBasicPropertyBinding(basic);
+            de.setBridgeErrorHandler(bridge);
+            de.setLazyStartProducer(lazy);
         }
 
+        // configure remainder of the parameters
         endpoint.configureProperties(parameters);
         if (useIntrospectionOnEndpoint()) {
             setProperties(endpoint, parameters);
@@ -213,39 +228,31 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // but at debug level only output sanitized uris
             log.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
         }
+
+        // extract these global options and infer their value based on global/component level configuration
+        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding ?
+                basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());
+        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler ?
+                bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());
+        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer ?
+                lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());
+
         Endpoint endpoint = createEndpoint(uri, path, parameters);
         if (endpoint == null) {
             return null;
         }
-
         // inject camel context
         endpoint.setCamelContext(getCamelContext());
 
-        // setup global options
+        // and setup those global options afterwards
         if (endpoint instanceof DefaultEndpoint) {
             DefaultEndpoint de = (DefaultEndpoint) endpoint;
-            de.setBasicPropertyBinding(getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());;
-            de.setBridgeErrorHandler(getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());;
-            de.setLazyStartProducer(getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());;
-        }
-
-        // setup global options which must be done before we set properties
-        if (endpoint instanceof DefaultEndpoint) {
-            DefaultEndpoint de = (DefaultEndpoint) endpoint;
-            boolean defaultBasic = basicPropertyBinding ? basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding();
-            boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, defaultBasic);
             de.setBasicPropertyBinding(basic);
-
-            boolean defaultBridge = bridgeErrorHandler ? bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler();
-            boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, defaultBridge);
             de.setBridgeErrorHandler(bridge);
-
-            boolean defaultLazy = lazyStartProducer ? lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer();
-            boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, defaultLazy);
             de.setLazyStartProducer(lazy);
         }
 
-        // configure parameters
+        // configure remainder of the parameters
         endpoint.configureProperties(parameters);
         if (useIntrospectionOnEndpoint()) {
             setProperties(endpoint, parameters);
