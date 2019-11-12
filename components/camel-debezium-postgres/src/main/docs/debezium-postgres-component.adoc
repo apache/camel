@@ -42,7 +42,7 @@ debezium-postgres:name[?options]
 
 
 // component options: START
-The Debezium PostgresSQL Connector component supports 2 options, which are listed below.
+The Debezium PostgresSQL Connector component supports 4 options, which are listed below.
 
 
 
@@ -51,6 +51,8 @@ The Debezium PostgresSQL Connector component supports 2 options, which are liste
 | Name | Description | Default | Type
 | *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | PostgresConnectorEmbeddedDebeziumConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -162,7 +164,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 63 options, which are listed below.
+The component supports 65 options, which are listed below.
 
 
 
@@ -170,6 +172,7 @@ The component supports 63 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.debezium-postgres.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.debezium-postgres.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.debezium-postgres.configuration.column-blacklist* | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
 | *camel.component.debezium-postgres.configuration.connector-class* | The name of the Java class for the connector |  | Class
 | *camel.component.debezium-postgres.configuration.database-dbname* | The name of the database the connector should be monitoring |  | String
@@ -232,6 +235,7 @@ The component supports 63 options, which are listed below.
 | *camel.component.debezium-postgres.configuration.tombstones-on-delete* | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | Boolean
 | *camel.component.debezium-postgres.configuration.xmin-fetch-interval-ms* | Specify how often (in ms) the xmin will be fetched from the replication slot. This xmin value is exposed by the slot which gives a lower bound of where a new replication slot could start from. The lower the value, the more likely this value is to be the current 'true' value, but the bigger the performance cost. The bigger the value, the less likely this value is to be the current 'true' value, but the lower the performance penalty. The default is set to 0 ms, which disables tracking xmin. | 0 | Long
 | *camel.component.debezium-postgres.enabled* | Whether to enable auto configuration of the debezium-postgres component. This is enabled by default. |  | Boolean
+| *camel.component.debezium-postgres.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

@@ -172,7 +172,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SMPP component supports 2 options, which are listed below.
+The SMPP component supports 4 options, which are listed below.
 
 
 
@@ -181,6 +181,8 @@ The SMPP component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -273,7 +275,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 38 options, which are listed below.
+The component supports 40 options, which are listed below.
 
 
 
@@ -281,6 +283,7 @@ The component supports 38 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.smpp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.smpp.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.smpp.configuration.address-range* | You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification. The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within this range. |  | String
 | *camel.component.smpp.configuration.alphabet* | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. <ul> <li>0: SMSC Default Alphabet <li>4: 8 bit Alphabet</li> <li>8: UCS2 Alphabet</li></li> </ul> |  | Byte
 | *camel.component.smpp.configuration.data-coding* | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: <ul> <li>0: SMSC Default Alphabet</li> <li>3: Latin 1 (ISO-8859-1)</li> <li>4: Octet unspecified (8-bit binary)</li> <li>8: UCS2 (ISO/IEC-10646)</li> <li>13: Extended Kanji JIS(X 0212-1990)</li> </ul> |  | Byte
@@ -318,6 +321,7 @@ The component supports 38 options, which are listed below.
 | *camel.component.smpp.configuration.type-of-number* | Defines the type of number (TON) to be used in the SME. The following TON values are defined: <ul> <li>0: Unknown</li> <li>1: International</li> <li>2: National</li> <li>3: Network Specific</li> <li>4: Subscriber Number</li> <li>5: Alphanumeric</li> <li>6: Abbreviated</li> </ul> |  | Byte
 | *camel.component.smpp.configuration.using-s-s-l* | Whether using SSL with the smpps protocol | false | Boolean
 | *camel.component.smpp.enabled* | Enable smpp component | true | Boolean
+| *camel.component.smpp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

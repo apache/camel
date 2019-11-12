@@ -38,7 +38,7 @@ elasticsearch-rest://clusterName[?options]
 == Endpoint Options
 
 // component options: START
-The Elastichsearch Rest component supports 12 options, which are listed below.
+The Elastichsearch Rest component supports 14 options, which are listed below.
 
 
 
@@ -57,6 +57,8 @@ The Elastichsearch Rest component supports 12 options, which are listed below.
 | *snifferInterval* (advanced) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
 | *sniffAfterFailureDelay* (advanced) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -118,7 +120,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 13 options, which are listed below.
+The component supports 15 options, which are listed below.
 
 
 
@@ -126,12 +128,14 @@ The component supports 13 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.elasticsearch-rest.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.elasticsearch-rest.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.elasticsearch-rest.client* | To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to customize the client with specific settings. The option is a org.elasticsearch.client.RestClient type. |  | String
 | *camel.component.elasticsearch-rest.connection-timeout* | The time in ms to wait before connection will timeout. | 30000 | Integer
 | *camel.component.elasticsearch-rest.enable-s-s-l* | Enable SSL | false | Boolean
 | *camel.component.elasticsearch-rest.enable-sniffer* | Enable automatically discover nodes from a running Elasticsearch cluster | false | Boolean
 | *camel.component.elasticsearch-rest.enabled* | Whether to enable auto configuration of the elasticsearch-rest component. This is enabled by default. |  | Boolean
 | *camel.component.elasticsearch-rest.host-addresses* | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
+| *camel.component.elasticsearch-rest.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.elasticsearch-rest.max-retry-timeout* | The time in ms before retry | 30000 | Integer
 | *camel.component.elasticsearch-rest.password* | Password for authenticate |  | String
 | *camel.component.elasticsearch-rest.sniff-after-failure-delay* | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | Integer

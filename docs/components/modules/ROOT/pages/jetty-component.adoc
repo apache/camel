@@ -54,7 +54,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty component supports 31 options, which are listed below.
+The Jetty component supports 33 options, which are listed below.
 
 
 
@@ -92,6 +92,8 @@ The Jetty component supports 31 options, which are listed below.
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -180,7 +182,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 32 options, which are listed below.
+The component supports 34 options, which are listed below.
 
 
 
@@ -189,6 +191,7 @@ The component supports 32 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.jetty.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
 | *camel.component.jetty.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.jetty.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.jetty.continuation-timeout* | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
 | *camel.component.jetty.enable-jmx* | If this option is true, Jetty JMX support will be enabled for this endpoint. | false | Boolean
 | *camel.component.jetty.enabled* | Whether to enable auto configuration of the jetty component. This is enabled by default. |  | Boolean
@@ -198,6 +201,7 @@ The component supports 32 options, which are listed below.
 | *camel.component.jetty.http-configuration* | Jetty component does not use HttpConfiguration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
 | *camel.component.jetty.jetty-http-binding* | To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer. The option is a org.apache.camel.component.jetty.JettyHttpBinding type. |  | String
 | *camel.component.jetty.keystore* | Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry. |  | String
+| *camel.component.jetty.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.jetty.max-threads* | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *camel.component.jetty.mb-container* | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans. The option is a org.eclipse.jetty.jmx.MBeanContainer type. |  | String
 | *camel.component.jetty.min-threads* | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
