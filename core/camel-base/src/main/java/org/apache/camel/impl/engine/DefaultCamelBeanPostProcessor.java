@@ -145,6 +145,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     protected boolean canPostProcessBean(Object bean, String beanName) {
+        if (beanName != null && "properties".equals(beanName)) {
+            // we cannot process the properties component
+            // its instantiated very eager during creation of camel context
+            return false;
+        }
         return bean != null;
     }
 
