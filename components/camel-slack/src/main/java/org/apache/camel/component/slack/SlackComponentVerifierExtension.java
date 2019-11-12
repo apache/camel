@@ -139,7 +139,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
         Map<String, Object> jsonMap = new HashMap<>();
 
         // Put the values in a map
-        jsonMap.put("text", message.getText());
+        jsonMap.put(SlackConstants.SLACK_TEXT_FIELD, message.getText());
 
         // Generate a JSONObject
         return new JsonObject(jsonMap).toJson();
