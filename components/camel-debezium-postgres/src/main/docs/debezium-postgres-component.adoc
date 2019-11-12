@@ -8,8 +8,6 @@
 // HEADER END
 
 
-*Since Camel 3.0*
-
 The Debezium PostgresSQL component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from PostgresSQL database using Debezium without the need for Kafka or Kafka Connect.
 
 *Note on handling failures:* Per https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
