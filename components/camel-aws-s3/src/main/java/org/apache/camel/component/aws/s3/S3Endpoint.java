@@ -99,7 +99,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         String prefix = getConfiguration().getPrefix();
 
         try {
-            s3Client.listObjects(new ListObjectsRequest(bucketName, prefix, null, null, 0));
+            s3Client.listObjects(new ListObjectsRequest(bucketName, prefix, null, null, maxMessagesPerPoll));
             LOG.trace("Bucket [{}] already exists", bucketName);
             return;
         } catch (AmazonServiceException ase) {
