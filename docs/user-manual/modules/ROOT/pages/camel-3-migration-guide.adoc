@@ -83,6 +83,30 @@ We have also modularized many of the core components and moved them out of `came
 - camel-xslt-saxon
 - camel-zip-deflater
 
+== Spring Boot starters Maven coordinate change
+
+The Maven `groupId` for the Spring Boot starters changed to: `org.apache.camel.springboot`.
+
+Instead of:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-component-starter</artifactId>
+</dependency>
+----
+
+Use:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-component-starter</artifactId>
+</dependency>
+----
+
 == Multiple CamelContexts per application not supported
 
 Support for multiple CamelContext's has been removed/deprecated and only 1 CamelContext per deployment is supported.
