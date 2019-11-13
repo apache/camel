@@ -342,7 +342,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
         if (isLoggingFeatureEnabled()) {
             LoggingFeature loggingFeature = new LoggingFeature();
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() >= -1) {
                 loggingFeature.setLimit(getLoggingSizeLimit());
             }
             sfb.getFeatures().add(loggingFeature);
@@ -531,7 +531,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
         if (isLoggingFeatureEnabled()) {
             LoggingFeature loggingFeature = new LoggingFeature();
-            if (getLoggingSizeLimit() > 0) {
+            if (getLoggingSizeLimit() >= -1) {
                 loggingFeature.setLimit(getLoggingSizeLimit());
 
             }
