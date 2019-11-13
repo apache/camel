@@ -99,7 +99,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         String prefix = getConfiguration().getPrefix();
 
         try {
-            s3Client.listObjects(new ListObjectsRequest(bucketName, prefix, null, null, 0));
+            s3Client.listObjects(new ListObjectsRequest(bucketName, prefix, null, null, maxMessagesPerPoll));
             LOG.trace("Bucket [{}] already exists", bucketName);
             return;
         } catch (AmazonServiceException ase) {
@@ -224,8 +224,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Is default unlimited, but use 0 or negative number to disable it as
-     * unlimited.
+     * Gets the maximum number of messages as a limit to poll at each polling. The
+     * default value is 10. Use 0 or a negative number to set it as unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
