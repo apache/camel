@@ -157,7 +157,7 @@ public class BomGeneratorMojo extends AbstractMojo {
     private List<Dependency> enhance(List<Dependency> dependencyList) {
 
         for (Dependency dep : dependencyList) {
-            if (dep.getGroupId().startsWith(project.getGroupId()) && project.getVersion().equals(dep.getVersion())) {
+            if (dep.getGroupId().startsWith("org.apache.camel") && project.getVersion().equals(dep.getVersion())) {
                 dep.setVersion("${project.version}");
             }
         }
