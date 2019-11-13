@@ -198,7 +198,6 @@ public interface EndpointBuilderFactory extends
         LanguageEndpointBuilderFactory,
         LdapEndpointBuilderFactory,
         LdifEndpointBuilderFactory,
-        LinkedInEndpointBuilderFactory,
         LogEndpointBuilderFactory,
         LuceneEndpointBuilderFactory,
         LumberjackEndpointBuilderFactory,

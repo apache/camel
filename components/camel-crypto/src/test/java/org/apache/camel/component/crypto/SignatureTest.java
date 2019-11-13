@@ -48,6 +48,7 @@ import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNAT
 public class SignatureTest extends CamelTestSupport {
 
     private KeyPair keyPair;
+    private KeyPair dsaKeyPair;
     private String payload = "Dear Alice, Rest assured it's me, signed Bob";
 
     @BindToRegistry("someRandom")
@@ -110,7 +111,8 @@ public class SignatureTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: provider
-                from("direct:provider").to("crypto:sign:provider?privateKey=#myPrivateKey&provider=SUN", "crypto:verify:provider?publicKey=#myPublicKey&provider=SUN",
+                from("direct:provider").to("crypto:sign:provider?algorithm=SHA1withDSA&privateKey=#myDSAPrivateKey&provider=SUN",
+                                           "crypto:verify:provider?algorithm=SHA1withDSA&publicKey=#myDSAPublicKey&provider=SUN",
                                            "mock:result");
                 // END SNIPPET: provider
             }
@@ -288,7 +290,7 @@ public class SignatureTest extends CamelTestSupport {
         unsigned.getIn().setBody(payload);
 
         // create a keypair
-        KeyPair pair = getKeyPair("DSA");
+        KeyPair pair = getKeyPair("RSA");
 
         // sign with the private key
         unsigned.getIn().setHeader(SIGNATURE_PRIVATE_KEY, pair.getPrivate());
@@ -375,13 +377,14 @@ public class SignatureTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        setUpKeys("DSA");
+        setUpKeys();
         disableJMX();
         super.setUp();
     }
 
-    public void setUpKeys(String algorithm) throws Exception {
-        keyPair = getKeyPair(algorithm);
+    public void setUpKeys() throws Exception {
+        keyPair = getKeyPair("RSA");
+        dsaKeyPair = getKeyPair("DSA");
     }
 
     public KeyPair getKeyPair(String algorithm) throws NoSuchAlgorithmException {
@@ -410,9 +413,19 @@ public class SignatureTest extends CamelTestSupport {
         return c.getPublicKey();
     }
 
+    @BindToRegistry("myDSAPublicKey")
+    public PublicKey getDSAPublicKey() throws Exception {
+        return dsaKeyPair.getPublic();
+    }
+
     @BindToRegistry("myPrivateKey")
     public PrivateKey getKeyFromKeystore() throws Exception {
         return (PrivateKey)loadKeystore().getKey("bob", "letmein".toCharArray());
+    }
+
+    @BindToRegistry("myDSAPrivateKey")
+    public PrivateKey getDSAPrivateKey() throws Exception {
+        return dsaKeyPair.getPrivate();
     }
 
     @BindToRegistry("signatureParams")

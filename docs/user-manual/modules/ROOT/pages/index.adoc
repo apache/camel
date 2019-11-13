@@ -308,7 +308,6 @@ camel routes without them knowing
 ** xref:components::kubernetes-services-component.adoc[Kubernetes Services]
 ** xref:components::ldap-component.adoc[LDAP]
 ** xref:components::ldif-component.adoc[LDIF]
-** xref:components::linkedin-component.adoc[Linkedin]
 ** xref:components::lucene-component.adoc[Lucene]
 ** xref:components::lumberjack-component.adoc[Lumberjack]
 ** xref:components::master-component.adoc[Master]

@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Only consumer is supported*
+// HEADER END
+
 The Scheduler component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
  xref:timer-component.adoc[Timer] component, but it offers more functionality in
@@ -32,7 +36,7 @@ You can append query options to the URI in the following format,
 == Options
 
 // component options: START
-The Scheduler component supports 2 options, which are listed below.
+The Scheduler component supports 4 options, which are listed below.
 
 
 
@@ -41,6 +45,8 @@ The Scheduler component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *concurrentTasks* (scheduler) | Number of threads used by the scheduling thread pool. Is by default using a single thread | 1 | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -111,7 +117,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -119,8 +125,10 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.scheduler.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.scheduler.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.scheduler.concurrent-tasks* | Number of threads used by the scheduling thread pool. Is by default using a single thread | 1 | Integer
 | *camel.component.scheduler.enabled* | Whether to enable auto configuration of the scheduler component. This is enabled by default. |  | Boolean
+| *camel.component.scheduler.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

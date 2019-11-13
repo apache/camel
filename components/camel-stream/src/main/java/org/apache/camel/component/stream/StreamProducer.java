@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +45,7 @@ public class StreamProducer extends DefaultProducer {
     private StreamEndpoint endpoint;
     private String uri;
     private OutputStream outputStream;
-    private AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
 
     public StreamProducer(StreamEndpoint endpoint, String uri) throws Exception {
         super(endpoint);
@@ -78,26 +76,6 @@ public class StreamProducer extends DefaultProducer {
                 closeStream(exchange, false);
             }
         }
-    }
-
-    private OutputStream resolveStreamFromUrl() throws IOException {
-        String u = endpoint.getUrl();
-        StringHelper.notEmpty(u, "url");
-        log.debug("About to write to url: {}", u);
-
-        URL url = new URL(u);
-        URLConnection c = url.openConnection();
-        c.setDoOutput(true);
-        if (endpoint.getConnectTimeout() > 0) {
-            c.setConnectTimeout(endpoint.getConnectTimeout());
-        }
-        if (endpoint.getReadTimeout() > 0) {
-            c.setReadTimeout(endpoint.getReadTimeout());
-        }
-        if (endpoint.getHttpHeaders() != null) {
-            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
-        }
-        return c.getOutputStream();
     }
 
     private OutputStream resolveStreamFromFile() throws IOException {
@@ -165,8 +143,6 @@ public class StreamProducer extends DefaultProducer {
             outputStream = System.err;
         } else if ("file".equals(uri)) {
             outputStream = resolveStreamFromFile();
-        } else if ("url".equals(uri)) {
-            outputStream = resolveStreamFromUrl();
         }
         count.set(outputStream == null ? 0 : endpoint.getAutoCloseCount());
         log.debug("Opened stream '{}'", endpoint.getEndpointKey());

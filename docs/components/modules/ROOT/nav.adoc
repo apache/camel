@@ -228,7 +228,6 @@
 * xref:ldap-component.adoc[LDAP Component]
 * xref:ldif-component.adoc[LDIF Component]
 * xref:leveldb.adoc[LevelDB]
-* xref:linkedin-component.adoc[Linkedin Component]
 * xref:log-component.adoc[Log Component]
 * xref:lra.adoc[LRA Component]
 * xref:lucene-component.adoc[Lucene Component]

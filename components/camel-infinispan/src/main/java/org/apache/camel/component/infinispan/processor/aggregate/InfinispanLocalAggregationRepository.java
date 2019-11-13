@@ -29,6 +29,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,10 +162,10 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
             throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
         }
         if (ObjectHelper.isEmpty(configuration)) {
-            manager = new DefaultCacheManager();
+            manager = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build());
             manager.start();
         } else {
-            manager = new DefaultCacheManager(configuration);
+            manager = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(), configuration);
             manager.start();
         }        
         if (ObjectHelper.isEmpty(cacheName)) {

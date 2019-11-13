@@ -43,23 +43,21 @@ public class XMLSecurityDataFormatConfiguration
      * XMLCipher.AES_128 XMLCipher.AES_128_GCM XMLCipher.AES_192
      * XMLCipher.AES_192_GCM XMLCipher.AES_256 XMLCipher.AES_256_GCM
      * XMLCipher.SEED_128 XMLCipher.CAMELLIA_128 XMLCipher.CAMELLIA_192
-     * XMLCipher.CAMELLIA_256 The default value is MLCipher.TRIPLEDES
+     * XMLCipher.CAMELLIA_256 The default value is XMLCipher.AES_256_GCM
      */
-    private String xmlCipherAlgorithm = "TRIPLEDES";
+    private String xmlCipherAlgorithm = "AES-256-GCM";
     /**
      * A String used as passPhrase to encrypt/decrypt content. The passPhrase
-     * has to be provided. If no passPhrase is specified, a default passPhrase
-     * is used. The passPhrase needs to be put together in conjunction with the
-     * appropriate encryption algorithm. For example using TRIPLEDES the
-     * passPhase can be a Only another 24 Byte key
+     * has to be provided. The passPhrase needs to be put together in
+     * conjunction with the appropriate encryption algorithm. For example using
+     * TRIPLEDES the passPhase can be a Only another 24 Byte key
      */
     private String passPhrase;
     /**
      * A byte used as passPhrase to encrypt/decrypt content. The passPhrase has
-     * to be provided. If no passPhrase is specified, a default passPhrase is
-     * used. The passPhrase needs to be put together in conjunction with the
-     * appropriate encryption algorithm. For example using TRIPLEDES the
-     * passPhase can be a Only another 24 Byte key
+     * to be provided. The passPhrase needs to be put together in conjunction
+     * with the appropriate encryption algorithm. For example using TRIPLEDES
+     * the passPhase can be a Only another 24 Byte key
      */
     private byte[] passPhraseByte;
     /**

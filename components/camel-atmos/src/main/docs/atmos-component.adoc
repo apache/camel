@@ -3,6 +3,10 @@
 
 *Since Camel 2.15*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 Camel-Atmos is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with ViPR object data services using the
 https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
@@ -16,7 +20,7 @@ from("atmos:foo/get?remotePath=/path").to("mock:test");
 
 
 // component options: START
-The Atmos component supports 5 options, which are listed below.
+The Atmos component supports 7 options, which are listed below.
 
 
 
@@ -28,6 +32,8 @@ The Atmos component supports 5 options, which are listed below.
 | *uri* (advanced) | The URI of the server for the Atmos client to connect to |  | String
 | *sslValidation* (security) | Whether the Atmos client should perform SSL validation | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -91,7 +97,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -99,8 +105,10 @@ The component supports 6 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.atmos.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.atmos.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.atmos.enabled* | Enable atmos component | true | Boolean
 | *camel.component.atmos.full-token-id* | The token id to pass to the Atmos client |  | String
+| *camel.component.atmos.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.atmos.secret-key* | The secret key to pass to the Atmos client (should be base64 encoded) |  | String
 | *camel.component.atmos.ssl-validation* | Whether the Atmos client should perform SSL validation | false | Boolean
 | *camel.component.atmos.uri* | The URI of the server for the Atmos client to connect to |  | String

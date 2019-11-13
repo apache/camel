@@ -4,6 +4,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
 With this Apache Camel component, you can generate and validate XML
 signatures as described in the W3C standard
 http://www.w3.org/TR/xmldsig-core/[XML Signature Syntax and Processing]
@@ -226,7 +230,7 @@ Signatures as Siblings of the Signed Elements".
 
 
 // component options: START
-The XML Security component supports 3 options, which are listed below.
+The XML Security component supports 5 options, which are listed below.
 
 
 
@@ -236,6 +240,8 @@ The XML Security component supports 3 options, which are listed below.
 | *signerConfiguration* (advanced) | To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints. |  | XmlSignerConfiguration
 | *verifierConfiguration* (advanced) | To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints. |  | XmlVerifierConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -298,7 +304,7 @@ with the following path and query parameters:
 | *plainTextEncoding* (sign) | Encoding of the plain text. Only relevant if the message body is plain text (see parameter plainText. Default value is UTF-8. | UTF-8 | String
 | *prefixForXmlSignature Namespace* (sign) | Namespace prefix for the XML signature namespace \http://www.w3.org/2000/09/xmldsig#. Default value is ds. If null or an empty value is set then no prefix is used for the XML signature namespace. See best practice \http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml- without-namespaces | ds | String
 | *properties* (sign) | For adding additional References and Objects to the XML signature which contain additional properties, you can provide a bean which implements the XmlSignatureProperties interface. |  | XmlSignatureProperties
-| *signatureAlgorithm* (sign) | Signature algorithm. Default value is \http://www.w3.org/2000/09/xmldsig#rsa-sha1. | http://www.w3.org/2000/09/xmldsig#rsa-sha1 | String
+| *signatureAlgorithm* (sign) | Signature algorithm. Default value is \http://www.w3.org/2000/09/xmldsig#rsa-sha1. | http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 | String
 | *signatureId* (sign) | Sets the signature Id. If this parameter is not set (null value) then a unique ID is generated for the signature ID (default). If this parameter is set to (empty string) then no Id attribute is created in the signature element. |  | String
 | *transformMethods* (sign) | Transforms which are executed on the message body before the digest is calculated. By default, C14n is added and in the case of enveloped signature (see option parentLocalName) also \http://www.w3.org/2000/09/xmldsig#enveloped-signature is added at position 0 of the list. Use methods in XmlSignatureHelper to create the transform methods. |  | List
 | *xpathsToIdAttributes* (sign) | Define the elements which are signed in the detached case via XPATH expressions to ID attributes (attributes of type ID). For each element found via the XPATH expression a detached signature is created whose reference URI contains the corresponding attribute value (preceded by '#'). The signature becomes the last sibling of the signed element. Elements with deeper hierarchy level are signed first. You can also set the XPATH list dynamically via the header XmlSignatureConstants#HEADER_XPATHS_TO_ID_ATTRIBUTES. The parameter setParentLocalName(String) or setParentXpath(XPathFilterParameterSpec) for enveloped signature and this parameter for detached signature must not be set in the same configuration. |  | List
@@ -328,7 +334,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 63 options, which are listed below.
+The component supports 65 options, which are listed below.
 
 
 
@@ -336,7 +342,9 @@ The component supports 63 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.xmlsecurity.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.xmlsecurity.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.xmlsecurity.enabled* | Enable xmlsecurity component | true | Boolean
+| *camel.component.xmlsecurity.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.xmlsecurity.signer-configuration.add-key-info-reference* | In order to protect the KeyInfo element from tampering you can add a reference to the signed info element so that it is protected via the signature value. The default value is <tt>true</tt>. <p> Only relevant when a KeyInfo is returned by {@link KeyAccessor}. and {@link KeyInfo#getId()} is not <code>null</code>. | true | Boolean
 | *camel.component.xmlsecurity.signer-configuration.base-uri* | You can set a base URI which is used in the URI dereferencing. Relative URIs are then concatenated with the base URI. |  | String
 | *camel.component.xmlsecurity.signer-configuration.canonicalization-method* | Canonicalization method used to canonicalize the SignedInfo element before the digest is calculated. You can use the helper methods XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or getCanonicalizationMethod(String algorithm, List<String> inclusiveNamespacePrefixes) to create a canonicalization method. |  | AlgorithmMethod
@@ -361,7 +369,7 @@ The component supports 63 options, which are listed below.
 | *camel.component.xmlsecurity.signer-configuration.properties* | For adding additional References and Objects to the XML signature which contain additional properties, you can provide a bean which implements the XmlSignatureProperties interface. |  | XmlSignatureProperties
 | *camel.component.xmlsecurity.signer-configuration.properties-name* | Sets the reference name for a XmlSignatureProperties that can be found in the registry. |  | String
 | *camel.component.xmlsecurity.signer-configuration.schema-resource-uri* | Classpath to the XML Schema. Must be specified in the detached XML Signature case for determining the ID attributes, might be set in the enveloped and enveloping case. If set, then the XML document is validated with the specified XML schema. The schema resource URI can be overwritten by the header {@link XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI}. |  | String
-| *camel.component.xmlsecurity.signer-configuration.signature-algorithm* | Signature algorithm. Default value is "\http://www.w3.org/2000/09/xmldsig#rsa-sha1". | http://www.w3.org/2000/09/xmldsig#rsa-sha1 | String
+| *camel.component.xmlsecurity.signer-configuration.signature-algorithm* | Signature algorithm. Default value is "\http://www.w3.org/2000/09/xmldsig#rsa-sha1". | http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 | String
 | *camel.component.xmlsecurity.signer-configuration.signature-id* | Sets the signature Id. If this parameter is not set (null value) then a unique ID is generated for the signature ID (default). If this parameter is set to "" (empty string) then no Id attribute is created in the signature element. |  | String
 | *camel.component.xmlsecurity.signer-configuration.transform-methods* | Transforms which are executed on the message body before the digest is calculated. By default, C14n is added and in the case of enveloped signature (see option parentLocalName) also \http://www.w3.org/2000/09/xmldsig#enveloped-signature is added at position 0 of the list. Use methods in XmlSignatureHelper to create the transform methods. |  | List
 | *camel.component.xmlsecurity.signer-configuration.transform-methods-name* | Sets the reference name for a XmlSignatureProperties that can be found in the registry. |  | String
@@ -392,12 +400,12 @@ The component supports 63 options, which are listed below.
 | *camel.dataformat.securexml.key-or-trust-store-parameters-ref* | Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore. |  | String
 | *camel.dataformat.securexml.key-password* | The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption. |  | String
 | *camel.dataformat.securexml.mgf-algorithm* | The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are: EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The default value is EncryptionConstants.MGF1_SHA1 | MGF1_SHA1 | String
-| *camel.dataformat.securexml.pass-phrase* | A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. If no passPhrase is specified, a default passPhrase is used. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key |  | String
-| *camel.dataformat.securexml.pass-phrase-byte* | A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. If no passPhrase is specified, a default passPhrase is used. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key |  | Byte[]
+| *camel.dataformat.securexml.pass-phrase* | A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key |  | String
+| *camel.dataformat.securexml.pass-phrase-byte* | A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key |  | Byte[]
 | *camel.dataformat.securexml.recipient-key-alias* | The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption. |  | String
 | *camel.dataformat.securexml.secure-tag* | The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted. |  | String
 | *camel.dataformat.securexml.secure-tag-contents* | A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element false = Element Level true = Element Content Level | false | Boolean
-| *camel.dataformat.securexml.xml-cipher-algorithm* | The cipher algorithm to be used for encryption/decryption of the XML message content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128 XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256 XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128 XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is MLCipher.TRIPLEDES | TRIPLEDES | String
+| *camel.dataformat.securexml.xml-cipher-algorithm* | The cipher algorithm to be used for encryption/decryption of the XML message content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128 XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256 XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128 XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is XMLCipher.AES_256_GCM | AES-256-GCM | String
 |===
 // spring-boot-auto-configure options: END
 

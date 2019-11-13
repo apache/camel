@@ -31,10 +31,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringSignatureTest extends SignatureTest {
 
     private static KeyPair rsaPair;
+    private static KeyPair dsaPair;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA");
+        dsaPair = getKeyPair("DSA");
         return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);
     }
 
@@ -66,8 +68,16 @@ public class SpringSignatureTest extends SignatureTest {
         return rsaPair.getPrivate();
     }
 
+    public static PrivateKey privateDSAKey() throws Exception {
+        return dsaPair.getPrivate();
+    }
+
     public static PublicKey publicRSAKey() throws Exception {
         return rsaPair.getPublic();
+    }
+
+    public static PublicKey publicDSAKey() throws Exception {
+        return dsaPair.getPublic();
     }
 
     public static SecureRandom random() throws Exception {

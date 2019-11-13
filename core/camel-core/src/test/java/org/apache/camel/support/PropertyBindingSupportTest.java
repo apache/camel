@@ -346,9 +346,47 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    public void testNestedClassConstructorParameterOneParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('Tony Tiger')");
+        PropertyBindingSupport.build().bind(context, foo, "animal.dangerous", "true");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Tony Tiger", foo.getAnimal().getName());
+        assertEquals(true, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassConstructorParameterPlaceholder() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('{{companyName}}', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Acme", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassConstructorParameterTwoParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('Donald Duck', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Donald Duck", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
     public static class Foo {
         private String name;
         private Bar bar = new Bar();
+        private Animal animal;
 
         public String getName() {
             return name;
@@ -364,6 +402,14 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         public void setBar(Bar bar) {
             this.bar = bar;
+        }
+
+        public Animal getAnimal() {
+            return animal;
+        }
+
+        public void setAnimal(Animal animal) {
+            this.animal = animal;
         }
     }
 

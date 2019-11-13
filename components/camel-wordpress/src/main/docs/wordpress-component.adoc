@@ -3,6 +3,10 @@
 
 *Since Camel 2.21*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
 
 Currently only the **Posts** and **Users** operations are supported.
@@ -10,7 +14,7 @@ Currently only the **Posts** and **Users** operations are supported.
 == Options
 
 // component options: START
-The Wordpress component supports 2 options, which are listed below.
+The Wordpress component supports 4 options, which are listed below.
 
 
 
@@ -19,6 +23,8 @@ The Wordpress component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (advanced) | Wordpress component configuration |  | WordpressComponentConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -80,7 +86,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 12 options, which are listed below.
 
 
 
@@ -88,6 +94,7 @@ The component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.wordpress.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.wordpress.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.wordpress.configuration.api-version* | The Wordpress REST API version | 2 | String
 | *camel.component.wordpress.configuration.criteria* | The criteria to use with complex searches. |  | Map
 | *camel.component.wordpress.configuration.force* | Whether to bypass trash and force deletion. | false | Boolean
@@ -97,6 +104,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. \http://myblog.com/wp-json/ |  | String
 | *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
 | *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is enabled by default. |  | Boolean
+| *camel.component.wordpress.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

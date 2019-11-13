@@ -3,6 +3,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The Google Pubsub component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
 the https://cloud.google.com/apis/docs/client-libraries-explained[Google Client Services API].
@@ -35,7 +39,7 @@ Destination Name can be either a topic or a subscription name.
 == Options
 
 // component options: START
-The Google Pubsub component supports 2 options, which are listed below.
+The Google Pubsub component supports 4 options, which are listed below.
 
 
 
@@ -44,6 +48,8 @@ The Google Pubsub component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *connectionFactory* (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GooglePubsubConnectionFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -102,7 +108,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -110,11 +116,13 @@ The component supports 6 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.google-pubsub.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.google-pubsub.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.google-pubsub.connection-factory.credentials-file-location* |  |  | String
 | *camel.component.google-pubsub.connection-factory.service-account* |  |  | String
 | *camel.component.google-pubsub.connection-factory.service-account-key* |  |  | String
 | *camel.component.google-pubsub.connection-factory.service-u-r-l* |  |  | String
 | *camel.component.google-pubsub.enabled* | Enable google-pubsub component | true | Boolean
+| *camel.component.google-pubsub.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

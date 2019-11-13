@@ -25,12 +25,13 @@
      http://camel.apache.org/schema/spring
      http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <bean id="cacheManager" class="org.infinispan.spring.provider.SpringRemoteCacheManagerFactoryBean">
+  <bean id="cacheManager" class="org.infinispan.spring.remote.provider.SpringRemoteCacheManagerFactoryBean">
     <property
         name="configurationProperties">
       <props>
         <prop key="infinispan.client.hotrod.server_list">127.0.0.1:11222</prop>
         <prop key="infinispan.client.hotrod.force_return_values">true</prop>
+        <prop key="infinispan.client.hotrod.java_serial_whitelist">java.lang.Boolean</prop>
       </props>
     </property>
   </bean>

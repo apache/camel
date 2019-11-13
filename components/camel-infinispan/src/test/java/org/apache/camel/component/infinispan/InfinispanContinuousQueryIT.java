@@ -25,7 +25,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
+import org.infinispan.client.hotrod.marshall.MarshallerUtil;
+import org.infinispan.commons.marshall.ProtoStreamMarshaller;
 import org.infinispan.commons.util.Util;
 import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.SerializationContext;
@@ -34,8 +35,8 @@ import org.infinispan.protostream.sampledomain.marshallers.GenderMarshaller;
 import org.infinispan.protostream.sampledomain.marshallers.UserMarshaller;
 import org.infinispan.query.dsl.Query;
 import org.infinispan.query.dsl.QueryFactory;
-import org.infinispan.query.remote.client.MarshallerRegistration;
 import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
+import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.Test;
 
 import static org.apache.camel.component.infinispan.util.UserUtils.CQ_USERS;
@@ -92,15 +93,15 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
             "sample_bank_account/bank.proto",
             Util.read(InfinispanContinuousQueryIT.class.getResourceAsStream("/sample_bank_account/bank.proto")));
 
-        MarshallerRegistration.registerMarshallers(ProtoStreamMarshaller.getSerializationContext(manager));
+        MarshallerRegistration.init(MarshallerUtil.getSerializationContext(manager));
 
-        SerializationContext serCtx = ProtoStreamMarshaller.getSerializationContext(manager);
+        SerializationContext serCtx = MarshallerUtil.getSerializationContext(manager);
         serCtx.registerProtoFiles(FileDescriptorSource.fromResources("/sample_bank_account/bank.proto"));
         serCtx.registerMarshaller(new UserMarshaller());
         serCtx.registerMarshaller(new GenderMarshaller());
 
         // pre-load data
-        cache = manager.getCache("remote_query");
+        cache = manager.administration().getOrCreateCache("remote_query", (String) null);
         cache.clear();
     }
 

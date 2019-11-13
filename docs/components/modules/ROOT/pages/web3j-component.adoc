@@ -4,6 +4,10 @@
 
 *Since Camel 2.22*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The Ethereum blockchain component uses the
 https://github.com/web3j/web3j[web3j] client
 API and allows you to interact with Ethereum compatible nodes such as https://github.com/ethereum/go-ethereum/wiki/geth[Geth], https://github.com/paritytech/parity[Parity], https://github.com/jpmorganchase/quorum/wiki[Quorum], https://infura.io[Infura], etc.
@@ -32,7 +36,7 @@ web3j://<local/remote host:port or local IPC path>[?options]
 
 
 // component options: START
-The Web3j Ethereum Blockchain component supports 2 options, which are listed below.
+The Web3j Ethereum Blockchain component supports 4 options, which are listed below.
 
 
 
@@ -41,6 +45,8 @@ The Web3j Ethereum Blockchain component supports 2 options, which are listed bel
 | Name | Description | Default | Type
 | *configuration* (common) | Default configuration |  | Web3jConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -128,7 +134,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 36 options, which are listed below.
+The component supports 38 options, which are listed below.
 
 
 
@@ -136,6 +142,7 @@ The component supports 36 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.web3j.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.web3j.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.web3j.configuration.address* | Contract address. |  | String
 | *camel.component.web3j.configuration.addresses* | Contract address or a list of addresses. |  | List
 | *camel.component.web3j.configuration.at-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. |  | DefaultBlockParameter
@@ -171,6 +178,7 @@ The component supports 36 options, which are listed below.
 | *camel.component.web3j.configuration.value* | The value sent within a transaction. |  | BigInteger
 | *camel.component.web3j.configuration.web3j* | The preconfigured Web3j object. |  | Web3j
 | *camel.component.web3j.enabled* | Enable web3j component | true | Boolean
+| *camel.component.web3j.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

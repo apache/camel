@@ -18,12 +18,15 @@ package org.apache.camel.component.infinispan.policy;
 
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalConfiguration;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 
 public class InfinispanEmbeddedRoutePolicyTest extends InfinispanRoutePolicyTestBase {
 
     @Override
     protected BasicCacheContainer createCacheManager() throws Exception {
-        return new DefaultCacheManager(new ConfigurationBuilder().build());
+        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").build();
+        return new DefaultCacheManager(global, new ConfigurationBuilder().build());
     }
 }

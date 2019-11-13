@@ -1,10 +1,11 @@
 [[debezium-mysql-component]]
 = Debezium MySQL Connector Component
-= Debezium MySQL Component
-*Since Camel 3.0*
-
 
 *Since Camel 3.0*
+
+// HEADER START
+*Only consumer is supported*
+// HEADER END
 
 The Debezium MySQL component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from MySQL database using Debezium without the need for Kafka or Kafka Connect.
 
@@ -48,7 +49,7 @@ debezium-mysql:name[?options]
 
 
 // component options: START
-The Debezium MySQL Connector component supports 2 options, which are listed below.
+The Debezium MySQL Connector component supports 4 options, which are listed below.
 
 
 
@@ -57,6 +58,8 @@ The Debezium MySQL Connector component supports 2 options, which are listed belo
 | Name | Description | Default | Type
 | *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | MySqlConnectorEmbeddedDebeziumConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -177,7 +180,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 72 options, which are listed below.
+The component supports 74 options, which are listed below.
 
 
 
@@ -185,6 +188,7 @@ The component supports 72 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.debezium-mysql.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.debezium-mysql.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.debezium-mysql.configuration.bigint-unsigned-handling-mode* | Specify how BIGINT UNSIGNED columns should be represented in change events, including:'precise' uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'long' (the default) represents values using Java's 'long', which may not offer the precision but will be far easier to use in consumers. | long | String
 | *camel.component.debezium-mysql.configuration.binlog-buffer-size* | The size of a look-ahead buffer used by the binlog reader to decide whether the transaction in progress is going to be committed or rolled back. Use 0 to disable look-ahead buffering. Defaults to 0 (i.e. buffering is disabled). | 0 | Integer
 | *camel.component.debezium-mysql.configuration.column-blacklist* | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
@@ -256,6 +260,7 @@ The component supports 72 options, which are listed below.
 | *camel.component.debezium-mysql.configuration.time-precision-mode* | Time, date and timestamps can be represented with different kinds of precisions, including:'adaptive_time_microseconds': the precision of date and timestamp values is based the database column's precision; but time fields always use microseconds precision;'connect': always represents time, date and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision. | adaptive_time_microseconds | String
 | *camel.component.debezium-mysql.configuration.tombstones-on-delete* | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | Boolean
 | *camel.component.debezium-mysql.enabled* | Whether to enable auto configuration of the debezium-mysql component. This is enabled by default. |  | Boolean
+| *camel.component.debezium-mysql.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

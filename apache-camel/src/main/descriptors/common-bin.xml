@@ -214,8 +214,6 @@
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-ldif</include>
         <include>org.apache.camel:camel-leveldb</include>
-        <include>org.apache.camel:camel-linkedin</include>
-        <include>org.apache.camel:camel-linkedin-api</include>
         <include>org.apache.camel:camel-log</include>
         <include>org.apache.camel:camel-lra</include>
         <include>org.apache.camel:camel-lucene</include>
@@ -571,7 +569,6 @@
         <include>org.apache.camel:camel-ldap-starter</include>
         <include>org.apache.camel:camel-ldif-starter</include>
         <include>org.apache.camel:camel-leveldb-starter</include>
-        <include>org.apache.camel:camel-linkedin-starter</include>
         <include>org.apache.camel:camel-log-starter</include>
         <include>org.apache.camel:camel-lra-starter</include>
         <include>org.apache.camel:camel-lucene-starter</include>

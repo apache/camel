@@ -71,17 +71,16 @@ import org.slf4j.LoggerFactory;
 public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);
-    private static final String DEFAULT_KEY = "Just another 24 Byte key";
 
     private String xmlCipherAlgorithm;
     private String keyCipherAlgorithm;
-    
+
     /**
      * Digest Algorithm to be used with RSA-OAEP. The default is SHA-1 (which is not
      * written out unless it is explicitly configured).
      */
     private String digestAlgorithm;
-    
+
     /**
      * MGF Algorithm to be used with RSA-OAEP. The default is MGF-SHA-1 (which is not
      * written out unless it is explicitly configured).
@@ -92,7 +91,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     private String secureTag;
     private boolean secureTagContents;
-    
+
     private KeyStore keyStore;
     private KeyStore trustStore;
 
@@ -100,18 +99,16 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     private String trustStorePassword;
     private String recipientKeyAlias;
     private String keyPassword;
-    
+
     private KeyStoreParameters keyOrTrustStoreParameters;
     private String keyOrTrustStoreParametersRef;
-    
+
     private CamelContext camelContext;
     private DefaultNamespaceContext nsContext = new DefaultNamespaceContext();
     private boolean addKeyValueForEncryptedKey = true;
-        
+
     public XMLSecurityDataFormat() {
-        this.xmlCipherAlgorithm = XMLCipher.TRIPLEDES;
-        // set a default pass phrase as its required
-        this.passPhrase = DEFAULT_KEY.getBytes();
+        this.xmlCipherAlgorithm = XMLCipher.AES_256_GCM;
         this.secureTag = "";
         this.secureTagContents = true;
 
@@ -126,7 +123,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                         System.setProperty(lineBreakPropName, "true");
                         return false;
                     }
-                    return true; 
+                    return true;
                 }
             });
         } catch (Throwable t) { //NOPMD
@@ -154,7 +151,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setSecureTag(secureTag);
         this.setSecureTagContents(secureTagContents);
     }
-    
+
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents) {
         this();
         this.setSecureTag(secureTag);
@@ -168,7 +165,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setSecureTagContents(secureTagContents);
         this.setPassPhrase(passPhrase);
     }
-    
+
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, byte[] passPhrase) {
         this();
         this.setSecureTag(secureTag);
@@ -177,7 +174,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setNamespaces(namespaces);
     }
 
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, byte[] passPhrase, 
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, byte[] passPhrase,
                                  String xmlCipherAlgorithm) {
         this();
         this.setSecureTag(secureTag);
@@ -197,7 +194,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersRef);
     }
 
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersRef, String keyPassword) {
         this();
         this.setSecureTag(secureTag);
@@ -209,7 +206,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyPassword(keyPassword);
     }
 
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersRef) {
         this();
         this.setSecureTag(secureTag);
@@ -223,7 +220,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         }
     }
 
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersRef, String keyPassword) {
         this();
         this.setSecureTag(secureTag);
@@ -238,7 +235,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyPassword(keyPassword);
     }
 
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
         this();
         this.setSecureTag(secureTag);
@@ -249,7 +246,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
     }
 
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
         this();
         this.setSecureTag(secureTag);
@@ -260,8 +257,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         this.setKeyPassword(keyPassword);
     }
-    
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
         this();
         this.setSecureTag(secureTag);
@@ -273,7 +270,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
     }
 
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
         this();
         this.setSecureTag(secureTag);
@@ -285,8 +282,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         this.setKeyPassword(keyPassword);
     }
-    
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword,
             String digestAlgorithm) {
         this();
@@ -333,8 +330,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
         // and covert that to XML
         Document document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
-        
-        if (null != keyCipherAlgorithm 
+
+        if (null != keyCipherAlgorithm
             && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP)
                 || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP_11))) {
             encryptAsymmetric(exchange, document, stream);
@@ -344,23 +341,23 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             encryptSymmetric(exchange, document, stream);
         }
     }
-    
+
     /**
      * Configure the public key for the asymmetric key wrap algorithm, create the key cipher, and delegate
      * to common encryption method.
-     * 
+     *
      * The method first checks the exchange for a declared key alias, and will fall back to the
      * statically-defined instance variable if no value is found in the exchange. This allows different
      * aliases / keys to be used for multiple-recipient messaging integration patterns such as CBR
      * or recipient list.
      */
-    private void encryptAsymmetric(Exchange exchange, Document document, OutputStream stream) throws Exception {       
+    private void encryptAsymmetric(Exchange exchange, Document document, OutputStream stream) throws Exception {
         String exchangeRecipientAlias = getRecipientKeyAlias();
-        
+
         if (null == exchangeRecipientAlias) {
             throw new IllegalStateException("The  recipient's key alias must be defined for asymmetric key encryption.");
         }
-        
+
         if (trustStore == null && null != this.keyOrTrustStoreParameters) {
             trustStore = keyOrTrustStoreParameters.createKeyStore();
             trustStorePassword = keyOrTrustStoreParameters.getPassword();
@@ -369,18 +366,18 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         if (null == trustStore) {
             throw new IllegalStateException("A trust store must be defined for asymmetric key encryption.");
         }
-        
-        String password = 
+
+        String password =
             this.keyPassword != null ? this.keyPassword : this.trustStorePassword;
         Key keyEncryptionKey = getPublicKey(this.trustStore, exchangeRecipientAlias, password);
-        
+
         if (null == keyEncryptionKey) {
-            throw new IllegalStateException("No key for the alias [ " + exchangeRecipientAlias 
+            throw new IllegalStateException("No key for the alias [ " + exchangeRecipientAlias
                 + " ] exists in " + "the configured trust store.");
         }
-        
+
         SecretKey dataEncryptionKey = generateDataEncryptionKey();
-        
+
         XMLCipher keyCipher;
         if (null != this.getKeyCipherAlgorithm()) {
             keyCipher = XMLCipher.getInstance(this.getKeyCipherAlgorithm(), null, digestAlgorithm);
@@ -398,7 +395,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
     }
-     
+
     private void encryptSymmetric(Exchange exchange, Document document, OutputStream stream) throws Exception {
         SecretKey keyEncryptionKey;
         SecretKey dataEncryptionKey;
@@ -414,11 +411,11 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         } else {
             keyEncryptionKey = generateKeyEncryptionKey("AES");
             dataEncryptionKey = generateDataEncryptionKey();
-        } 
-        
+        }
+
         XMLCipher keyCipher = XMLCipher.getInstance(generateXmlCipherAlgorithmKeyWrap());
         keyCipher.init(XMLCipher.WRAP_MODE, keyEncryptionKey);
-        
+
         encrypt(exchange, document, stream, dataEncryptionKey, keyCipher, keyEncryptionKey);
 
         // Clean the secret keys from memory
@@ -427,15 +424,15 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         } catch (javax.security.auth.DestroyFailedException ex) {
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
-        
+
         try {
             keyEncryptionKey.destroy();
         } catch (javax.security.auth.DestroyFailedException ex) {
             LOG.debug("Error destroying key: {}", ex.getMessage());
         }
     }
-    
-    
+
+
     /**
      * Returns the private key for the specified alias, or null if the alias or private key is not found.
      */
@@ -448,10 +445,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             return null;
         }
     }
-    
+
     /**
      * Returns the public key for the specified alias, or null if the alias or private key is not found.
-     */    
+     */
     // TODO Move this to a crypto utility class
     private Key getPublicKey(KeyStore keystore, String alias, String password) throws Exception {
         java.security.cert.Certificate cert = keystore.getCertificate(alias);
@@ -461,9 +458,9 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         }
         return keystore.getKey(alias, password.toCharArray());
     }
- 
-    
-    private void encrypt(Exchange exchange, Document document, OutputStream stream, Key dataEncryptionKey, 
+
+
+    private void encrypt(Exchange exchange, Document document, OutputStream stream, Key dataEncryptionKey,
                          XMLCipher keyCipher, Key keyEncryptionKey) throws Exception {
         XMLCipher xmlCipher = XMLCipher.getInstance(xmlCipherAlgorithm);
         xmlCipher.init(XMLCipher.ENCRYPT_MODE, dataEncryptionKey);
@@ -472,20 +469,21 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             embedKeyInfoInEncryptedData(document, keyCipher, xmlCipher, dataEncryptionKey, keyEncryptionKey);
             document = xmlCipher.doFinal(document, document.getDocumentElement());
         } else {
-                          
-            XPathBuilder xpathBuilder = new XPathBuilder(secureTag);
-            xpathBuilder.setNamespaceContext(getNamespaceContext());
-            NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
-            
-            
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                document = node.getOwnerDocument();
-                embedKeyInfoInEncryptedData(node.getOwnerDocument(), keyCipher, xmlCipher, 
-                                            dataEncryptionKey, keyEncryptionKey);
-                Document temp = xmlCipher.doFinal(node.getOwnerDocument(), (Element) node, getSecureTagContents());
-                document.importNode(temp.getDocumentElement().cloneNode(true), true);
-            }    
+
+            try (XPathBuilder xpathBuilder = new XPathBuilder(secureTag)) {
+                xpathBuilder.setNamespaceContext(getNamespaceContext());
+                NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
+
+
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    Node node = nodeList.item(i);
+                    document = node.getOwnerDocument();
+                    embedKeyInfoInEncryptedData(node.getOwnerDocument(), keyCipher, xmlCipher,
+                                                dataEncryptionKey, keyEncryptionKey);
+                    Document temp = xmlCipher.doFinal(node.getOwnerDocument(), (Element) node, getSecureTagContents());
+                    document.importNode(temp.getDocumentElement().cloneNode(true), true);
+                }
+            }
         }
 
         try {
@@ -496,29 +494,29 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             stream.close();
         }
     }
-    
-    
+
+
     public Object unmarshal(Exchange exchange, Document document) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
         return unmarshal(exchange, is);
     }
-    
-    
+
+
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        Document encodedDocument = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, stream);        
-        
-        if (null != keyCipherAlgorithm 
+        Document encodedDocument = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, stream);
+
+        if (null != keyCipherAlgorithm
             && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP)
                 || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP_11))) {
             return decodeWithAsymmetricKey(exchange, encodedDocument);
         } else {
             LOG.debug("No (known) asymmetric keyCipherAlgorithm specified. Attempting to "
-                      + "decrypt using a symmetric key"); 
+                      + "decrypt using a symmetric key");
             return decodeWithSymmetricKey(exchange, encodedDocument);
         }
     }
-    
+
     private Object decodeWithSymmetricKey(Exchange exchange, Document encodedDocument) throws Exception {
         SecretKey keyEncryptionKey;
         if (xmlCipherAlgorithm.equals(XMLCipher.TRIPLEDES)) {
@@ -548,18 +546,18 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
         return  ret;
     }
-    
-    private Object decodeWithAsymmetricKey(Exchange exchange, Document encodedDocument) throws Exception { 
-        
+
+    private Object decodeWithAsymmetricKey(Exchange exchange, Document encodedDocument) throws Exception {
+
         if (keyStore == null && null != keyOrTrustStoreParameters) {
             keyStore = keyOrTrustStoreParameters.createKeyStore();
             keyStorePassword = keyOrTrustStoreParameters.getPassword();
         }
-        
+
         if (this.keyStore == null) {
             throw new IllegalStateException("A key store must be defined for asymmetric key decryption.");
         }
-        
+
         PrivateKey keyEncryptionKey = getPrivateKey(this.keyStore, this.recipientKeyAlias,
                  this.keyPassword != null ? this.keyPassword : this.keyStorePassword);
         Object ret = null;
@@ -583,7 +581,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
         return  ret;
     }
-    
+
     private Object decode(Exchange exchange, Document encodedDocument, Key keyEncryptionKey,
                           boolean hasEncrytionKey) throws Exception {
         XMLCipher xmlCipher = XMLCipher.getInstance();
@@ -600,32 +598,33 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             encodedDocument = xmlCipher.doFinal(encodedDocument, encodedDocument.getDocumentElement());
         } else {
 
-            XPathBuilder xpathBuilder = new XPathBuilder(secureTag);
-            xpathBuilder.setNamespaceContext(getNamespaceContext());
-            NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
+            try (XPathBuilder xpathBuilder = new XPathBuilder(secureTag)) {
+                xpathBuilder.setNamespaceContext(getNamespaceContext());
+                NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
 
 
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                encodedDocument = node.getOwnerDocument();
-                if (getSecureTagContents()) {
-                    checkEncryptionAlgorithm(keyEncryptionKey, (Element)node);
-                    Document temp = xmlCipher.doFinal(encodedDocument, (Element) node, true);
-                    encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
-                } else {
-                    NodeList childNodes = node.getChildNodes();
-                    for (int j = 0; j < childNodes.getLength(); j++) {
-                        Node childNode = childNodes.item(j);
-                        if (childNode.getLocalName().equals("EncryptedData")) {
-                            checkEncryptionAlgorithm(keyEncryptionKey, (Element) childNode);
-                            Document temp = xmlCipher.doFinal(encodedDocument, (Element) childNode, false);
-                            encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
-                        }    
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    Node node = nodeList.item(i);
+                    encodedDocument = node.getOwnerDocument();
+                    if (getSecureTagContents()) {
+                        checkEncryptionAlgorithm(keyEncryptionKey, (Element)node);
+                        Document temp = xmlCipher.doFinal(encodedDocument, (Element) node, true);
+                        encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
+                    } else {
+                        NodeList childNodes = node.getChildNodes();
+                        for (int j = 0; j < childNodes.getLength(); j++) {
+                            Node childNode = childNodes.item(j);
+                            if (childNode.getLocalName().equals("EncryptedData")) {
+                                checkEncryptionAlgorithm(keyEncryptionKey, (Element) childNode);
+                                Document temp = xmlCipher.doFinal(encodedDocument, (Element) childNode, false);
+                                encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
+                            }
+                        }
                     }
-                }    
+                }
             }
         }
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             DOMSource source = new DOMSource(encodedDocument);
@@ -638,10 +637,15 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         // Return the decrypted data
         return bos.toByteArray();
     }
-    
-    
+
+
     private SecretKey generateKeyEncryptionKey(String algorithm) throws
             InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+        if (passPhrase == null) {
+            LOG.error("A passphrase must be specified for encryption");
+            throw new InvalidKeyException("A passphrase must be specified for encryption");
+        }
 
         DESedeKeySpec keySpec;
         SecretKey secretKey;
@@ -650,16 +654,12 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                 keySpec = new DESedeKeySpec(passPhrase);
                 SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(algorithm);
                 secretKey = keyFactory.generateSecret(keySpec);
-            } else if (algorithm.equalsIgnoreCase("SEED")) { 
+            } else if (algorithm.equalsIgnoreCase("SEED")) {
                 secretKey = new SecretKeySpec(passPhrase, "SEED");
-            } else if (algorithm.equalsIgnoreCase("CAMELLIA")) { 
+            } else if (algorithm.equalsIgnoreCase("CAMELLIA")) {
                 secretKey = new SecretKeySpec(passPhrase, "CAMELLIA");
             } else {
                 secretKey = new SecretKeySpec(passPhrase, "AES");
-            }
-            
-            if (Arrays.equals(passPhrase, DEFAULT_KEY.getBytes())) {
-                LOG.warn("Using the default encryption key is not secure");
             }
         } catch (InvalidKeyException e) {
             throw new InvalidKeyException("InvalidKeyException due to invalid passPhrase: " + Arrays.toString(passPhrase));
@@ -670,14 +670,14 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         }
         return secretKey;
     }
-    
+
     private SecretKey generateDataEncryptionKey() throws Exception {
         KeyGenerator keyGenerator = null;
         if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.TRIPLEDES)) {
             keyGenerator = KeyGenerator.getInstance("DESede");
         } else {
             keyGenerator = KeyGenerator.getInstance("AES");
-        
+
             if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
                 || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)
                 || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.SEED_128)
@@ -696,9 +696,9 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         return keyGenerator.generateKey();
     }
 
-    private void embedKeyInfoInEncryptedData(Document document, XMLCipher keyCipher, 
+    private void embedKeyInfoInEncryptedData(Document document, XMLCipher keyCipher,
                                              XMLCipher xmlCipher, Key dataEncryptionkey,
-                                             Key keyEncryptionKey) 
+                                             Key keyEncryptionKey)
         throws XMLEncryptionException {
 
         EncryptedKey encryptedKey = keyCipher.encryptKey(document, dataEncryptionkey, mgfAlgorithm, null);
@@ -707,9 +707,9 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             keyInfo.add((PublicKey)keyEncryptionKey);
             encryptedKey.setKeyInfo(keyInfo);
         }
-        
+
         KeyInfo keyInfo = new KeyInfo(document);
-        keyInfo.add(encryptedKey);    
+        keyInfo.add(encryptedKey);
         EncryptedData encryptedDataElement = xmlCipher.getEncryptedData();
         encryptedDataElement.setKeyInfo(keyInfo);
     }
@@ -735,11 +735,11 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             algorithmKeyWrap = XMLCipher.CAMELLIA_192_KeyWrap;
         } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_256)) {
             algorithmKeyWrap = XMLCipher.CAMELLIA_256_KeyWrap;
-        } 
+        }
 
         return algorithmKeyWrap;
     }
-    
+
     // Check to see if the asymmetric key transport algorithm is allowed
     private void checkEncryptionAlgorithm(Key keyEncryptionKey, Element parentElement) throws Exception {
         if (XMLCipher.RSA_v1dot5.equals(keyCipherAlgorithm)
@@ -752,22 +752,22 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         if (encryptedElement == null) {
             return;
         }
-        
+
         // The EncryptedKey EncryptionMethod algorithm
         String foundEncryptedKeyMethod = findEncryptedKeyMethod(encryptedElement);
         if (XMLCipher.RSA_v1dot5.equals(foundEncryptedKeyMethod)) {
-            String errorMessage = "The found key transport encryption method is not allowed"; 
+            String errorMessage = "The found key transport encryption method is not allowed";
             throw new XMLEncryptionException(errorMessage);
         }
     }
-    
+
     private Element findEncryptedDataElement(Element element) {
         // First check the Element itself
         if (EncryptionConstants._TAG_ENCRYPTEDDATA.equals(element.getLocalName())
             && EncryptionConstants.EncryptionSpecNS.equals(element.getNamespaceURI())) {
             return element;
         }
-        
+
         // Now check the child nodes
         Node child = element.getFirstChild();
         while (child != null) {
@@ -780,10 +780,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             }
             child = child.getNextSibling();
         }
-        
+
         return null;
     }
-    
+
     private String findEncryptionMethod(Element element) {
         Node child = element.getFirstChild();
         while (child != null) {
@@ -796,10 +796,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             }
             child = child.getNextSibling();
         }
-        
+
         return null;
     }
-    
+
     private String findEncryptedKeyMethod(Element element) {
         Node child = element.getFirstChild();
         while (child != null) {
@@ -822,10 +822,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             }
             child = child.getNextSibling();
         }
-        
+
         return null;
     }
-     
+
     private DefaultNamespaceContext getNamespaceContext() {
         return this.nsContext;
     }
@@ -841,15 +841,15 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     public String getKeyCipherAlgorithm() {
         return keyCipherAlgorithm;
     }
-    
+
     public void setKeyCipherAlgorithm(String keyCipherAlgorithm) {
         this.keyCipherAlgorithm = keyCipherAlgorithm;
     }
-    
+
     public String getRecipientKeyAlias() {
         return this.recipientKeyAlias;
     }
-    
+
     public void setRecipientKeyAlias(String recipientKeyAlias) {
         this.recipientKeyAlias = recipientKeyAlias;
     }
@@ -869,7 +869,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     public void setSecureTag(String secureTag) {
         this.secureTag = secureTag;
     }
-    
+
     public boolean isSecureTagContents() {
         return secureTagContents;
     }
@@ -885,11 +885,11 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     public void setKeyOrTrustStoreParameters(KeyStoreParameters parameters) {
         this.keyOrTrustStoreParameters = parameters;
     }
-    
+
     public KeyStoreParameters getKeyOrTrustStoreParameters() {
         return this.keyOrTrustStoreParameters;
     }
-    
+
     public void setKeyOrTrustStoreParametersRef(String registryId) {
         this.keyOrTrustStoreParametersRef = registryId;
         if (camelContext != null) {
@@ -897,13 +897,13 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             if (parametersObj instanceof KeyStoreParameters) {
                 this.keyOrTrustStoreParameters = (KeyStoreParameters)parametersObj;
             } else {
-                throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext." 
+                throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext."
                         + "The id for the keyOrTrustStoreParameters specified [ " + keyOrTrustStoreParametersRef
                         + " ] does not identify a KeyStoreParameters bean.");
             }
-        } 
+        }
     }
-    
+
     public String getKeyOrTrustStoreParametersRef() {
         return this.keyOrTrustStoreParametersRef;
     }
@@ -911,7 +911,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     public void setNamespaces(Map<String, String> namespaces) {
         getNamespaceContext().setNamespaces(namespaces);
     }
-    
+
     public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
     }

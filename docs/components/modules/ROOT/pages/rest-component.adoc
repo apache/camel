@@ -4,6 +4,10 @@
 
 *Since Camel 2.14*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The REST component allows to define REST endpoints (consumer) using the
 Rest DSL and plugin to other Camel components as the
 REST transport.
@@ -20,7 +24,7 @@ rest://method:path[:uriTemplate]?[options]
 == URI Options
 
 // component options: START
-The REST component supports 6 options, which are listed below.
+The REST component supports 8 options, which are listed below.
 
 
 
@@ -33,6 +37,8 @@ The REST component supports 6 options, which are listed below.
 | *apiDoc* (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
 | *host* (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -100,7 +106,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -109,9 +115,11 @@ The component supports 7 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.rest.api-doc* | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
 | *camel.component.rest.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.rest.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.rest.consumer-component-name* | The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *camel.component.rest.enabled* | Whether to enable auto configuration of the rest component. This is enabled by default. |  | Boolean
 | *camel.component.rest.host* | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| *camel.component.rest.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.rest.producer-component-name* | The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *camel.component.rest.component-name* | *Deprecated* The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 |===

@@ -65,6 +65,10 @@ use.
 Notice the aggregation strategy is a mandatory option and must be
 provided to the aggregator.
 
+IMPORTANT: In the aggregate method, do not create a new exchange instance to return,
+instead return either the old or new exchange from the input parameters;
+favor returning the old exchange whenever possible.
+
 Here are a few example `AggregationStrategy` implementations that should
 help you create your own custom strategy.
 

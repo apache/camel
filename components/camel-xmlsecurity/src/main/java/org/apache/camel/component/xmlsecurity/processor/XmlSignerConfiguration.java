@@ -52,8 +52,8 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     @UriParam(label = "sign", defaultValue = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
     private AlgorithmMethod canonicalizationMethod = new XmlSignatureTransform(CanonicalizationMethod.INCLUSIVE);
     private String canonicalizationMethodName;
-    @UriParam(label = "sign", defaultValue = "http://www.w3.org/2000/09/xmldsig#rsa-sha1")
-    private String signatureAlgorithm = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+    @UriParam(label = "sign", defaultValue = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
+    private String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
     @UriParam(label = "sign")
     private String digestAlgorithm;
     @UriParam(label = "sign", defaultValue = "true")
@@ -235,14 +235,14 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     /**
      * Namespace prefix for the XML signature namespace
      * "http://www.w3.org/2000/09/xmldsig#". Default value is "ds".
-     * 
+     *
      * If <code>null</code> or an empty value is set then no prefix is used for
      * the XML signature namespace.
      * <p>
      * See best practice
      * http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-
      * without-namespaces
-     * 
+     *
      * @param prefixForXmlSignatureNamespace
      *            prefix
      */
@@ -256,20 +256,20 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     /**
      * Local name of the parent element to which the XML signature element will
-     * be added. Only relevant for enveloped XML signature. Alternatively you can 
+     * be added. Only relevant for enveloped XML signature. Alternatively you can
      * also use {@link #setParentXpath(XPathFilterParameterSpec)}.
-     * 
+     *
      * <p> Default value is
      * <code>null</code>. The value must be <code>null</code> for enveloping and
      * detached XML signature.
      * <p>
      * This parameter or the parameter {@link #setParentXpath(XPathFilterParameterSpec)}
-     * for enveloped signature and the parameter {@link #setXpathsToIdAttributes(List)} 
+     * for enveloped signature and the parameter {@link #setXpathsToIdAttributes(List)}
      * for detached signature must not be set in the same configuration.
      * <p>
      * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified
      * in the same configuration then an exception is thrown.
-     * 
+     *
      * @param parentLocalName
      *            local name
      */
@@ -467,19 +467,19 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     /**
      * Sets the XPath to find the parent node in the enveloped case.
-     * Either you specify the parent node via this method or the local name and namespace of the parent 
-     * with the methods {@link #setParentLocalName(String)} and {@link #setParentNamespace(String)}. 
+     * Either you specify the parent node via this method or the local name and namespace of the parent
+     * with the methods {@link #setParentLocalName(String)} and {@link #setParentNamespace(String)}.
      * <p>
      * Default value is <code>null</code>. The value must be <code>null</code> for enveloping and
      * detached XML signature.
      * <p>
      * If the parameters <tt>parentXpath</tt> and <tt>parentLocalName</tt> are specified
      * in the same configuration then an exception is thrown.
-     * 
+     *
      * @param parentXpath xpath to the parent node, if the xpath returns several values then the first Element node is used
      */
     public void setParentXpath(XPathFilterParameterSpec parentXpath) {
         this.parentXpath = parentXpath;
     }
-    
+
 }

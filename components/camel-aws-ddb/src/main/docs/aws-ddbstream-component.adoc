@@ -3,6 +3,10 @@
 
 *Since Camel 2.17*
 
+// HEADER START
+*Only consumer is supported*
+// HEADER END
+
 The DynamoDB Stream component supports receiving messages from
 Amazon DynamoDB Stream service.
 
@@ -27,7 +31,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS DynamoDB Streams component supports 5 options, which are listed below.
+The AWS DynamoDB Streams component supports 7 options, which are listed below.
 
 
 
@@ -39,6 +43,8 @@ The AWS DynamoDB Streams component supports 5 options, which are listed below.
 | *secretKey* (consumer) | Amazon AWS Secret Key |  | String
 | *region* (consumer) | Amazon AWS Region |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -121,7 +127,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 18 options, which are listed below.
 
 
 
@@ -130,6 +136,7 @@ The component supports 16 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-ddbstream.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ddbstream.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-ddbstream.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.aws-ddbstream.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ddbstream.configuration.amazon-dynamo-db-streams-client* | Amazon DynamoDB client to use for all requests for this endpoint |  | AmazonDynamoDBStreams
 | *camel.component.aws-ddbstream.configuration.iterator-type* | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. |  | ShardIteratorType
@@ -142,6 +149,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.aws-ddbstream.configuration.sequence-number-provider* | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
 | *camel.component.aws-ddbstream.configuration.table-name* | Name of the dynamodb table |  | String
 | *camel.component.aws-ddbstream.enabled* | Whether to enable auto configuration of the aws-ddbstream component. This is enabled by default. |  | Boolean
+| *camel.component.aws-ddbstream.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.aws-ddbstream.region* | Amazon AWS Region |  | String
 | *camel.component.aws-ddbstream.secret-key* | Amazon AWS Secret Key |  | String
 |===

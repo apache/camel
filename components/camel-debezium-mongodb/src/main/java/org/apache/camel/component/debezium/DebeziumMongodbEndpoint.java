@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.debezium;
 
+import io.debezium.data.Envelope;
 import org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.kafka.connect.data.Schema;
 
 /**
  * Represents a Debezium MongoDB endpoint which is used to capture changes in MongoDB database so that that applications can see those changes and respond to them.
@@ -45,5 +47,17 @@ public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConne
     @Override
     public void setConfiguration(final MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    protected Object extractBodyValueFromValueStruct(Schema schema, Object value) {
+        // according to DBZ docs, `after` field only presents on the create events, however for updates there is field `patch`
+        // https://debezium.io/documentation/reference/0.10/connectors/mongodb.html
+        // hence first we test for `after`, if null we return `patch` instead
+        final Object after = extractFieldValueFromValueStruct(schema, value, Envelope.FieldName.AFTER);
+        if (after != null) {
+            return after;
+        }
+        return extractFieldValueFromValueStruct(schema, value, "patch");
     }
 }

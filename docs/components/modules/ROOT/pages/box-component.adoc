@@ -4,6 +4,10 @@
 
 *Since Camel 2.14*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The Box component provides access to all of the Box.com APIs accessible
 using https://github.com/box/box-java-sdk/[https://github.com/box/box-java-sdk]. It
 allows producing messages to upload and download files, create, edit,
@@ -49,7 +53,7 @@ The Box component supports three different types of authenticated connections.
 == Box Options
 
 // component options: START
-The Box component supports 2 options, which are listed below.
+The Box component supports 4 options, which are listed below.
 
 
 
@@ -58,6 +62,8 @@ The Box component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | BoxConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -143,7 +149,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 19 options, which are listed below.
+The component supports 21 options, which are listed below.
 
 
 
@@ -151,6 +157,7 @@ The component supports 19 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.box.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.box.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.box.configuration.access-token-cache* | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
 | *camel.component.box.configuration.api-name* | What kind of operation to perform |  | BoxApiName
 | *camel.component.box.configuration.authentication-type* | The type of authentication for connection. <p> Types of Authentication: <ul> <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged)</li> <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens</li> </ul> | APP_USER_AUTHENTICATION | String
@@ -169,6 +176,7 @@ The component supports 19 options, which are listed below.
 | *camel.component.box.configuration.user-name* | Box user name, MUST be provided |  | String
 | *camel.component.box.configuration.user-password* | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
 | *camel.component.box.enabled* | Enable box component | true | Boolean
+| *camel.component.box.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

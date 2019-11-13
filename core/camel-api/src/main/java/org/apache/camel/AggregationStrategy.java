@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
  * to acquire. Such as when using a <tt>PollEnricher</tt> to poll from a JMS queue which
  * is empty and a timeout was set.
  * <p/>
+ * Important: In the aggregate method, do not create a new exchange instance to return,
+ * instead return either the old or new exchange from the input parameters; favor returning the old exchange whenever possible.
+ * <p/>
  * Possible implementations include performing some kind of combining or delta processing, such as adding line items
  * together into an invoice or just using the newest exchange and removing old exchanges such as for state tracking or
  * market data prices; where old values are of little use.
@@ -51,15 +54,22 @@ public interface AggregationStrategy {
 
     /**
      * Aggregates an old and new exchange together to create a single combined exchange
+     * <p/>
+     * Important: In the aggregate method, do not create a new exchange instance to return,
+     * instead return either the old or new exchange from the input parameters; favor returning the old exchange whenever possible.
      *
      * @param oldExchange the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new exchange)
      * @param newExchange the newest exchange (can be <tt>null</tt> if there was no data possible to acquire)
-     * @return a combined composite of the two exchanges, favor returning the <tt>oldExchange</tt> whenever possible
+     * @return a combined composite of the two exchanges, return either the old or new exchange from the input parameters;
+     * favor returning the old exchange whenever possible)
      */
     Exchange aggregate(Exchange oldExchange, Exchange newExchange);
 
     /**
      * Aggregates an old and new exchange together to create a single combined exchange.
+     * <p/>
+     * Important: In the aggregate method, do not create a new exchange instance to return,
+     * instead return either the old or new exchange from the input parameters; favor returning the old exchange whenever possible.
      * <p/>
      * Important: Only Multicast and Recipient List EIP supports this method with access to the input exchange. All other EIPs
      * does not and uses the {@link #aggregate(Exchange, Exchange)} method instead.
@@ -67,7 +77,8 @@ public interface AggregationStrategy {
      * @param oldExchange    the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new exchange)
      * @param newExchange    the newest exchange (can be <tt>null</tt> if there was no data possible to acquire)
      * @param inputExchange  the input exchange (input to the EIP)
-     * @return a combined composite of the two exchanges, favor returning the <tt>oldExchange</tt> whenever possible
+     * @return a combined composite of the two exchanges, return either the old or new exchange from the input parameters;
+     * favor returning the old exchange whenever possible)
      */
     default Exchange aggregate(Exchange oldExchange, Exchange newExchange, Exchange inputExchange) {
         return aggregate(oldExchange, newExchange);

@@ -40,7 +40,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
 
     @XmlAttribute
-    @Metadata(defaultValue = "TRIPLEDES")
+    @Metadata(defaultValue = "AES-256-GCM")
     private String xmlCipherAlgorithm;
     @XmlAttribute
     private String passPhrase;
@@ -97,7 +97,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
      * <li>XMLCipher.CAMELLIA_192</li>
      * <li>XMLCipher.CAMELLIA_256</li>
      * </ul>
-     * The default value is MLCipher.TRIPLEDES
+     * The default value is XMLCipher.AES_256_GCM
      */
     public void setXmlCipherAlgorithm(String xmlCipherAlgorithm) {
         this.xmlCipherAlgorithm = xmlCipherAlgorithm;
@@ -109,8 +109,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     /**
      * A String used as passPhrase to encrypt/decrypt content. The passPhrase
-     * has to be provided. If no passPhrase is specified, a default passPhrase
-     * is used. The passPhrase needs to be put together in conjunction with the
+     * has to be provided. The passPhrase needs to be put together in conjunction with the
      * appropriate encryption algorithm. For example using TRIPLEDES the
      * passPhase can be a "Only another 24 Byte key"
      */
@@ -124,8 +123,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     /**
      * A byte[] used as passPhrase to encrypt/decrypt content. The passPhrase
-     * has to be provided. If no passPhrase is specified, a default passPhrase
-     * is used. The passPhrase needs to be put together in conjunction with the
+     * has to be provided. The passPhrase needs to be put together in conjunction with the
      * appropriate encryption algorithm. For example using TRIPLEDES the
      * passPhase can be a "Only another 24 Byte key"
      */

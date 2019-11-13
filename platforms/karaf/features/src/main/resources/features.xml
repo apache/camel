@@ -24,6 +24,10 @@
   <repository>mvn:org.apache.karaf.features/spring-legacy/${karaf4-version}/xml/features</repository>
   <repository>mvn:org.hibernate.validator/hibernate-validator-osgi-karaf-features/${hibernate-validator-version}/xml/features</repository>
   <repository>mvn:ca.uhn.hapi.fhir.karaf/hapi-fhir/${hapi-fhir-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-commons/${infinispan-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-core/${infinispan-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-jboss-marshalling/${infinispan-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}/xml/features</repository>
 
   <feature name='xml-specs-api' version='${servicemix-specs-version}' start-level='10'>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
@@ -1344,29 +1348,10 @@
   </feature>
   <feature name='camel-infinispan' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature>transaction</feature>
-    <feature>aries-blueprint</feature>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-core/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-commons/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-query-dsl/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
-    <bundle dependency='true'>mvn:com.github.ben-manes.caffeine/caffeine/${caffeine-version}</bundle>
-    <bundle dependency='true'>mvn:io.reactivex.rxjava2/rxjava/${rxjava2-version}</bundle>
-    <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
-    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-osgi/${jboss-marshalling-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${jboss-marshalling-version}</bundle>
-    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
+    <feature version="${infinispan-version}">infinispan-commons</feature>
+    <feature version="${infinispan-version}">infinispan-core</feature>
+    <feature version="${infinispan-version}">infinispan-jboss-marshalling</feature>
+    <feature version="${infinispan-version}">infinispan-client-hotrod-with-query</feature>
     <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
   </feature>
   <feature name='camel-influxdb' version='${project.version}' start-level='50'>
@@ -1440,6 +1425,11 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-parser/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:com.github.javaparser/javaparser-core/${javaparser-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/kie-pmml/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
@@ -1509,7 +1499,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jgroups-raft/${project.version}</bundle>
-    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-raft-jgroups-version}</bundle>
+    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
     <bundle dependency='true'>mvn:org.jgroups/jgroups-raft/${jgroups-raft-version}</bundle>
     <bundle dependency='true'>mvn:org.fusesource.leveldbjni/leveldbjni-all/${jgroups-raft-leveldbjni-version}</bundle>
     <bundle dependency='true'>mvn:org.mapdb/mapdb/${jgroups-raft-mapdb-version}</bundle>
@@ -1636,7 +1626,7 @@
     <bundle dependency='true'>mvn:io.fabric8/openshift-client/${kubernetes-client-version}/jar/bundle</bundle>
     <bundle>mvn:org.apache.camel/camel-kubernetes/${project.version}</bundle>
   </feature>
-  <feature name='camel-kudu' version='${project.version}' resolver='(obr)' start-level='50'>
+  <feature name='camel-kudu' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:org.apache.kudu/kudu-client/${kudu-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.apache.yetus/audience-annotations/${yetus-audience-annotations-version}</bundle>
@@ -1673,35 +1663,6 @@
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ldif/${project.version}</bundle>
-  </feature>
-  <feature name='camel-linkedin' version='${project.version}' start-level='50'>
-    <feature>aries-blueprint</feature>
-    <feature>pax-http-whiteboard</feature>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${cxf-version-range}'>cxf-core</feature>
-    <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-api/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-common/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-client/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.httpcomponents/httpmime/${httpclient4-version}$Export-Package=org.apache.http.*;version=${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.htmlunit/${htmlunit-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.w3c.css/sac/1.3</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-linkedin-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-linkedin/${project.version}</bundle>
   </feature>
   <feature name='camel-leveldb' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1979,6 +1940,11 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-parser/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:com.github.javaparser/javaparser-core/${javaparser-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${drools-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-xjc/${jaxb-bundle-version}</bundle>
