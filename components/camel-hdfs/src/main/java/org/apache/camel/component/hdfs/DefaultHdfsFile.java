@@ -24,6 +24,7 @@ import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
@@ -63,11 +64,8 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
     }
 
     protected final Writable getWritable(Object obj, Exchange exchange, Holder<Integer> size) {
-        Class<?> objCls = obj == null ? null : obj.getClass();
-        HdfsWritableFactories.HdfsWritableFactory objWritableFactory = WritableCache.writables.get(objCls);
-        if (objWritableFactory == null) {
-            objWritableFactory = new HdfsWritableFactories.HdfsObjectWritableFactory();
-        }
+        Class<?> objCls = Optional.ofNullable(obj).orElse(new UnknownType()).getClass();
+        HdfsWritableFactories.HdfsWritableFactory objWritableFactory = WritableCache.writables.getOrDefault(objCls, new HdfsWritableFactories.HdfsObjectWritableFactory());
         return objWritableFactory.create(obj, exchange.getContext().getTypeConverter(), size);
     }
 
@@ -97,7 +95,7 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
             writables.put(Integer.class, new HdfsWritableFactories.HdfsIntWritableFactory());
             writables.put(Long.class, new HdfsWritableFactories.HdfsLongWritableFactory());
             writables.put(String.class, new HdfsWritableFactories.HdfsTextWritableFactory());
-            writables.put(null, new HdfsWritableFactories.HdfsNullWritableFactory());
+            writables.put(UnknownType.class, new HdfsWritableFactories.HdfsNullWritableFactory());
         }
 
         static {
@@ -111,5 +109,8 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
             readables.put(Text.class, new HdfsWritableFactories.HdfsTextWritableFactory());
             readables.put(NullWritable.class, new HdfsWritableFactories.HdfsNullWritableFactory());
         }
+    }
+
+    private static final class UnknownType {
     }
 }

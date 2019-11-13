@@ -18,6 +18,7 @@ package org.apache.camel.component.hdfs;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.RuntimeCamelException;
@@ -42,6 +43,8 @@ public class HdfsInputStream implements Closeable {
     private final AtomicLong numOfReadMessages = new AtomicLong(0L);
 
     private boolean streamDownload;
+
+    private EntryHolder cachedNextEntry;
 
     protected HdfsInputStream() {
     }
@@ -92,7 +95,24 @@ public class HdfsInputStream implements Closeable {
      * @param value
      * @return number of bytes read. 0 is correct number of bytes (empty file), -1 indicates no record was read
      */
-    public final long next(Holder<Object> key, Holder<Object> value) {
+    public final long next(final Holder<Object> key, final Holder<Object> value) {
+        if (Objects.nonNull(cachedNextEntry)) {
+            return getNextFromCache(key, value);
+        }
+
+        return getNextFromStream(key, value);
+    }
+
+    private long getNextFromCache(final Holder<Object> key, final Holder<Object> value) {
+        key.setValue(cachedNextEntry.getKey().getValue());
+        value.setValue(cachedNextEntry.getValue().getValue());
+
+        long nextByteCount = cachedNextEntry.getByteCount();
+        cachedNextEntry = null;
+        return nextByteCount;
+    }
+
+    private long getNextFromStream(final Holder<Object> key, final Holder<Object> value) {
         long nb = fileType.next(this, key, value);
         // when zero bytes was read from given type of file, we may still have a record (e.g., empty file)
         // null value.value is the only indication that no (new) record/chunk was read
@@ -100,12 +120,26 @@ public class HdfsInputStream implements Closeable {
             // we've read all chunks from file, which size is exact multiple the chunk size
             return -1;
         }
-        if (value.value != null) {
+        if (value.getValue() != null) {
             numOfReadBytes.addAndGet(nb);
             numOfReadMessages.incrementAndGet();
             return nb;
         }
+
         return -1;
+    }
+
+    /**
+     */
+    public final boolean hasNext() {
+        if (Objects.isNull(cachedNextEntry)) {
+            Holder<Object> nextKey = new Holder<>();
+            Holder<Object> nextValue = new Holder<>();
+            long nextByteCount = next(nextKey, nextValue);
+            cachedNextEntry = new EntryHolder(nextKey, nextValue, nextByteCount);
+        }
+
+        return cachedNextEntry.hasNext();
     }
 
     public final long getNumOfReadBytes() {
@@ -134,5 +168,34 @@ public class HdfsInputStream implements Closeable {
 
     public boolean isStreamDownload() {
         return streamDownload;
+    }
+
+    private final class EntryHolder {
+
+        private long byteCount;
+        private Holder<Object> key;
+        private Holder<Object> value;
+
+        public EntryHolder(Holder<Object> key, Holder<Object> value, long byteCount) {
+            this.key = key;
+            this.value = value;
+            this.byteCount = byteCount;
+        }
+
+        public Holder<Object> getKey() {
+            return key;
+        }
+
+        public Holder<Object> getValue() {
+            return value;
+        }
+
+        public Boolean hasNext() {
+            return byteCount >= 0;
+        }
+
+        public long getByteCount() {
+            return byteCount;
+        }
     }
 }

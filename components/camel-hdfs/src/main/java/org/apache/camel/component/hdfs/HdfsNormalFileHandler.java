@@ -106,8 +106,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
 
     private long nextAsWrappedStream(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
         InputStream inputStream = (InputStream) hdfsInputStream.getIn();
-        key.value = null;
-        value.value = inputStream;
+        value.setValue(inputStream);
 
         if (consumed) {
             return 0;
@@ -124,13 +123,11 @@ class HdfsNormalFileHandler extends DefaultHdfsFile<OutputStream, InputStream> {
             int bytesRead = ((InputStream) hdfsInputStream.getIn()).read(buf);
             if (bytesRead >= 0) {
                 outputStream.write(buf, 0, bytesRead);
-                key.value = null;
-                value.value = outputStream;
+                value.setValue(outputStream);
                 return bytesRead;
             } else {
-                key.value = null;
                 // indication that we may have read from empty file
-                value.value = outputStream;
+                value.setValue(outputStream);
                 return 0;
             }
         } catch (IOException ex) {

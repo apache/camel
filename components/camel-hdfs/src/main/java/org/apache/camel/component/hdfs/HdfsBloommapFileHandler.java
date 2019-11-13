@@ -58,7 +58,7 @@ class HdfsBloommapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = getWritable(value, exchange, valueSize);
             ((BloomMapFile.Writer) hdfsOutputStream.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
-            return Long.sum(keySize.value, valueSize.value);
+            return Long.sum(keySize.getValue(), valueSize.getValue());
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
         }
@@ -85,9 +85,9 @@ class HdfsBloommapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
             if (reader.next(keyWritable, valueWritable)) {
-                key.value = getObject(keyWritable, keySize);
-                value.value = getObject(valueWritable, valueSize);
-                return Long.sum(keySize.value, valueSize.value);
+                key.setValue(getObject(keyWritable, keySize));
+                value.setValue(getObject(valueWritable, valueSize));
+                return Long.sum(keySize.getValue(), valueSize.getValue());
             } else {
                 return 0;
             }
