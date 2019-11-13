@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.xpath.XPath;
@@ -39,11 +40,9 @@ import javax.xml.xpath.XPathFactoryConfigurationException;
 import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.InputSource;
 
 import org.apache.camel.CamelContext;
@@ -62,10 +61,12 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1030,6 +1031,9 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             }
 
             if (resultQName != null) {
+                if (document == null) {
+                    document = new XMLConverterHelper().createDocument();
+                }
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource)document;
                     answer = xpathExpression.evaluate(inputSource, resultQName);
@@ -1050,6 +1054,12 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                     answer = xpathExpression.evaluate(document);
                 }
             }
+        } catch (ParserConfigurationException e) {
+            String message = getText();
+            if (ObjectHelper.isNotEmpty(getHeaderName())) {
+                message = message + " with headerName " + getHeaderName();
+            }
+            throw new RuntimeCamelException(message, e);
         } catch (XPathExpressionException e) {
             String message = getText();
             if (ObjectHelper.isNotEmpty(getHeaderName())) {
