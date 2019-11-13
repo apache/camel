@@ -19,6 +19,7 @@ package org.apache.camel.component.hdfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.RuntimeCamelException;
@@ -96,37 +97,28 @@ public class HdfsInputStream implements Closeable {
      * @return number of bytes read. 0 is correct number of bytes (empty file), -1 indicates no record was read
      */
     public final long next(final Holder<Object> key, final Holder<Object> value) {
-        if (Objects.nonNull(cachedNextEntry)) {
-            return getNextFromCache(key, value);
-        }
-
-        return getNextFromStream(key, value);
-    }
-
-    private long getNextFromCache(final Holder<Object> key, final Holder<Object> value) {
-        key.setValue(cachedNextEntry.getKey().getValue());
-        value.setValue(cachedNextEntry.getValue().getValue());
-
-        long nextByteCount = cachedNextEntry.getByteCount();
+        EntryHolder nextEntry = Optional.ofNullable(cachedNextEntry).orElseGet(() -> getNextFromStream(key, value));
         cachedNextEntry = null;
-        return nextByteCount;
+
+        key.setValue(nextEntry.getKey().getValue());
+        value.setValue(nextEntry.getValue().getValue());
+
+        return nextEntry.getByteCount();
     }
 
-    private long getNextFromStream(final Holder<Object> key, final Holder<Object> value) {
+    private EntryHolder getNextFromStream(final Holder<Object> key, final Holder<Object> value) {
         long nb = fileType.next(this, key, value);
         // when zero bytes was read from given type of file, we may still have a record (e.g., empty file)
         // null value.value is the only indication that no (new) record/chunk was read
-        if (nb == 0 && numOfReadMessages.get() > 0) {
+        if ((nb == 0 && numOfReadMessages.get() > 0) || Objects.isNull(value.getValue())) {
             // we've read all chunks from file, which size is exact multiple the chunk size
-            return -1;
-        }
-        if (value.getValue() != null) {
+            nb = -1;
+        } else {
             numOfReadBytes.addAndGet(nb);
             numOfReadMessages.incrementAndGet();
-            return nb;
         }
 
-        return -1;
+        return new EntryHolder(key, value, nb);
     }
 
     /**

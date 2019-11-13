@@ -157,15 +157,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         Holder<Object> currentKey = new Holder<>();
         Holder<Object> currentValue = new Holder<>();
 
-        long byteCount = hdfsFile.next(currentKey, currentValue);
-
-        while (byteCount >= 0) {
-
-
-
-        }
-
-        while (hdfsFile.hasNext() && hdfsFile.next(currentKey, currentValue) >= 0) {
+        while (hdfsFile.next(currentKey, currentValue) >= 0) {
             processHdfsInputStream(hdfsFile, currentKey, currentValue, messageCount, totalMessageCount);
             messageCount.incrementAndGet();
         }
@@ -239,7 +231,6 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
     }
 
-    /* Port over from Splitter class*/
     protected void updateNewExchange(Exchange exchange, int index, HdfsInputStream hdfsFile) {
         // do not share unit of work
         exchange.setUnitOfWork(null);
