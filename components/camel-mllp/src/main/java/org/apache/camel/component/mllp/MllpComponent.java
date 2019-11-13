@@ -51,10 +51,14 @@ public class MllpComponent extends DefaultComponent {
     MllpConfiguration configuration;
 
     public MllpComponent() {
+        // bridge error handler by default
+        setBridgeErrorHandler(true);
     }
 
     public MllpComponent(CamelContext context) {
         super(context);
+        // bridge error handler by default
+        setBridgeErrorHandler(true);
     }
 
     @Override
