@@ -175,7 +175,9 @@ public class SpringBootStarterMojo extends AbstractMojo {
         for (String gp : globalProps) {
             String[] comps = gp.split("\\:");
             String stdName = (comps[0] + ":" + comps[1]).replace("-starter", "");
-            if (stdName.equals(project.getGroupId() + ":" + project.getArtifactId())) {
+            String camelGav = project.getGroupId() + ":" + project.getArtifactId();
+            String camelSpringBootGav = project.getGroupId() + ".springboot:" + project.getArtifactId();
+            if (stdName.equals(camelGav) || stdName.equals(camelSpringBootGav)) {
                 inGlobal = true;
                 break;
             }
