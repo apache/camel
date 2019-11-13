@@ -22,12 +22,20 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class SpringRestSwaggerReaderModelApiSecurityTest extends CamelSpringTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SpringRestSwaggerReaderModelApiSecurityTest.class);
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -53,7 +61,7 @@ public class SpringRestSwaggerReaderModelApiSecurityTest extends CamelSpringTest
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String json = mapper.writeValueAsString(swagger);
 
-        log.info(json);
+        LOG.info(json);
 
         assertTrue(json.contains("\"securityDefinitions\" : {"));
         assertTrue(json.contains("\"type\" : \"oauth2\","));

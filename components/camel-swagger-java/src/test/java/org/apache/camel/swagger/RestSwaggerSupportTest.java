@@ -32,7 +32,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class RestSwaggerSupportTest {
 
@@ -90,7 +89,7 @@ public class RestSwaggerSupportTest {
 
         RestSwaggerSupport.setupXForwardedHeaders(swagger, Collections.emptyMap());
 
-        verifyZeroInteractions(swagger);
+        verifyNoMoreInteractions(swagger);
     }
 
     static Stream<Arguments> basePathAndPrefixVariations() {
