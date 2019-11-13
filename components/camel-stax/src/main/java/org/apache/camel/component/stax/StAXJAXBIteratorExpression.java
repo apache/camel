@@ -35,6 +35,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.stax.StAXUtil.getTagName;
@@ -115,9 +116,10 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     @SuppressWarnings("unchecked")
     public Object evaluate(Exchange exchange) {
         try {
+            InputStream inputStream = null;
             XMLEventReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLEventReader.class, exchange, exchange.getIn().getBody());
             if (reader == null) {
-                InputStream inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+                inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
                 xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, isNamespaceAware);
                 reader = xmlInputFactory.createXMLEventReader(inputStream);
@@ -127,7 +129,7 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
             if (clazz == null && handledName != null) {
                 clazz = (Class<T>) exchange.getContext().getClassResolver().resolveMandatoryClass(handledName);
             }
-            return createIterator(reader, clazz);
+            return createIterator(reader, clazz, inputStream);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             return null;
@@ -143,8 +145,8 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
         }
     }
 
-    private Iterator<T> createIterator(XMLEventReader reader, Class<T> clazz) throws JAXBException {
-        return new StAXJAXBIterator<>(clazz, reader);
+    private Iterator<T> createIterator(XMLEventReader reader, Class<T> clazz, InputStream inputStream) throws JAXBException {
+        return new StAXJAXBIterator<>(clazz, reader, inputStream);
     }
 
     /**
@@ -153,14 +155,16 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     static class StAXJAXBIterator<T> implements Iterator<T>, Closeable {
 
         private final XMLEventReader reader;
+        private final InputStream inputStream;
         private final Class<T> clazz;
         private final String name;
         private final Unmarshaller unmarshaller;
         private T element;
 
-        StAXJAXBIterator(Class<T> clazz, XMLEventReader reader) throws JAXBException {
+        StAXJAXBIterator(Class<T> clazz, XMLEventReader reader, InputStream inputStream) throws JAXBException {
             this.clazz = clazz;
             this.reader = reader;
+            this.inputStream = inputStream;
 
             name = getTagName(clazz);
             JAXBContext jaxb = jaxbContext(clazz);
@@ -221,6 +225,9 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
 
         @Override
         public void close() throws IOException {
+            if (inputStream != null) {
+                IOHelper.close(inputStream);
+            }
             try {
                 reader.close();
             } catch (XMLStreamException e) {
