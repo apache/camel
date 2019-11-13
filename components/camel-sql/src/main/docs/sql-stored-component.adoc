@@ -4,7 +4,7 @@
 *Since Camel 2.17*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The SQL Stored component allows you to work with databases using JDBC

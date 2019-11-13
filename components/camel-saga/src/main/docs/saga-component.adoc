@@ -4,7 +4,7 @@
 *Since Camel 2.21*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Saga component provides a bridge to execute custom actions within a route using the Saga EIP.

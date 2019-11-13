@@ -5,7 +5,7 @@
 *Since Camel 1.2*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Velocity component allows you to process a message using an

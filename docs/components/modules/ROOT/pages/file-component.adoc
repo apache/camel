@@ -5,7 +5,7 @@
 *Since Camel 1.0*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The File component provides access to file systems, allowing files to be

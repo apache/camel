@@ -5,7 +5,7 @@
 *Since Camel 2.22*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 

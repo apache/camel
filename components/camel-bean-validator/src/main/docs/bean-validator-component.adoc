@@ -4,7 +4,7 @@
 *Since Camel 2.3*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Validator component performs bean validation of the message body

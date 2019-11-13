@@ -5,7 +5,7 @@
 *Since Camel 2.16*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The PDF components provides the ability to create, modify or extract

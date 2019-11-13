@@ -4,7 +4,7 @@
 *Since Camel 1.2*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The JDBC component enables you to access databases through JDBC, where

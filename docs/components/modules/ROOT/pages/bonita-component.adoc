@@ -5,7 +5,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 Used for communicating with a remote Bonita BPM process engine.

@@ -4,7 +4,7 @@
 *Since Camel 1.4*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The SQL component allows you to work with databases using JDBC

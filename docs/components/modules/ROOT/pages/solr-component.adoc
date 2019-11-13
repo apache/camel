@@ -5,7 +5,7 @@
 *Since Camel 2.9*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Solr component allows you to interface with an

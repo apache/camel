@@ -4,7 +4,7 @@
 *Since Camel 1.2*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 The Atom component is used for polling Atom feeds.

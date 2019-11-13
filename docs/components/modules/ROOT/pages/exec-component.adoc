@@ -5,7 +5,7 @@
 *Since Camel 2.3*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Exec component can be used to execute system commands.

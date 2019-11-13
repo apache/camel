@@ -5,7 +5,7 @@
 *Since Camel 2.16*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The Git component allows you to work with a generic Git repository. 

@@ -5,7 +5,7 @@
 *Since Camel 1.5*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The LDAP component allows you to perform searches in LDAP servers

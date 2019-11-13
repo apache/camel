@@ -5,7 +5,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The XJ component allows you to convert XML and JSON documents directly forth and back without the need of

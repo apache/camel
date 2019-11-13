@@ -4,7 +4,7 @@
 *Since Camel 2.17*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 http://nats.io/[NATS] is a fast and reliable messaging platform.

@@ -4,7 +4,7 @@
 *Since Camel 2.8*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The AHC component provides HTTP based endpoints

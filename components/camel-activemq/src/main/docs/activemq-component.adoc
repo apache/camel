@@ -4,7 +4,7 @@
 *Since Camel 1.0*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The ActiveMQ component is an extension to the JMS component and has been pre-configured for using Apache ActiveMQ 5.x (not Artemis).

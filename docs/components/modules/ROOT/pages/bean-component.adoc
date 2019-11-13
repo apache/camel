@@ -5,7 +5,7 @@
 *Since Camel 1.0*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Bean component binds beans to Camel message exchanges.

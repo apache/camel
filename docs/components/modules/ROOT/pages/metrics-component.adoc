@@ -5,7 +5,7 @@
 *Since Camel 2.14*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Metrics component allows to collect various metrics directly

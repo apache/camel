@@ -4,7 +4,7 @@
 *Since Camel 2.16*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 http://docs.groovy-lang.org/latest/html/documentation/grape.html[Grape]

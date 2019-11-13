@@ -4,7 +4,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The Google Pubsub component provides access

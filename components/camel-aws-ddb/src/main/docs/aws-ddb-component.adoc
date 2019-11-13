@@ -4,7 +4,7 @@
 *Since Camel 2.10*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The DynamoDB component supports storing and retrieving data from/to

@@ -4,7 +4,7 @@
 *Since Camel 2.6*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 Apache Camel has extensive support for JMX to allow you to monitor and

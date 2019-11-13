@@ -5,7 +5,7 @@
 *Since Camel 2.15*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Chunk component allows for processing a message using a

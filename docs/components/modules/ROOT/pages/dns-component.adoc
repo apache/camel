@@ -5,7 +5,7 @@
 *Since Camel 2.7*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 This is an additional component for Camel to run DNS queries, using

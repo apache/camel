@@ -4,7 +4,7 @@
 *Since Camel 2.12*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 The Quartz component provides a scheduled delivery of messages using

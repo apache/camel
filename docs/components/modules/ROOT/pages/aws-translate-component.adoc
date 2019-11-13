@@ -5,7 +5,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Translate component supports translate a text in multiple languages.

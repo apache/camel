@@ -5,7 +5,7 @@
 *Since Camel 2.16*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The EC2 component supports the ability to create, run, start, stop and terminate

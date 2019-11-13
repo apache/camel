@@ -4,7 +4,7 @@
 *Since Camel 2.20*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 The Camel-Master endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;
