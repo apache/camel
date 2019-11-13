@@ -115,13 +115,11 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     @SuppressWarnings("unchecked")
     public Object evaluate(Exchange exchange) {
         try {
-            XMLEventReader reader;
-            if (isNamespaceAware) {
-                reader = exchange.getIn().getMandatoryBody(XMLEventReader.class);
-            } else {
+            XMLEventReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLEventReader.class, exchange, exchange.getIn().getBody());
+            if (reader == null) {
                 InputStream inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-                xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
+                xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, isNamespaceAware);
                 reader = xmlInputFactory.createXMLEventReader(inputStream);
             }
 
