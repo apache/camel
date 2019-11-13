@@ -5,7 +5,7 @@
 *Since Camel 2.21*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The KMS component supports the ability to work with keys stored in

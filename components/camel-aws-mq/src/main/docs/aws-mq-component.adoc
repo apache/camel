@@ -4,7 +4,7 @@
 *Since Camel 2.21*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The MQ component supports create, run, start, stop and terminate

@@ -5,7 +5,7 @@
 *Since Camel 2.7*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Hazelcast Components which allows you to consume join/leave events of the cache instance in the cluster.

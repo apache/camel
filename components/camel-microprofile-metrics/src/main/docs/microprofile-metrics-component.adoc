@@ -4,7 +4,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The MircoProfile Metrics component provides the capability to expose metrics from Camel routes.

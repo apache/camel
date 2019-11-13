@@ -4,7 +4,7 @@
 *Since Camel 2.18*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 *Since Camel 2.18*

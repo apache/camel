@@ -4,7 +4,7 @@
 *Since Camel 2.10*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Spring Batch component and support classes provide integration

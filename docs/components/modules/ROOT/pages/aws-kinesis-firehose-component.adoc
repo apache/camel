@@ -5,7 +5,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Kinesis Firehose component supports sending messages to Amazon Kinesis Firehose service.

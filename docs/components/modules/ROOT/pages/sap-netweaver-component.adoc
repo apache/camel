@@ -5,7 +5,7 @@
 *Since Camel 2.12*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The SAP Netweaver integrates with the

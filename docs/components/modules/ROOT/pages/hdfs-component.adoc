@@ -5,7 +5,7 @@
 *Since Camel 2.14*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The HDFS component enables you to read and write messages from/to an

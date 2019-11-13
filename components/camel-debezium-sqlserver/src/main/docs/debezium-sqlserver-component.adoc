@@ -4,7 +4,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 The Debezium SQL Server component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.10/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from SQL Server database using Debezium without the need for Kafka or Kafka Connect.

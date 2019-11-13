@@ -4,7 +4,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Drill component gives you the ability to querying to https://drill.apache.org/[Apache Drill Cluster]

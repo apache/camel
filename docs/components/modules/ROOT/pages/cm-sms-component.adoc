@@ -5,7 +5,7 @@
 *Since Camel 2.18*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 *Camel-Cm-Sms* is an http://camel.apache.org/[Apache Camel] component 

@@ -5,7 +5,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating https://www.digitalocean.com/community/projects/api-client-in-java[digitalocean-api-java]. All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.

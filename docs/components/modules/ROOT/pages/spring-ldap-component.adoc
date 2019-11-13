@@ -5,7 +5,7 @@
 *Since Camel 2.11*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Spring LDAP component provides a Camel wrapper for

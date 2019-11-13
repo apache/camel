@@ -5,7 +5,7 @@
 *Since Camel 1.1*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The IRC component implements an

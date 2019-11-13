@@ -5,7 +5,7 @@
 *Since Camel 2.12*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 With this Apache Camel component, you can generate and validate XML

@@ -5,7 +5,7 @@
 *Since Camel 1.3*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 Testing of distributed and asynchronous processing is

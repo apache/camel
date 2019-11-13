@@ -5,7 +5,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The JIRA component interacts with the JIRA API by encapsulating

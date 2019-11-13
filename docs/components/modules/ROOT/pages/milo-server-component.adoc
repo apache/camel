@@ -5,7 +5,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The Milo Server component provides an OPC UA server using the

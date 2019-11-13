@@ -4,7 +4,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Openstack Neutron component allows messages to be sent to an OpenStack network services.

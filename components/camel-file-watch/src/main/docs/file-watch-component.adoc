@@ -4,7 +4,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 This component can be used to watch file modification events in folder. It is based on https://github.com/gmethvin/directory-watcher[gmethvin/directory-watcher].

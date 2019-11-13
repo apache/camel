@@ -5,7 +5,7 @@
 *Since Camel 2.11*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the

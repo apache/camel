@@ -5,7 +5,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The Soroush component provides access to the https://soroush-app.ir/developer.html[Soroush Bot API].

@@ -5,7 +5,7 @@
 *Since Camel 2.19*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 Camel PubNub component can be used to communicate with the https://www.pubnub.com/[PubNub] data stream network for connected devices.

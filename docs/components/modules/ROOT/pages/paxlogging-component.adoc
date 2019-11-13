@@ -5,7 +5,7 @@
 *Since Camel 2.6*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 The PAX Logging component can be used in an OSGi environment to receive

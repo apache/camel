@@ -5,7 +5,7 @@
 *Since Camel 2.20*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 http://tools.ietf.org/html/rfc5652[Cryptographic Message Syntax (CMS)] is a well established standard for signing and encrypting messages. The Apache Crypto CMS component supports the following parts of this standard:

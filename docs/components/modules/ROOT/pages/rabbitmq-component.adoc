@@ -5,7 +5,7 @@
 *Since Camel 2.12*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The RabbitMQ component allows you produce and consume messages from

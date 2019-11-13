@@ -5,7 +5,7 @@
 *Since Camel 2.8*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The SNS component allows messages to be sent to an

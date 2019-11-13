@@ -5,7 +5,7 @@
 *Since Camel 1.4*
 
 // HEADER START
-*Both Producer and Consumer are supported*
+*Both producer and consumer is supported*
 // HEADER END
 
 The Spring Integration component provides a bridge for Camel

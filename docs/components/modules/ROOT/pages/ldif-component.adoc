@@ -5,7 +5,7 @@
 *Since Camel 2.20*
 
 // HEADER START
-*Only Producer is supported*
+*Only producer is supported*
 // HEADER END
 
 The LDIF component allows you to do updates on an LDAP server

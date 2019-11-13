@@ -528,14 +528,14 @@ public class UpdateReadmeMojo extends AbstractMojo {
         final boolean producerOnly = Boolean.parseBoolean(model.getProducerOnly());
         // if we have only producer support
         if (!consumerOnly && producerOnly) {
-            return "*Only Producer is supported*";
+            return "*Only producer is supported*";
         }
         // if we have only consumer support
         if (consumerOnly && !producerOnly) {
-            return "*Only Consumer is supported*";
+            return "*Only consumer is supported*";
         }
 
-        return "*Both Producer and Consumer are supported*";
+        return "*Both producer and consumer is supported*";
     }
 
     private static boolean updateAvailableFrom(final File file, final String firstVersion) throws MojoExecutionException {

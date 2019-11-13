@@ -5,7 +5,7 @@
 *Since Camel 3.0*
 
 // HEADER START
-*Only Consumer is supported*
+*Only consumer is supported*
 // HEADER END
 
 The Debezium MySQL component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from MySQL database using Debezium without the need for Kafka or Kafka Connect.
