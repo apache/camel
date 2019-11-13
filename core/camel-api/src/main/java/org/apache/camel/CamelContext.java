@@ -504,6 +504,11 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      */
     Collection<Endpoint> removeEndpoints(String pattern) throws Exception;
 
+    /**
+     * Gets the global endpoint configuration, where you can configure common endpoint options.
+     */
+    GlobalEndpointConfiguration getGlobalEndpointConfiguration();
+
     // Route Management Methods
     //-----------------------------------------------------------------------
 

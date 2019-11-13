@@ -323,9 +323,40 @@ The uri attribute has been deprecated, instead use value, which allows a shortha
 In Camel 2.x you could have 2 or more inputs to Camel routes, however this was not supported in all use-cases in Camel, and this functionality is seldom in use. This has
 also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multiple inputs to routes, and its now only possible to specify exactly only 1 input to a route.
 
+=== Crypto Component
+
+The default signature algorithm has changed for the Crypto (JCE) Component - it
+is now SHA256withRSA (before it was SHA1WithDSA).
+
+=== Crypto DataFormat
+
+The default encryption algorithm has changed for the Crypto (JCE) DataFormat - 
+it is now required to set a value for it (meaning that the default is null).
+Before the default value was "DES/CBC/PKCS5Padding". 
+
 === JSon DataFormat
 
 The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
+
+=== Shiro Component
+
+The default encryption key for the Shiro component has been removed, so now it
+is mandatory to supply the key/passphrase.
+
+=== XML Security Component
+
+The default signature algorithm has changed for the XML Security Component - it
+is now RSA-SHA256 (before it was RSA-SHA1).
+
+=== XML Security DataFormat
+
+The default encryption key for the XML Security DataFormat has been removed,
+so it is now mandatory to supply the key String/bytes if you are using
+symmetric encryption. This means that some of the methods are removed that
+used the XMLSecurityDataFormat without specifying a key.
+
+In addition, the default symmetric encryption algorithm has changed from
+Triple DES to AES-256 in GCM mode.
 
 === Zip and GZip DataFormat
 

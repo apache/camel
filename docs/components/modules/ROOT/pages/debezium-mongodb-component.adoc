@@ -4,6 +4,10 @@
 
 *Since Camel 3.0*
 
+// HEADER START
+*Only consumer is supported*
+// HEADER END
+
 The Debezium MongoDB component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from MongoDB database using Debezium without the need for Kafka or Kafka Connect.
 
 *Note:* The Debezium MongoDB connector uses MongoDB’s oplog to capture the changes, so the connector works only with MongoDB replica sets or with sharded clusters where each shard is a separate replica set, therefore you will need to have your MongoDB instance running either in replica set mode
@@ -39,7 +43,7 @@ debezium-mongodb:name[?options]
 
 
 // component options: START
-The Debezium MongoDB Connector component supports 2 options, which are listed below.
+The Debezium MongoDB Connector component supports 4 options, which are listed below.
 
 
 
@@ -48,6 +52,8 @@ The Debezium MongoDB Connector component supports 2 options, which are listed be
 | Name | Description | Default | Type
 | *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | MongoDbConnectorEmbeddedDebeziumConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -138,7 +144,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 42 options, which are listed below.
+The component supports 44 options, which are listed below.
 
 
 
@@ -146,6 +152,7 @@ The component supports 42 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.debezium-mongodb.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.debezium-mongodb.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.debezium-mongodb.configuration.collection-blacklist* | Description is not available here, please check Debezium website for corresponding key 'collection.blacklist' description. |  | String
 | *camel.component.debezium-mongodb.configuration.collection-whitelist* | The collections for which changes are to be captured |  | String
 | *camel.component.debezium-mongodb.configuration.connect-backoff-initial-delay-ms* | The initial delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 1 second (1000 ms). | 1000 | Long
@@ -187,6 +194,7 @@ The component supports 42 options, which are listed below.
 | *camel.component.debezium-mongodb.configuration.source-struct-version* | A version of the format of the publicly visible source part in the message | v2 | String
 | *camel.component.debezium-mongodb.configuration.tombstones-on-delete* | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | Boolean
 | *camel.component.debezium-mongodb.enabled* | Whether to enable auto configuration of the debezium-mongodb component. This is enabled by default. |  | Boolean
+| *camel.component.debezium-mongodb.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -205,10 +213,11 @@ The following headers are available when consuming change events from Debezium.
 | DebeziumConstants.HEADER_IDENTIFIER       | "CamelDebeziumIdentifier"                      | String      | The identifier of the connector, normally is this format "{server-name}.{database-name}.{table-name}".
 | DebeziumConstants.HEADER_KEY              | "CamelDebeziumKey"                             | Struct      | The key of the event, normally is the table Primary Key.
 | DebeziumConstants.HEADER_SOURCE_METADATA  | "CamelDebeziumSourceMetadata"                  | Map         | The metadata about the source event, for example `table` name, database `name`, log position, etc, please refer to the Debezium documentation for more info.
-| DebeziumConstants.HEADER_OPERATION        | "CamelDebeziumOperation"                       | String      | If presents, the type of event operation. Values for the connector are `c` for create (or insert), `u` for update, `d` for delete or `r` in case of a snapshot event.
+| DebeziumConstants.HEADER_OPERATION        | "CamelDebeziumOperation"                       | String      | If presents, the type of event operation. Values for the connector are `c` for create (or insert), `u` for update, `d` for delete or `r` for read (in the case of a initial sync).
 | DebeziumConstants.HEADER_TIMESTAMP        | "CamelDebeziumTimestamp"                       | Long        | If presents, the time (using the system clock in the JVM) at which the connector processed the event.
-| DebeziumConstants.HEADER_BEFORE           | "CamelDebeziumBefore"                          | Struct     | If presents, contains the state of the row before the event occurred.
 |===
+
+*Note*: Debezium Mongodb uses MongoDB’s oplog to populate the CDC events, the update events in MongoDB’s oplog don’t have the before or after states of the changed document, so there’s no way for the Debezium connector to provide this information, therefore header key `CamelDebeziumBefore` is not available in this component.
 
 == Message body
 The message body if is not `null` (in case of tombstones), it contains the state of the row after the event occurred as `String` JSON format and you can unmarchal using Camel JSON Data Format.
@@ -221,16 +230,20 @@ Here is a very simple route that you can use in order to listen to Debezium even
 [source,java]
 ----
 from("debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&mongodbHosts=rs0/localhost:27017&mongodbUser=debezium&mongodbPassword=dbz&mongodbName=dbserver1&databaseHistoryFileName=/usr/history-file-1.dat")
-    .unmarshal().json()
     .log("Event received from Debezium : ${body}")
     .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
     .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
     .log("    the event occured upon this operation '${headers.CamelDebeziumSourceOperation}'")
     .log("    on this database '${headers.CamelDebeziumSourceMetadata[db]}' and this table '${headers.CamelDebeziumSourceMetadata[table]}'")
     .log("    with the key ${headers.CamelDebeziumKey}")
-    .log("    the previous value is ${headers.CamelDebeziumBefore}")
+    .choice()
+        .when(header(DebeziumConstants.HEADER_OPERATION).in("c", "u", "r"))
+            .unmarshal().json()
+            .log("Event received from Debezium : ${body}")
+         .end()
+    .end();
 ----
 
-By default, the component will emit the events in the body and `CamelDebeziumBefore` header as String JSON format, this can be easily converted to JSON using Camel JSON Data Format e.g: `.unmarshal().json()` like the above example.
+By default, the component will emit the events in the body String JSON format in case of `u`, `c` or `r` operations, this can be easily converted to JSON using Camel JSON Data Format e.g: `.unmarshal().json()` like the above example. In case of operation `d`, the body will be `null`.
 
 *Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].

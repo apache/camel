@@ -91,7 +91,9 @@ public final class KubernetesHelper {
         if (ObjectHelper.isNotEmpty(configuration.getConnectionTimeout())) {
             builder.withConnectionTimeout(configuration.getConnectionTimeout());
         }
-
+        if (ObjectHelper.isNotEmpty(configuration.getNamespace())) {
+            builder.withNamespace(configuration.getNamespace());
+        }
         Config conf = builder.build();
         return new DefaultKubernetesClient(conf);
     }

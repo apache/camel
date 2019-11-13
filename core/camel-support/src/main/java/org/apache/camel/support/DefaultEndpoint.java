@@ -61,7 +61,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                     + " the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed"
                     + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
     private boolean lazyStartProducer;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
+    @UriParam(label = "consumer", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                     + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
                     + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
@@ -311,8 +311,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * To let the consumer use a custom ExceptionHandler.
-     + Notice if the option bridgeErrorHandler is enabled then this options is not in use.
-     + By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.
+     * Notice if the option bridgeErrorHandler is enabled then this options is not in use.
+     * By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.
      */
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;

@@ -3,6 +3,10 @@
 
 *Since Camel 2.11*
 
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
 The CW component allows messages to be sent to an
 https://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The
 implementation of the Amazon API is provided by
@@ -29,7 +33,7 @@ The metrics will be created if they don't already exists. +
 
 
 // component options: START
-The AWS CloudWatch component supports 5 options, which are listed below.
+The AWS CloudWatch component supports 7 options, which are listed below.
 
 
 
@@ -41,6 +45,8 @@ The AWS CloudWatch component supports 5 options, which are listed below.
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | The region in which CW client needs to work |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -104,7 +110,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 17 options, which are listed below.
+The component supports 19 options, which are listed below.
 
 
 
@@ -113,6 +119,7 @@ The component supports 17 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-cw.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-cw.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-cw.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.aws-cw.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-cw.configuration.amazon-cw-client* | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
 | *camel.component.aws-cw.configuration.name* | The metric name |  | String
@@ -126,6 +133,7 @@ The component supports 17 options, which are listed below.
 | *camel.component.aws-cw.configuration.unit* | The metric unit |  | String
 | *camel.component.aws-cw.configuration.value* | The metric value |  | Double
 | *camel.component.aws-cw.enabled* | Whether to enable auto configuration of the aws-cw component. This is enabled by default. |  | Boolean
+| *camel.component.aws-cw.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.aws-cw.region* | The region in which CW client needs to work |  | String
 | *camel.component.aws-cw.secret-key* | Amazon AWS Secret Key |  | String
 |===

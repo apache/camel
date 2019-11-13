@@ -17,8 +17,10 @@
 package org.apache.camel.converter.crypto;
 
 import java.security.Key;
+import java.security.SecureRandom;
 
 import javax.crypto.KeyGenerator;
+import javax.crypto.spec.GCMParameterSpec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,11 +53,11 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
     public static Key getDesKey() {
         return deskey;
     }
-    
+
     public static Key getDesEdeKey() {
         return desEdekey;
     }
-    
+
     public static Key getAESKey() {
         return aeskey;
     }
@@ -64,4 +66,11 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
         return new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
     }
 
+    public static GCMParameterSpec getGCMParameterSpec() {
+        byte[] iv = new byte[12];
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(iv);
+
+        return new GCMParameterSpec(128, iv);
+    }
 }

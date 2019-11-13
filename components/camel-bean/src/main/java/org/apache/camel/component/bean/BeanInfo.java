@@ -738,6 +738,12 @@ public class BeanInfo {
                 return true;
             }
         }
+        if (Boolean.class.equals(parameterType)) {
+            // boolean should match both Boolean and boolean
+            if (Boolean.class.isAssignableFrom(expectedType) || boolean.class.isAssignableFrom(expectedType)) {
+                return true;
+            }
+        }
         return parameterType.isAssignableFrom(expectedType);
     }
 

@@ -43,7 +43,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -51,9 +51,11 @@ The component supports 8 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.xquery.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.xquery.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.xquery.configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
 | *camel.component.xquery.configuration-properties* | To set custom Saxon configuration properties |  | Map
 | *camel.component.xquery.enabled* | Enable xquery component | true | Boolean
+| *camel.component.xquery.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.xquery.module-u-r-i-resolver* | To use the custom ModuleURIResolver. The option is a net.sf.saxon.lib.ModuleURIResolver type. |  | String
 | *camel.language.xquery.enabled* | Enable xquery language | true | Boolean
 | *camel.language.xquery.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
@@ -65,9 +67,9 @@ The component supports 8 options, which are listed below.
 
 [source,java]
 ---------------------------
-from("queue:foo").filter().
-  xquery("//foo").
-  to("queue:bar")
+from("queue:foo")
+  .filter().xquery("//foo")
+  .to("queue:bar")
 ---------------------------
 
 You can also use functions inside your query, in which case you need an
@@ -77,8 +79,8 @@ HIERARCHY_REQUEST_ERR) by passing the Class as a second argument to the
 
 [source,java]
 -----------------------------------------------------------------------------
-from("direct:start").
-  recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
+from("direct:start")
+  .recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
 -----------------------------------------------------------------------------
 
 == Variables
@@ -146,62 +148,6 @@ attribute:
     <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
-== Using XQuery as transformation
-
-We can do a message translation using transform or setBody in the route,
-as shown below:
-
-[source,java]
-----------------------------------------
-from("direct:start").
-   transform().xquery("/people/person");
-----------------------------------------
-
-Notice that xquery will use DOMResult by default, so if we want to grab
-the value of the person node, using text() we need to tell xquery to use
-String as result type, as shown:
-
-[source,java]
--------------------------------------------------------------
-from("direct:start").
-   transform().xquery("/people/person/text()", String.class);
--------------------------------------------------------------
-
- 
-
-== Using XQuery as an endpoint
-
-Sometimes an XQuery expression can be quite large; it can essentally be
-used for Templating. So you may want to use an
-XQuery Endpoint so you can route using XQuery
-templates.
-
-The following example shows how to take a message of an ActiveMQ queue
-(MyQueue) and transform it using XQuery and send it to MQSeries.
-
-[source,java]
--------------------------------------------------------------------------
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="activemq:MyQueue"/>
-      <to uri="xquery:com/acme/someTransform.xquery"/>
-      <to uri="mqseries:SomeOtherQueue"/>
-    </route>
-  </camelContext>
--------------------------------------------------------------------------
-
-== Examples
-
-Here is a simple
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
-using an XQuery expression as a predicate in a
-Message Filter
-
-This
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
-uses XQuery with namespaces as a predicate in a
-Message Filter
-
 == Learning XQuery
 
 XQuery is a very powerful language for querying, searching, sorting and
@@ -216,8 +162,6 @@ You might also find the http://www.w3.org/TR/xpath-functions/[XQuery
 function reference] useful
 
 == Loading script from external resource
-
-*Available as of Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +

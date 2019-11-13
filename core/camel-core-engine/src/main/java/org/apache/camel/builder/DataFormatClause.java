@@ -920,29 +920,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML() {
+    public T secureXML(byte[] passPhraseByte) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
-        return dataFormat(xsdf);
-    }
-
-    /**
-     * Uses the XML Security data format
-     */
-    public T secureXML(String secureTag, boolean secureTagContents) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
-        xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
-        return dataFormat(xsdf);
-    }
-
-    /**
-     * Uses the XML Security data format
-     */
-    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
-        xsdf.setSecureTag(secureTag);
-        xsdf.setSecureTagContents(secureTagContents);
-        xsdf.setNamespaces(namespaces);
+        xsdf.setPassPhraseByte(passPhraseByte);
         return dataFormat(xsdf);
     }
 

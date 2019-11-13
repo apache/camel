@@ -16,41 +16,27 @@
  */
 package org.apache.camel.dataformat.xmlsecurity;
 
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.crypto.KeyGenerator;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.xml.security.encryption.XMLCipher;
-import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.junit.Test;
 
 public class XMLSecurityConcurrencyTest extends CamelTestSupport {
-    private static final boolean HAS_3DES;
-    static {
-        boolean ok = false;
-        try {
-            XMLCipher.getInstance(XMLCipher.TRIPLEDES_KeyWrap);
-            ok = true;
-        } catch (XMLEncryptionException e) {
-        }
-        HAS_3DES = ok;
-    }
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
-        if (!HAS_3DES) {
-            return;
-        }
         doSendMessages(1, 1);
     }
 
     @Test
     public void testConcurrentProducers() throws Exception {
-        if (!HAS_3DES) {
-            return;
-        }
         doSendMessages(10, 5);
     }
 
@@ -80,16 +66,20 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() {
+    protected RouteBuilder createRouteBuilder() throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(256);
+        Key defaultKey = keyGenerator.generateKey();
+
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                        marshal().secureXML().
+                        marshal().secureXML(defaultKey.getEncoded()).
                         to("mock:secure").
                         to("direct:marshalled");
 
                 from("direct:marshalled").
-                        unmarshal().secureXML().
+                        unmarshal().secureXML(defaultKey.getEncoded()).
                         convertBodyTo(String.class).
                         to("mock:result");
             }

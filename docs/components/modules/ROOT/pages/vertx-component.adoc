@@ -4,6 +4,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The Vert.x component is for working with the http://vertx.io/[Vertx]
 https://vertx.io/docs/vertx-core/java/#event_bus[EventBus].
 
@@ -38,7 +42,7 @@ vertx:channelName[?options]
 
 
 // component options: START
-The Vert.x component supports 7 options, which are listed below.
+The Vert.x component supports 9 options, which are listed below.
 
 
 
@@ -52,6 +56,8 @@ The Vert.x component supports 7 options, which are listed below.
 | *vertx* (common) | To use the given vertx EventBus instead of creating a new embedded EventBus |  | Vertx
 | *timeout* (common) | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60. | 60 | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -108,7 +114,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -116,8 +122,10 @@ The component supports 8 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.vertx.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.vertx.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.vertx.enabled* | Enable vertx component | true | Boolean
 | *camel.component.vertx.host* | Hostname for creating an embedded clustered EventBus |  | String
+| *camel.component.vertx.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.vertx.port* | Port for creating an embedded clustered EventBus |  | Integer
 | *camel.component.vertx.timeout* | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60. | 60 | Integer
 | *camel.component.vertx.vertx* | To use the given vertx EventBus instead of creating a new embedded EventBus. The option is a io.vertx.core.Vertx type. |  | String

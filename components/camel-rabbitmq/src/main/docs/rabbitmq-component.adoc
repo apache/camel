@@ -3,6 +3,10 @@
 
 *Since Camel 2.12*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The RabbitMQ component allows you produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
 client, this component offers a pure RabbitMQ approach over the generic
@@ -47,7 +51,7 @@ exchange name determines which exchange the queue will bind to.
 == Options
 
 // component options: START
-The RabbitMQ component supports 50 options, which are listed below.
+The RabbitMQ component supports 52 options, which are listed below.
 
 
 
@@ -104,6 +108,8 @@ The RabbitMQ component supports 50 options, which are listed below.
 | *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
 | *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -210,7 +216,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 51 options, which are listed below.
+The component supports 53 options, which are listed below.
 
 
 
@@ -225,6 +231,7 @@ The component supports 51 options, which are listed below.
 | *camel.component.rabbitmq.auto-detect-connection-factory* | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | Boolean
 | *camel.component.rabbitmq.automatic-recovery-enabled* | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *camel.component.rabbitmq.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.rabbitmq.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.rabbitmq.channel-pool-max-size* | Get maximum number of opened channel in pool | 10 | Integer
 | *camel.component.rabbitmq.channel-pool-max-wait* | Set the maximum number of milliseconds to wait for a channel from the pool | 1000 | Long
 | *camel.component.rabbitmq.client-properties* | Connection client properties (client info used in negotiating with the server) |  | Map
@@ -242,6 +249,7 @@ The component supports 51 options, which are listed below.
 | *camel.component.rabbitmq.guaranteed-deliveries* | When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also publisher acknowledgements - When will messages be confirmed. | false | Boolean
 | *camel.component.rabbitmq.hostname* | The hostname of the running RabbitMQ instance or cluster. |  | String
 | *camel.component.rabbitmq.immediate* | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option. | false | Boolean
+| *camel.component.rabbitmq.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.rabbitmq.mandatory* | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | Boolean
 | *camel.component.rabbitmq.network-recovery-interval* | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *camel.component.rabbitmq.passive* | Passive queues depend on the queue already to be available at RabbitMQ. | false | Boolean

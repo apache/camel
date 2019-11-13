@@ -66,9 +66,6 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpClientTransport;
-import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.AbstractConnector;
@@ -77,7 +74,6 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.MultiPartFormDataCompliance;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -113,8 +109,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Map<Integer, Connector> socketConnectors;
     protected Map<String, Object> sslSocketConnectorProperties;
     protected Map<String, Object> socketConnectorProperties;
-    protected Integer httpClientMinThreads;
-    protected Integer httpClientMaxThreads;
     protected Integer minThreads;
     protected Integer maxThreads;
     protected ThreadPool threadPool;
@@ -714,108 +708,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         this.socketConnectors = socketConnectors;
     }
 
-    /**
-     * Creates a new {@link HttpClient} and configures its proxy/thread pool and SSL based on this
-     * component settings.
-     *
-     * @param endpoint   the instance of JettyHttpEndpoint
-     * @param minThreads optional minimum number of threads in client thread pool
-     * @param maxThreads optional maximum number of threads in client thread pool
-     * @param ssl        option SSL parameters
-     */
-    public CamelHttpClient createHttpClient(JettyHttpEndpoint endpoint, Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
-        SslContextFactory sslContextFactory = createSslContextFactory(ssl, true);
-        HttpClientTransport transport = createHttpClientTransport(maxThreads);
-        CamelHttpClient httpClient = createCamelHttpClient(transport, sslContextFactory);
-
-        CamelContext context = endpoint.getCamelContext();
-
-        if (context != null
-            && ObjectHelper.isNotEmpty(context.getGlobalOption("http.proxyHost"))
-            && ObjectHelper.isNotEmpty(context.getGlobalOption("http.proxyPort"))) {
-            String host = context.getGlobalOption("http.proxyHost");
-            int port = Integer.parseInt(context.getGlobalOption("http.proxyPort"));
-            log.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
-            httpClient.setProxy(host, port);
-        }
-
-        if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && endpoint.getProxyPort() > 0) {
-            String host = endpoint.getProxyHost();
-            int port = endpoint.getProxyPort();
-            log.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
-            httpClient.setProxy(host, port);
-        }
-
-        // must have both min and max
-        if (minThreads != null || maxThreads != null) {
-
-            // must have both options
-            if (minThreads == null || maxThreads == null) {
-                throw new IllegalArgumentException("Both min and max thread pool sizes must be provided.");
-            }
-
-            // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
-            QueuedThreadPool qtp = new QueuedThreadPool();
-            qtp.setMinThreads(minThreads.intValue());
-            qtp.setMaxThreads(maxThreads.intValue());
-            // and we want to use daemon threads
-            qtp.setDaemon(true);
-            // let the thread names indicate they are from the client
-            qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
-            httpClient.setThreadPoolOrExecutor(qtp);
-        }
-
-        if (log.isDebugEnabled()) {
-            if (minThreads != null) {
-                log.debug("Created HttpClient with thread pool {}-{} -> {}", minThreads, maxThreads, httpClient);
-            } else {
-                log.debug("Created HttpClient with default thread pool size -> {}", httpClient);
-            }
-        }
-
-        return httpClient;
-    }
-
-    private HttpClientTransport createHttpClientTransport(Integer maxThreads) {
-        if (maxThreads == null) {
-            return new HttpClientTransportOverHTTP();
-        }
-
-        int selectors = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
-
-        if (selectors >= maxThreads) {
-            selectors = maxThreads - 1;
-        }
-
-        return new HttpClientTransportOverHTTP(selectors);
-    }
-
-    protected abstract CamelHttpClient createCamelHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory);
-
-    public Integer getHttpClientMinThreads() {
-        return httpClientMinThreads;
-    }
-
-    /**
-     * To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
-     */
-    @Metadata(description = "To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.", label = "producer")
-    public void setHttpClientMinThreads(Integer httpClientMinThreads) {
-        this.httpClientMinThreads = httpClientMinThreads;
-    }
-
-    public Integer getHttpClientMaxThreads() {
-        return httpClientMaxThreads;
-    }
-
-    /**
-     * To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
-     */
-    @Metadata(description = "To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.", label = "producer")
-    public void setHttpClientMaxThreads(Integer httpClientMaxThreads) {
-        this.httpClientMaxThreads = httpClientMaxThreads;
-    }
-
     public Integer getMinThreads() {
         return minThreads;
     }
@@ -907,7 +799,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
             if (mbs != null) {
                 mbContainer = new MBeanContainer(mbs);
-                startMbContainer();
             } else {
                 log.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
@@ -1249,10 +1140,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected CamelServlet createServletForConnector(Server server, Connector connector,
                                                      List<Handler> handlers, JettyHttpEndpoint endpoint) throws Exception {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
-        if (Server.getVersion().startsWith("8")) {
-            context.getClass().getMethod("setConnectorNames", new Class[] {String[].class})
-                .invoke(context, new Object[] {new String[] {connector.getName()}});
-        }
 
         addJettyHandlers(server, handlers);
 
@@ -1313,7 +1200,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
 
     protected Server createServer() {
-        Server s = null;
+
         ThreadPool tp = threadPool;
         defaultQueuedThreadPool = null;
         // configure thread pool if min/max given
@@ -1331,25 +1218,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             tp = defaultQueuedThreadPool;
 
         }
-        if (tp != null) {
-            try {
-                if (!Server.getVersion().startsWith("8")) {
-                    s = Server.class.getConstructor(ThreadPool.class).newInstance(tp);
 
-                } else {
-                    s = new Server();
-                    if (isEnableJmx()) {
-                        enableJmx(s);
-                    }
-                    Server.class.getMethod("setThreadPool", ThreadPool.class).invoke(s, tp);
-                }
-            } catch (Exception e) {
-                //ignore
-            }
-        }
-        if (s == null) {
+        Server s;
+        if (tp != null) {
+            s = new Server(tp);
+        } else {
             s = new Server();
         }
+        if (isEnableJmx()) {
+            enableJmx(s);
+        }
+
         if (defaultQueuedThreadPool != null) {
             // let the thread names indicate they are from the server
             defaultQueuedThreadPool.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(s) + ")");
@@ -1364,19 +1243,14 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // setup the error handler if it set to Jetty component
         if (getErrorHandler() != null) {
             s.addBean(getErrorHandler());
-        } else if (!Server.getVersion().startsWith("8")) {
-            //need an error handler that won't leak information about the exception
-            //back to the client.
+        } else {
+            //need an error handler that won't leak information about the exception back to the client.
             ErrorHandler eh = new ErrorHandler() {
                 public void handle(String target, Request baseRequest,
                                    HttpServletRequest request, HttpServletResponse response)
                     throws IOException {
                     String msg = HttpStatus.getMessage(response.getStatus());
                     request.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
-                    if (response instanceof Response) {
-                        //need to use the deprecated method to support compiling with Jetty 8
-                        ((Response)response).setStatus(response.getStatus(), msg);
-                    }
                     super.handle(target, baseRequest, request, response);
                 }
                 protected void writeErrorPage(HttpServletRequest request, Writer writer, int code,
@@ -1390,30 +1264,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         return s;
     }
 
-
-    /**
-     * Starts {@link #mbContainer} and registers the container with itself as a managed bean
-     * logging an error if there is a problem starting the container.
-     * Does nothing if {@link #mbContainer} is {@code null}.
-     */
-    protected void startMbContainer() {
-        if (mbContainer != null
-            && Server.getVersion().startsWith("8")) {
-            //JETTY8 only
-            try {
-                boolean b = (Boolean)mbContainer.getClass().getMethod("isStarted").invoke(mbContainer);
-                if (b) {
-                    mbContainer.getClass().getMethod("start").invoke(mbContainer);
-                    // Publish the container itself for consistency with
-                    // traditional embedded Jetty configurations.
-                    mbContainer.getClass().getMethod("addBean", Object.class).invoke(mbContainer, mbContainer);
-                }
-            } catch (Throwable e) {
-                log.warn("Could not start Jetty MBeanContainer. Jetty JMX extensions will remain disabled.", e);
-            }
-        }
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -1423,8 +1273,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());
         }
-
-        startMbContainer();
     }
 
     @Override
@@ -1446,13 +1294,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             }
         }
         if (mbContainer != null) {
-            try {
-                //JETTY8
-                mbContainer.getClass().getMethod("stop").invoke(mbContainer);
-            } catch (Throwable t) {
-                //JETTY9
-                mbContainer.getClass().getMethod("destroy").invoke(mbContainer);
-            }
+            mbContainer.destroy();
             mbContainer = null;
         }
     }
@@ -1465,9 +1307,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         try {
             Object o = getContainer(server);
             o.getClass().getMethod("addEventListener", Container.Listener.class).invoke(o, mbContainer);
-            if (Server.getVersion().startsWith("8")) {
-                return;
-            }
             mbContainer.getClass().getMethod("beanAdded", Container.class, Object.class)
                 .invoke(mbContainer, null, server);
         } catch (RuntimeException rex) {

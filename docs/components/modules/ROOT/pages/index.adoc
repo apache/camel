@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 304 in 242 JAR artifacts (0 deprecated)
+Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -378,8 +378,6 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:ldif-component.adoc[LDIF] (camel-ldif) | 2.20 | The ldif component allows you to do updates on an LDAP server from a LDIF body content.
 
-| xref:linkedin-component.adoc[Linkedin] (camel-linkedin) | 2.14 | The linkedin component is used for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
-
 | xref:log-component.adoc[Log] (camel-log) | 1.1 | The log component logs message exchanges to the underlying logging mechanism.
 
 | xref:lucene-component.adoc[Lucene] (camel-lucene) | 2.2 | To insert or query from Apache Lucene databases.
@@ -560,7 +558,7 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:stomp-component.adoc[Stomp] (camel-stomp) | 2.12 | The stomp component is used for communicating with Stomp compliant message brokers.
 
-| xref:stream-component.adoc[Stream] (camel-stream) | 1.3 | The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
+| xref:stream-component.adoc[Stream] (camel-stream) | 1.3 | The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file.
 
 | xref:string-template-component.adoc[String Template] (camel-stringtemplate) | 1.2 | Transforms the message using a String template.
 

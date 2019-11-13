@@ -32,15 +32,13 @@ import static org.jgroups.util.Util.assertTrue;
 
 public class InfinispanIdempotentRepositoryTest {
 
-    public static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfigurationBuilder().build();
-
     protected BasicCacheContainer basicCacheContainer;
     protected InfinispanIdempotentRepository idempotentRepository;
     protected String cacheName = "default";
 
     @Before
-    public void setUp() throws Exception {
-        GlobalConfiguration global = new GlobalConfigurationBuilder().globalJmxStatistics().allowDuplicateDomains(true).build();
+    public void setUp() {
+        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").globalJmxStatistics().allowDuplicateDomains(true).build();
         Configuration conf = new ConfigurationBuilder().build();
         basicCacheContainer = new DefaultCacheManager(global, conf);
         basicCacheContainer.start();
@@ -48,12 +46,12 @@ public class InfinispanIdempotentRepositoryTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         basicCacheContainer.stop();
     }
 
     @Test
-    public void addsNewKeysToCache() throws Exception {
+    public void addsNewKeysToCache() {
         assertTrue(idempotentRepository.add("One"));
         assertTrue(idempotentRepository.add("Two"));
 
@@ -62,13 +60,13 @@ public class InfinispanIdempotentRepositoryTest {
     }
 
     @Test
-    public void skipsAddingSecondTimeTheSameKey() throws Exception {
+    public void skipsAddingSecondTimeTheSameKey() {
         assertTrue(idempotentRepository.add("One"));
         assertFalse(idempotentRepository.add("One"));
     }
 
     @Test
-    public void containsPreviouslyAddedKey() throws Exception {
+    public void containsPreviouslyAddedKey() {
         assertFalse(idempotentRepository.contains("One"));
 
         idempotentRepository.add("One");
@@ -77,7 +75,7 @@ public class InfinispanIdempotentRepositoryTest {
     }
 
     @Test
-    public void removesAnExistingKey() throws Exception {
+    public void removesAnExistingKey() {
         idempotentRepository.add("One");
 
         assertTrue(idempotentRepository.remove("One"));
@@ -86,12 +84,12 @@ public class InfinispanIdempotentRepositoryTest {
     }
 
     @Test
-    public void doesntRemoveMissingKey() throws Exception {
+    public void doesntRemoveMissingKey() {
         assertFalse(idempotentRepository.remove("One"));
     }
     
     @Test
-    public void clearCache() throws Exception {
+    public void clearCache() {
         assertTrue(idempotentRepository.add("One"));
         assertTrue(idempotentRepository.add("Two"));
 

@@ -169,7 +169,6 @@ public final class PackageHelper {
                 || "camel-jetty-common".equals(name);
             boolean special2 = "camel-as2".equals(name)
                 || "camel-box".equals(name)
-                || "camel-linkedin".equals(name)
                 || "camel-olingo2".equals(name)
                 || "camel-olingo4".equals(name)
                 || "camel-salesforce".equals(name)

@@ -4,6 +4,10 @@
 
 *Since Camel 2.10*
 
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
 The DynamoDB component supports storing and retrieving data from/to
 https://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
 
@@ -27,7 +31,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS DynamoDB component supports 5 options, which are listed below.
+The AWS DynamoDB component supports 7 options, which are listed below.
 
 
 
@@ -39,6 +43,8 @@ The AWS DynamoDB component supports 5 options, which are listed below.
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | The region in which DDB client needs to work |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -104,7 +110,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 19 options, which are listed below.
+The component supports 21 options, which are listed below.
 
 
 
@@ -113,6 +119,7 @@ The component supports 19 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-ddb.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ddb.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-ddb.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.aws-ddb.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ddb.configuration.amazon-d-d-b-client* | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
 | *camel.component.aws-ddb.configuration.consistent-read* | Determines whether or not strong consistency should be enforced when data is read. | false | Boolean
@@ -128,6 +135,7 @@ The component supports 19 options, which are listed below.
 | *camel.component.aws-ddb.configuration.table-name* | The name of the table currently worked with. |  | String
 | *camel.component.aws-ddb.configuration.write-capacity* | The provisioned throughput to reserved for writing resources to your table |  | Long
 | *camel.component.aws-ddb.enabled* | Whether to enable auto configuration of the aws-ddb component. This is enabled by default. |  | Boolean
+| *camel.component.aws-ddb.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.aws-ddb.region* | The region in which DDB client needs to work |  | String
 | *camel.component.aws-ddb.secret-key* | Amazon AWS Secret Key |  | String
 |===

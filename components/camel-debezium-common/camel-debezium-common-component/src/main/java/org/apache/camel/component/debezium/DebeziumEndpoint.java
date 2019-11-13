@@ -74,7 +74,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         final Map<String, Object> sourceMetadata = extractSourceMetadataValueFromValueStruct(valueSchema, value);
         final Object operation = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.OPERATION);
         final Object before = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.BEFORE);
-        final Object after = extractAfterValueFromValueStruct(valueSchema, value);
+        final Object body = extractBodyValueFromValueStruct(valueSchema, value);
         final Object timestamp = extractValueFromValueStruct(valueSchema, value, Envelope.FieldName.TIMESTAMP);
 
         // set message headers
@@ -85,8 +85,7 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         message.setHeader(DebeziumConstants.HEADER_BEFORE, before);
         message.setHeader(DebeziumConstants.HEADER_TIMESTAMP, timestamp);
 
-        // set 'after' as message body
-        message.setBody(after);
+        message.setBody(body);
 
         return exchange;
     }
@@ -94,6 +93,21 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
     public abstract C getConfiguration();
 
     public abstract void setConfiguration(C configuration);
+
+    protected Object extractBodyValueFromValueStruct(final Schema schema, final Object value) {
+        // by default, we will extract the value from field `after`, however if other connector needs different field, this method needs to be overriden
+        return extractFieldValueFromValueStruct(schema, value, Envelope.FieldName.AFTER);
+    }
+
+    protected Object extractFieldValueFromValueStruct(final Schema schema, final Object value, final String fieldName) {
+        // first we try with normal extraction from value struct
+        final Object valueExtracted = extractValueFromValueStruct(schema, value, fieldName);
+
+        if (valueExtracted == null && !isSchemaAStructSchema(schema)) { // we could have anything other than struct, we just return that
+            return value;
+        }
+        return valueExtracted;
+    }
 
     private Map<String, Object> extractSourceMetadataValueFromValueStruct(final Schema schema, final Object value) {
         // we want to convert metadata to map since it facilitate usage and also struct structure is not needed for the metadata
@@ -103,16 +117,6 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
             return DebeziumTypeConverter.toMap((Struct) valueExtracted);
         }
         return null;
-    }
-
-    private Object extractAfterValueFromValueStruct(final Schema schema, final Object value) {
-        // first we try with normal extraction from value struct
-        final Object valueExtracted = extractValueFromValueStruct(schema, value, Envelope.FieldName.AFTER);
-
-        if (valueExtracted == null && !isSchemaAStructSchema(schema)) { // we could have anything other than struct, we just return that
-            return value;
-        }
-        return valueExtracted;
     }
 
     private Object extractValueFromValueStruct(final Schema schema, final Object value, final String fieldName) {

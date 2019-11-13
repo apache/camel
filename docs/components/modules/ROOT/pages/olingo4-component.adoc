@@ -4,6 +4,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
 version 4.0 APIs to interact with OData 4.0 compliant service.
 Since version 4.0 OData is OASIS standard and number of popular open source 
@@ -46,7 +50,7 @@ for this component:
 
 
 // component options: START
-The Olingo4 component supports 3 options, which are listed below.
+The Olingo4 component supports 5 options, which are listed below.
 
 
 
@@ -56,6 +60,8 @@ The Olingo4 component supports 3 options, which are listed below.
 | *configuration* (common) | To use the shared configuration |  | Olingo4Configuration
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -142,7 +148,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 18 options, which are listed below.
 
 
 
@@ -150,6 +156,7 @@ The component supports 16 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.olingo4.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.olingo4.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.olingo4.configuration.api-name* | What kind of operation to perform |  | Olingo4ApiName
 | *camel.component.olingo4.configuration.connect-timeout* | HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer
 | *camel.component.olingo4.configuration.content-type* | Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8 | application/json;charset=utf-8 | String
@@ -164,6 +171,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.olingo4.configuration.split-result* | For endpoints that return an array or collection, a consumer endpoint will map every element to distinct messages, unless splitResult is set to false. | true | Boolean
 | *camel.component.olingo4.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
 | *camel.component.olingo4.enabled* | Enable olingo4 component | true | Boolean
+| *camel.component.olingo4.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.olingo4.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

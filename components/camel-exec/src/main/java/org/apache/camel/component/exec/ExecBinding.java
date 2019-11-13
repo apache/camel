@@ -91,6 +91,12 @@ public interface ExecBinding {
     String EXEC_USE_STDERR_ON_EMPTY_STDOUT = "CamelExecUseStderrOnEmptyStdout";
 
     /**
+     * The value of this header define logging level to be used for commands during execution. The default value is INFO.
+     * Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF. (Values of LoggingLevel enum)
+     */
+    String EXEC_COMMAND_LOG_LEVEL = "CamelExecCommandLogLevel";
+
+    /**
      * Creates a {@link ExecCommand} from the headers in the
      * <code>exchange</code> and the settings of the <code>endpoint</code>.
      * 

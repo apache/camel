@@ -49,8 +49,8 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private KeyStore keystore;
     @UriParam(label = "advanced", secret = true)
     private SecureRandom secureRandom;
-    @UriParam(defaultValue = "SHA1WithDSA")
-    private String algorithm = "SHA1WithDSA";
+    @UriParam(defaultValue = "SHA256withRSA")
+    private String algorithm = "SHA256withRSA";
     @UriParam(label = "advanced", defaultValue = "" + 2048)
     private Integer bufferSize = 2048;
     @UriParam

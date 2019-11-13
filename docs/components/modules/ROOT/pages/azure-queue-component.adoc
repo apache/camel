@@ -4,6 +4,10 @@
 
 *Since Camel 2.19*
 
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
 The Azure Queue component supports storing and retrieving the messages to/from
 https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service.
 
@@ -36,7 +40,7 @@ to("file://queuedirectory");
 
 
 // component options: START
-The Azure Storage Queue Service component supports 2 options, which are listed below.
+The Azure Storage Queue Service component supports 4 options, which are listed below.
 
 
 
@@ -45,6 +49,8 @@ The Azure Storage Queue Service component supports 2 options, which are listed b
 | Name | Description | Default | Type
 | *configuration* (advanced) | The Queue Service configuration |  | QueueServiceConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -113,7 +119,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 12 options, which are listed below.
 
 
 
@@ -121,6 +127,7 @@ The component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.azure-queue.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.azure-queue.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.azure-queue.configuration.account-name* | Set the Azure account name |  | String
 | *camel.component.azure-queue.configuration.azure-queue-client* | The queue service client |  | CloudQueue
 | *camel.component.azure-queue.configuration.credentials* | Set the storage credentials, required in most cases |  | StorageCredentials
@@ -130,6 +137,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.azure-queue.configuration.queue-name* | The queue resource name |  | String
 | *camel.component.azure-queue.configuration.queue-prefix* | Set a prefix which can be used for listing the queues |  | String
 | *camel.component.azure-queue.enabled* | Enable azure-queue component | true | Boolean
+| *camel.component.azure-queue.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
