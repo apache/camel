@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
@@ -31,6 +32,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -55,6 +57,7 @@ public class HdfsInputStreamTest {
         fileSystem = mock(FileSystem.class);
         configuration = mock(Configuration.class);
         Path path = mock(Path.class);
+        FileStatus fileStatus = mock(FileStatus.class);
 
         when(hdfsInfoFactory.newHdfsInfo(anyString())).thenReturn(hdfsInfo);
         when(hdfsInfoFactory.newHdfsInfoWithoutAuth(anyString())).thenReturn(hdfsInfo);
@@ -63,6 +66,11 @@ public class HdfsInputStreamTest {
         when(hdfsInfo.getFileSystem()).thenReturn(fileSystem);
         when(hdfsInfo.getConfiguration()).thenReturn(configuration);
         when(hdfsInfo.getPath()).thenReturn(path);
+
+        when(path.getFileSystem(configuration)).thenReturn(fileSystem);
+
+        when(fileSystem.getFileStatus(path)).thenReturn(fileStatus);
+        when(fileStatus.getLen()).thenReturn(1000L);
     }
 
     @Test
@@ -112,6 +120,134 @@ public class HdfsInputStreamTest {
         // then
         assertThat(underTest, nullValue());
         verify(fileSystem, times(1)).rename(any(Path.class), any(Path.class));
+    }
+
+    @Test
+    public void createInputStreamForLocalSequenceFile() throws IOException {
+        // given
+        String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
+        FileStatus fileStatus = mock(FileStatus.class);
+
+        when(endpointConfig.getFileType()).thenReturn(HdfsFileType.SEQUENCE_FILE);
+        when(endpointConfig.getFileSystemType()).thenReturn(HdfsFileSystemType.LOCAL);
+
+        when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
+        when(fileSystem.open(any(Path.class), anyInt())).thenReturn(fsDataInputStream);
+        when(fileSystem.getFileStatus(any(Path.class))).thenReturn(fileStatus);
+        when(fileStatus.getLen()).thenReturn(1000L);
+
+        ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
+
+        // when
+        underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
+
+        // then
+        assertThat(underTest, notNullValue());
+        verify(fileSystem, times(1)).rename(any(Path.class), pathCaptor.capture());
+        assertThat(pathCaptor.getValue().toString(), is("hdfs://localhost/target/test/multiple-consumers.null"));
+
+        assertThat(underTest.getNumOfReadBytes(), is(0L));
+        assertThat(underTest.getNumOfReadMessages(), is(0L));
+        assertThat(underTest.getActualPath(), is(hdfsPath));
+        assertThat(underTest.getChunkSize(), is(0));
+        assertThat(underTest.isOpened(), is(true));
+    }
+
+    @Test
+    public void createInputStreamForLocalMapFile() throws IOException {
+        // given
+        String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
+        FileStatus fileStatus = mock(FileStatus.class);
+
+        when(endpointConfig.getFileType()).thenReturn(HdfsFileType.MAP_FILE);
+        when(endpointConfig.getFileSystemType()).thenReturn(HdfsFileSystemType.LOCAL);
+
+        when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
+        when(fileSystem.open(any(Path.class), anyInt())).thenReturn(fsDataInputStream);
+        when(fileSystem.getFileStatus(any(Path.class))).thenReturn(fileStatus);
+        when(fileStatus.getLen()).thenReturn(1000L);
+
+        ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
+
+        // when
+        underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
+
+        // then
+        assertThat(underTest, notNullValue());
+        verify(fileSystem, times(1)).rename(any(Path.class), pathCaptor.capture());
+        assertThat(pathCaptor.getValue().toString(), is("hdfs://localhost/target/test/multiple-consumers.null"));
+
+        assertThat(underTest.getNumOfReadBytes(), is(0L));
+        assertThat(underTest.getNumOfReadMessages(), is(0L));
+        assertThat(underTest.getActualPath(), is(hdfsPath));
+        assertThat(underTest.getChunkSize(), is(0));
+        assertThat(underTest.isOpened(), is(true));
+    }
+
+    @Test
+    public void createInputStreamForLocalBloomMapFile() throws IOException {
+        // given
+        String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
+        FileStatus fileStatus = mock(FileStatus.class);
+
+        when(endpointConfig.getFileType()).thenReturn(HdfsFileType.BLOOMMAP_FILE);
+        when(endpointConfig.getFileSystemType()).thenReturn(HdfsFileSystemType.LOCAL);
+
+        when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
+        when(fileSystem.open(any(Path.class), anyInt())).thenReturn(fsDataInputStream);
+        when(fileSystem.getFileStatus(any(Path.class))).thenReturn(fileStatus);
+        when(fileStatus.getLen()).thenReturn(1000L);
+
+        ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
+
+        // when
+        underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
+
+        // then
+        assertThat(underTest, notNullValue());
+        verify(fileSystem, times(1)).rename(any(Path.class), pathCaptor.capture());
+        assertThat(pathCaptor.getValue().toString(), is("hdfs://localhost/target/test/multiple-consumers.null"));
+
+        assertThat(underTest.getNumOfReadBytes(), is(0L));
+        assertThat(underTest.getNumOfReadMessages(), is(0L));
+        assertThat(underTest.getActualPath(), is(hdfsPath));
+        assertThat(underTest.getChunkSize(), is(0));
+        assertThat(underTest.isOpened(), is(true));
+    }
+
+    @Test
+    public void createInputStreamForLocalArrayFile() throws IOException {
+        // given
+        String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
+        FileStatus fileStatus = mock(FileStatus.class);
+
+        when(endpointConfig.getFileType()).thenReturn(HdfsFileType.ARRAY_FILE);
+        when(endpointConfig.getFileSystemType()).thenReturn(HdfsFileSystemType.LOCAL);
+
+        when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
+        when(fileSystem.open(any(Path.class), anyInt())).thenReturn(fsDataInputStream);
+        when(fileSystem.getFileStatus(any(Path.class))).thenReturn(fileStatus);
+        when(fileStatus.getLen()).thenReturn(1000L);
+
+        ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
+
+        // when
+        underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
+
+        // then
+        assertThat(underTest, notNullValue());
+        verify(fileSystem, times(1)).rename(any(Path.class), pathCaptor.capture());
+        assertThat(pathCaptor.getValue().toString(), is("hdfs://localhost/target/test/multiple-consumers.null"));
+
+        assertThat(underTest.getNumOfReadBytes(), is(0L));
+        assertThat(underTest.getNumOfReadMessages(), is(0L));
+        assertThat(underTest.getActualPath(), is(hdfsPath));
+        assertThat(underTest.getChunkSize(), is(0));
+        assertThat(underTest.isOpened(), is(true));
     }
 
 }
