@@ -51,11 +51,11 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start1")
-                    .to("xslt:org/apache/camel/component/xslt/transform_text_imported.xsl")
+                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_text_imported.xsl")
                     .to("mock:result");
                 
                 from("direct:start2")
-                    .to("xslt:org/apache/camel/component/xslt/transform_text.xsl")
+                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_text.xsl")
                     .to("mock:result");
             }
         };

@@ -64,6 +64,10 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
         endpoint.reset();
         endpoint.expectedMessageCount(1);
         
+        // reset stream before trying again
+        if (message instanceof InputStream) {
+            ((InputStream) message).reset();
+        }
         try {
             template.sendBody("direct:start2", message);
             list = endpoint.getReceivedExchanges();
@@ -71,6 +75,7 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
             xml = exchange.getIn().getBody(String.class);
             assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
         } catch (Exception ex) {
+            ex.printStackTrace();
             // expect an exception here
             assertTrue("Get a wrong exception", ex instanceof CamelExecutionException);
             // the file could not be found
@@ -86,11 +91,11 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
             public void configure() throws Exception {
                 
                 from("direct:start1")
-                    .to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl")
+                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_dtd.xsl")
                     .to("mock:result");
                 
                 from("direct:start2")
-                    .to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl?allowStAX=false")
+                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_dtd.xsl?allowStAX=false")
                     .to("mock:result");
             }
         };

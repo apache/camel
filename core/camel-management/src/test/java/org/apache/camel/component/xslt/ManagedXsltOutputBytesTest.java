@@ -54,9 +54,6 @@ public class ManagedXsltOutputBytesTest extends ContextTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("xslt://org/apache/camel/component/xslt/example.xsl?output=bytes", uri);
 
-        Boolean saxon = (Boolean) mbeanServer.getAttribute(on, "Saxon");
-        assertEquals(false, saxon.booleanValue());
-
         XsltOutput output = (XsltOutput) mbeanServer.getAttribute(on, "Output");
         assertEquals(XsltOutput.bytes, output);
 

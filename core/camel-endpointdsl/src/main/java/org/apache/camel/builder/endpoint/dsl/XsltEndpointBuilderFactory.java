@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -37,34 +36,6 @@ public interface XsltEndpointBuilderFactory {
     public interface XsltEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedXsltEndpointBuilder advanced() {
             return (AdvancedXsltEndpointBuilder) this;
-        }
-        /**
-         * Whether to allow using StAX as the javax.xml.transform.Source. You
-         * can enable this if the XSLT library supports StAX such as the Saxon
-         * library (camel-saxon). The Xalan library (default in JVM) does not
-         * support StAXSource.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default XsltEndpointBuilder allowStAX(boolean allowStAX) {
-            doSetProperty("allowStAX", allowStAX);
-            return this;
-        }
-        /**
-         * Whether to allow using StAX as the javax.xml.transform.Source. You
-         * can enable this if the XSLT library supports StAX such as the Saxon
-         * library (camel-saxon). The Xalan library (default in JVM) does not
-         * support StAXSource.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default XsltEndpointBuilder allowStAX(String allowStAX) {
-            doSetProperty("allowStAX", allowStAX);
-            return this;
         }
         /**
          * Cache for the resource content (the stylesheet file) when it is
@@ -221,32 +192,6 @@ public interface XsltEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use Saxon as the transformerFactoryClass. If enabled then
-         * the class net.sf.saxon.TransformerFactoryImpl. You would need to add
-         * Saxon to the classpath.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default XsltEndpointBuilder saxon(boolean saxon) {
-            doSetProperty("saxon", saxon);
-            return this;
-        }
-        /**
-         * Whether to use Saxon as the transformerFactoryClass. If enabled then
-         * the class net.sf.saxon.TransformerFactoryImpl. You would need to add
-         * Saxon to the classpath.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default XsltEndpointBuilder saxon(String saxon) {
-            doSetProperty("saxon", saxon);
-            return this;
-        }
-        /**
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
@@ -395,62 +340,6 @@ public interface XsltEndpointBuilderFactory {
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
             doSetProperty("resultHandlerFactory", resultHandlerFactory);
-            return this;
-        }
-        /**
-         * To use a custom Saxon configuration.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXsltEndpointBuilder saxonConfiguration(
-                Object saxonConfiguration) {
-            doSetProperty("saxonConfiguration", saxonConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom Saxon configuration.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXsltEndpointBuilder saxonConfiguration(
-                String saxonConfiguration) {
-            doSetProperty("saxonConfiguration", saxonConfiguration);
-            return this;
-        }
-        /**
-         * Allows you to use a custom
-         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
-         * camel-saxon to the classpath. The function is looked up in the
-         * registry, where you can comma to separate multiple values to lookup.
-         * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
-                List<Object> saxonExtensionFunctions) {
-            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
-            return this;
-        }
-        /**
-         * Allows you to use a custom
-         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
-         * camel-saxon to the classpath. The function is looked up in the
-         * registry, where you can comma to separate multiple values to lookup.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
-                String saxonExtensionFunctions) {
-            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
         }
         /**
