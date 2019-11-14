@@ -14,23 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xslt;
+package org.apache.camel.component.xslt.saxon;
 
-import org.apache.camel.builder.RouteBuilder;
+public class TestBean {
 
-/**
- *
- */
-public class XsltRouteAllowStAXTest extends XsltRouteTest {
+    private String subject;
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/transform.xsl?allowStAX=true").multicast().bean("testBean").to("mock:result");
-            }
-        };
+    public void onMethod(@MyXPath("/*/@subject") String subject) {
+        this.subject = subject;
     }
 
+    public String getSubject() {
+        return subject;
+    }
 }

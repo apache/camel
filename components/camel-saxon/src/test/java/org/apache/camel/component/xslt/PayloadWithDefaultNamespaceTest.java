@@ -28,7 +28,7 @@ public class PayloadWithDefaultNamespaceTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/transform.xsl");
+                from("direct:start").to("xslt-saxon:org/apache/camel/component/xslt/transform.xsl");
             }
         };
     }

@@ -87,7 +87,7 @@ public class XsltDTDTest extends ContextTestSupport {
 
                 from("direct:start1").to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl").to("mock:result");
 
-                from("direct:start2").to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl?allowStAX=false").to("mock:result");
+                from("direct:start2").to("xslt:org/apache/camel/component/xslt/transform_dtd.xsl").to("mock:result");
             }
         };
     }

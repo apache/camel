@@ -1673,6 +1673,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xslt-saxon</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-xstream</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -3158,6 +3163,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-xslt-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xslt-saxon-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

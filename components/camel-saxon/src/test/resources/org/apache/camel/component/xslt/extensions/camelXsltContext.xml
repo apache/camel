@@ -28,7 +28,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:extensions"/>
-      <to uri="xslt:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2"/>
+      <to uri="xslt-saxon:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2"/>
       <to uri="log:org.apache.camel.component.xslt.extensions?level=INFO"/>
     </route>
   </camelContext>

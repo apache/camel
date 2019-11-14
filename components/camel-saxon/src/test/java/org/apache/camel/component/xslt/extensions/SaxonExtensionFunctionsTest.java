@@ -44,7 +44,7 @@ public class SaxonExtensionFunctionsTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:extensions")
-                    .toF("xslt:%s?saxonExtensionFunctions=#function1,#function2", XSLT_PATH)
+                    .toF("xslt-saxon:%s?saxonExtensionFunctions=#function1,#function2", XSLT_PATH)
                         .to("log:org.apache.camel.component.xslt.extensions?level=INFO");
             }
         };

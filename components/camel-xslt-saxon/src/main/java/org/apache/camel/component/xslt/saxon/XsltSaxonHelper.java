@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xslt;
+package org.apache.camel.component.xslt.saxon;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -27,13 +27,15 @@ import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class XsltHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(XsltHelper.class);
+final class XsltSaxonHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonHelper.class);
+
+    // TODO: Avoid dynamic class-loading
 
     private static final String SAXON_CONFIGURATION_CLASS_NAME = "net.sf.saxon.Configuration";
     private static final String SAXON_EXTENDED_FUNCTION_DEFINITION_CLASS_NAME = "net.sf.saxon.lib.ExtensionFunctionDefinition";
 
-    private XsltHelper() {
+    private XsltSaxonHelper() {
     }
 
     public static void registerSaxonConfiguration(
@@ -76,7 +78,7 @@ final class XsltHelper {
                 Object configuration = method.invoke(factory);
                 if (configuration != null) {
                     Class<?> extensionClass = camelContext.getClassResolver().resolveMandatoryClass(
-                        SAXON_EXTENDED_FUNCTION_DEFINITION_CLASS_NAME, XsltComponent.class.getClassLoader()
+                        SAXON_EXTENDED_FUNCTION_DEFINITION_CLASS_NAME, XsltSaxonComponent.class.getClassLoader()
                     );
 
                     method = configuration.getClass().getMethod("registerExtensionFunction", extensionClass);

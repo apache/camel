@@ -18,7 +18,6 @@ package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -70,7 +69,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     private CamelContext camelContext;
 
     private String propertyName;
-    private String xslFile;
+    private final String xslFile;
     private String transformerFactoryClass;
     private XsltOutput output = XsltOutput.string;
 
@@ -205,9 +204,8 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         return this;
     }
 
-    public XsltAggregationStrategy withSaxon() {
-        setTransformerFactoryClass(XsltEndpoint.SAXON_TRANSFORMER_FACTORY_CLASS_NAME);
-        return this;
+    protected XsltBuilder createXsltBuilder() {
+        return camelContext.getInjector().newInstance(XsltBuilder.class);
     }
 
     @Override
@@ -218,7 +216,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         this.propertyName = ObjectHelper.isNotEmpty(propertyName) ? propertyName : DEFAULT_PROPERTY_NAME;
 
         // initialize the XsltBuilder
-        this.xslt = camelContext.getInjector().newInstance(XsltBuilder.class);
+        this.xslt = createXsltBuilder();
 
         if (transformerFactoryClass != null) {
             Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
@@ -234,7 +232,6 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         xslt.setUriResolver(uriResolver);
         xslt.setFailOnNullBody(true);
         xslt.transformerCacheSize(0);
-        xslt.setAllowStAX(true);
 
         configureOutput(xslt, output.name());
         loadResource(xslFile);
