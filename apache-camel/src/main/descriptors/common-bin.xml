@@ -692,8 +692,8 @@
         <include>org.apache.camel:camel-xmlsecurity-starter</include>
         <include>org.apache.camel:camel-xmpp-starter</include>
         <include>org.apache.camel:camel-xpath-starter</include>
-        <include>org.apache.camel:camel-xslt-starter</include>
         <include>org.apache.camel:camel-xslt-saxon-starter</include>
+        <include>org.apache.camel:camel-xslt-starter</include>
         <include>org.apache.camel:camel-xstream-starter</include>
         <include>org.apache.camel:camel-yammer-starter</include>
         <include>org.apache.camel:camel-zendesk-starter</include>

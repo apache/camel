@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 303 in 241 JAR artifacts (0 deprecated)
+Number of Components: 303 in 240 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -546,7 +546,7 @@ Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 
 | xref:spring-redis-component.adoc[Spring Redis] (camel-spring-redis) | 2.11 | The spring-redis component allows sending and receiving messages from Redis.
 
-| xref:spring-ws-component.adoc[Spring WebService] (camel-spring-ws) | 2.6 | The spring-ws component is used for SOAP WebServices using Spring WebServices.
+| xref:spring-ws-component.adoc[Spring WebService] (@@@ARTIFACTID@@@) | 2.6 | The spring-ws component is used for SOAP WebServices using Spring WebServices.
 
 | xref:sql-component.adoc[SQL] (camel-sql) | 1.4 | The sql component allows you to work with databases using JDBC SQL queries.
 
@@ -600,7 +600,7 @@ Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 
 | xref:xchange-component.adoc[XChange] (camel-xchange) | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
-| xref:xj-component.adoc[XJ] (camel-xj) | 3.0 | Transforms json/xml message back and forth using a XSLT.
+| xref:xj-component.adoc[XJ] (@@@ARTIFACTID@@@) | 3.0 | Transforms json/xml message back and forth using a XSLT.
 
 | xref:xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) | 2.12 | Used to sign and verify exchanges using the XML signature specification.
 
