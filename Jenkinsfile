@@ -67,6 +67,7 @@ pipeline {
 
         stage('Checks') {
             steps {
+                sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
             post {
