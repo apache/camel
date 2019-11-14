@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *encoding* (common) | Encoding to use for all request |  | String
-| *fhirVersion* (common) | The FHIR Version to use | DSTU3 | String
+| *fhirVersion* (common) | The FHIR Version to use | R4 | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *log* (common) | Will log every requests and responses | false | boolean
 | *prettyPrint* (common) | Pretty print all request | false | boolean

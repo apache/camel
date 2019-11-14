@@ -389,6 +389,7 @@
 * xref:xmlsecurity-component.adoc[XML Security Component]
 * xref:xmpp-component.adoc[XMPP Component]
 * xref:xpath-language.adoc[XPath Language]
+* xref:xslt-saxon-component.adoc[XSLT Saxon Component]
 * xref:xslt-component.adoc[XSLT Component]
 * xref:json-xstream-dataformat.adoc[JSon XStream DataFormat]
 * xref:xstream-dataformat.adoc[XStream DataFormat]
