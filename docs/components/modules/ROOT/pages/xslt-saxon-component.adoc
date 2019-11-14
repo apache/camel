@@ -1,22 +1,22 @@
-[[xslt-component]]
-= XSLT Component
-:page-source: components/camel-xslt/src/main/docs/xslt-component.adoc
+[[xslt-saxon-component]]
+= XSLT Saxon Component
+:page-source: components/camel-xslt-saxon/src/main/docs/xslt-saxon-component.adoc
 
-*Since Camel 1.3*
+*Since Camel 3.0*
 
 // HEADER START
 *Only producer is supported*
 // HEADER END
 
-The XSLT component allows you to process a message using an
-http://www.w3.org/TR/xslt[XSLT] template. This can be ideal when using
-Templating to generate response for requests.
+The XSLT Saxon component allows you to process a message using an
+http://www.w3.org/TR/xslt[XSLT] template using Saxon. This can be ideal when using
+Templating to generate responses for requests.
 
 == URI format
 
 [source]
 ----
-xslt:templateName[?options]
+xslt-saxon:templateName[?options]
 ----
 The URI format contains *templateName*, which can be one of the following:
 
@@ -32,21 +32,24 @@ You can append query options to the URI in the following format:
 [options="header"]
 |=================================================================
 |URI                              |Description     
-|xslt:com/acme/mytransform.xsl|Refers to the file com/acme/mytransform.xsl on the classpath
-|xslt:file:///foo/bar.xsl |Refers to the file /foo/bar.xsl
-|xslt:http://acme.com/cheese/foo.xsl|Refers to the remote http resource
+|xslt-saxon:com/acme/mytransform.xsl|Refers to the file com/acme/mytransform.xsl on the classpath
+|xslt-saxon:file:///foo/bar.xsl |Refers to the file /foo/bar.xsl
+|xslt-saxon:http://acme.com/cheese/foo.xsl|Refers to the remote http resource
 |=================================================================
 
 == Options
 
 // component options: START
-The XSLT component supports 6 options, which are listed below.
+The XSLT Saxon component supports 9 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
+| *saxonConfiguration Properties* (advanced) | To set custom Saxon configuration properties |  | Map
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 | *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
@@ -58,10 +61,10 @@ The XSLT component supports 6 options, which are listed below.
 
 
 // endpoint options: START
-The XSLT endpoint is configured using URI syntax:
+The XSLT Saxon endpoint is configured using URI syntax:
 
 ----
-xslt:resourceUri
+xslt-saxon:resourceUri
 ----
 
 with the following path and query parameters:
@@ -76,12 +79,15 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource. | true | boolean
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
+| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
 | *deleteOutputFile* (producer) | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use. | false | boolean
 | *failOnNullBody* (producer) | Whether or not to throw an exception if the input body is null. | true | boolean
@@ -108,27 +114,30 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-xslt-starter</artifactId>
+  <artifactId>camel-xslt-saxon-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.xslt.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.xslt.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.xslt.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
-| *camel.component.xslt.enabled* | Whether to enable auto configuration of the xslt component. This is enabled by default. |  | Boolean
-| *camel.component.xslt.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.xslt.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String
-| *camel.component.xslt.uri-resolver-factory* | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. The option is a org.apache.camel.component.xslt.XsltUriResolverFactory type. |  | String
+| *camel.component.xslt-saxon.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.xslt-saxon.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.xslt-saxon.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
+| *camel.component.xslt-saxon.enabled* | Whether to enable auto configuration of the xslt-saxon component. This is enabled by default. |  | Boolean
+| *camel.component.xslt-saxon.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.component.xslt-saxon.saxon-configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
+| *camel.component.xslt-saxon.saxon-configuration-properties* | To set custom Saxon configuration properties |  | Map
+| *camel.component.xslt-saxon.saxon-extension-functions* | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
+| *camel.component.xslt-saxon.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String
+| *camel.component.xslt-saxon.uri-resolver-factory* | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. The option is a org.apache.camel.component.xslt.XsltUriResolverFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END
 
@@ -140,7 +149,7 @@ message exchanges (where there is a `JMSReplyTo` header)
 [source,java]
 ----
 from("activemq:My.Queue").
-  to("xslt:com/acme/mytransform.xsl");
+  to("xslt-saxon:com/acme/mytransform.xsl");
 ----
 
 
@@ -187,7 +196,7 @@ To use the above examples in Spring XML you would use something like the followi
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="activemq:My.Queue"/>
-      <to uri="xslt:org/apache/camel/spring/processor/example.xsl"/>
+      <to uri="xslt-saxon:org/apache/camel/spring/processor/example.xsl"/>
       <to uri="activemq:Another.Queue"/>
     </route>
   </camelContext>
@@ -226,6 +235,46 @@ Camel will use the prefix from the endpoint configuration as the default prefix.
 
 You can explicitly specify `file:` or `classpath:` loading. The two loading types can be mixed in a XSLT script, if necessary.
 
+== Using Saxon extension functions
+
+Since Saxon 9.2, writing extension functions has been supplemented by a
+new mechanism, referred to
+as http://www.saxonica.com/html/documentation/extensibility/integratedfunctions[integrated
+extension functions] you can now easily use camel as shown in the below example:
+
+[source,java]
+----
+SimpleRegistry registry = new SimpleRegistry();
+registry.put("function1", new MyExtensionFunction1());
+registry.put("function2", new MyExtensionFunction2());
+
+CamelContext context = new DefaultCamelContext(registry);
+context.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("direct:start")
+            .to("xslt-saxon:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2");
+    }
+});
+----
+
+
+With Spring XML:
+
+[source,xml]
+----
+<bean id="function1" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction1"/>
+<bean id="function2" class="org.apache.camel.component.xslt.extensions.MyExtensionFunction2"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:extensions"/>
+    <to uri="xslt-saxon:org/apache/camel/component/xslt/extensions/extensions.xslt?saxonExtensionFunctions=#function1,#function2"/>
+  </route>
+</camelContext>
+----
+
+
 == Dynamic stylesheets
 
 To provide a dynamic stylesheet at runtime you can define a dynamic URI.
@@ -263,4 +312,3 @@ xsl:message.
 
 The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
-
