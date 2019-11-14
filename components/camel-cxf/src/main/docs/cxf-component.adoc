@@ -680,7 +680,7 @@ message with this parameter list. The response message's body is a
 messageContentsList, you can get the result from that list.
 
 If you don't specify the operation name in the message header,
-`CxfProducer` will try to use the `defaultOperationName `from
+`CxfProducer` will try to use the `defaultOperationName` from
 `CxfEndpoint`, if there is no `defaultOperationName` set on
 `CxfEndpoint`, it will pickup the first operationName from the Operation
 list.
