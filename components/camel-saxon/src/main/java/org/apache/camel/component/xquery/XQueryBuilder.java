@@ -40,6 +40,7 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.om.TreeInfo;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
@@ -508,7 +509,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
-            Object body = null;
+            Object body;
             if (ObjectHelper.isNotEmpty(getHeaderName())) {
                 body = in.getHeader(getHeaderName());
             } else {
@@ -536,8 +537,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     throw new NoTypeConversionAvailableException(body, Source.class);
                 }
 
-                DocumentInfo doc = config.buildDocument(source);
-                dynamicQueryContext.setContextItem(doc);
+                TreeInfo doc = config.buildDocumentTree(source);
+                dynamicQueryContext.setContextItem(doc.getRootNode());
             } finally {
                 // can deal if is is null
                 IOHelper.close(is);
