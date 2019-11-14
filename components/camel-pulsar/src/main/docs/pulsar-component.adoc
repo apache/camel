@@ -156,7 +156,7 @@ The component supports 8 options, which are listed below.
 |===
 | Header | Type | Description
 | `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
-| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar Message
+| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
 | `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
 |===
 
@@ -173,7 +173,7 @@ The component supports 8 options, which are listed below.
 | `message_id` | `MessageId` | Unique identifier of the message
 | `event_time` | `long` | The event time associated with the message or 0 if unset on the Pulsar message
 | `key` | `String` | The key of the Pulsar message in String form or the empty string if unset on the Pulsar message
-| `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF_8 encoded bytes of the string.
+| `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
 | `topic_name` | `String` | The topic to which the message was published
 | `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
 |===
