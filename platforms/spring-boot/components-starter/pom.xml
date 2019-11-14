@@ -389,6 +389,7 @@
     <module>camel-xmlsecurity-starter</module>
     <module>camel-xmpp-starter</module>
     <module>camel-xpath-starter</module>
+    <module>camel-xslt-saxon-starter</module>
     <module>camel-xslt-starter</module>
     <module>camel-xstream-starter</module>
     <module>camel-yammer-starter</module>

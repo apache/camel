@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xslt.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -57,28 +56,6 @@ public class XsltComponentConfiguration
      * operation.
      */
     private Boolean contentCache = true;
-    /**
-     * Whether to use Saxon as the transformerFactoryClass. If enabled then the
-     * class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to
-     * the classpath.
-     */
-    private Boolean saxon = false;
-    /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath. The function is
-     * looked up in the registry, where you can comma to separate multiple
-     * values to lookup.
-     */
-    private String saxonExtensionFunctions;
-    /**
-     * To use a custom Saxon configuration. The option is a java.lang.Object
-     * type.
-     */
-    private String saxonConfiguration;
-    /**
-     * To set custom Saxon configuration properties
-     */
-    private Map<String, Object> saxonConfigurationProperties;
     /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
@@ -127,39 +104,6 @@ public class XsltComponentConfiguration
 
     public void setContentCache(Boolean contentCache) {
         this.contentCache = contentCache;
-    }
-
-    public Boolean getSaxon() {
-        return saxon;
-    }
-
-    public void setSaxon(Boolean saxon) {
-        this.saxon = saxon;
-    }
-
-    public String getSaxonExtensionFunctions() {
-        return saxonExtensionFunctions;
-    }
-
-    public void setSaxonExtensionFunctions(String saxonExtensionFunctions) {
-        this.saxonExtensionFunctions = saxonExtensionFunctions;
-    }
-
-    public String getSaxonConfiguration() {
-        return saxonConfiguration;
-    }
-
-    public void setSaxonConfiguration(String saxonConfiguration) {
-        this.saxonConfiguration = saxonConfiguration;
-    }
-
-    public Map<String, Object> getSaxonConfigurationProperties() {
-        return saxonConfigurationProperties;
-    }
-
-    public void setSaxonConfigurationProperties(
-            Map<String, Object> saxonConfigurationProperties) {
-        this.saxonConfigurationProperties = saxonConfigurationProperties;
     }
 
     public Boolean getBasicPropertyBinding() {

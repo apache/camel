@@ -36,7 +36,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <to uri="xslt:org/apache/camel/component/xslt/transform.xsl?saxon=true&amp;saxonConfiguration=#saxon-configuration&amp;saxonConfigurationProperties=#saxon-properties"/>
+      <to uri="xslt-saxon:org/apache/camel/component/xslt/transform.xsl?saxonConfiguration=#saxon-configuration&amp;saxonConfigurationProperties=#saxon-properties"/>
       <multicast>
         <to uri="mock:result"/>
       </multicast>

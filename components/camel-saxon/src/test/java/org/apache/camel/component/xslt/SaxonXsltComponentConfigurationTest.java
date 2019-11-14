@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
+import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -23,8 +25,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SaxonXsltComponentConfigurationTest extends CamelSpringTestSupport {
     @Test
     public void testConfiguration() throws Exception {
-        XsltComponent component = context.getComponent("xslt", XsltComponent.class);
-        XsltEndpoint endpoint = context.getEndpoint("xslt:org/apache/camel/component/xslt/transform.xsl", XsltEndpoint.class);
+        XsltSaxonComponent component = context.getComponent("xslt-saxon", XsltSaxonComponent.class);
+        XsltSaxonEndpoint endpoint = context.getEndpoint("xslt-saxon:org/apache/camel/component/xslt/transform.xsl", XsltSaxonEndpoint.class);
 
         assertNotNull(component.getSaxonConfiguration());
         assertNotNull(component.getSaxonConfigurationProperties());
