@@ -267,6 +267,11 @@ The component `camel-aws` has been split into multiple components:
 
 So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
 
+=== FHIR
+
+The camel-fhir component has upgraded it's hapi-fhir dependency to 4.1.0; Karaf support has been dropped until the hapi-fhir Karaf features are fixed and released.
+The default FHIR version has been changed to R4. Therefore if DSTU3 is desired it has to be explicitly set.
+
 === Kafka
 
 The `camel-kafka` component has removed the options `bridgeEndpoint` and `circularEndpointDetection` as this is no longer needed as the component is acting as briding would work on Camel 2.x. In other words `camel-kafka` will send messages to the topic from the endpoint uri. To override this use the `KafkaConstants.OVERRIDE_TOPIC` header with the new topic. See more details in the `camel-kafka` component documentation.

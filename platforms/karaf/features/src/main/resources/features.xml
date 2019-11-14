@@ -23,7 +23,6 @@
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
   <repository>mvn:org.apache.karaf.features/spring-legacy/${karaf4-version}/xml/features</repository>
   <repository>mvn:org.hibernate.validator/hibernate-validator-osgi-karaf-features/${hibernate-validator-version}/xml/features</repository>
-  <repository>mvn:ca.uhn.hapi.fhir.karaf/hapi-fhir/${hapi-fhir-version}/xml/features</repository>
   <repository>mvn:org.infinispan/infinispan-commons/${infinispan-version}/xml/features</repository>
   <repository>mvn:org.infinispan/infinispan-core/${infinispan-version}/xml/features</repository>
   <repository>mvn:org.infinispan/infinispan-jboss-marshalling/${infinispan-version}/xml/features</repository>
@@ -973,16 +972,6 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastjson/${fastjson-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-fastjson/${project.version}</bundle>
-  </feature>
-  <feature name='camel-fhir' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir-client</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir-dstu2</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir-dstu3</feature>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.camel/camel-fhir-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-fhir/${project.version}</bundle>
   </feature>
   <feature name='camel-file-watch' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
