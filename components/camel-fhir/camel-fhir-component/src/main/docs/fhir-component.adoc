@@ -51,7 +51,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The FHIR component supports 4 options, which are listed below.
+The FHIR component supports 2 options, which are listed below.
 
 
 
@@ -60,8 +60,6 @@ The FHIR component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | FhirConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -93,7 +91,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *encoding* (common) | Encoding to use for all request |  | String
-| *fhirVersion* (common) | The FHIR Version to use | DSTU3 | String
+| *fhirVersion* (common) | The FHIR Version to use | R4 | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *log* (common) | Will log every requests and responses | false | boolean
 | *prettyPrint* (common) | Pretty print all request | false | boolean
