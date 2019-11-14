@@ -33,6 +33,12 @@
     <name>Camel :: XSLT Saxon</name>
     <description>Camel XSLT Saxon component</description>
 
+    <properties>
+        <camel.osgi.import.additional>
+            net.sf.saxon.*;version="[9.9.0,10)"
+        </camel.osgi.import.additional>
+    </properties>
+
     <dependencies>
 
         <dependency>

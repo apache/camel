@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.transform.TransformerFactory;
 
+import net.sf.saxon.Configuration;
+import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -34,15 +36,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.EndpointHelper;
 
 /**
- * Transforms the message using a XSLT template.
+ * Transforms the message using a XSLT template using Saxon.
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltSaxonEndpoint extends XsltEndpoint {
-    public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
-
     @UriParam(label = "advanced")
-    private Object saxonConfiguration;
+    private Configuration saxonConfiguration;
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
     @UriParam(label = "advanced", javaType = "java.lang.String")
@@ -80,14 +80,14 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         );
     }
 
-    public Object getSaxonConfiguration() {
+    public Configuration getSaxonConfiguration() {
         return saxonConfiguration;
     }
 
     /**
      * To use a custom Saxon configuration
      */
-    public void setSaxonConfiguration(Object saxonConfiguration) {
+    public void setSaxonConfiguration(Configuration saxonConfiguration) {
         this.saxonConfiguration = saxonConfiguration;
     }
 
@@ -132,21 +132,24 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
         final XsltSaxonBuilder xslt = injector.newInstance(XsltSaxonBuilder.class);
 
-        String fc = getTransformerFactoryClass();
-        if (fc == null) {
-            fc = SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
-        }
-
         TransformerFactory factory = getTransformerFactory();
         if (factory == null) {
-            // provide the class loader of this component to work in OSGi environments
-            Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(fc, TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
-            log.debug("Using TransformerFactoryClass {}", factoryClass);
-            factory = injector.newInstance(factoryClass);
+            if (getTransformerFactoryClass() == null) {
+                // create new saxon factory
+                factory = new TransformerFactoryImpl();
+            } else {
+                // provide the class loader of this component to work in OSGi environments
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(), TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
+                log.debug("Using TransformerFactoryClass {}", factoryClass);
+                factory = injector.newInstance(factoryClass);
+            }
+        }
 
-            XsltSaxonHelper.registerSaxonConfiguration(ctx, factoryClass, factory, saxonConfiguration);
-            XsltSaxonHelper.registerSaxonConfigurationProperties(ctx, factoryClass, factory, saxonConfigurationProperties);
-            XsltSaxonHelper.registerSaxonExtensionFunctions(ctx, factoryClass, factory, saxonExtensionFunctions);
+        if (factory instanceof TransformerFactoryImpl) {
+            TransformerFactoryImpl tf = (TransformerFactoryImpl) factory;
+            XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
+            XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
+            XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions);
         }
 
         if (factory != null) {

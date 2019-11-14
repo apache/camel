@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.saxon.Configuration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.xslt.XsltComponent;
 import org.apache.camel.spi.Metadata;
@@ -33,7 +34,7 @@ import org.apache.camel.support.EndpointHelper;
 public class XsltSaxonComponent extends XsltComponent {
 
     @Metadata(label = "advanced")
-    private Object saxonConfiguration;
+    private Configuration saxonConfiguration;
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
     @Metadata(label = "advanced", javaType = "java.lang.String")
@@ -65,14 +66,14 @@ public class XsltSaxonComponent extends XsltComponent {
         );
     }
 
-    public Object getSaxonConfiguration() {
+    public Configuration getSaxonConfiguration() {
         return saxonConfiguration;
     }
 
     /**
      * To use a custom Saxon configuration
      */
-    public void setSaxonConfiguration(Object saxonConfiguration) {
+    public void setSaxonConfiguration(Configuration saxonConfiguration) {
         this.saxonConfiguration = saxonConfiguration;
     }
 

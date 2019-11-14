@@ -47,7 +47,7 @@ The XSLT Saxon component supports 9 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
-| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Object
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
 | *saxonConfiguration Properties* (advanced) | To set custom Saxon configuration properties |  | Map
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 | *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
@@ -85,7 +85,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource. | true | boolean
-| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Object
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
 | *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
 | *deleteOutputFile* (producer) | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use. | false | boolean
@@ -132,7 +132,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.xslt-saxon.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
 | *camel.component.xslt-saxon.enabled* | Whether to enable auto configuration of the xslt-saxon component. This is enabled by default. |  | Boolean
 | *camel.component.xslt-saxon.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.xslt-saxon.saxon-configuration* | To use a custom Saxon configuration. The option is a java.lang.Object type. |  | String
+| *camel.component.xslt-saxon.saxon-configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
 | *camel.component.xslt-saxon.saxon-configuration-properties* | To set custom Saxon configuration properties |  | Map
 | *camel.component.xslt-saxon.saxon-extension-functions* | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *camel.component.xslt-saxon.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String

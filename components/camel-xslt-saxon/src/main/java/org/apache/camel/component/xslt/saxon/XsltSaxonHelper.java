@@ -16,89 +16,47 @@
  */
 package org.apache.camel.component.xslt.saxon;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.XMLConstants;
-import javax.xml.transform.TransformerFactory;
 
-import org.apache.camel.CamelContext;
+import net.sf.saxon.Configuration;
+import net.sf.saxon.TransformerFactoryImpl;
+import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class XsltSaxonHelper {
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonHelper.class);
 
-    // TODO: Avoid dynamic class-loading
-
-    private static final String SAXON_CONFIGURATION_CLASS_NAME = "net.sf.saxon.Configuration";
-    private static final String SAXON_EXTENDED_FUNCTION_DEFINITION_CLASS_NAME = "net.sf.saxon.lib.ExtensionFunctionDefinition";
-
     private XsltSaxonHelper() {
     }
 
-    public static void registerSaxonConfiguration(
-            CamelContext camelContext, Class<?> factoryClass, TransformerFactory factory, Object saxonConfiguration) throws Exception {
-
+    public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration) throws Exception {
         if (saxonConfiguration != null) {
-            Class<?> configurationClass = camelContext.getClassResolver().resolveClass(SAXON_CONFIGURATION_CLASS_NAME);
-            if (configurationClass != null) {
-                Method method = factoryClass.getMethod("setConfiguration", configurationClass);
-                if (method != null) {
-                    method.invoke(factory, configurationClass.cast(saxonConfiguration));
-                }
-            }
+            factory.setConfiguration(saxonConfiguration);
         }
     }
 
-    public static void registerSaxonConfigurationProperties(
-            CamelContext camelContext, Class<?> factoryClass, TransformerFactory factory, Map<String, Object> saxonConfigurationProperties) throws Exception {
-
+    public static void registerSaxonConfigurationProperties(TransformerFactoryImpl factory,
+                                                            Map<String, Object> saxonConfigurationProperties) throws Exception {
         if (saxonConfigurationProperties != null && !saxonConfigurationProperties.isEmpty()) {
-            Method method = factoryClass.getMethod("getConfiguration");
-            if (method != null) {
-                Object configuration = method.invoke(factory);
-                if (configuration != null) {
-                    method = configuration.getClass().getMethod("setConfigurationProperty", String.class, Object.class);
-                    for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
-                        method.invoke(configuration, entry.getKey(), entry.getValue());
-                    }
-                }
+            for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
+                factory.getConfiguration().setConfigurationProperty(entry.getKey(), entry.getValue());
             }
         }
     }
 
-    public static void registerSaxonExtensionFunctions(
-            CamelContext camelContext, Class<?> factoryClass, TransformerFactory factory, List<Object> saxonExtensionFunctions) throws Exception {
-
+    public static void registerSaxonExtensionFunctions(TransformerFactoryImpl factory, List<Object> saxonExtensionFunctions) throws Exception {
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
-            Method method = factoryClass.getMethod("getConfiguration");
-            if (method != null) {
-                Object configuration = method.invoke(factory);
-                if (configuration != null) {
-                    Class<?> extensionClass = camelContext.getClassResolver().resolveMandatoryClass(
-                        SAXON_EXTENDED_FUNCTION_DEFINITION_CLASS_NAME, XsltSaxonComponent.class.getClassLoader()
-                    );
-
-                    method = configuration.getClass().getMethod("registerExtensionFunction", extensionClass);
-                    if (method != null) {
-                        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-                        for (Object extensionFunction : saxonExtensionFunctions) {
-                            if (extensionClass.isInstance(extensionFunction)) {
-                                LOG.debug("Saxon.registerExtensionFunction {}", extensionFunction);
-                                method.invoke(configuration, extensionFunction);
-                            }
-                        }
-                    } else {
-                        LOG.warn("Unable to get reference to method registerExtensionFunction on {}", configuration.getClass().getName());
-                    }
-                } else {
-                    LOG.warn("Unable to get Saxon configuration ({}) on {}", SAXON_CONFIGURATION_CLASS_NAME, factory.getClass().getName());
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            for (Object extensionFunction : saxonExtensionFunctions) {
+                if (extensionFunction instanceof ExtensionFunctionDefinition) {
+                    LOG.debug("Saxon.registerExtensionFunction {}", extensionFunction);
+                    factory.getConfiguration().registerExtensionFunction((ExtensionFunctionDefinition) extensionFunction);
                 }
-            } else {
-                LOG.warn("Unable to get reference to method getConfiguration on {}", factoryClass.getName());
             }
         }
     }
+    
 }

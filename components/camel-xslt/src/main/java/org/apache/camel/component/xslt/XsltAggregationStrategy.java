@@ -70,6 +70,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
 
     private String propertyName;
     private final String xslFile;
+    private TransformerFactory transformerFactory;
     private String transformerFactoryClass;
     private XsltOutput output = XsltOutput.string;
 
@@ -134,6 +135,10 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
 
     public void setTransformerFactoryClass(String transformerFactoryClass) {
         this.transformerFactoryClass = transformerFactoryClass;
+    }
+
+    public void setTransformerFactory(TransformerFactory transformerFactory) {
+        this.transformerFactory = transformerFactory;
     }
 
     public String getPropertyName() {
@@ -218,11 +223,13 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         // initialize the XsltBuilder
         this.xslt = createXsltBuilder();
 
-        if (transformerFactoryClass != null) {
+        if (transformerFactory == null && transformerFactoryClass != null) {
             Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
                 XsltAggregationStrategy.class.getClassLoader());
             TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
             xslt.setTransformerFactory(factory);
+        } else if (transformerFactory != null) {
+            xslt.setTransformerFactory(transformerFactory);
         }
 
         if (uriResolver == null) {

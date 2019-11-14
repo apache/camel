@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt.saxon;
 
+import net.sf.saxon.TransformerFactoryImpl;
+
 import org.apache.camel.component.xslt.XsltAggregationStrategy;
 import org.apache.camel.component.xslt.XsltBuilder;
 
@@ -23,7 +25,7 @@ public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
 
     public XsltSaxonAggregationStrategy(String xslFileLocation) {
         super(xslFileLocation);
-        setTransformerFactoryClass(XsltSaxonEndpoint.SAXON_TRANSFORMER_FACTORY_CLASS_NAME);
+        setTransformerFactory(new TransformerFactoryImpl());
     }
 
     @Override
