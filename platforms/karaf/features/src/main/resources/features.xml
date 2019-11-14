@@ -2646,6 +2646,10 @@
     <bundle dependency='true'>wrap:mvn:org.minidns/minidns-core/${minidns-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xmpp/${project.version}</bundle>
   </feature>
+  <feature name='camel-xslt-saxon' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-saxon</feature>
+    <bundle>mvn:org.apache.camel/camel-xslt-saxon/${project.version}</bundle>
+  </feature>
   <feature name='camel-xstream' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.codehaus.jettison/jettison/${jettison-version}</bundle>
