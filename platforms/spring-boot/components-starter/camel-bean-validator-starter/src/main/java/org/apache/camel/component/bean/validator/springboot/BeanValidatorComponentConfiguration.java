@@ -42,6 +42,26 @@ public class BeanValidatorComponentConfiguration
      */
     private Boolean ignoreXmlConfiguration = false;
     /**
+     * To use a a custom ValidationProviderResolver. The option is a
+     * javax.validation.ValidationProviderResolver type.
+     */
+    private String validationProviderResolver;
+    /**
+     * To use a custom MessageInterpolator. The option is a
+     * javax.validation.MessageInterpolator type.
+     */
+    private String messageInterpolator;
+    /**
+     * To use a custom TraversableResolver. The option is a
+     * javax.validation.TraversableResolver type.
+     */
+    private String traversableResolver;
+    /**
+     * To use a custom ConstraintValidatorFactory. The option is a
+     * javax.validation.ConstraintValidatorFactory type.
+     */
+    private String constraintValidatorFactory;
+    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
@@ -73,6 +93,38 @@ public class BeanValidatorComponentConfiguration
 
     public void setIgnoreXmlConfiguration(Boolean ignoreXmlConfiguration) {
         this.ignoreXmlConfiguration = ignoreXmlConfiguration;
+    }
+
+    public String getValidationProviderResolver() {
+        return validationProviderResolver;
+    }
+
+    public void setValidationProviderResolver(String validationProviderResolver) {
+        this.validationProviderResolver = validationProviderResolver;
+    }
+
+    public String getMessageInterpolator() {
+        return messageInterpolator;
+    }
+
+    public void setMessageInterpolator(String messageInterpolator) {
+        this.messageInterpolator = messageInterpolator;
+    }
+
+    public String getTraversableResolver() {
+        return traversableResolver;
+    }
+
+    public void setTraversableResolver(String traversableResolver) {
+        this.traversableResolver = traversableResolver;
+    }
+
+    public String getConstraintValidatorFactory() {
+        return constraintValidatorFactory;
+    }
+
+    public void setConstraintValidatorFactory(String constraintValidatorFactory) {
+        this.constraintValidatorFactory = constraintValidatorFactory;
     }
 
     public Boolean getBasicPropertyBinding() {
