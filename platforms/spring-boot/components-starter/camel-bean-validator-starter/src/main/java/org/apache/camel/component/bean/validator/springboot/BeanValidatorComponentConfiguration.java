@@ -38,6 +38,10 @@ public class BeanValidatorComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * Whether to ignore data from the META-INF/validation.xml file.
+     */
+    private Boolean ignoreXmlConfiguration = false;
+    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
@@ -62,6 +66,14 @@ public class BeanValidatorComponentConfiguration
      * will be logged at WARN or ERROR level and ignored.
      */
     private Boolean bridgeErrorHandler = false;
+
+    public Boolean getIgnoreXmlConfiguration() {
+        return ignoreXmlConfiguration;
+    }
+
+    public void setIgnoreXmlConfiguration(Boolean ignoreXmlConfiguration) {
+        this.ignoreXmlConfiguration = ignoreXmlConfiguration;
+    }
 
     public Boolean getBasicPropertyBinding() {
         return basicPropertyBinding;

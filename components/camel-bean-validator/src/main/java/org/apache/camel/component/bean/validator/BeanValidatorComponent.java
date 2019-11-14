@@ -19,6 +19,7 @@ package org.apache.camel.component.bean.validator;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -29,6 +30,9 @@ import org.apache.camel.support.DefaultComponent;
 @Component("bean-validator")
 public class BeanValidatorComponent extends DefaultComponent {
 
+    @Metadata
+    private boolean ignoreXmlConfiguration;
+
     public BeanValidatorComponent() {
     }
 
@@ -36,8 +40,20 @@ public class BeanValidatorComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanValidatorEndpoint endpoint = new BeanValidatorEndpoint(uri, this);
         endpoint.setLabel(remaining);
+        endpoint.setIgnoreXmlConfiguration(ignoreXmlConfiguration);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public boolean isIgnoreXmlConfiguration() {
+        return ignoreXmlConfiguration;
+    }
+
+    /**
+     * Whether to ignore data from the META-INF/validation.xml file.
+     */
+    public void setIgnoreXmlConfiguration(boolean ignoreXmlConfiguration) {
+        this.ignoreXmlConfiguration = ignoreXmlConfiguration;
     }
 
 }
