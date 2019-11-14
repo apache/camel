@@ -80,6 +80,7 @@ We have also modularized many of the core components and moved them out of `came
 - camel-vm
 - camel-xpath
 - camel-xslt
+- camel-xslt-saxon
 - camel-zip-deflater
 
 == Multiple CamelContexts per application not supported
@@ -287,6 +288,13 @@ If you run Camel standalone with just `camel-core` as a dependency, and you want
 For using `ManagedCamelContext` you now need to get this an extension from `CamelContext` as follows:
 
     ManagedCamelContext managed = camelContext.getExtension(ManagedCamelContext.class);
+
+=== XSLT
+
+The XSLT component has moved out of camel-core into `camel-xslt` and `camel-xslt-saxon`. The component is separated so `camel-xslt` is for using the JDK XSTL engine (Xalan), and `camel-xslt-saxon` is when you use Saxon.
+This means that you should use `xslt` and `xslt-saxon` as component name in your Camel endpoint URIs.
+If you are using XSLT aggregation strategy, then use `org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy` for Saxon support.
+And use `org.apache.camel.component.xslt.saxon.XsltSaxonBuilder` for Saxon support if using xslt builder. Also notice that `allowStax` is also only supported in `camel-xslt-saxon` as this is not supported by the JDK XSLT.
 
 === Configuring global options on CamelContext
 
