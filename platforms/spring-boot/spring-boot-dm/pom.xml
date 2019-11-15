@@ -63,8 +63,8 @@
         <grpc-guava-version>26.0-android</grpc-guava-version>
 
         <!-- Plugin versions -->
-        <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
-        <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
+        <maven-checkstyle-plugin-version>3.1.0</maven-checkstyle-plugin-version>
+        <maven-checkstyle-version>8.26</maven-checkstyle-version>
 
         <camel.osgi.manifest></camel.osgi.manifest>
     </properties>
