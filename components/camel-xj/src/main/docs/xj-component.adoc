@@ -46,20 +46,19 @@ In contrary to the xslt component, the *templateName* parameter is optional. If 
 == Component options
 
 // component options: START
-The XJ component supports 10 options, which are listed below.
+The XJ component supports 9 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
+| *saxonConfiguration Properties* (advanced) | To set custom Saxon configuration properties |  | Map
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 | *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
-| *saxon* (producer) | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | boolean
-| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
-| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Object
-| *saxonConfiguration Properties* (advanced) | To set custom Saxon configuration properties |  | Map
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -85,27 +84,26 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (19 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *transformDirection* (producer) | *Required* Sets the transform direction. |  | TransformDirection
-| *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource. | false | boolean
+| *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource. | true | boolean
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
+| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
 | *deleteOutputFile* (producer) | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use. | false | boolean
 | *failOnNullBody* (producer) | Whether or not to throw an exception if the input body is null. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *output* (producer) | Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime. | string | XsltOutput
-| *saxon* (producer) | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | boolean
 | *transformerCacheSize* (producer) | The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to Template.newTransformer(). | 0 | int
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *entityResolver* (advanced) | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource. |  | EntityResolver
 | *errorListener* (advanced) | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases. |  | ErrorListener
 | *resultHandlerFactory* (advanced) | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types. |  | ResultHandlerFactory
-| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Object
-| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *transformerFactory* (advanced) | To use a custom XSLT transformer factory |  | TransformerFactory
 | *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String

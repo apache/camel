@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xslt</artifactId>
+            <artifactId>camel-xslt-saxon</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

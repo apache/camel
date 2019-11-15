@@ -21,7 +21,8 @@ import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.xslt.XsltBuilder;
-import org.apache.camel.component.xslt.XsltEndpoint;
+import org.apache.camel.component.xslt.saxon.XsltSaxonBuilder;
+import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -32,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @ManagedResource(description = "Managed XJEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true, label = "transformation")
-public class XJEndpoint extends XsltEndpoint {
+public class XJEndpoint extends XsltSaxonEndpoint {
 
     private final JsonFactory jsonFactory = new JsonFactory();
 
@@ -68,8 +69,8 @@ public class XJEndpoint extends XsltEndpoint {
     }
 
     @Override
-    protected XsltBuilder createXsltBuilder() throws Exception {
-        final XsltBuilder xsltBuilder = super.createXsltBuilder();
+    protected XsltSaxonBuilder createXsltBuilder() throws Exception {
+        final XsltSaxonBuilder xsltBuilder = super.createXsltBuilder();
         xsltBuilder.setAllowStAX(true); // we rely on stax so always to true.
 
         configureInput(xsltBuilder);
