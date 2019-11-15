@@ -40,7 +40,6 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import net.sf.saxon.om.TreeInfo;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
@@ -51,6 +50,7 @@ import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
