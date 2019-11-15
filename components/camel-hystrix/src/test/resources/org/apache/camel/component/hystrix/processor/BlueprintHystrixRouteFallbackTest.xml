@@ -25,14 +25,14 @@
   <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
     <route>
       <from uri="direct:start"/>
-      <hystrix>
+      <circuitBreaker>
         <throwException exceptionType="java.lang.IllegalArgumentException" message="Forced"/>
         <onFallback>
           <transform>
             <constant>Fallback message</constant>
           </transform>
         </onFallback>
-      </hystrix>
+      </circuitBreaker>
       <to uri="mock:result"/>
     </route>
 

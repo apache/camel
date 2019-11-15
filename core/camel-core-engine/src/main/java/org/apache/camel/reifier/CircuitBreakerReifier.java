@@ -17,19 +17,19 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.HystrixDefinition;
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.RouteContext;
 
-public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
+public class CircuitBreakerReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public HystrixReifier(ProcessorDefinition<?> definition) {
-        super(HystrixDefinition.class.cast(definition));
+    public CircuitBreakerReifier(ProcessorDefinition<?> definition) {
+        super(CircuitBreakerDefinition.class.cast(definition));
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        throw new IllegalStateException("Cannot find camel-hystrix on the classpath.");
+        throw new IllegalStateException("Cannot find camel-hystrix or camel-microprofile-fault-tolerance on the classpath.");
     }
 
 }

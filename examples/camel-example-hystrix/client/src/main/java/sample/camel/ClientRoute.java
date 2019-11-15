@@ -28,7 +28,7 @@ public class ClientRoute extends RouteBuilder {
         from("timer:trigger?period=500").streamCaching()
             .bean("counterBean")
             .log(" Client request: ${body}")
-            .hystrix()
+            .circuitBreaker()
                 // see application.properties how hystrix is configured
                 .to("http://localhost:9090/service1")
             //.onFallback()
