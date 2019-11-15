@@ -215,8 +215,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             if (configuration.getTaskExecutor() instanceof ExecutorService) {
                 consumer.setListenerContainerExecutorService((ExecutorService) configuration.getTaskExecutor(), false);
             }
-        } else if ((listenerContainer instanceof DefaultJmsMessageListenerContainer && configuration.getDefaultTaskExecutorType() == null)
-                || !(listenerContainer instanceof DefaultJmsMessageListenerContainer)) {
+        } else if (!(listenerContainer instanceof DefaultJmsMessageListenerContainer) || configuration.getDefaultTaskExecutorType() == null) {
             // preserve backwards compatibility if an explicit Default TaskExecutor Type was not set;
             // otherwise, defer the creation of the TaskExecutor
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
