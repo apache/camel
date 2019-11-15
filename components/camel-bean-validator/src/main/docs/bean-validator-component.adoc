@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,6 +103,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *traversableResolver* (advanced) | To use a custom TraversableResolver |  | TraversableResolver
 | *validationProviderResolver* (advanced) | To use a a custom ValidationProviderResolver |  | ValidationProviderResolver
+| *validatorFactory* (advanced) | To use a custom ValidatorFactory |  | ValidatorFactory
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
