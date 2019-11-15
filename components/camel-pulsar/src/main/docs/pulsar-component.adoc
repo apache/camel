@@ -149,6 +149,5 @@ The component supports 3 options, which are listed below.
 | `key` | `String` | The key of the Pulsar message in String form or the empty string if unset on the Pulsar message
 | `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
 | `topic_name` | `String` | The topic to which the message was published
-| `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
 |===
 // message-headers options: END
