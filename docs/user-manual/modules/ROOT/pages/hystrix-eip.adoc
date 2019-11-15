@@ -112,7 +112,7 @@ You can find an example with the source code: https://github.com/apache/camel/tr
 
 == Using Hystrix with Spring Boot
 
-See the xref:hystrix-component.adoc[Hystrix Component].
+See the xref:components::hystrix.adoc[Hystrix Component].
 
 == Camel's Error Handler and Hystrix EIP
 
