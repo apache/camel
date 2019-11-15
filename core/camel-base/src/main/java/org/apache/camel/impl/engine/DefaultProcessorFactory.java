@@ -40,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  * to the name of the {@link ProcessorFactory} the Camel component implement, which gets called for creating
  * the {@link Processor}s for the EIP.
  * <p/>
- * The Hystrix EIP is such an example where {@link org.apache.camel.model.HystrixDefinition} is implemented
+ * The Hystrix EIP is such an example where the circuit breaker EIP (CircuitBreakerDefinition) is implemented
  * in the <tt>camel-hystrix</tt> component.
  */
 public class DefaultProcessorFactory implements ProcessorFactory {

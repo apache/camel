@@ -73,7 +73,7 @@ public class HystrixHierarchicalConfigurationTest {
             .filter(CircuitBreakerDefinition.class::isInstance)
             .map(CircuitBreakerDefinition.class::cast)
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Unable to find a HystrixDefinition"));
+            .orElseThrow(() -> new IllegalStateException("Unable to find a CircuitBreakerDefinition"));
     }
 }
 
