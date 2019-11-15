@@ -8,7 +8,7 @@
 // HEADER END
 
 The SEDA component provides asynchronous
-http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, so that
+https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior, so that
 messages are exchanged on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
 and consumers are invoked in a separate thread from the producer.
