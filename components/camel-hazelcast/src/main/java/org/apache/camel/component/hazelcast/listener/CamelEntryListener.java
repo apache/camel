@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast.listener;
 
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
-
 import com.hazelcast.core.MapEvent;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;

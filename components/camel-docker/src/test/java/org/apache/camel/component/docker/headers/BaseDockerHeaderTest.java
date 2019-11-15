@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.dockerjava.api.DockerClient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docker.DockerClientProfile;

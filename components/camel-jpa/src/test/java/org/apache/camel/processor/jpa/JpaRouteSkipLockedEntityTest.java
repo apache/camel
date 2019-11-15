@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;

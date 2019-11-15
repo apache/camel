@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.util.concurrent;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

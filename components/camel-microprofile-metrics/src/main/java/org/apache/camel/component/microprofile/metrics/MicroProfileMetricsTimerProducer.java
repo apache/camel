@@ -28,6 +28,7 @@ import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.microprofile.metrics.Timer.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_TIMER_ACTION;
 
 public class MicroProfileMetricsTimerProducer extends AbstractMicroProfileMetricsProducer<Timer> {

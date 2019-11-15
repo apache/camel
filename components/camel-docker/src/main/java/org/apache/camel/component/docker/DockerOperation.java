@@ -19,7 +19,6 @@ package org.apache.camel.component.docker;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Operations the Docker Component supports
  */

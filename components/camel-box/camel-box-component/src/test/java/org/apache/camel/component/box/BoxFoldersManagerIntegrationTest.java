@@ -24,7 +24,6 @@ import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxFoldersManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;

@@ -20,11 +20,9 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import com.couchbase.client.CouchbaseClientIF;
-
 import net.spy.memcached.PersistTo;
 import net.spy.memcached.ReplicateTo;
 import net.spy.memcached.internal.OperationFuture;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 

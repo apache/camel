@@ -20,7 +20,6 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.translate.AmazonTranslate;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

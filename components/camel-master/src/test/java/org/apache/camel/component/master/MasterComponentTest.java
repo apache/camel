@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class MasterComponentTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterComponentTest.class);
     private static final List<String> INSTANCES = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());

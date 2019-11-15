@@ -21,7 +21,6 @@ import java.util.Set;
 
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.queue.CloudQueue;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;

@@ -17,6 +17,7 @@
 package org.apache.camel.itest.issues;
 
 import java.util.Collection;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.Endpoint;

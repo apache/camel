@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;

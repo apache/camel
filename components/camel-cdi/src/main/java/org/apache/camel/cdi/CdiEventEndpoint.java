@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
@@ -41,6 +39,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultEndpoint;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * A Camel {@link Endpoint} that bridges the CDI events facility with Camel routes so that CDI events

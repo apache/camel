@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
 /**

@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 
 import com.splunk.Args;
 import com.splunk.Service;
-
 import org.apache.camel.component.splunk.SplunkEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.slf4j.Logger;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.paho;
 
 import java.util.Properties;
+
 import javax.net.SocketFactory;
 import javax.net.ssl.HostnameVerifier;
 

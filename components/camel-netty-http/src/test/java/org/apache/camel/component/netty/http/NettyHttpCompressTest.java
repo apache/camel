@@ -24,7 +24,6 @@ import java.util.Map;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.HttpContentDecompressor;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;

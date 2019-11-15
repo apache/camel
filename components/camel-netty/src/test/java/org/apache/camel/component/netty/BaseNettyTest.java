@@ -21,7 +21,6 @@ import java.util.Properties;
 
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ResourceLeakDetector;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;

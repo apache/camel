@@ -23,17 +23,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.Optional.ofNullable;
-
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import javax.websocket.server.ServerContainer;
 
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.IOHelper;
+
+import static java.util.Optional.ofNullable;
 
 @Component("websocket-jsr356")
 public class JSR356WebSocketComponent extends DefaultComponent {

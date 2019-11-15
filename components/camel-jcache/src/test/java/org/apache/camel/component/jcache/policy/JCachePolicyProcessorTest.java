@@ -133,7 +133,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
     public void testNullResult() throws Exception {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
-        mock.whenAnyExchangeReceived((e) -> e.getMessage().setBody(null));
+        mock.whenAnyExchangeReceived(e -> e.getMessage().setBody(null));
 
         //Send first
         this.template().requestBody("direct:cached-simple", key);
@@ -212,7 +212,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
         //Send
         Exchange response = this.template().request("direct:cached-invalidkey",
-            (e) -> e.getMessage().setBody(body));
+            e -> e.getMessage().setBody(body));
 
         //Exception is on the exchange, cache is empty, onException was called.
         assertIsInstanceOf(SimpleIllegalSyntaxException.class, response.getException().getCause());
@@ -244,14 +244,15 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
     public void testException() throws Exception {
         final String key = randomString();
         MockEndpoint mock = getMockEndpoint("mock:value");
-        mock.whenAnyExchangeReceived((e) -> {
+        mock.whenAnyExchangeReceived(e -> {
             throw new RuntimeException("unexpected");
         });
+
         Cache cache = lookupCache("simple");
 
         //Send
         Exchange response = this.template().request("direct:cached-exception",
-            (e) -> e.getMessage().setBody(key));
+            e -> e.getMessage().setBody(key));
 
         //Exception is on the exchange, cache is empty
         assertEquals("unexpected", response.getException().getMessage());

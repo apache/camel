@@ -18,7 +18,6 @@ package org.apache.camel.component.rabbitmq.reply;
 
 import com.rabbitmq.client.AMQP;
 
-
 /**
  * Handles a reply.
  */

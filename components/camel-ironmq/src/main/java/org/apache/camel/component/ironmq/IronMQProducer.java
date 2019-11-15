@@ -17,7 +17,6 @@
 package org.apache.camel.component.ironmq;
 
 import io.iron.ironmq.Queue;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;

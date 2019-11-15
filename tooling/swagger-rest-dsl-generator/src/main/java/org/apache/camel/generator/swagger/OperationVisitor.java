@@ -25,7 +25,6 @@ import io.swagger.models.Operation;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
-
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.util.ObjectHelper;

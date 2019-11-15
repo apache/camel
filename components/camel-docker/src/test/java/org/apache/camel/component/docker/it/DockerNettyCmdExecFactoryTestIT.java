@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.it;
 import java.util.concurrent.TimeUnit;
 
 import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;

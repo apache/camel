@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-
 @Ignore
 public class PerformanceRouteTest extends CamelTestSupport {
 

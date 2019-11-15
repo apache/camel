@@ -18,13 +18,14 @@ package org.apache.camel.component.xslt.saxon;
 
 import java.util.List;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.w3c.dom.Document;
 
 public class XsltSaxonTest extends CamelTestSupport {
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.springldap;
 
 import java.util.Map;
 import java.util.function.BiFunction;
+
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.ModificationItem;

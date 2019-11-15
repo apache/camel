@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.etcd.cloud;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

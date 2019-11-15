@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.kms;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.services.kms.AWSKMS;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

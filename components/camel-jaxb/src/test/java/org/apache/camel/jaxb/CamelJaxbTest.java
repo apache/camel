@@ -27,7 +27,6 @@ import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class CamelJaxbTest extends CamelTestSupport {
 
     @Test

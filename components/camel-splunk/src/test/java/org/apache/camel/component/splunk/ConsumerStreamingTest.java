@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.splunk.Job;
 import com.splunk.JobCollection;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;

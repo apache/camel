@@ -17,7 +17,6 @@
 package org.apache.camel.component.debezium;
 
 import io.debezium.relational.history.FileDatabaseHistory;
-
 import org.apache.kafka.connect.storage.FileOffsetBackingStore;
 
 public final class DebeziumConstants {

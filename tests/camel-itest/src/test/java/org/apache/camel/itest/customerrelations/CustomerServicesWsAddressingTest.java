@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.customerrelations;
+
 import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;

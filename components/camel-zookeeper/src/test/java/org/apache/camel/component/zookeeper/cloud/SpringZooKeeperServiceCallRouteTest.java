@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
+
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.curator.framework.CuratorFramework;

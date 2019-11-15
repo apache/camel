@@ -19,6 +19,7 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.Producer;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.junit.Test;
+
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;

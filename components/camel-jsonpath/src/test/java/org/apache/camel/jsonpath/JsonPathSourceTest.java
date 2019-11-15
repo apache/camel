@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.jsonpath;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -24,7 +25,6 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.Test;
-
 
 public class JsonPathSourceTest extends CamelTestSupport {
     private static final String MESSAGE1 = "Joseph und seine Br\u00fcder";

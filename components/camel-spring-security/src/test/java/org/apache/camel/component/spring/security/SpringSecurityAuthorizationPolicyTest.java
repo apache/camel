@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.security;
 
-
 import java.util.Collections;
 import java.util.List;
 

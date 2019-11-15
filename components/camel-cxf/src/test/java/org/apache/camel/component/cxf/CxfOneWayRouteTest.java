@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 /**
  * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input
  * back to the oneway cxf EP.

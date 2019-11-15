@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
 import org.junit.Test;

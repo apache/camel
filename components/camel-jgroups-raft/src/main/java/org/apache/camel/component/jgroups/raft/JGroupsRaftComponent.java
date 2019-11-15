@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;

@@ -35,8 +35,6 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 
-
-
 @javax.jws.WebService(serviceName = "HeaderService",
                       targetNamespace = "http://apache.org/camel/cxf/soap/headers",
                       endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")

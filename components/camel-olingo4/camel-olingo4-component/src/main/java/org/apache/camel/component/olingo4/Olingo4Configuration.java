@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo4;
 
 import java.util.Map;
+
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

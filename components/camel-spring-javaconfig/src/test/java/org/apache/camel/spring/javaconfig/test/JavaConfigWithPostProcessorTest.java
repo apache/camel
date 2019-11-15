@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)

@@ -17,6 +17,7 @@
 package org.apache.camel.component.fhir;
 
 import java.util.List;
+
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;

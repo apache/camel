@@ -21,12 +21,12 @@ import java.util.Date;
 import java.util.List;
 
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 public class DescribeTableCommandTest {

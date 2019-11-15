@@ -26,11 +26,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
+
 import org.xml.sax.InputSource;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;

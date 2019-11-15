@@ -18,6 +18,7 @@ package org.apache.camel.spring.boot;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.annotation.PreDestroy;
 
 import org.apache.camel.CamelContext;

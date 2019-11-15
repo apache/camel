@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.zookeeper;
 
-import static java.lang.String.format;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.zookeeper.operations.CreateOperation;
@@ -34,6 +32,7 @@ import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
+import static java.lang.String.format;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getAclListFromMessage;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;

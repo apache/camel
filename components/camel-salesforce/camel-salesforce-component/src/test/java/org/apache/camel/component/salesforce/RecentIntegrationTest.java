@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.RecentItem;

@@ -29,7 +29,6 @@ import com.amazonaws.services.mq.model.EngineType;
 import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
 import com.amazonaws.services.mq.model.User;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

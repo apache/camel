@@ -22,7 +22,6 @@ import org.apache.camel.component.nitrite.NitriteConstants;
 import org.apache.camel.component.nitrite.NitriteEndpoint;
 import org.apache.camel.component.nitrite.operation.AbstractPayloadAwareOperation;
 import org.apache.camel.component.nitrite.operation.RepositoryOperation;
-import org.dizitart.no2.Document;
 import org.dizitart.no2.objects.ObjectFilter;
 import org.dizitart.no2.objects.ObjectRepository;
 

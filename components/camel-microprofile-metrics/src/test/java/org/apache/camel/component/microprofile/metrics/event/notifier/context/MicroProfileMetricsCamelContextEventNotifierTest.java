@@ -25,6 +25,7 @@ import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSu
 import org.apache.camel.component.microprofile.metrics.gauge.LambdaGauge;
 import org.eclipse.microprofile.metrics.Tag;
 import org.junit.Test;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_STATUS_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_UPTIME_METRIC_NAME;

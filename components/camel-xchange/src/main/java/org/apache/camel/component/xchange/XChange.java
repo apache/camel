@@ -27,7 +27,6 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.TradeService;
-
 import si.mazi.rescu.SynchronizedValueFactory;
 
 // Wraps the exchange to avoid anem collision with the camel exchange

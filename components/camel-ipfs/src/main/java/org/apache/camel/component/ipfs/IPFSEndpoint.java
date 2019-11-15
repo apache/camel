@@ -30,12 +30,10 @@ import io.ipfs.multihash.Multihash;
 import io.nessus.ipfs.client.DefaultIPFSClient;
 import io.nessus.ipfs.client.IPFSClient;
 import io.nessus.ipfs.client.IPFSException;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
-
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;

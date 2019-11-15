@@ -20,7 +20,6 @@ import java.util.Date;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

@@ -19,7 +19,6 @@ package org.apache.camel.component.hazelcast.queue;
 import java.util.concurrent.ExecutorService;
 
 import com.hazelcast.core.HazelcastInstance;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

@@ -25,8 +25,6 @@ import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.Arrays.asList;
-
 import org.apache.camel.component.iec60870.DiscardAckModule;
 import org.apache.camel.component.iec60870.ObjectAddress;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.ASDUAddress;
@@ -42,6 +40,8 @@ import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Actio
 import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Arrays.asList;
 
 public class ServerInstance {
     private static final Logger LOG = LoggerFactory.getLogger(ServerInstance.class);

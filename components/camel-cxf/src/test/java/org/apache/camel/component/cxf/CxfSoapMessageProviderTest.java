@@ -29,7 +29,6 @@ import org.apache.hello_world_soap_http.SOAPService;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
     static int port = CXFTestSupport.getPort1();

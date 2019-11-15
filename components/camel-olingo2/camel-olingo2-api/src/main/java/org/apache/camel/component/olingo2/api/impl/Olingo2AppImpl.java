@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+
 import org.apache.camel.component.olingo2.api.Olingo2App;
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
@@ -340,7 +341,7 @@ public final class Olingo2AppImpl implements Olingo2App {
     public void delete(final String resourcePath, final Map<String, String> endpointHttpHeaders, final Olingo2ResponseHandler<HttpStatusCodes> responseHandler) {
         HttpDelete deleteRequest = new HttpDelete(createUri(resourcePath));
 
-        Consumer<HttpRequestBase> deleteFunction = (request) -> {
+        Consumer<HttpRequestBase> deleteFunction = request -> {
             execute(request, contentType, endpointHttpHeaders, new AbstractFutureCallback<HttpStatusCodes>(responseHandler) {
                 @Override
                 public void onCompleted(HttpResponse result) {

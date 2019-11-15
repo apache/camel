@@ -30,7 +30,6 @@ import com.mongodb.util.JSON;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 
-
 public class GridFsProducer extends DefaultProducer {    
     private GridFsEndpoint endpoint;
 

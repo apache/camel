@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.services.sqs.AmazonSQS;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

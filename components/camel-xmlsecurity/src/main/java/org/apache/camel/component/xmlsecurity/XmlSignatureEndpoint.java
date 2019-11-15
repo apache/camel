@@ -17,6 +17,7 @@
 package org.apache.camel.component.xmlsecurity;
 
 import java.util.Map;
+
 import javax.xml.crypto.URIDereferencer;
 
 import org.apache.camel.Consumer;

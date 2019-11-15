@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class StatefulQuartzRouteTest extends BaseQuartzTest {
     protected MockEndpoint resultEndpoint;
 

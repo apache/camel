@@ -17,6 +17,7 @@
 package org.apache.camel.component.servicenow;
 
 import java.util.Map;
+
 import javax.ws.rs.ProcessingException;
 
 import org.apache.camel.component.extension.ComponentVerifierExtension;

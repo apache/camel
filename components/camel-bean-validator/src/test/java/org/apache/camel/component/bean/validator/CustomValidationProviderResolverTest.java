@@ -18,8 +18,6 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 import javax.validation.ValidationProviderResolver;
 import javax.validation.spi.ValidationProvider;
 
@@ -29,6 +27,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;

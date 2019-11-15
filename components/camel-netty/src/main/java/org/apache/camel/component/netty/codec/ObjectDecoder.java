@@ -20,7 +20,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.serialization.ClassResolver;
 
-
 /**
  * Just expose the decode method for DatagramPacketObjectDecoder to use
  */

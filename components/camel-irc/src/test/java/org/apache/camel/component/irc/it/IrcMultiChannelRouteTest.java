@@ -17,6 +17,7 @@
 package org.apache.camel.component.irc.it;
 
 import java.util.List;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

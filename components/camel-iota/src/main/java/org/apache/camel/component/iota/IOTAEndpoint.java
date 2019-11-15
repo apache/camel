@@ -19,11 +19,9 @@ package org.apache.camel.component.iota;
 import java.net.URL;
 
 import jota.IotaAPI;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

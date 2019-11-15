@@ -25,7 +25,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.reactivestreams.Subscriber;
 
-
 public class EventTypeTest extends CamelTestSupport {
 
     @Test

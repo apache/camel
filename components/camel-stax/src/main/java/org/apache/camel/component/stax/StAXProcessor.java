@@ -22,7 +22,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 
 import com.ctc.wstx.sr.ValidatingStreamReader;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;

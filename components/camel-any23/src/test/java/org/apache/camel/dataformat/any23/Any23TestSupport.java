@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.any23;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+
 import org.apache.camel.util.IOHelper;
 
 public final class Any23TestSupport {

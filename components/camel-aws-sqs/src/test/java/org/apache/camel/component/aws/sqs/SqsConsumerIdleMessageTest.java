@@ -17,15 +17,15 @@
 package org.apache.camel.component.aws.sqs;
 
 import org.apache.camel.BindToRegistry;
-/**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
- */
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+/**
+ * Test to verify that the polling consumer delivers an empty Exchange when the
+ * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
+ */
 public class SqsConsumerIdleMessageTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSQSClient")

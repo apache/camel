@@ -21,11 +21,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 
 /**
  * Bean that creates the database table

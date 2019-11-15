@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.InfoCmd;
-
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
 import org.mockito.Mock;

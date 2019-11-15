@@ -20,7 +20,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
-import static java.lang.String.format;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,6 +27,7 @@ import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.commons.codec.binary.Base64;
 
+import static java.lang.String.format;
 
 public class SigningProcessor extends DigitalSignatureProcessor {
 

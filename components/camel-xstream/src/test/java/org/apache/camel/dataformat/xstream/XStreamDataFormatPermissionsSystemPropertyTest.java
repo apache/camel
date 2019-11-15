@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xstream;
-import com.thoughtworks.xstream.XStream;
 
+import com.thoughtworks.xstream.XStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

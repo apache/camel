@@ -28,7 +28,6 @@ import io.fabric8.openshift.api.model.BuildList;
 import io.fabric8.openshift.api.model.DoneableBuild;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.dsl.BuildResource;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;

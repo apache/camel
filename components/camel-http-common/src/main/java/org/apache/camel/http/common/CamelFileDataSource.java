@@ -17,6 +17,7 @@
 package org.apache.camel.http.common;
 
 import java.io.File;
+
 import javax.activation.FileDataSource;
 import javax.activation.FileTypeMap;
 

@@ -17,6 +17,7 @@
 package org.apache.camel.component.jmx;
 
 import java.io.File;
+
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;

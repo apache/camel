@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;

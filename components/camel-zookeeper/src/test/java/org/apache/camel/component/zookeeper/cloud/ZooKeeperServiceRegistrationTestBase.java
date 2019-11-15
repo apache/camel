@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;

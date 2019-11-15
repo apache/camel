@@ -42,6 +42,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 @ContextConfiguration
 public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     protected static int port0 = CXFTestSupport.getPort1(); 

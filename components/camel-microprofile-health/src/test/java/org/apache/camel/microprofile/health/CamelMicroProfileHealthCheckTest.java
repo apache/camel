@@ -20,7 +20,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import io.smallrye.health.SmallRyeHealth;
-
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
@@ -45,7 +44,7 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel", State.UP, checks.getJsonObject(0), (checksJson) -> {
+        assertHealthCheckOutput("camel", State.UP, checks.getJsonObject(0), checksJson -> {
             assertEquals(ServiceStatus.Started.toString(), checksJson.getString("contextStatus"));
             assertEquals("health-context", checksJson.getString("name"));
         });
@@ -69,7 +68,7 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput("camel", State.DOWN, checks.getJsonObject(0), (checksJson) -> {
+        assertHealthCheckOutput("camel", State.DOWN, checks.getJsonObject(0), checksJson -> {
             assertEquals(ServiceStatus.Stopped.toString(), checksJson.getString("contextStatus"));
             assertEquals("health-context", checksJson.getString("name"));
         });

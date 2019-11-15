@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client.queue;
 
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

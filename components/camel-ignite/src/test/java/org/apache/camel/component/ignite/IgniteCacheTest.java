@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.cache.Cache.Entry;
 
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.camel.component.ignite.cache.IgniteCacheOperation;

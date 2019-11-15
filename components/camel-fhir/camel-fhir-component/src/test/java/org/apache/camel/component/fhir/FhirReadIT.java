@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;

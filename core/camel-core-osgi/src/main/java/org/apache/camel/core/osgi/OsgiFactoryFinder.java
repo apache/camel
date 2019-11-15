@@ -26,7 +26,6 @@ import java.util.Properties;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

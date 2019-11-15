@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config.scan;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;

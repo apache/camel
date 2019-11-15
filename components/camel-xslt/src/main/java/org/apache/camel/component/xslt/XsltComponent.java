@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import java.util.Map;
+
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;

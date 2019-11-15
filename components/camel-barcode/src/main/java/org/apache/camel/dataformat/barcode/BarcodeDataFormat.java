@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 
 import com.google.zxing.BarcodeFormat;

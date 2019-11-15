@@ -19,9 +19,9 @@ package org.apache.camel.spring.boot.security;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.junit.Test;
-
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -47,7 +47,7 @@ public class CamelSSLAutoConfigurationTest {
                     "camel.ssl.config.trust-managers.key-store.password=changeit",
                     "camel.ssl.config.trust-managers.key-store.type=jks"
             )
-            .run((context) -> {
+            .run(context -> {
                     GlobalSSLContextParametersSupplier supplier = context.getBean(GlobalSSLContextParametersSupplier.class);
                     assertThat(context).hasSingleBean(CamelSSLAutoConfiguration.class);
                     assertNotNull(supplier);

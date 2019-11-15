@@ -27,7 +27,6 @@ import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureSt
 import org.apache.camel.component.reactor.engine.suport.TestSubscriber;
 import org.junit.Assert;
 import org.junit.Test;
-
 import reactor.core.publisher.Flux;
 
 public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsServiceTestSupport {

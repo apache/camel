@@ -19,7 +19,6 @@ package org.apache.camel.component.ironmq;
 import java.io.IOException;
 
 import io.iron.ironmq.EmptyQueueException;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

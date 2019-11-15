@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;

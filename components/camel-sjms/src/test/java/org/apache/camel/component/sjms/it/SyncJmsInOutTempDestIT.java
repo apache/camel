@@ -24,7 +24,6 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
-
 /**
  * Integration test that verifies the ability of SJMS to correctly process
  * synchronous InOut exchanges from both the Producer and Consumer perspective

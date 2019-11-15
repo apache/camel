@@ -30,10 +30,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.InputSource;
 
 import io.swagger.models.Swagger;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestsDefinition;

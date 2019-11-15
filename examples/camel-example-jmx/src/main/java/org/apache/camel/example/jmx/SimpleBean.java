@@ -18,6 +18,7 @@ package org.apache.camel.example.jmx;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.management.AttributeChangeNotification;
 import javax.management.NotificationBroadcasterSupport;
 

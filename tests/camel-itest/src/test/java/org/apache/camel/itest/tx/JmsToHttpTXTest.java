@@ -24,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
+
 /**
  * Unit test will look for the spring .xml file with the same class name
  * but postfixed with -config.xml as filename.

@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;

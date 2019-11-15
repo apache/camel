@@ -44,7 +44,6 @@ import com.consol.citrus.http.server.HttpServer;
 import com.consol.citrus.http.server.HttpServerBuilder;
 import com.consol.citrus.http.servlet.GzipHttpServletResponseWrapper;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
-
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;

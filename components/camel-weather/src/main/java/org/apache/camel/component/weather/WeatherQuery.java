@@ -18,6 +18,7 @@ package org.apache.camel.component.weather;
 
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
+
 import static org.apache.camel.component.weather.WeatherMode.JSON;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 

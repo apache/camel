@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 
-
 public class SpringModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
 
     public static final String ADDITIONAL_JAXB_CONTEXT_PACKAGES = ":"

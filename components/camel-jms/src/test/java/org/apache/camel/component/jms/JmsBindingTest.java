@@ -25,7 +25,6 @@ import org.apache.activemq.command.ActiveMQBlobMessage;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

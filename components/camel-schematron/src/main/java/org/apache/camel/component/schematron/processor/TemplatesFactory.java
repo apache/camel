@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.schematron.processor;
 
-
 import java.io.InputStream;
 
 import javax.xml.transform.Source;
@@ -33,7 +32,6 @@ import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Class generating Templates for a given schematron rules

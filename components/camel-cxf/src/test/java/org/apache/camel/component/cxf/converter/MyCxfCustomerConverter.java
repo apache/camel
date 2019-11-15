@@ -24,7 +24,6 @@ import org.apache.camel.Converter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
-
 // This converter is used to show how to override the CxfPayload default toString converter
 @Converter 
 public final class MyCxfCustomerConverter {

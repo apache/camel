@@ -28,7 +28,6 @@ import com.google.api.services.bigquery.model.QueryParameterType;
 import com.google.api.services.bigquery.model.QueryParameterValue;
 import com.google.api.services.bigquery.model.QueryRequest;
 import com.google.api.services.bigquery.model.QueryResponse;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;

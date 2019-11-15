@@ -17,12 +17,12 @@
 package org.apache.camel.component.jcache.policy;
 
 import java.net.URI;
+
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 
 import com.hazelcast.instance.HazelcastInstanceFactory;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
@@ -72,7 +72,7 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
     public void after() {
         super.after();
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null);
-        cacheManager.getCacheNames().forEach((s) -> cacheManager.destroyCache(s));
+        cacheManager.getCacheNames().forEach(s -> cacheManager.destroyCache(s));
         Caching.getCachingProvider().close(URI.create("hzsecond"), null);
 
         // We need to shutdown the second instance using the Hazelcast api.

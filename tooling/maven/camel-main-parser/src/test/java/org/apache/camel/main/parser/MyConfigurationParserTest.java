@@ -19,6 +19,7 @@ package org.apache.camel.main.parser;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.junit.Test;
 
 public class MyConfigurationParserTest extends TestCase {

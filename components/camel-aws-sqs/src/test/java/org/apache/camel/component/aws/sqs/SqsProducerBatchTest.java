@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.amazonaws.services.sqs.model.SendMessageBatchResult;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

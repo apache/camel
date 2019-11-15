@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
+
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spring.SpringTestSupport;

@@ -31,11 +31,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Optional.ofNullable;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -48,7 +45,6 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Json;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -66,6 +62,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;

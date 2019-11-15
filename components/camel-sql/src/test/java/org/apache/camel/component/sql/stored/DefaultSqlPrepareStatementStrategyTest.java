@@ -17,6 +17,7 @@
 package org.apache.camel.component.sql.stored;
 
 import java.sql.SQLException;
+
 import org.apache.camel.component.sql.DefaultSqlPrepareStatementStrategy;
 import org.junit.Test;
 

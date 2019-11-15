@@ -17,6 +17,7 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
+
 import javax.sql.DataSource;
 
 import org.springframework.dao.DataAccessException;

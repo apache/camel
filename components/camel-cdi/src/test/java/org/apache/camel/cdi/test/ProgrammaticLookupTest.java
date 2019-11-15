@@ -17,6 +17,7 @@
 package org.apache.camel.cdi.test;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;

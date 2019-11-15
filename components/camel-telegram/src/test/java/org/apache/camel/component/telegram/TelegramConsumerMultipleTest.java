@@ -49,7 +49,7 @@ public class TelegramConsumerMultipleTest extends TelegramTestSupport {
 
         UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
 
-        when(api.getUpdates(any(), any(), any(), any())).thenReturn(res1).thenReturn(res2).thenAnswer((i) -> defaultRes);
+        when(api.getUpdates(any(), any(), any(), any())).thenReturn(res1).thenReturn(res2).thenAnswer(i -> defaultRes);
     }
 
     @Test

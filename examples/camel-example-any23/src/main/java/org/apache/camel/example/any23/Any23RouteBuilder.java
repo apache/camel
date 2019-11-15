@@ -19,6 +19,7 @@ package org.apache.camel.example.any23;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

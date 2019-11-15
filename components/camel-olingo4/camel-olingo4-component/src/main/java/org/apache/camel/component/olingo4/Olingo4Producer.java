@@ -18,6 +18,7 @@ package org.apache.camel.component.olingo4;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;

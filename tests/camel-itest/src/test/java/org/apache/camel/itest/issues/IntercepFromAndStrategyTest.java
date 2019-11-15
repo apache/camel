@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class IntercepFromAndStrategyTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")

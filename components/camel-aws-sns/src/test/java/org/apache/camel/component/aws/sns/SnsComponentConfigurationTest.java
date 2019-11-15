@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
-
 import org.apache.camel.component.aws.sqs.AmazonSQSClientMock;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

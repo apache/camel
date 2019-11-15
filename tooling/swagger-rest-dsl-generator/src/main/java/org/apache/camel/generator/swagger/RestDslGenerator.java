@@ -17,6 +17,7 @@
 package org.apache.camel.generator.swagger;
 
 import java.nio.file.Path;
+
 import javax.annotation.processing.Filer;
 
 import io.swagger.models.Swagger;

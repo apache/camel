@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jclouds;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;

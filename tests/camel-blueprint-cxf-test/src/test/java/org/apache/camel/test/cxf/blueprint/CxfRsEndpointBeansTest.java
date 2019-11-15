@@ -19,7 +19,9 @@ package org.apache.camel.test.cxf.blueprint;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.ws.rs.ProcessingException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Produce;

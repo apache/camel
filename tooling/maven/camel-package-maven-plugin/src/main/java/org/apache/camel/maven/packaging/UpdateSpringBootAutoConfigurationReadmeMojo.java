@@ -150,11 +150,11 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
                     // find out if the JAR has a Camel component, dataformat, or language
                     boolean hasComponentDataFormatOrLanguage = files.stream().anyMatch(
-                        (f) -> f.getName().endsWith("-component.adoc") || f.getName().endsWith("-dataformat.adoc") || f.getName().endsWith("-language.adoc"));
+                        f -> f.getName().endsWith("-component.adoc") || f.getName().endsWith("-dataformat.adoc") || f.getName().endsWith("-language.adoc"));
 
                     // if so then skip the root adoc file as its just a introduction to the others
                     if (hasComponentDataFormatOrLanguage) {
-                        files = Arrays.stream(docFiles).filter((f) -> !f.getName().equals(componentName + ".adoc")).collect(Collectors.toList());
+                        files = Arrays.stream(docFiles).filter(f -> !f.getName().equals(componentName + ".adoc")).collect(Collectors.toList());
                     }
 
                     if (files.size() == 1) {
@@ -299,7 +299,7 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
         JsonArray arr = obj.getCollection("properties");
         if (arr != null && !arr.isEmpty()) {
-            arr.forEach((e) -> {
+            arr.forEach(e -> {
                 JsonObject row = (JsonObject) e;
                 String name = row.getString("name");
                 String javaType = row.getString("type");

@@ -19,6 +19,7 @@ package org.apache.camel.component.fhir.dataformat.spring;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.context.ParserOptions;
 import ca.uhn.fhir.parser.LenientErrorHandler;

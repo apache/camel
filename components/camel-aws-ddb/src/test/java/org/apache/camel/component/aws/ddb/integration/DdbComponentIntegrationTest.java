@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.ddb.integration;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
@@ -31,7 +32,6 @@ import org.apache.camel.component.aws.ddb.DdbOperations;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
-
 
 @Ignore("Must be manually tested. Provide your own credentials below!")
 public class DdbComponentIntegrationTest extends CamelTestSupport {

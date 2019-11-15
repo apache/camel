@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xquery;
+
 import java.io.File;
 
 import org.apache.camel.Exchange;

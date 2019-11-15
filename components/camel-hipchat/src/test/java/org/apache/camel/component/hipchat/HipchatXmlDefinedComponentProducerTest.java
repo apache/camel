@@ -17,6 +17,7 @@
 package org.apache.camel.component.hipchat;
 
 import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -25,7 +26,6 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 
 import static org.hamcrest.core.Is.is;
 

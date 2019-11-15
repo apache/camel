@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 public class CxfMixedModeRouterTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1(); 

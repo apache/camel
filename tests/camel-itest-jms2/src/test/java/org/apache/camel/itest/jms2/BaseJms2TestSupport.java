@@ -17,6 +17,7 @@
 package org.apache.camel.itest.jms2;
 
 import java.util.Arrays;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.MessageConsumer;

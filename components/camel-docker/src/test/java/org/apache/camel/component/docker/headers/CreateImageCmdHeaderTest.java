@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.CreateImageCmd;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;

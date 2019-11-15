@@ -17,7 +17,6 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.spi.SendDynamicAware.DynamicAwareEntry;
-
 import org.junit.Before;
 import org.junit.Test;
 

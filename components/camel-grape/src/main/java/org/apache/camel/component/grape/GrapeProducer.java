@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import groovy.grape.Grape;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 

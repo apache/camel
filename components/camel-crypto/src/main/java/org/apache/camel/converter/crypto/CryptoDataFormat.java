@@ -23,13 +23,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
-
-import static javax.crypto.Cipher.DECRYPT_MODE;
-import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -41,6 +39,9 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static javax.crypto.Cipher.DECRYPT_MODE;
+import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 /**
  * <code>CryptoDataFormat</code> uses a specified key and algorithm to encrypt,

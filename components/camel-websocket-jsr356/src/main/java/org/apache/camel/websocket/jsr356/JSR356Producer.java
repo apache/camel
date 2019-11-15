@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.BiConsumer;
 
-import static java.util.Optional.ofNullable;
-
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.Session;
 
@@ -29,6 +27,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
 
+import static java.util.Optional.ofNullable;
 
 public class JSR356Producer extends DefaultAsyncProducer {
     private final int sessionCount;

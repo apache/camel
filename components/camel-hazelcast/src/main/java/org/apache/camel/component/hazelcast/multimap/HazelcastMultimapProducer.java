@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;

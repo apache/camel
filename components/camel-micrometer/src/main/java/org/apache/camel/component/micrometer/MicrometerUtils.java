@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.Set;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;

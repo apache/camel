@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.jaxrs.simplebinding;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;

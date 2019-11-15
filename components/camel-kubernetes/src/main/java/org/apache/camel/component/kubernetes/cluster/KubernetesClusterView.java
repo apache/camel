@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;

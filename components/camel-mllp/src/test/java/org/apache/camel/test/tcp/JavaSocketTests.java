@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.fail;
 
-
 /**
  * Various tests used to validate the behaviour of Java Sockets.
  *

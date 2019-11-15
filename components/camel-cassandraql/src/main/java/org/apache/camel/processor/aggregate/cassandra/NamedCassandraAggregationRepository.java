@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.aggregate.cassandra;
 
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 

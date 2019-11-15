@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
-
 import org.apache.camel.Exchange;
 
 public class DeleteDomainCommand extends AbstractSdbCommand {

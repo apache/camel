@@ -27,6 +27,7 @@ import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -35,7 +36,6 @@ import com.notnoop.apns.internal.ApnsFeedbackParsingUtilsAcessor;
 import com.notnoop.apns.internal.Utilities;
 import com.notnoop.apns.utils.ApnsServerStub;
 import com.notnoop.apns.utils.FixedCertificates;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
 import org.apache.camel.support.jsse.KeyManagersParameters;

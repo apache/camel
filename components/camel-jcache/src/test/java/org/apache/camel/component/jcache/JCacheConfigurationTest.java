@@ -19,6 +19,7 @@ package org.apache.camel.component.jcache;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+
 import javax.cache.Cache;
 import javax.cache.configuration.CompleteConfiguration;
 import javax.cache.configuration.Factory;

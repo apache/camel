@@ -27,7 +27,6 @@ import com.amazonaws.services.simpledb.AmazonSimpleDBClientBuilder;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;

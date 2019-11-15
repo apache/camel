@@ -18,6 +18,7 @@ package org.apache.camel.cdi;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.RuntimeCamelException;

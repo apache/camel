@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atmos.integration.producer;
 
-
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -26,7 +25,6 @@ import org.apache.camel.component.atmos.integration.AtmosTestSupport;
 import org.apache.camel.component.atmos.util.AtmosResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-
 
 public class AtmosProducerPutFolderWithRemotePathTest extends AtmosTestSupport {
 

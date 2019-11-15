@@ -25,7 +25,6 @@ import java.nio.file.StandardOpenOption;
 
 import io.debezium.util.Collect;
 import io.debezium.util.IoUtil;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

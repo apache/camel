@@ -17,7 +17,6 @@
 package org.apache.camel.component.pubnub;
 
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,9 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-
 import static org.hamcrest.CoreMatchers.equalTo;
-
 
 public class PubNubPresenceTest extends PubNubTestBase {
 

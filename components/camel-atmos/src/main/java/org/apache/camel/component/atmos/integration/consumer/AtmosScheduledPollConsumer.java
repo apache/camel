@@ -21,7 +21,6 @@ import org.apache.camel.component.atmos.AtmosConfiguration;
 import org.apache.camel.component.atmos.AtmosEndpoint;
 import org.apache.camel.support.ScheduledPollConsumer;
 
-
 public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {
 
     protected AtmosEndpoint endpoint;

@@ -35,7 +35,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
-
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Notification Service
  * <a href="http://aws.amazon.com/sns/">AWS SNS</a>

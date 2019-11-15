@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer.eventNotifier;
 
 import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -26,7 +27,6 @@ import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEve
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
 import org.junit.Test;
-
 
 public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEventNotifierTest {
 

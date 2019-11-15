@@ -19,7 +19,6 @@ package org.apache.camel.generator.swagger;
 import java.io.IOException;
 
 import com.squareup.javapoet.JavaFile;
-
 import io.swagger.models.Swagger;
 
 final class AppendableGenerator extends RestDslSourceCodeGenerator<Appendable> {

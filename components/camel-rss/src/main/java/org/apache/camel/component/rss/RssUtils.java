@@ -23,7 +23,6 @@ import java.net.URL;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
-
 import org.apache.commons.codec.binary.Base64;
 
 public final class RssUtils {

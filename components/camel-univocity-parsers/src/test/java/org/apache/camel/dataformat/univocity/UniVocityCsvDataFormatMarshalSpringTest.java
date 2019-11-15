@@ -30,7 +30,6 @@ import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 /**
  * This class tests the marshalling of {@link org.apache.camel.dataformat.univocity.UniVocityCsvDataFormat} using the
  * Spring DSL.
