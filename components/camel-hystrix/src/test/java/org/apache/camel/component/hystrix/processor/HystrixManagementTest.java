@@ -102,10 +102,10 @@ public class HystrixManagementTest extends CamelTestSupport {
                 context.addService(stream);
 
                 from("direct:start").routeId("start")
-                        .hystrix().id("myHystrix")
-                        .to("direct:foo")
+                        .circuitBreaker().id("myHystrix")
+                            .to("direct:foo")
                         .onFallback()
-                        .transform().constant("Fallback message")
+                            .transform().constant("Fallback message")
                         .end()
                         .to("mock:result");
 

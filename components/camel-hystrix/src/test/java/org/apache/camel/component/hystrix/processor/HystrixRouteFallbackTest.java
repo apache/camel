@@ -40,7 +40,7 @@ public class HystrixRouteFallbackTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("log:start")
-                    .hystrix()
+                    .circuitBreaker()
                         .throwException(new IllegalArgumentException("Forced"))
                     .onFallback()
                         .transform().constant("Fallback message")
