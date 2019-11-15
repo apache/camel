@@ -26,7 +26,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <hystrix>
+      <circuitBreaker>
         <hystrixConfiguration groupKey="myCamelApp" requestLogEnabled="false" corePoolSize="5"/>
         <to uri="direct:foo"/>
         <onFallback>
@@ -34,7 +34,7 @@
             <constant>Fallback message</constant>
           </transform>
         </onFallback>
-      </hystrix>
+      </circuitBreaker>
       <to uri="mock:result"/>
     </route>
 

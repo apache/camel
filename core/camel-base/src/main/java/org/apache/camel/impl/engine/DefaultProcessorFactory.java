@@ -40,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  * to the name of the {@link ProcessorFactory} the Camel component implement, which gets called for creating
  * the {@link Processor}s for the EIP.
  * <p/>
- * The Hystrix EIP is such an example where {@link org.apache.camel.model.HystrixDefinition} is implemented
+ * The Hystrix EIP is such an example where the circuit breaker EIP (CircuitBreakerDefinition) is implemented
  * in the <tt>camel-hystrix</tt> component.
  */
 public class DefaultProcessorFactory implements ProcessorFactory {
@@ -82,23 +82,22 @@ public class DefaultProcessorFactory implements ProcessorFactory {
 
     @Override
     public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception {
-        // currently only SendDynamicProcessor is supported
-        SendDynamicProcessor answer = null;
         if ("SendDynamicProcessor".equals(definitionName)) {
             String uri = (String) args.get("uri");
             Expression expression = (Expression) args.get("expression");
             ExchangePattern exchangePattern = (ExchangePattern) args.get("exchangePattern");
-            answer = new SendDynamicProcessor(uri, expression);
-            answer.setCamelContext(camelContext);
+            SendDynamicProcessor processor = new SendDynamicProcessor(uri, expression);
+            processor.setCamelContext(camelContext);
             if (exchangePattern != null) {
-                answer.setPattern(exchangePattern);
+                processor.setPattern(exchangePattern);
             }
+            return processor;
         } else if ("UnitOfWorkProducer".equals(definitionName)) {
             Producer producer = (Producer) args.get("producer");
             return new UnitOfWorkProducer(producer);
         }
 
-        return answer;
+        return null;
     }
     
 }

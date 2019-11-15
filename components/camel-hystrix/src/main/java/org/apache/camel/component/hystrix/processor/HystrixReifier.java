@@ -29,8 +29,8 @@ import com.netflix.hystrix.HystrixThreadPoolProperties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
-import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
@@ -41,9 +41,9 @@ import org.apache.camel.util.function.Suppliers;
 import static org.apache.camel.support.CamelContextHelper.lookup;
 import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
-public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
+public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public HystrixReifier(HystrixDefinition definition) {
+    public HystrixReifier(CircuitBreakerDefinition definition) {
         super(definition);
     }
 
@@ -223,8 +223,8 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
-        if (definition.getHystrixConfigurationRef() != null) {
-            final String ref = definition.getHystrixConfigurationRef();
+        if (definition.getConfigurationRef() != null) {
+            final String ref = definition.getConfigurationRef();
 
             loadProperties(camelContext, properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),

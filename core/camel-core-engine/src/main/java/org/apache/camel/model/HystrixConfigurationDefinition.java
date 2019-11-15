@@ -35,12 +35,12 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     public static final String DEFAULT_GROUP_KEY = "CamelHystrix";
 
     @XmlTransient
-    private HystrixDefinition parent;
+    private CircuitBreakerDefinition parent;
 
     public HystrixConfigurationDefinition() {
     }
 
-    public HystrixConfigurationDefinition(HystrixDefinition parent) {
+    public HystrixConfigurationDefinition(CircuitBreakerDefinition parent) {
         this.parent = parent;
     }
 
@@ -375,7 +375,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     /**
      * End of configuration.
      */
-    public HystrixDefinition end() {
+    public CircuitBreakerDefinition end() {
         return parent;
     }
 

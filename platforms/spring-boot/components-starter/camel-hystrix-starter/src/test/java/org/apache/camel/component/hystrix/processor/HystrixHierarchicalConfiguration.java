@@ -21,6 +21,7 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.springframework.context.annotation.Bean;
 
 public class HystrixHierarchicalConfiguration {
+
     @Bean(name = "ref-hystrix")
     public HystrixConfigurationDefinition hystrixConfiguration() {
         return new HystrixConfigurationDefinition()
@@ -35,8 +36,8 @@ public class HystrixHierarchicalConfiguration {
             public void configure() throws Exception {
                 from("direct:start")
                     .routeId("hystrix-route")
-                    .hystrix()
-                        .hystrixConfiguration("ref-hystrix")
+                    .circuitBreaker()
+                        .configuration("ref-hystrix")
                         .hystrixConfiguration()
                             .groupKey("local-conf-group-key")
                             .end()

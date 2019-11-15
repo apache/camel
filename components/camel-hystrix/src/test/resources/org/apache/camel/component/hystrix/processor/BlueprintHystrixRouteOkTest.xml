@@ -25,14 +25,14 @@
   <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/blueprint">
     <route>
       <from uri="direct:start"/>
-      <hystrix>
+      <circuitBreaker>
         <to uri="direct:foo"/>
         <onFallback>
           <transform>
             <constant>Fallback message</constant>
           </transform>
         </onFallback>
-      </hystrix>
+      </circuitBreaker>
       <to uri="mock:result"/>
     </route>
 

@@ -24,7 +24,6 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.HystrixConfigurationDefinition;
-import org.apache.camel.model.HystrixDefinition;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
