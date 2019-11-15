@@ -57,6 +57,8 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
     private TraversableResolver traversableResolver;
     @UriParam(label = "advanced")
     private ConstraintValidatorFactory constraintValidatorFactory;
+    @UriParam(label = "advanced")
+    private ValidatorFactory validatorFactory;
 
     public BeanValidatorEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -68,8 +70,13 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
         if (group != null) {
             producer.setGroup(getCamelContext().getClassResolver().resolveMandatoryClass(group));
         }
-        ValidatorFactory validatorFactory = buildValidatorFactory(isOsgiContext(), isIgnoreXmlConfiguration(),
-                validationProviderResolver, messageInterpolator, traversableResolver, constraintValidatorFactory);
+
+        ValidatorFactory validatorFactory = this.validatorFactory;
+        if (validatorFactory == null) {
+            validatorFactory = buildValidatorFactory(isOsgiContext(), isIgnoreXmlConfiguration(),
+                    validationProviderResolver, messageInterpolator, traversableResolver, constraintValidatorFactory);
+        }
+
         producer.setValidatorFactory(validatorFactory);
         return producer;
     }
@@ -160,5 +167,16 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
      */
     public void setConstraintValidatorFactory(ConstraintValidatorFactory constraintValidatorFactory) {
         this.constraintValidatorFactory = constraintValidatorFactory;
+    }
+
+    public ValidatorFactory getValidatorFactory() {
+        return validatorFactory;
+    }
+
+    /**
+     * To use a custom {@link ValidatorFactory}
+     */
+    public void setValidatorFactory(ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
     }
 }

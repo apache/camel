@@ -22,6 +22,7 @@ import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;
 import javax.validation.ValidationProviderResolver;
+import javax.validation.ValidatorFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -45,6 +46,8 @@ public class BeanValidatorComponent extends DefaultComponent {
     private TraversableResolver traversableResolver;
     @Metadata(label = "advanced")
     private ConstraintValidatorFactory constraintValidatorFactory;
+    @Metadata(label = "advanced")
+    private ValidatorFactory validatorFactory;
 
     public BeanValidatorComponent() {
     }
@@ -59,6 +62,7 @@ public class BeanValidatorComponent extends DefaultComponent {
         endpoint.setMessageInterpolator(messageInterpolator);
         endpoint.setTraversableResolver(traversableResolver);
         endpoint.setConstraintValidatorFactory(constraintValidatorFactory);
+        endpoint.setValidatorFactory(validatorFactory);
 
         setProperties(endpoint, parameters);
         return endpoint;
