@@ -2342,7 +2342,7 @@
   </feature>
   <feature name='camel-spring-ws' version='${project.version}' start-level='50'>
     <feature>http</feature>
-    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-xslt-saxon</feature>
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-jms</feature>
     <feature version='${spring-version-range}'>spring-oxm</feature>
@@ -2606,7 +2606,7 @@
     <bundle>mvn:org.apache.camel/camel-xchange/${project.version}</bundle>
   </feature>
   <feature name='camel-xj' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-xslt-saxon</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xj/${project.version}</bundle>
@@ -2636,7 +2636,9 @@
     <bundle>mvn:org.apache.camel/camel-xmpp/${project.version}</bundle>
   </feature>
   <feature name='camel-xslt-saxon' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-saxon</feature>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/${saxon-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xslt-saxon/${project.version}</bundle>
   </feature>
   <feature name='camel-xstream' version='${project.version}' start-level='50'>
