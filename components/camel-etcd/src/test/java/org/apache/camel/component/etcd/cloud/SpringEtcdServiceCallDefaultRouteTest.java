@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.etcd.cloud;
+
 import java.net.URI;
 
 import com.fasterxml.jackson.databind.JsonNode;

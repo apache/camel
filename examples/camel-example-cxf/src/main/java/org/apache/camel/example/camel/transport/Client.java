@@ -17,6 +17,7 @@
 package org.apache.camel.example.camel.transport;
 
 import java.net.MalformedURLException;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 

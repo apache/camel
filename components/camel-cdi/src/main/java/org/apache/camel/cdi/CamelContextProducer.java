@@ -19,9 +19,6 @@ package org.apache.camel.cdi;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import static java.beans.Introspector.decapitalize;
-import static java.util.stream.Collectors.toSet;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Annotated;
@@ -40,6 +37,8 @@ import org.apache.camel.support.DefaultRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.beans.Introspector.decapitalize;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;

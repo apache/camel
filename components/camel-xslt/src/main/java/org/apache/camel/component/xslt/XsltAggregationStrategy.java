@@ -18,6 +18,7 @@ package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;

@@ -29,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class SaxonXsltDTDTest extends CamelTestSupport {
     
     private static final String MESSAGE = 

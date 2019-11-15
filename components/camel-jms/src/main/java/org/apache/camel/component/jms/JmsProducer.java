@@ -21,8 +21,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.util.Optional.ofNullable;
-
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -47,6 +45,7 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.JmsUtils;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.jms.JmsMessageHelper.isQueuePrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.isTopicPrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;

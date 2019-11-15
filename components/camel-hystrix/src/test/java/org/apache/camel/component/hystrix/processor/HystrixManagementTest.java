@@ -17,6 +17,7 @@
 package org.apache.camel.component.hystrix.processor;
 
 import java.util.stream.Stream;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

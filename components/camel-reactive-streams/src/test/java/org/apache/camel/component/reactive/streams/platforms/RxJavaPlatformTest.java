@@ -22,7 +22,6 @@ import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-
 public class RxJavaPlatformTest extends AbstractPlatformTestSupport {
 
     @Override

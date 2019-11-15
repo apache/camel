@@ -18,7 +18,6 @@ package org.apache.camel.component.netty;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

@@ -30,7 +30,6 @@ import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 import com.amazonaws.services.identitymanagement.model.RemoveUserFromGroupResult;
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

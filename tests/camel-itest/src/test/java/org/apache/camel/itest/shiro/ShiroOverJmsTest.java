@@ -18,6 +18,7 @@ package org.apache.camel.itest.shiro;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.builder.RouteBuilder;

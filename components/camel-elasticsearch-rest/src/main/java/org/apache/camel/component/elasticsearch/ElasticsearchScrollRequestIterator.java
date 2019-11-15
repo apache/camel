@@ -19,6 +19,7 @@ package org.apache.camel.component.elasticsearch;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
+
 import org.apache.camel.Exchange;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -31,7 +32,6 @@ import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT;
-
 
 public class ElasticsearchScrollRequestIterator implements Iterator<SearchHit>, Closeable {
     private final SearchRequest searchRequest;

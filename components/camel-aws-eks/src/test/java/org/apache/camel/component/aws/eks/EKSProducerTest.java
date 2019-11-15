@@ -21,7 +21,6 @@ import com.amazonaws.services.eks.model.DeleteClusterResult;
 import com.amazonaws.services.eks.model.DescribeClusterResult;
 import com.amazonaws.services.eks.model.ListClustersResult;
 import com.amazonaws.services.eks.model.VpcConfigRequest;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

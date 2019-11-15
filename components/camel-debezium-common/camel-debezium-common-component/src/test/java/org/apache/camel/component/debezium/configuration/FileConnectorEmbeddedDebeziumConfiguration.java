@@ -17,6 +17,7 @@
 package org.apache.camel.component.debezium.configuration;
 
 import java.nio.file.Path;
+
 import io.debezium.config.Configuration;
 import org.apache.kafka.connect.file.FileStreamSourceConnector;
 

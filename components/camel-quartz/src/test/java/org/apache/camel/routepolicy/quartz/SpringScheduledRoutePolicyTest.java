@@ -31,7 +31,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit4.TestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
     protected enum TestType {
         SIMPLE, CRON

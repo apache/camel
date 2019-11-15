@@ -30,8 +30,6 @@ import org.apache.camel.wsdl_first.types.UnknownPersonFault;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.staxutils.StaxUtils;
 
-
-
 public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultTest {
     
     protected static final String DETAILS = "<detail></detail>";

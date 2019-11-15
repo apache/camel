@@ -22,7 +22,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSupport {
 
     @Test(expected = UnsupportedOperationException.class)

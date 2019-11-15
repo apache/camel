@@ -18,7 +18,7 @@ package org.apache.camel.service.lra;
 
 import java.io.IOException;
 import java.io.InputStream;
-import static java.util.concurrent.TimeUnit.SECONDS;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -33,6 +33,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 

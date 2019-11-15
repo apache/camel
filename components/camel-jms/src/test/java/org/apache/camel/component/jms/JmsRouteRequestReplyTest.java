@@ -44,7 +44,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";

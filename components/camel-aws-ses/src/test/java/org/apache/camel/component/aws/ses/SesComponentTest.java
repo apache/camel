@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

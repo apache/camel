@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.SObject;

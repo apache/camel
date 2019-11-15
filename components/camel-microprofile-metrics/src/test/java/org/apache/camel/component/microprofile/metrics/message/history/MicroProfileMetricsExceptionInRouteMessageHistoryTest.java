@@ -19,7 +19,6 @@ package org.apache.camel.component.microprofile.metrics.message.history;
 import java.util.SortedMap;
 
 import io.smallrye.metrics.exporters.JsonExporter;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;

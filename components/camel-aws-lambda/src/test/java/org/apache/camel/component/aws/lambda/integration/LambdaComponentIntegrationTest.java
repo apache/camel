@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.lambda.integration;
 
 import java.io.*;
+
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;

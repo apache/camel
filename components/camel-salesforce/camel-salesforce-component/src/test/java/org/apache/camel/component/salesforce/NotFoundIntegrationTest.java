@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce;
 import java.util.Arrays;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.dto.generated.Account;

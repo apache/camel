@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

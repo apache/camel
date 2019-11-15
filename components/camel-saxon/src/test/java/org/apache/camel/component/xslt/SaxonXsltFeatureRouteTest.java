@@ -17,7 +17,6 @@
 package org.apache.camel.component.xslt;
 
 import net.sf.saxon.trans.UncheckedXPathException;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;

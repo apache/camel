@@ -24,7 +24,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 
-
 public class OneWayOutgoingChainInterceptor extends AbstractPhaseInterceptor<Message> {
     
     public OneWayOutgoingChainInterceptor() {

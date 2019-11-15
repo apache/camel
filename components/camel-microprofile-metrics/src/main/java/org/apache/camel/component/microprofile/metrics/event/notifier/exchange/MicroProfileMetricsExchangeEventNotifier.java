@@ -32,6 +32,7 @@ import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.microprofile.metrics.Timer.Context;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.PROCESSING_METRICS_SUFFIX;

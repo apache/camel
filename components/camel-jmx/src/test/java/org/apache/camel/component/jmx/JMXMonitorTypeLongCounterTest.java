@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
 
-
 public class JMXMonitorTypeLongCounterTest extends SimpleBeanFixture {
     
     @Test

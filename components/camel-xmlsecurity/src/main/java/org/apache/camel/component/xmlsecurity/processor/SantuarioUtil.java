@@ -26,7 +26,6 @@ import java.security.Security;
 import org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI;
 import org.apache.xml.security.utils.XMLUtils;
 
-
 public final class SantuarioUtil {
     private SantuarioUtil() {
         //Helper class

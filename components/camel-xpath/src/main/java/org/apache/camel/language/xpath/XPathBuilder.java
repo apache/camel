@@ -40,9 +40,11 @@ import javax.xml.xpath.XPathFactoryConfigurationException;
 import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.InputSource;
 
 import org.apache.camel.CamelContext;
@@ -66,7 +68,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

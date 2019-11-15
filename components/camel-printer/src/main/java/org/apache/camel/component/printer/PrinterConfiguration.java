@@ -19,6 +19,7 @@ package org.apache.camel.component.printer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import javax.print.DocFlavor;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;

@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.hl7.HL7.hl7terser;
 
-
 public class TerserExpressionTest extends CamelTestSupport {
 
     private static final String PATIENT_ID = "123456";

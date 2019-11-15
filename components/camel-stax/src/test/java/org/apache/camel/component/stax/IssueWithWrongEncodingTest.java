@@ -17,10 +17,8 @@
 package org.apache.camel.component.stax;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.stax.model.Product;

@@ -28,7 +28,6 @@ import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.jetty.http.HttpHeader;
 import org.junit.AfterClass;

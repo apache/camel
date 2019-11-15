@@ -19,9 +19,9 @@ package org.apache.camel.component.aws.lambda;
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambdaClient;
-
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
 import static org.mockito.Mockito.mock;
 
 public class LambdaComponentConfigurationTest extends CamelTestSupport {

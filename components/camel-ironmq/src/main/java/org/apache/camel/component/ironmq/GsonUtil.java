@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
-
 import org.apache.camel.Message;
 
 public final class GsonUtil {

@@ -23,7 +23,6 @@ import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
-
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Before;
 import org.junit.Test;

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.olingo2.api.Olingo2App;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
@@ -45,6 +46,7 @@ import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

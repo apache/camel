@@ -17,7 +17,6 @@
 package org.apache.camel.opentracing;
 
 import io.opentracing.Span;
-
 import org.apache.camel.Exchange;
 
 /**

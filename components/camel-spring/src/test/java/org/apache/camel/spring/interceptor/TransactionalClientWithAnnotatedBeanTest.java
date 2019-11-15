@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;

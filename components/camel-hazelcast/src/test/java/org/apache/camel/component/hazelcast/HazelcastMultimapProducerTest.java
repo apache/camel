@@ -21,7 +21,6 @@ import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;

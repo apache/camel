@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.avro;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;

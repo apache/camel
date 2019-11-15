@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.cluster.utils;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.junit.Assert;
 import org.junit.Test;
 

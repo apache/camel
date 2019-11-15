@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;

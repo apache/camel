@@ -26,7 +26,6 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageDecoder;
-
 import org.acplt.oncrpc.OncRpcException;
 import org.acplt.oncrpc.XdrBufferDecodingStream;
 import org.apache.camel.BindToRegistry;
@@ -41,14 +40,12 @@ import org.junit.rules.ExpectedException;
 
 import static info.ganglia.gmetric4j.gmetric.GMetricSlope.NEGATIVE;
 import static info.ganglia.gmetric4j.gmetric.GMetricType.FLOAT;
-
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_DMAX;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_METRIC_NAME;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_SLOPE;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_TMAX;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_TYPE;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_UNITS;
-
 import static org.apache.camel.component.ganglia.GangliaConstants.GROUP_NAME;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_DMAX;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_NAME;

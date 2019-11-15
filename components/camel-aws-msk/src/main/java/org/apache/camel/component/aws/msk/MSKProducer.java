@@ -27,7 +27,6 @@ import com.amazonaws.services.kafka.model.DescribeClusterRequest;
 import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersRequest;
 import com.amazonaws.services.kafka.model.ListClustersResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

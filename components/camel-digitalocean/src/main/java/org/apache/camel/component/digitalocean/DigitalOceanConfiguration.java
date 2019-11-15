@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.digitalocean;
 
-
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;

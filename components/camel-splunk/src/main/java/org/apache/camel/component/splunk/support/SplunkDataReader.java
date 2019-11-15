@@ -37,7 +37,6 @@ import com.splunk.SavedSearchCollection;
 import com.splunk.SavedSearchDispatchArgs;
 import com.splunk.Service;
 import com.splunk.ServiceArgs;
-
 import org.apache.camel.component.splunk.ConsumerType;
 import org.apache.camel.component.splunk.SplunkEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;

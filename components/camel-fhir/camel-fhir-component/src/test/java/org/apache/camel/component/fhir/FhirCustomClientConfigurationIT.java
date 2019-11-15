@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir;
 
 import java.util.List;
 import java.util.Map;
+
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.interceptor.api.IInterceptorService;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -48,7 +49,6 @@ import ca.uhn.fhir.rest.gclient.ITransaction;
 import ca.uhn.fhir.rest.gclient.IUntypedQuery;
 import ca.uhn.fhir.rest.gclient.IUpdate;
 import ca.uhn.fhir.rest.gclient.IValidate;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

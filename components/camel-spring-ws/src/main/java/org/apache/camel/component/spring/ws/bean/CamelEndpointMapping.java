@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws.bean;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;

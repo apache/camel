@@ -24,8 +24,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-
-
 public class UTPasswordCallback implements CallbackHandler {
 
     private Map<String, String> passwords =

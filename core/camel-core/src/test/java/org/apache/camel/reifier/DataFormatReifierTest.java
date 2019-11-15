@@ -16,14 +16,14 @@
  */
 package org.apache.camel.reifier;
 
-import static junit.framework.TestCase.fail;
-
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.reifier.dataformat.CustomDataFormatReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
+import static junit.framework.TestCase.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DataFormatReifierTest {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quartz;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;

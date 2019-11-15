@@ -28,7 +28,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.mapper.CachingMapper;
 import com.thoughtworks.xstream.mapper.CannotResolveClassException;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

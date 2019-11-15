@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.iec60870.client;
 
-import static java.util.Objects.requireNonNull;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -25,6 +23,8 @@ import org.apache.camel.component.iec60870.AbstractIecEndpoint;
 import org.apache.camel.component.iec60870.ObjectAddress;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.support.DefaultComponent;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * IEC 60870 component used for telecontrol (supervisory control and data acquisition)

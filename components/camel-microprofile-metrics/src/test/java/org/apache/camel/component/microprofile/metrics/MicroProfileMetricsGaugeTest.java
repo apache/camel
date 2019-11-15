@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
 import org.junit.Test;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
 
 public class MicroProfileMetricsGaugeTest extends MicroProfileMetricsTestSupport {

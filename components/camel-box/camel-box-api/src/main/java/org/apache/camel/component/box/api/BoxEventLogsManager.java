@@ -25,7 +25,6 @@ import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxEvent;
 import com.box.sdk.EventLog;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

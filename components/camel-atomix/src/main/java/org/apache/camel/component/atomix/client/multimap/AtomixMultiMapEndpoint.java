@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client.multimap;
 
-
 import org.apache.camel.Producer;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientEndpoint;
 import org.apache.camel.spi.UriEndpoint;

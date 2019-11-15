@@ -32,7 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class DataFormatConcurrentTest extends CamelTestSupport {

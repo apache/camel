@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.ec2.AmazonEC2;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;

@@ -24,15 +24,13 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
-import static javax.ws.rs.client.Entity.entity;
-
 import org.apache.camel.component.bonita.api.model.CaseCreationResponse;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.apache.camel.component.bonita.api.util.BonitaAPIUtil;
 import org.apache.camel.util.ObjectHelper;
 
-
+import static javax.ws.rs.client.Entity.entity;
 
 public class BonitaAPI {
 

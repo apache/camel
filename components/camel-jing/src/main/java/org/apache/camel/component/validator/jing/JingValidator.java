@@ -32,7 +32,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
-
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
 

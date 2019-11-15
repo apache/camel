@@ -21,8 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.EnumSet;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -32,6 +30,8 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.junit.Test;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Testing monitoring items over multiple connections

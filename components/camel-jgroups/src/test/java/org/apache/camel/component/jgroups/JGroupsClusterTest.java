@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jgroups;
 
-import static java.lang.String.format;
-import static java.util.UUID.randomUUID;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,8 +24,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
-
 
 public class JGroupsClusterTest extends Assert {
 

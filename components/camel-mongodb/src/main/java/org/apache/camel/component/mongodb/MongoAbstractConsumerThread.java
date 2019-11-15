@@ -20,7 +20,6 @@ import java.util.concurrent.CountDownLatch;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-
 import org.apache.camel.Consumer;
 import org.bson.Document;
 import org.slf4j.Logger;

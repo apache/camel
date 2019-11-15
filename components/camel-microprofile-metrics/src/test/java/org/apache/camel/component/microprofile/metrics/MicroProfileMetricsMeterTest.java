@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Meter;
 import org.junit.Test;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METER_MARK;
 
 public class MicroProfileMetricsMeterTest extends MicroProfileMetricsTestSupport {

@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.joining;
-
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -53,7 +50,6 @@ import com.fasterxml.jackson.module.jsonSchema.types.NumberSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
-
 import org.apache.camel.component.salesforce.api.FieldsToNullPropertyFilter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
@@ -65,6 +61,8 @@ import org.apache.camel.component.salesforce.api.dto.SObject;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Factory class for creating

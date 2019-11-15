@@ -22,7 +22,6 @@ import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 
-
 public final class AuthenticationHttpClientConfigurer implements HttpClientConfigurer {
 
     private final boolean proxy;

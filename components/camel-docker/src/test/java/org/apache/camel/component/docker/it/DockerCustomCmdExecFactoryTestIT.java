@@ -19,7 +19,6 @@ package org.apache.camel.component.docker.it;
 import java.util.concurrent.TimeUnit;
 
 import com.github.dockerjava.api.model.Version;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

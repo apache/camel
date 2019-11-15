@@ -31,7 +31,6 @@ import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
 import com.box.sdk.Metadata;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxFilesManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;

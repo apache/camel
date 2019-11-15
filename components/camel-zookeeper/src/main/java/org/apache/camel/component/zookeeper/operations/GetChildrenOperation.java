@@ -18,10 +18,10 @@ package org.apache.camel.component.zookeeper.operations;
 
 import java.util.List;
 
-import static java.lang.String.format;
-
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+
+import static java.lang.String.format;
 
 /**
  * <code>GetChildrenOperation</code> is a basic ZooKeeper operation used to

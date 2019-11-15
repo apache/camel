@@ -24,10 +24,8 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Message;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.Request;

@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.ddb;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
-
 import org.apache.camel.Exchange;
 
 public class PutItemCommand extends AbstractDdbCommand {

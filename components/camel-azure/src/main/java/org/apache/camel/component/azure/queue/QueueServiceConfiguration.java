@@ -17,11 +17,11 @@
 package org.apache.camel.component.azure.queue;
 
 import com.microsoft.azure.storage.queue.CloudQueue;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.common.AbstractConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+
 @UriParams
 public class QueueServiceConfiguration extends AbstractConfiguration {
 

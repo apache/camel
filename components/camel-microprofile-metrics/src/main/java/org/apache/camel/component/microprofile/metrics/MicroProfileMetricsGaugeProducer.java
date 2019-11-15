@@ -25,6 +25,7 @@ import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
 

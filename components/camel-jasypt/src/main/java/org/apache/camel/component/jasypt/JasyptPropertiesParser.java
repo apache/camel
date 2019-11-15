@@ -19,14 +19,14 @@ package org.apache.camel.component.jasypt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.String.format;
-
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+
+import static java.lang.String.format;
 
 /**
  * A {@link org.apache.camel.component.properties.PropertiesParser} which is using

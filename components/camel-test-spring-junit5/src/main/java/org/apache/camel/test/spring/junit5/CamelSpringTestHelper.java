@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.camel.spring.SpringCamelContext;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 

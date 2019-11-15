@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -28,7 +28,6 @@ import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.junit.Test;
 
-
 public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
 
     private static final String MOCK_GOTCHA = "mock:gotcha";

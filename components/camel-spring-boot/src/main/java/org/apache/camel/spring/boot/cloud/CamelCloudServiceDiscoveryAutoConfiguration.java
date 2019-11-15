@@ -18,6 +18,7 @@ package org.apache.camel.spring.boot.cloud;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;

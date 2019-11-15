@@ -24,7 +24,6 @@ import org.jgroups.protocols.raft.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class ClusterRoleChangeListener implements RAFT.RoleChange {
     private static final transient Logger LOG = LoggerFactory.getLogger(ClusterRoleChangeListener.class);
 

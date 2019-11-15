@@ -19,7 +19,6 @@ package org.apache.camel.component.sql;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;

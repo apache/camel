@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.test.blueprint;
-import org.junit.Before;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**

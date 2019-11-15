@@ -21,7 +21,6 @@ import java.util.SortedMap;
 
 import io.smallrye.metrics.TagsUtils;
 import io.smallrye.metrics.exporters.JsonExporter;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
@@ -31,6 +30,7 @@ import org.eclipse.microprofile.metrics.MetricRegistry.Type;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 import org.junit.Test;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME;
 
 public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTestSupport {

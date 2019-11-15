@@ -26,8 +26,6 @@ import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.serialization.ClassResolver;
 
-
-
 public class DatagramPacketObjectDecoder extends MessageToMessageDecoder<AddressedEnvelope<Object, InetSocketAddress>> {
 
     private final ObjectDecoder delegateDecoder;

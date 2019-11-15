@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
+
 import java.net.URL;
 import java.util.Properties;
 

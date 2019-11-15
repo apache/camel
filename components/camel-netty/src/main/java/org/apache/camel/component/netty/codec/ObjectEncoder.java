@@ -21,7 +21,6 @@ import java.io.Serializable;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-
 /**
  * Just expose the encode method for DatagramPacketObjectEncoder to use
  */

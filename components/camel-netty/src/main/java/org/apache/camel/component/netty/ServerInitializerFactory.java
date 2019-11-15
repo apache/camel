@@ -20,7 +20,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 
-
 /**
  * Factory to create {@link ChannelPipeline} for servers, eg {@link NettyConsumer}.
  * <p/>

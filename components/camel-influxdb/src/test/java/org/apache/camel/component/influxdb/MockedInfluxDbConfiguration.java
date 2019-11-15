@@ -18,8 +18,6 @@ package org.apache.camel.component.influxdb;
 
 import java.net.UnknownHostException;
 
-import static junit.framework.TestCase.assertNotNull;
-
 import org.influxdb.InfluxDB;
 import org.influxdb.impl.InfluxDBImpl;
 import org.slf4j.Logger;
@@ -27,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
+import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @Configuration

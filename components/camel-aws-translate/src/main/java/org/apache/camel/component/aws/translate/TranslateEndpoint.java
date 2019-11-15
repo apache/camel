@@ -24,7 +24,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.translate.AmazonTranslate;
 import com.amazonaws.services.translate.AmazonTranslateClientBuilder;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

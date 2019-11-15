@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
-
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;

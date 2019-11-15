@@ -17,6 +17,7 @@
 package org.apache.camel.example.cxf.provider;
 
 import java.util.List;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;

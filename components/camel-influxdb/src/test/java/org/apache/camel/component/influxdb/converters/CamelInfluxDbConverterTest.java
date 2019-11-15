@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-
 public class CamelInfluxDbConverterTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInfluxDbConverterTest.class);

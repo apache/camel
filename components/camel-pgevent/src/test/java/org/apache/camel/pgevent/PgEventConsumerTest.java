@@ -20,7 +20,6 @@ import java.sql.PreparedStatement;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDataSource;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;

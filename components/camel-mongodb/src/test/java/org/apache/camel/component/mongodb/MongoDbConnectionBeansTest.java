@@ -17,7 +17,6 @@
 package org.apache.camel.component.mongodb;
 
 import com.mongodb.MongoClient;
-
 import org.apache.camel.Endpoint;
 import org.junit.Test;
 

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.reflect.TypeToken;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;

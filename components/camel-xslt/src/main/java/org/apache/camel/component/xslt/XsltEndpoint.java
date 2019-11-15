@@ -19,11 +19,14 @@ package org.apache.camel.component.xslt;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+
+import org.xml.sax.EntityResolver;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -40,7 +43,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.xml.sax.EntityResolver;
 
 /**
  * Transforms the message using a XSLT template.

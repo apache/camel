@@ -20,7 +20,6 @@ import java.time.Duration;
 
 import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;

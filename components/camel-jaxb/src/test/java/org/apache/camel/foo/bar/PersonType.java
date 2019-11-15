@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.util.ObjectHelper;
 
-
 /**
  * <p>Java class for PersonType complex type.
  * 

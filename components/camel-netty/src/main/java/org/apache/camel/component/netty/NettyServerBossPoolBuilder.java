@@ -21,7 +21,6 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
-
 /**
  * A builder to create Netty {@link io.netty.channel.EventLoopGroup} which can be used for executor boss events
  * with multiple Netty {@link org.apache.camel.component.netty.NettyServerBootstrapFactory} server bootstrap configurations.

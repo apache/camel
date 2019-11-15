@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.stream.Collectors.joining;
-
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+
+import static java.util.stream.Collectors.joining;
 
 public final class Containers {
     private static final Logger LOGGER = LoggerFactory.getLogger(Containers.class);

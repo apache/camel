@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.amazonaws.xray.AWSXRay;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

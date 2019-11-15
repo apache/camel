@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.component.hbase.processor.idempotent.HBaseIdempotentRepository;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.hbase.util.Bytes;

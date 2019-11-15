@@ -33,7 +33,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 @ContextConfiguration
 public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(DelimitedAllowLongTest.class);

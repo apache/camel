@@ -29,7 +29,6 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;

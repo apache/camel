@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;

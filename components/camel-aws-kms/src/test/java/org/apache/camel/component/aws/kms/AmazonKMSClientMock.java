@@ -96,7 +96,6 @@ import com.amazonaws.services.kms.model.UpdateAliasResult;
 import com.amazonaws.services.kms.model.UpdateKeyDescriptionRequest;
 import com.amazonaws.services.kms.model.UpdateKeyDescriptionResult;
 
-
 public class AmazonKMSClientMock extends AbstractAWSKMS {
 
     public AmazonKMSClientMock() {

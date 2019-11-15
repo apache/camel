@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepositoryTestSupport {
 
     private static final String MOCK_GOTCHA = "mock:gotcha";

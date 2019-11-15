@@ -32,8 +32,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-
-
 @Path("/customerservice/")
 public class CustomerService {
     private final AtomicLong currentId = new AtomicLong(123L);

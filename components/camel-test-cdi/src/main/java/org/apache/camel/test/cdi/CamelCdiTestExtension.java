@@ -19,6 +19,7 @@ package org.apache.camel.test.cdi;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.annotation.Priority;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;

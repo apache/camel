@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.cw;
 import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

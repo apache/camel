@@ -32,7 +32,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-
 public class CxfRsStreamCacheTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CONTEXT = "/CxfRsStreamCacheTest";

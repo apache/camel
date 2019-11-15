@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.greeter;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

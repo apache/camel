@@ -41,7 +41,6 @@ import org.w3c.dom.Comment;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.skyscreamer.jsonassert.JSONAssert;

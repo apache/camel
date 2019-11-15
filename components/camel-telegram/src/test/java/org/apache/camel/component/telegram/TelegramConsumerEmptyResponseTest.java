@@ -42,7 +42,7 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
 
         UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
 
-        when(api.getUpdates(any(), any(), any(), any())).thenAnswer((i) -> defaultRes);
+        when(api.getUpdates(any(), any(), any(), any())).thenAnswer(i -> defaultRes);
     }
 
     @Test(expected = AssertionError.class)

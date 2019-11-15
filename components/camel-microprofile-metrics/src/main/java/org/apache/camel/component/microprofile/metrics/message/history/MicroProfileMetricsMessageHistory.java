@@ -23,6 +23,7 @@ import org.apache.camel.support.DefaultMessageHistory;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetadataBuilder;
 import org.eclipse.microprofile.metrics.MetricRegistry;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.MESSAGE_HISTORY_DESCRIPTION;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.MESSAGE_HISTORY_DISPLAY_NAME;
 import static org.eclipse.microprofile.metrics.Timer.Context;

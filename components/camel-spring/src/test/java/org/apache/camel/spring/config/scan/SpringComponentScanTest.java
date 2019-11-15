@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config.scan;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;

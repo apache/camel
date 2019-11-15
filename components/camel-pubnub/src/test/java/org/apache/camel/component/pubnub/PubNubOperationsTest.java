@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.pubnub;
 
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +25,6 @@ import com.pubnub.api.models.consumer.history.PNHistoryItemResult;
 import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNHereNowResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 

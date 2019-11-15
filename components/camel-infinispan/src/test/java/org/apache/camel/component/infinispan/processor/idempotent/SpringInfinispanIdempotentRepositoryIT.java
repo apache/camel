@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.processor.idempotent;
 
 import java.util.UUID;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.infinispan.client.hotrod.RemoteCache;
@@ -26,7 +27,6 @@ import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 
 public class SpringInfinispanIdempotentRepositoryIT extends CamelSpringTestSupport {
 

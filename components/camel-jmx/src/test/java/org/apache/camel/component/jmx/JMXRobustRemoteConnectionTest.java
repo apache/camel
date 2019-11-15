@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jmx;
 
-
 import java.io.File;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

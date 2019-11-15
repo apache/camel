@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.function.Function;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;

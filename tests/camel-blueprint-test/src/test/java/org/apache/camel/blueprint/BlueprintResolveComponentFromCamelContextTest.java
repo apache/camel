@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
-
 public class BlueprintResolveComponentFromCamelContextTest extends CamelBlueprintTestSupport {
 
     @EndpointInject("mock://result")

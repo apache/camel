@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.wsdl;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;

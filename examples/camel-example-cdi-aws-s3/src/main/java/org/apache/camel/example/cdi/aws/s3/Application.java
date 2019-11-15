@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.aws.s3;
 
 import java.io.File;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;

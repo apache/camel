@@ -27,6 +27,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+
 import static org.awaitility.Awaitility.await;
 
 public class ManagedInflightStatisticsTest extends ManagementTestSupport {

@@ -23,6 +23,7 @@ import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Tag;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_METRIC_PREFIX;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_COMPLETED_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME;

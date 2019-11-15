@@ -49,7 +49,7 @@ public class TelegramConsumerMediaDocumentTest extends TelegramTestSupport {
 
         when(api.getUpdates(any(), any(), any(), any()))
                 .thenReturn(res)
-                .thenAnswer((i) -> defaultRes);
+                .thenAnswer(i -> defaultRes);
     }
 
     @Test

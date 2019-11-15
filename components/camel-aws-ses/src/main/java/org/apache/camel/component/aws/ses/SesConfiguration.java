@@ -21,7 +21,6 @@ import java.util.List;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

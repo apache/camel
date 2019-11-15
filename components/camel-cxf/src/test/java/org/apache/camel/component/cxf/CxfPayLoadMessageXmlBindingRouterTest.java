@@ -41,7 +41,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     
     protected static final String ROUTER_ADDRESS = "http://localhost:" 

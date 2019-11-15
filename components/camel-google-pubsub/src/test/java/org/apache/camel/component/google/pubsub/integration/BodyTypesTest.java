@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub.integration;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;

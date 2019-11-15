@@ -28,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.microprofile.metrics.Timer.Context;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.PROCESSING_METRICS_SUFFIX;
 

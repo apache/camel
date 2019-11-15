@@ -17,6 +17,7 @@
 package org.apache.camel.test.cdi;
 
 import java.lang.reflect.Type;
+
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.junit.runners.model.FrameworkMethod;

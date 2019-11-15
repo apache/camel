@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;

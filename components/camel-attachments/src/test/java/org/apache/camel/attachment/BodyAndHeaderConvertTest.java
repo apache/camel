@@ -17,6 +17,7 @@
 package org.apache.camel.attachment;
 
 import java.net.URL;
+
 import javax.activation.DataHandler;
 import javax.activation.URLDataSource;
 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.cw;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

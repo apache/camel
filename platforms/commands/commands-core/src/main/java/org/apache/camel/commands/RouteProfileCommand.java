@@ -18,6 +18,7 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 import java.io.StringReader;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 

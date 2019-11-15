@@ -17,6 +17,7 @@
 package org.apache.camel.http.common;
 
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

@@ -36,7 +36,6 @@ import com.amazonaws.services.mq.model.RebootBrokerResult;
 import com.amazonaws.services.mq.model.UpdateBrokerRequest;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
 import com.amazonaws.services.mq.model.User;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

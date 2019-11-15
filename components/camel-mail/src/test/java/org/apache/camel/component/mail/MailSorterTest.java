@@ -30,7 +30,6 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-
 /**
  * Tests mail sort util
  */

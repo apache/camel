@@ -19,7 +19,6 @@ package org.apache.camel.pgevent.integration;
 import java.util.Properties;
 
 import com.impossibl.postgres.jdbc.PGDataSource;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;

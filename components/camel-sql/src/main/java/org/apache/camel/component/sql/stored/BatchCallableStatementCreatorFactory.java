@@ -29,7 +29,6 @@ import org.springframework.jdbc.core.CallableStatementCreatorFactory;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.StatementCreatorUtils;
 
-
 public class BatchCallableStatementCreatorFactory {
 
     final CallableStatementCreatorFactory callableStatementCreatorFactory;

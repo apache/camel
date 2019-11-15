@@ -17,7 +17,6 @@
 package org.apache.camel.component.stream;
 
 import java.nio.charset.Charset;
-import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;

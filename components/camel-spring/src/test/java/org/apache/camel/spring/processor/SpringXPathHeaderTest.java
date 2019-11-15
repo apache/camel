@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
 /**
  * Spring basesd XPathHeaderTest.
  */

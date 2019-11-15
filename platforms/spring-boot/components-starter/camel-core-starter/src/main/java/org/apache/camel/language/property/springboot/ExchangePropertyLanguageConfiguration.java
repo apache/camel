@@ -17,6 +17,7 @@
 package org.apache.camel.language.property.springboot;
 
 import javax.annotation.Generated;
+
 import org.apache.camel.spring.boot.LanguageConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.ec2;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.services.ec2.AmazonEC2;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

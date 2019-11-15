@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.bind;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;

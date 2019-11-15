@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
-
 public abstract class AbstractAtomixClientEndpoint<T extends AbstractAtomixClientComponent, C extends AtomixClientConfiguration> extends DefaultEndpoint {
     @UriPath(description = "The distributed resource name")
     @Metadata(required = true)

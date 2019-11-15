@@ -17,6 +17,7 @@
 package org.apache.camel.component.validator.msv;
 
 import java.util.Map;
+
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.Endpoint;

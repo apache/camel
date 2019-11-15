@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.scan;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;

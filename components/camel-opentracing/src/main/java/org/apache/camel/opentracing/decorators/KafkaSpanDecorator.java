@@ -19,7 +19,6 @@ package org.apache.camel.opentracing.decorators;
 import java.util.Map;
 
 import io.opentracing.Span;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 

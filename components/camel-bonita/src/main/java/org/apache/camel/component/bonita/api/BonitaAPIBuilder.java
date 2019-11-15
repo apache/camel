@@ -21,7 +21,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 

@@ -25,7 +25,6 @@ import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildListBuilder;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.server.mock.OpenShiftServer;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

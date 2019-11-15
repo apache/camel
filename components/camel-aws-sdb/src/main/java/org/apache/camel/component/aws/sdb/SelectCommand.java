@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.sdb;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.SelectRequest;
 import com.amazonaws.services.simpledb.model.SelectResult;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 

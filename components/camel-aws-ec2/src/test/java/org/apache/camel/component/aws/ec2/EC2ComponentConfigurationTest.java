@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.ec2;
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2Client;
-
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

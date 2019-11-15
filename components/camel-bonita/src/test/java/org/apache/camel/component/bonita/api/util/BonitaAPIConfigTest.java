@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.bonita.api.util;
 
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
 
 public class BonitaAPIConfigTest {
 

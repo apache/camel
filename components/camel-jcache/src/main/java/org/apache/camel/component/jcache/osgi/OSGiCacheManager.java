@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Enumeration;
+
 import javax.cache.Cache;
 
 import org.apache.camel.component.jcache.JCacheConfiguration;

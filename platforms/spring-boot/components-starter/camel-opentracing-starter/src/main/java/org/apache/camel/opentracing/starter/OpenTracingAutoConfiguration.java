@@ -17,7 +17,6 @@
 package org.apache.camel.opentracing.starter;
 
 import io.opentracing.Tracer;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.opentracing.OpenTracingTracer;
 import org.springframework.beans.factory.annotation.Autowired;

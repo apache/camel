@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.catalog.springboot;
+
 import java.util.List;
 
 import org.apache.camel.catalog.CamelCatalog;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;

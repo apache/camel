@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
+
 import javax.annotation.Resource;
 
 import org.apache.camel.CamelExecutionException;

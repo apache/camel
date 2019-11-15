@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.support.DefaultProducer;
 
-
 public class IPFSProducer extends DefaultProducer {
 
     public IPFSProducer(IPFSEndpoint endpoint) {

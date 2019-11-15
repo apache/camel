@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
@@ -32,7 +31,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 
 /**
  * Unit test that we send payload as byte[] for certain types

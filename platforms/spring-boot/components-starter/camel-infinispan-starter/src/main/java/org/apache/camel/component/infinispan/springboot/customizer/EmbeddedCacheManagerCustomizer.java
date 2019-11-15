@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.infinispan.springboot.customizer;
 
-
 import org.apache.camel.component.infinispan.InfinispanComponent;
 import org.apache.camel.component.infinispan.springboot.InfinispanComponentAutoConfiguration;
 import org.apache.camel.spi.ComponentCustomizer;

@@ -18,9 +18,6 @@ package org.apache.camel.component.aws.firehose;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
-
-import org.apache.camel.component.aws.kinesis.KinesisComponent;
-import org.apache.camel.component.aws.kinesis.KinesisEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

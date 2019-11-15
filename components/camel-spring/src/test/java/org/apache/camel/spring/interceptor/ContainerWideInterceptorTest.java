@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;

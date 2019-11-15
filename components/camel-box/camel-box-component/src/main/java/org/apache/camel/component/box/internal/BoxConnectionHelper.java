@@ -34,7 +34,6 @@ import com.box.sdk.BoxDeveloperEditionAPIConnection;
 import com.box.sdk.IAccessTokenCache;
 import com.box.sdk.InMemoryLRUAccessTokenCache;
 import com.box.sdk.JWTEncryptionPreferences;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.box.BoxConfiguration;
 import org.apache.http.HttpHost;

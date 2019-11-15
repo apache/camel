@@ -20,7 +20,6 @@ import com.amazonaws.services.ecs.model.CreateClusterResult;
 import com.amazonaws.services.ecs.model.DeleteClusterResult;
 import com.amazonaws.services.ecs.model.DescribeClustersResult;
 import com.amazonaws.services.ecs.model.ListClustersResult;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

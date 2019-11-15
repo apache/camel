@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast.list;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;

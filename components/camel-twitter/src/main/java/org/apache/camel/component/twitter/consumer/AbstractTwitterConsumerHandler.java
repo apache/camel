@@ -26,7 +26,6 @@ import twitter4j.Paging;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-
 public abstract class AbstractTwitterConsumerHandler {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());

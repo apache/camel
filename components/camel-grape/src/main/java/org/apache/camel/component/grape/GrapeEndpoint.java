@@ -21,7 +21,6 @@ import java.util.List;
 
 import groovy.grape.Grape;
 import groovy.lang.Closure;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

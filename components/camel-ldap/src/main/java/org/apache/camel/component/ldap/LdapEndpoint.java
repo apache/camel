@@ -18,6 +18,7 @@ package org.apache.camel.component.ldap;
 
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import javax.naming.directory.SearchControls;
 
 import org.apache.camel.Consumer;

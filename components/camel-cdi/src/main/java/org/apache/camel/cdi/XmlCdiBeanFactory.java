@@ -27,13 +27,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.lang.String.format;
-import static java.util.Collections.addAll;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toSet;
-
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
@@ -60,6 +53,12 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
+import static java.util.Collections.addAll;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;

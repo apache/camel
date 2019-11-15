@@ -23,7 +23,6 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxCollaboration;
 import com.box.sdk.BoxCollaborator;
 import com.box.sdk.BoxFolder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

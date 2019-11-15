@@ -23,7 +23,6 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedHashMap;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.junit.Before;
@@ -37,7 +36,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-
 import static org.junit.Assert.assertEquals;
 
 public class BonitaAuthFilterConnectionTest {

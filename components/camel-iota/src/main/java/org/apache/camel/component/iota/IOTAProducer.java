@@ -24,13 +24,11 @@ import jota.dto.response.GetTransferResponse;
 import jota.dto.response.SendTransferResponse;
 import jota.model.Transfer;
 import jota.utils.TrytesConverter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * The IOTA producer.

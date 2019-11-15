@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.interceptors;
 
-
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.cxf.binding.soap.SoapMessage;

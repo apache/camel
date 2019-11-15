@@ -17,7 +17,6 @@
 package org.apache.camel.generator.swagger;
 
 import io.swagger.models.Path;
-
 import org.apache.camel.util.ObjectHelper;
 
 class PathVisitor<T> {

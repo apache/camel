@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dns;
 
-
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 

@@ -24,7 +24,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.kafka.AWSKafka;
 import com.amazonaws.services.kafka.AWSKafkaClientBuilder;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

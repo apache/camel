@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stomp;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.activemq.broker.BrokerService;

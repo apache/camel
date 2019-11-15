@@ -30,6 +30,7 @@ import com.amazonaws.services.simpleworkflow.model.WorkflowExecutionDetail;
 import com.amazonaws.services.simpleworkflow.model.WorkflowExecutionInfo;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;

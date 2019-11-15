@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.validator;
 
-
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

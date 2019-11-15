@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ThrowExceptionTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-                                  
+
 public class SpringThrowExceptionTest extends ThrowExceptionTest {
 
     @Override

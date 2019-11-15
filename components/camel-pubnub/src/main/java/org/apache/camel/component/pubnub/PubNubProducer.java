@@ -28,7 +28,6 @@ import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNHereNowResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 import com.pubnub.api.models.consumer.presence.PNWhereNowResult;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;

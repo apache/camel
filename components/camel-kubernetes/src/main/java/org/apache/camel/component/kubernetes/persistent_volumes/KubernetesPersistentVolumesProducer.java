@@ -23,7 +23,6 @@ import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeList;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
