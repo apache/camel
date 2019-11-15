@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -23,10 +24,14 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
+import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
+import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.ProducerBuilder;
+import org.apache.pulsar.client.api.TypedMessageBuilder;
 
 public class PulsarProducer extends DefaultProducer {
 
@@ -42,6 +47,8 @@ public class PulsarProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) throws Exception {
         final Message message = exchange.getIn();
+
+        TypedMessageBuilder<byte[]> messageBuilder = producer.newMessage();
         byte[] body;
         try {
             body = exchange.getContext().getTypeConverter()
@@ -50,7 +57,24 @@ public class PulsarProducer extends DefaultProducer {
             // fallback to try serialize the data
             body = PulsarMessageUtils.serialize(message.getBody());
         }
-        producer.send(body);
+        messageBuilder.value(body);
+
+        String key = exchange.getIn().getHeader(PulsarMessageHeaders.KEY_OUT, String.class);
+        if (ObjectHelper.isNotEmpty(key)) {
+            messageBuilder.key(key);
+        }
+
+        Map<String, String> properties = CastUtils.cast(exchange.getIn().getHeader(PulsarMessageHeaders.PROPERTIES_OUT, Map.class));
+        if (ObjectHelper.isNotEmpty(properties)) {
+            messageBuilder.properties(properties);
+        }
+
+        Long eventTime = exchange.getIn().getHeader(PulsarMessageHeaders.EVENT_TIME_OUT, Long.class);
+        if (eventTime != null) {
+            messageBuilder.eventTime(eventTime);
+        }
+
+        messageBuilder.send();
     }
 
     private synchronized void createProducer() throws org.apache.pulsar.client.api.PulsarClientException {
