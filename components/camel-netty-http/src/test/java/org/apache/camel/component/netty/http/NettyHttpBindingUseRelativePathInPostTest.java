@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.Test;
 
-
 public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
 
     @Test

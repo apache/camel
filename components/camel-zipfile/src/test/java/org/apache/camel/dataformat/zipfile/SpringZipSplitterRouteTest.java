@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;

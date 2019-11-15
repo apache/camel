@@ -25,7 +25,6 @@ import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class CamelReactiveStreamsTest {
 
     @Test

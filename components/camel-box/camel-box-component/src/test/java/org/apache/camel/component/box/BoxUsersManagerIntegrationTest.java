@@ -25,7 +25,6 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
 import com.box.sdk.EmailAlias;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxUsersManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;

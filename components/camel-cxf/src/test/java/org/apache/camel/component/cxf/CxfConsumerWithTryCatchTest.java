@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.Test;
 
-
 public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
    
     private static final String ECHO_OPERATION = "echo";

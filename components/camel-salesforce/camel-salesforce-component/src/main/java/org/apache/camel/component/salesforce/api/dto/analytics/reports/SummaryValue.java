@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 
 /**

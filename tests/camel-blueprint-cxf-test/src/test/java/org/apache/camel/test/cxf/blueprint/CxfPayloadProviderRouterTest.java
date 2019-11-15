@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.cxf.blueprint;
+
 import java.util.Properties;
 
 import javax.xml.namespace.QName;

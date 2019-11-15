@@ -18,7 +18,9 @@ package org.apache.camel.model.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.Generated;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")

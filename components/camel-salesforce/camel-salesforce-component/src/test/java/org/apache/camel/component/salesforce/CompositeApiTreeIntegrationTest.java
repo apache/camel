@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce;
 import java.util.Arrays;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
-
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;

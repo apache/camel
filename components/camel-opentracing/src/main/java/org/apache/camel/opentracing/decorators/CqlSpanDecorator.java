@@ -21,7 +21,6 @@ import java.util.Map;
 
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 

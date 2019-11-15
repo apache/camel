@@ -36,8 +36,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static java.util.Collections.singletonList;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.server.internal.CamelNamespace;
@@ -61,6 +59,7 @@ import org.eclipse.milo.opcua.stack.core.types.enumerated.UserTokenType;
 import org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
 
+import static java.util.Collections.singletonList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
 
 /**

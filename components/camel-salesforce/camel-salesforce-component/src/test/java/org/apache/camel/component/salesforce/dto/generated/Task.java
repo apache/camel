@@ -20,7 +20,6 @@ import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
 /**

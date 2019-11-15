@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.language.xpath;
+
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.component.mock.MockEndpoint;

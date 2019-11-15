@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.function.Predicate;
+
 import io.micrometer.core.instrument.Meter;
 
 public final class MicrometerConstants {

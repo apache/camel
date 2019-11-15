@@ -27,7 +27,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * To enable handle attachments with Jetty 9 when this filter is set.
  * <p/>

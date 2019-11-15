@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +50,6 @@ import static org.bouncycastle.bcpg.PublicKeyAlgorithmTags.ECDSA;
 import static org.bouncycastle.bcpg.PublicKeyAlgorithmTags.ELGAMAL_GENERAL;
 import static org.bouncycastle.bcpg.PublicKeyAlgorithmTags.RSA_GENERAL;
 import static org.bouncycastle.bcpg.PublicKeyAlgorithmTags.RSA_SIGN;
-
 
 public final class PGPDataFormatUtil {
 

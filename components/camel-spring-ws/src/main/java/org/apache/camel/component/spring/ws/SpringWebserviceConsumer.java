@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.ws;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeaders;

@@ -18,9 +18,6 @@ package org.apache.camel.cdi;
 
 import java.util.function.Function;
 
-import static java.lang.String.format;
-import static java.util.Objects.nonNull;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
@@ -34,6 +31,8 @@ import org.apache.camel.cdi.xml.ErrorHandlerDefinition;
 import org.apache.camel.cdi.xml.RedeliveryPolicyFactoryBean;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 

@@ -17,6 +17,7 @@
 package org.apache.camel.component.exec;
 
 import java.io.InputStream;
+
 import org.apache.camel.RuntimeCamelException;
 
 /**

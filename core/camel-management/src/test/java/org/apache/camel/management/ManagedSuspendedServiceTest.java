@@ -30,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.awaitility.Awaitility.await;
 
 public class ManagedSuspendedServiceTest extends ManagementTestSupport {

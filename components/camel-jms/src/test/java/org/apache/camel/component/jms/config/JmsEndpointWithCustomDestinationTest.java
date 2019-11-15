@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class JmsEndpointWithCustomDestinationTest extends CamelSpringTestSupport {
 
     private Object expectedBody = "<hello>world!</hello>";

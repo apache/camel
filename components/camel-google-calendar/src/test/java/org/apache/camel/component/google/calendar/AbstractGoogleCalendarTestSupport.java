@@ -23,7 +23,6 @@ import java.util.Properties;
 import java.util.Random;
 
 import com.google.api.services.calendar.model.Calendar;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.support.PropertyBindingSupport;

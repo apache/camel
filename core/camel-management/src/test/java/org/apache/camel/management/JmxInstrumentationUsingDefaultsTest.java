@@ -34,6 +34,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.awaitility.Awaitility.await;
 
 /**

@@ -35,7 +35,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-
 @RunWith(Arquillian.class)
 public class NoCamelContextTest {
 

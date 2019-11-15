@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.lambda;
 
 import com.amazonaws.services.lambda.AWSLambdaClient;
-
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

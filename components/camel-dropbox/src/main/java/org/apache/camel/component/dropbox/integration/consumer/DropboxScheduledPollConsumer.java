@@ -23,7 +23,6 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer {
     protected static final transient Logger LOG = LoggerFactory.getLogger(DropboxScheduledPollConsumer.class);
     protected final DropboxEndpoint endpoint;

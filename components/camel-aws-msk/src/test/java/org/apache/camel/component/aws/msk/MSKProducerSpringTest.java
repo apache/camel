@@ -22,7 +22,6 @@ import com.amazonaws.services.kafka.model.CreateClusterResult;
 import com.amazonaws.services.kafka.model.DeleteClusterResult;
 import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersResult;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

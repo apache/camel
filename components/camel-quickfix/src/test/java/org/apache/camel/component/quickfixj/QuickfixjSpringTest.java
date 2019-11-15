@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quickfixj;
+
 import java.util.Properties;
 
 import org.apache.camel.test.spring.CamelSpringTestSupport;

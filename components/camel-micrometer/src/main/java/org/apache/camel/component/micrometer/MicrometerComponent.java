@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer;
 
 import java.util.Map;
 import java.util.stream.Stream;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;

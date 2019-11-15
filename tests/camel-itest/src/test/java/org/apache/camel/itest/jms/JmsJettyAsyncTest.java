@@ -17,6 +17,7 @@
 package org.apache.camel.itest.jms;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.builder.RouteBuilder;

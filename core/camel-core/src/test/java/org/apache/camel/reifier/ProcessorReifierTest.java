@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier;
 
-import static junit.framework.TestCase.fail;
-
 import org.apache.camel.model.ProcessDefinition;
 import org.junit.Test;
+
+import static junit.framework.TestCase.fail;
 
 public class ProcessorReifierTest {
     @Test

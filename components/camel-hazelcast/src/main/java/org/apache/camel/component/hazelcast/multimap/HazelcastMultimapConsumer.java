@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast.multimap;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;

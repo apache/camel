@@ -23,6 +23,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
 import static org.awaitility.Awaitility.await;
 
 public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {

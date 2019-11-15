@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import brave.SpanCustomizer;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;

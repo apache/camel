@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class WalkOIDTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(PollOIDTest.class);
 

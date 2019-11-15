@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.googlecode.junittoolbox.MultithreadingTester;
 import com.googlecode.junittoolbox.RunnableAssert;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;

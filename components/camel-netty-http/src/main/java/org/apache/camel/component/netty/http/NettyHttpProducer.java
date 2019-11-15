@@ -32,7 +32,6 @@ import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
 
-
 /**
  * HTTP based {@link NettyProducer}.
  */

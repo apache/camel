@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote.manual;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;

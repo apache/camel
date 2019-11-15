@@ -27,7 +27,6 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

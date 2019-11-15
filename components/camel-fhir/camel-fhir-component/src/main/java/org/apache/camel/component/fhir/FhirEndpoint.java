@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

@@ -18,6 +18,7 @@ package org.apache.camel.component.kudu;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

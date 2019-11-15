@@ -16,9 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy;
 
-
 import org.apache.camel.dataformat.bindy.format.factories.FactoryRegistry;
-
 
 /**
  * Factory to return {@link Format} classes for a given type.

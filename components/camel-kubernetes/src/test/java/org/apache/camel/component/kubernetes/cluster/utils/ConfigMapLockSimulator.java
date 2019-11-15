@@ -18,7 +18,6 @@ package org.apache.camel.component.kubernetes.cluster.utils;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

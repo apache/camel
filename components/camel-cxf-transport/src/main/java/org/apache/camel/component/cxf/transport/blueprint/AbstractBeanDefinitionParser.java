@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.transport.blueprint;
 
 import java.util.StringTokenizer;
 
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -29,8 +28,6 @@ import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
 import org.osgi.service.blueprint.reflect.BeanMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
-
-
 
 public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser {
     

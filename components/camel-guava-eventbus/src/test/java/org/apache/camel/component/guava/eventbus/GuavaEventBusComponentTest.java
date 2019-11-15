@@ -17,7 +17,6 @@
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.EventBus;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

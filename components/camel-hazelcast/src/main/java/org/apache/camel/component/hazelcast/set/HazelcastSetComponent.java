@@ -19,7 +19,6 @@ package org.apache.camel.component.hazelcast.set;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;

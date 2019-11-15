@@ -29,14 +29,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import static org.w3c.dom.Node.ELEMENT_NODE;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -48,6 +47,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import static org.w3c.dom.Node.ELEMENT_NODE;
 
 /**
  * Prepares the Karaf provider camel catalog to include component it supports

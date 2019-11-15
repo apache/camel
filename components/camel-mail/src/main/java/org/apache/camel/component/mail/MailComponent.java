@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;

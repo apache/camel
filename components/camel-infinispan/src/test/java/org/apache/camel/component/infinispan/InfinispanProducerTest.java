@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.infinispan.util.Wait.waitFor;
 
-
 public class InfinispanProducerTest extends InfinispanTestSupport {
 
     private static final String COMMAND_VALUE = "commandValue";

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint;
 
 // CHECKSTYLE:OFF
+// CHECKSTYLE:OFF
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

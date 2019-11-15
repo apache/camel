@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.Map;
+
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+
 import java.util.Set;
 
 import javax.management.MBeanServer;

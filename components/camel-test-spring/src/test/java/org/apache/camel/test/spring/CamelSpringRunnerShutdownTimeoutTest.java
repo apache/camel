@@ -19,6 +19,7 @@ package org.apache.camel.test.spring;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 @ShutdownTimeout(value = 11, timeUnit = TimeUnit.MILLISECONDS)

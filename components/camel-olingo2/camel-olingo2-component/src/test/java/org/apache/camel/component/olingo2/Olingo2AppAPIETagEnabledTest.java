@@ -18,7 +18,9 @@ package org.apache.camel.component.olingo2;
 
 import java.io.InputStream;
 import java.util.Map;
+
 import javax.ws.rs.HttpMethod;
+
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;

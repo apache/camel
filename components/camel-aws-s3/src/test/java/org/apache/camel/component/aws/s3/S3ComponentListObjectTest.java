@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.model.ObjectListing;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

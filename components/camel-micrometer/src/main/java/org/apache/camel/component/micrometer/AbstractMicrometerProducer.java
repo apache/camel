@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.function.Function;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -27,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;

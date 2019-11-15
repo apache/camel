@@ -19,7 +19,6 @@ package org.apache.camel.component.microprofile.metrics;
 import java.util.SortedMap;
 
 import io.smallrye.metrics.MetricsRegistryImpl;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;

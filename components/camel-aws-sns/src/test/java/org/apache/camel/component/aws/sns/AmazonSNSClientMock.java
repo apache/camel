@@ -51,7 +51,6 @@ import com.amazonaws.services.sns.model.SubscribeResult;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.model.UnsubscribeRequest;
 import com.amazonaws.services.sns.model.UnsubscribeResult;
-
 import org.junit.Assert;
 
 public class AmazonSNSClientMock extends AbstractAmazonSNS {

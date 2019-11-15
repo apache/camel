@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.any23;
 
 import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;

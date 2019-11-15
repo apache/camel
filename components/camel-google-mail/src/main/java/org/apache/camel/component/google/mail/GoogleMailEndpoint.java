@@ -19,7 +19,6 @@ package org.apache.camel.component.google.mail;
 import java.util.Map;
 
 import com.google.api.services.gmail.Gmail;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

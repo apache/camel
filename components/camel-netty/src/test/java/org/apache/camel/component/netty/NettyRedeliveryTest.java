@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

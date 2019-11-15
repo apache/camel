@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;

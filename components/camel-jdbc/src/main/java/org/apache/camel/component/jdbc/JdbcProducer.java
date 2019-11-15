@@ -34,7 +34,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
-
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 public class JdbcProducer extends DefaultProducer {

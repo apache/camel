@@ -19,7 +19,6 @@ package org.apache.camel.component.grape;
 import java.util.Map;
 
 import groovy.lang.GroovyClassLoader;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;

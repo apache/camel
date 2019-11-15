@@ -42,7 +42,6 @@ import com.amazonaws.services.identitymanagement.model.RemoveUserFromGroupResult
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

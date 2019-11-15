@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

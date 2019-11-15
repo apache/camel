@@ -17,7 +17,6 @@
 package org.apache.camel.generator.swagger;
 
 import io.swagger.models.Swagger;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 

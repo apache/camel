@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xmlsecurity;
+
 import java.nio.charset.Charset;
 import java.security.Key;
 import java.util.Arrays;
@@ -37,7 +38,6 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 
 /**
  * Unit test of the encryptXML data format.

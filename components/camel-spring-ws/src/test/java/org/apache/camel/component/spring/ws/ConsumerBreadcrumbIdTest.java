@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.ws;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

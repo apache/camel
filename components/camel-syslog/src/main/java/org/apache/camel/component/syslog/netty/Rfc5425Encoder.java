@@ -26,7 +26,6 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 
-
 @Sharable
 public class Rfc5425Encoder extends MessageToMessageEncoder<ByteBuf> {
 

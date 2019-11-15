@@ -17,6 +17,7 @@
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
+
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.PreferReturnEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;

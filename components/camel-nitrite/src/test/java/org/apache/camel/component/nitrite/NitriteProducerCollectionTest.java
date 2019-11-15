@@ -35,7 +35,6 @@ import org.apache.camel.component.nitrite.operation.common.RebuildIndexOperation
 import org.apache.camel.component.nitrite.operation.common.UpdateOperation;
 import org.apache.camel.component.nitrite.operation.common.UpsertOperation;
 import org.apache.camel.component.nitrite.operation.repository.FindRepositoryOperation;
-import org.apache.camel.component.nitrite.operation.repository.UpdateRepositoryOperation;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.FileUtil;
 import org.dizitart.no2.Document;

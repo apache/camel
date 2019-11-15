@@ -19,7 +19,6 @@ package org.apache.camel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
-
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

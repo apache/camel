@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
 
 import com.univocity.parsers.common.AbstractParser;
 
-
 /**
  * This class unmarshalls the exchange body using an uniVocity parser.
  *

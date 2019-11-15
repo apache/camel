@@ -34,7 +34,6 @@ import org.w3c.dom.Document;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 
-
 /**
  * Example for a XmlSignatureProperties implementation which adds a timestamp
  * signature property.

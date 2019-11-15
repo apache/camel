@@ -20,7 +20,6 @@ import com.amazonaws.services.kms.model.CreateKeyResult;
 import com.amazonaws.services.kms.model.DescribeKeyResult;
 import com.amazonaws.services.kms.model.ListKeysResult;
 import com.amazonaws.services.kms.model.ScheduleKeyDeletionResult;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

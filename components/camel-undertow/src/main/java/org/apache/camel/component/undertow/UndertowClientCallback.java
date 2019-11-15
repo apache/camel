@@ -227,7 +227,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                     // using Message versus clientExchange as its header values have extra formatting
                     final Map<String, String> headers = result.getHeaders().entrySet()
                             .stream()
-                            .collect(Collectors.toMap(Map.Entry::getKey, (entry) -> entry.getValue().toString()));
+                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().toString()));
 
                     // Since result (Message) isn't associated with an Exchange yet, you can not use result.getBody(String.class)
                     final String bodyText = ExchangeHelper.convertToType(exchange, String.class, result.getBody());

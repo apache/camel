@@ -20,9 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.couchbase.client.CouchbaseClient;
-
 import net.spy.memcached.internal.OperationFuture;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.Assert;

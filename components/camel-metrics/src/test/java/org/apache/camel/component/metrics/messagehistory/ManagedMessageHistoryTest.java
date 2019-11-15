@@ -17,11 +17,11 @@
 package org.apache.camel.component.metrics.messagehistory;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import com.codahale.metrics.MetricRegistry;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

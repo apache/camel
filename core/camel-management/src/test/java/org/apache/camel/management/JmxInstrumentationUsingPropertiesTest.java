@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+
 import javax.management.ObjectName;
 
 import org.apache.camel.api.management.JmxSystemPropertyKeys;

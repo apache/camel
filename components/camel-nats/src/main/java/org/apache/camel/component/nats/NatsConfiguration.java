@@ -22,7 +22,6 @@ import java.time.Duration;
 import io.nats.client.Connection;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

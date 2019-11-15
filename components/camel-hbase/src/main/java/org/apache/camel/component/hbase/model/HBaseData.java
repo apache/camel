@@ -18,6 +18,7 @@ package org.apache.camel.component.hbase.model;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "data")

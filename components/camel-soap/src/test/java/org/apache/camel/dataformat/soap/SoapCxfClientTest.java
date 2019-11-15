@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.soap;
+
 import java.util.List;
 
 import javax.annotation.Resource;

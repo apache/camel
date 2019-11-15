@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docker.headers;
 
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Map;

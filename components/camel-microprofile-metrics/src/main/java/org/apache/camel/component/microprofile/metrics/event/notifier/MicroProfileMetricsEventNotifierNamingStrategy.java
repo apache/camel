@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.eclipse.microprofile.metrics.Tag;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ENDPOINT_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EVENT_TYPE_TAG;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.sheets;
 
-
 import java.util.Map;
 import java.util.Map.Entry;
 

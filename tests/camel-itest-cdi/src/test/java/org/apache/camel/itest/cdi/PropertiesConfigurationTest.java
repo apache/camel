@@ -17,6 +17,7 @@
 package org.apache.camel.itest.cdi;
 
 import java.util.Properties;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;

@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.atmos.util.AtmosResultCode;
 import org.apache.camel.component.atmos.util.AtmosResultHeader;
 
-
 public class AtmosFileUploadResult extends AtmosResult {
 
     /**

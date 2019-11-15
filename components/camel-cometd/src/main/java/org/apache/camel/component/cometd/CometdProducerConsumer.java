@@ -18,7 +18,6 @@ package org.apache.camel.component.cometd;
 
 import org.cometd.server.BayeuxServerImpl;
 
-
 public interface CometdProducerConsumer {
 
     /**

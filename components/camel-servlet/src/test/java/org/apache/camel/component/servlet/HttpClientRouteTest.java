@@ -17,6 +17,7 @@
 package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayInputStream;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

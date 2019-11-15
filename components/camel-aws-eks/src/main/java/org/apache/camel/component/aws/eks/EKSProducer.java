@@ -27,7 +27,6 @@ import com.amazonaws.services.eks.model.DescribeClusterResult;
 import com.amazonaws.services.eks.model.ListClustersRequest;
 import com.amazonaws.services.eks.model.ListClustersResult;
 import com.amazonaws.services.eks.model.VpcConfigRequest;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

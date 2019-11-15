@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.google.calendar;
 
-
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarCalendarListApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;

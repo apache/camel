@@ -19,6 +19,7 @@ package org.apache.camel.http.common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

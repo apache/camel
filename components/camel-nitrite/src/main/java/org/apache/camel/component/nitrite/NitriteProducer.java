@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class NitriteProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NitriteProducer.class);
     private NitriteEndpoint endpoint;
-    private Consumer<AbstractNitriteOperation> operationValidator = (noop) -> { };
+    private Consumer<AbstractNitriteOperation> operationValidator = noop -> { };
 
     public NitriteProducer(NitriteEndpoint endpoint) {
         super(endpoint);

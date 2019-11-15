@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.ws;
 
 import java.util.Properties;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;

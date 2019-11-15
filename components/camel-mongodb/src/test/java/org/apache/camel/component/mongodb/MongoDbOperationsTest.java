@@ -21,8 +21,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 import com.mongodb.MongoClient;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
@@ -43,6 +41,7 @@ import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.currentTimestamp;
 import static com.mongodb.client.model.Updates.set;
+import static java.util.Arrays.asList;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {

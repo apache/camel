@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.sdb;
 import java.util.List;
 
 import com.amazonaws.services.simpledb.model.Item;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;

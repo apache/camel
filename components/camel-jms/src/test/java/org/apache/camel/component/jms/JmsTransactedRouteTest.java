@@ -26,7 +26,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
-
 public class JmsTransactedRouteTest extends CamelTestSupport {
 
     @Test

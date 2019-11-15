@@ -18,7 +18,12 @@ package org.apache.camel.component.xslt.saxon;
 
 import java.io.File;
 import java.io.InputStream;
+
 import javax.xml.transform.sax.SAXSource;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -26,9 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class SAXSourceLogBodyTest extends CamelTestSupport {
 

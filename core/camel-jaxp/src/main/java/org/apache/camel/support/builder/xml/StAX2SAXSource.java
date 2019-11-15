@@ -67,8 +67,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
                 // Attributes are handled in START_ELEMENT
                 case XMLStreamConstants.ATTRIBUTE:
                     break;
-                case XMLStreamConstants.CDATA:
-                {
+                case XMLStreamConstants.CDATA: {
                     if (lexicalHandler != null) {
                         lexicalHandler.startCDATA();
                     }
@@ -81,16 +80,14 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
                     }
                     break;
                 }
-                case XMLStreamConstants.CHARACTERS:
-                {
+                case XMLStreamConstants.CHARACTERS: {
                     int length = streamReader.getTextLength();
                     int start = streamReader.getTextStart();
                     char[] chars = streamReader.getTextCharacters();
                     contentHandler.characters(chars, start, length);
                     break;
                 }
-                case XMLStreamConstants.SPACE:
-                {
+                case XMLStreamConstants.SPACE: {
                     int length = streamReader.getTextLength();
                     int start = streamReader.getTextStart();
                     char[] chars = streamReader.getTextCharacters();

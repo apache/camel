@@ -23,7 +23,6 @@ import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.cxf.message.MessageContentsList;
 
-
 public class RouteBuilderCxfTracer extends RouteBuilder {
     @Override
     public void configure() throws Exception {        

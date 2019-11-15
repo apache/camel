@@ -32,7 +32,6 @@ import facebook4j.PostUpdate;
 import facebook4j.Reading;
 import facebook4j.TagUpdate;
 import facebook4j.TestUser;
-
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 

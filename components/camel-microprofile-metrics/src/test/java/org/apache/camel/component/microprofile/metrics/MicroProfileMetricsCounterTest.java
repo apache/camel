@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Counter;
 import org.junit.Test;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_COUNTER_INCREMENT;
 
 public class MicroProfileMetricsCounterTest extends MicroProfileMetricsTestSupport {

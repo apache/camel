@@ -27,7 +27,6 @@ import org.apache.camel.component.atmos.util.AtmosResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class AtmosProducerGetSingleTest extends AtmosTestSupport {
 
     public AtmosProducerGetSingleTest() throws Exception { }

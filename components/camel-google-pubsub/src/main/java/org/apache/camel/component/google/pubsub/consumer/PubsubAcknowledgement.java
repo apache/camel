@@ -25,7 +25,6 @@ import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public abstract class PubsubAcknowledgement {
 
     protected Logger logger;

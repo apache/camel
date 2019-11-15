@@ -21,7 +21,6 @@ import java.util.Optional;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
-
 public final class HttpUtil {
     private HttpUtil() {
     }

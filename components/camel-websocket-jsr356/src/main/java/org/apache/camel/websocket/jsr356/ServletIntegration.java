@@ -18,13 +18,13 @@ package org.apache.camel.websocket.jsr356;
 
 import java.util.Set;
 
-import static java.util.Optional.ofNullable;
-
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.websocket.server.ServerContainer;
+
+import static java.util.Optional.ofNullable;
 
 public class ServletIntegration implements ServletContainerInitializer {
     @Override

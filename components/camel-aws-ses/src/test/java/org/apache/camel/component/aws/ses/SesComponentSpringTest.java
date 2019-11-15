@@ -21,7 +21,6 @@ import java.util.List;
 
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.spring.CamelSpringTestSupport;

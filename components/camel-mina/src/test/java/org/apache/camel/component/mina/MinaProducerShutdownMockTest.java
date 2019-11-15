@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-
 import java.lang.reflect.Field;
 
 import org.apache.camel.Endpoint;

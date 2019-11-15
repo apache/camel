@@ -18,7 +18,6 @@ package org.apache.camel.component.atmos.dto;
 
 import org.apache.camel.Exchange;
 
-
 public abstract class AtmosResult {
 
     protected Object resultEntries;

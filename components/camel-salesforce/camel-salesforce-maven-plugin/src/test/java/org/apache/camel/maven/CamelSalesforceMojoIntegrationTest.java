@@ -29,7 +29,6 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compilation.Status;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
-
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.junit.Rule;
 import org.junit.Test;

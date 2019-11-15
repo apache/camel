@@ -38,7 +38,6 @@ import org.xbill.DNS.SRVRecord;
 import org.xbill.DNS.TextParseException;
 import org.xbill.DNS.Type;
 
-
 public final class DnsServiceDiscovery extends DefaultServiceDiscovery {
     private static final Comparator<SRVRecord> COMPARATOR = comparator();
     private final DnsConfiguration configuration;

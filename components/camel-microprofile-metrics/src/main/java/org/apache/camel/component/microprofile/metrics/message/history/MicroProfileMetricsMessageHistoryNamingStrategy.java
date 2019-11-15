@@ -19,6 +19,7 @@ package org.apache.camel.component.microprofile.metrics.message.history;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.eclipse.microprofile.metrics.Tag;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.NODE_ID_TAG;

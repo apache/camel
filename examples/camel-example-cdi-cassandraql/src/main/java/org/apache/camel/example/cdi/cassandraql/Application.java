@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.cassandraql;
 
 import java.util.Arrays;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo2;
 
 import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ipfs;
 
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
+
 import java.util.HashMap;
 import java.util.Map;
 

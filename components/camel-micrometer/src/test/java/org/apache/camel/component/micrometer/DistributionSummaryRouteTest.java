@@ -36,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;

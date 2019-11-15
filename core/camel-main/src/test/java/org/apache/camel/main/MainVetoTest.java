@@ -23,7 +23,6 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class MainVetoTest extends Assert {
 
     @Test

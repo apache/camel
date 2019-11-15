@@ -18,7 +18,6 @@ package org.apache.camel.component.splunk;
 
 import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

@@ -19,7 +19,6 @@ package org.apache.camel.component.graphql;
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;

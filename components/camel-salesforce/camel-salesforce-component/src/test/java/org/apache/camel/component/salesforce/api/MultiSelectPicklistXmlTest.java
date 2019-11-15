@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce.api;
 
 import com.thoughtworks.xstream.XStream;
-
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.dto.generated.MSPTest;
 import org.junit.Test;

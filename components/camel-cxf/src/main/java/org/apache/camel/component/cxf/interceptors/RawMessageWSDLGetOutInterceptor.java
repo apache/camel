@@ -29,7 +29,6 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.staxutils.StaxUtils;
 
-
 public class RawMessageWSDLGetOutInterceptor extends AbstractPhaseInterceptor<Message> {
     public static final RawMessageWSDLGetOutInterceptor INSTANCE = new RawMessageWSDLGetOutInterceptor();
 

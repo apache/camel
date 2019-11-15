@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.util;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;

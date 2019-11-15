@@ -32,7 +32,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 /**
  * This test validates that fixed length records can be defined and processed using ordinal 'pos' values, and 
  * lengths declared for each field.  Strict position calculations in FixedLength records is not necessary.  The

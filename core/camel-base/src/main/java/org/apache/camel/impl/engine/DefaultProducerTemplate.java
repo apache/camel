@@ -532,7 +532,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected Function<Exchange, Exchange> createCompletionFunction(Synchronization onCompletion) {
-        return (answer) -> {
+        return answer -> {
             // invoke callback before returning answer
             // as it allows callback to be used without unit of work invoking it
             // and thus it works directly from a producer template as well, as opposed

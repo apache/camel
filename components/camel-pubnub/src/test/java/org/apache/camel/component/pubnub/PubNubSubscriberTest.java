@@ -26,7 +26,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
-
 public class PubNubSubscriberTest extends PubNubTestBase {
 
     @EndpointInject("mock:result")

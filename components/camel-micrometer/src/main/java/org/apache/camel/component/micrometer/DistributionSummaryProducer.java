@@ -17,12 +17,14 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.function.Function;
+
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 
 public class DistributionSummaryProducer extends AbstractMicrometerProducer<DistributionSummary> {

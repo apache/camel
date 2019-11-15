@@ -18,6 +18,7 @@ package org.apache.camel.example.artemis.amqp;
 
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
 import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
+
 // import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
 // import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
 

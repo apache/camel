@@ -21,7 +21,6 @@ import java.util.Set;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.elsql;
 
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSqlConfig;

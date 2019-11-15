@@ -67,9 +67,7 @@ public class GrpcMethodHandler implements MethodHandler {
             Object responseBody = exchange.getIn().getBody();
             if (responseBody instanceof List) {
                 List<Object> responseList = (List<Object>)responseBody;
-                responseList.forEach((responseItem) -> {
-                    responseObserver.onNext(responseItem);
-                });
+                responseList.forEach(responseObserver::onNext);
             } else {
                 responseObserver.onNext(responseBody);
             }

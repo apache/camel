@@ -22,9 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-
 import org.junit.Test;
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class FreemarkerSetHeaderTest extends CamelSpringTestSupport {

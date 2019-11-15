@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir.api;
 
 import java.util.List;
 import java.util.Map;
+
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.ITransactionTyped;
 import org.hl7.fhir.instance.model.api.IBaseBundle;

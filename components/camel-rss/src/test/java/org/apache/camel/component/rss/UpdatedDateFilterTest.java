@@ -21,7 +21,6 @@ import java.util.Date;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndEntryImpl;
 import com.rometools.rome.feed.synd.SyndFeedImpl;
-
 import org.junit.Before;
 import org.junit.Test;
 

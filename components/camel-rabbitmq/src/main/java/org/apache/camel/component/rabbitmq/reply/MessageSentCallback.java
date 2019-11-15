@@ -18,8 +18,6 @@ package org.apache.camel.component.rabbitmq.reply;
 
 import com.rabbitmq.client.Connection;
 
-
-
 /**
  * Callback when a {@link Message} has been sent.
  */

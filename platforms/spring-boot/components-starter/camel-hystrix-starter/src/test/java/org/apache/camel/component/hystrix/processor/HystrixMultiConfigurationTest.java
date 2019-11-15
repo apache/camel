@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.junit.Assert;
 import org.junit.Test;

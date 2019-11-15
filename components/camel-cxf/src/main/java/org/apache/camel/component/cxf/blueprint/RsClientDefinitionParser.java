@@ -32,7 +32,6 @@ import org.apache.cxf.jaxrs.model.UserResource;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.osgi.service.blueprint.reflect.Metadata;
 
-
 public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
 
     public Metadata parse(Element element, ParserContext context) {

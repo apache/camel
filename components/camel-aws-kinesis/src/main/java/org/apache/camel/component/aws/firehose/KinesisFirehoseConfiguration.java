@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.firehose;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

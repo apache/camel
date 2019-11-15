@@ -44,7 +44,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.lang.Nullable;
 
-
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
  */

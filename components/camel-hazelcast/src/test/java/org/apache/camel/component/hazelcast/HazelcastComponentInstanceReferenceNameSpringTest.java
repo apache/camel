@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class HazelcastComponentInstanceReferenceNameSpringTest extends HazelcastCamelSpringTestSupport {
 
     private static final String TEST_VALUE = "TestValue";

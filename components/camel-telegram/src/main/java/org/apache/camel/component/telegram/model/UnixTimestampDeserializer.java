@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.telegram.model;
 
-
 import java.io.IOException;
 import java.time.Instant;
 

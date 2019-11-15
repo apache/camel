@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

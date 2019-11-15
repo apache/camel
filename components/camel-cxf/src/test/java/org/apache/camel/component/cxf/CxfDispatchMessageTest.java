@@ -28,9 +28,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-
-
 /**
  * Unit test for setting arbitrary payload in MESSAGE mode
  */

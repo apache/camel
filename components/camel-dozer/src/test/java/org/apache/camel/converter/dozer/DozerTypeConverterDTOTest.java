@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.dozer;
+
 import java.util.Arrays;
 
 import com.github.dozermapper.core.loader.api.BeanMappingBuilder;

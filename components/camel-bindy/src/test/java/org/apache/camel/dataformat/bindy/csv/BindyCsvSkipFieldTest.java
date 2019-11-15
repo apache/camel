@@ -30,7 +30,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-
 @ContextConfiguration
 public class BindyCsvSkipFieldTest  extends AbstractJUnit4SpringContextTests {
 

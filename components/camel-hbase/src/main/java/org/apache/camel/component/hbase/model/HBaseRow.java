@@ -18,6 +18,7 @@ package org.apache.camel.component.hbase.model;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 

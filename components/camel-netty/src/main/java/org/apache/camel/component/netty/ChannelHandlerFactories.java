@@ -39,7 +39,6 @@ import org.apache.camel.component.netty.codec.DelimiterBasedFrameDecoder;
 import org.apache.camel.component.netty.codec.ObjectDecoder;
 import org.apache.camel.component.netty.codec.ObjectEncoder;
 
-
 /**
  * Helper to create commonly used {@link ChannelHandlerFactory} instances.
  */

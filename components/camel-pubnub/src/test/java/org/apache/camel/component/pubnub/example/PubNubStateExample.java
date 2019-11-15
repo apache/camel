@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pubnub.PubNubConstants;

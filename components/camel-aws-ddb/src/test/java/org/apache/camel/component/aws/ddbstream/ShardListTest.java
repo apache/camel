@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

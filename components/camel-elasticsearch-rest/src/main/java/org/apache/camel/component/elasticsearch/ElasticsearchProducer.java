@@ -19,6 +19,7 @@ package org.apache.camel.component.elasticsearch;
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
 import java.util.Collections;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -49,7 +50,6 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
-
 
 /**
  * Represents an Elasticsearch producer.
@@ -322,7 +322,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     
     private final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
-            super(restClient, (client) -> { }, Collections.emptyList());
+            super(restClient, client -> { }, Collections.emptyList());
         }
     }
 }

@@ -23,12 +23,12 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.any23.Any23;
 import org.apache.any23.configuration.DefaultConfiguration;
 import org.apache.any23.configuration.ModifiableConfiguration;
 import org.apache.any23.source.ByteArrayDocumentSource;
 import org.apache.any23.writer.TripleHandler;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.any23.utils.Any23Utils;
 import org.apache.camel.dataformat.any23.writer.RDF4JModelWriter;

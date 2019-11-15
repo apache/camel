@@ -18,6 +18,7 @@ package org.apache.camel.component.jcr;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;

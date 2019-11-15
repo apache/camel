@@ -19,6 +19,7 @@ package org.apache.camel.service.lra;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;

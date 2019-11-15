@@ -19,7 +19,6 @@ package org.apache.camel.component.atmos.dto;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.atmos.util.AtmosResultHeader;
 
-
 public class AtmosMoveResult extends AtmosResult {
     
     /**

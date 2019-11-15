@@ -17,7 +17,6 @@
 package org.apache.camel.component.apns.factory;
 
 import com.notnoop.apns.ApnsService;
-
 import org.apache.camel.component.apns.model.ConnectionStrategy;
 import org.apache.camel.component.apns.util.ApnsUtils;
 import org.apache.camel.component.apns.util.TestConstants;

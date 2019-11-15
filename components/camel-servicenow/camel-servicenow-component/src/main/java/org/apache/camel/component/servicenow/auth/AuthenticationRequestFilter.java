@@ -19,6 +19,7 @@ package org.apache.camel.component.servicenow.auth;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.ClientRequestContext;
@@ -27,7 +28,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.camel.component.servicenow.ServiceNowConfiguration;
-
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)

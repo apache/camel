@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;

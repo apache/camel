@@ -32,6 +32,7 @@ import org.eclipse.microprofile.metrics.Metric;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METRIC_DESCRIPTION;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METRIC_DISPLAY_NAME;

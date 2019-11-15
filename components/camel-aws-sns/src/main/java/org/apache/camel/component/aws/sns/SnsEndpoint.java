@@ -34,7 +34,6 @@ import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.util.Topics;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

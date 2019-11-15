@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean.validator;
 
 import java.util.Map;
+
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;

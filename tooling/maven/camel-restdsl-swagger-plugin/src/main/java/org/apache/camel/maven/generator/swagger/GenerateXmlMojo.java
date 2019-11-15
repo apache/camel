@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.generator.swagger.RestDslGenerator;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.corda;
 
 import java.util.List;
+
 import net.corda.core.contracts.ContractState;
 import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.messaging.DataFeed;

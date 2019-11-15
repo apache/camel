@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ribbon.cloud;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;

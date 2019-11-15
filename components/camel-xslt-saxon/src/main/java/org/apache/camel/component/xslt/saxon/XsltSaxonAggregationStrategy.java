@@ -17,7 +17,6 @@
 package org.apache.camel.component.xslt.saxon;
 
 import net.sf.saxon.TransformerFactoryImpl;
-
 import org.apache.camel.component.xslt.XsltAggregationStrategy;
 import org.apache.camel.component.xslt.XsltBuilder;
 

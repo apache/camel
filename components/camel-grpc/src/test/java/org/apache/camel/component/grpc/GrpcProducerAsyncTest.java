@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.grpc;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

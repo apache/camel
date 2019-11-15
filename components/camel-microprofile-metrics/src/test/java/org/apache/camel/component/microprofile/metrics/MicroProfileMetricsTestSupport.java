@@ -23,7 +23,6 @@ import java.util.Map;
 
 import io.smallrye.metrics.MetricRegistries;
 import io.smallrye.metrics.exporters.JsonExporter;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
 import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
@@ -38,6 +37,7 @@ import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
 import static org.eclipse.microprofile.metrics.MetricRegistry.Type;
 

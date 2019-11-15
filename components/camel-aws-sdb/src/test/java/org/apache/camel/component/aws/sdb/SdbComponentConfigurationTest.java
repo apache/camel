@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.Protocol;
-
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

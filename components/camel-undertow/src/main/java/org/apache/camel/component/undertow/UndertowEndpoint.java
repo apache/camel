@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;

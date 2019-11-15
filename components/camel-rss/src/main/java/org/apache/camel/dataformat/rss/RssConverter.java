@@ -22,7 +22,6 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.SyndFeedOutput;
-
 import org.apache.camel.Converter;
 
 @Converter(generateLoader = true)

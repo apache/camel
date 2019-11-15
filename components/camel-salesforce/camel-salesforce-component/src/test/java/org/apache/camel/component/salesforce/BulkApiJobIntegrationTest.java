@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
-
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;

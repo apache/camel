@@ -33,7 +33,6 @@ import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
-
 /**
  * The drill component gives you the ability to quering into apache drill
  * cluster.

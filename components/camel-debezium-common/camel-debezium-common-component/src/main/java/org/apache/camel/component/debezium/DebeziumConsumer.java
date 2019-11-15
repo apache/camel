@@ -19,7 +19,6 @@ package org.apache.camel.component.debezium;
 import java.util.concurrent.ExecutorService;
 
 import io.debezium.embedded.EmbeddedEngine;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;

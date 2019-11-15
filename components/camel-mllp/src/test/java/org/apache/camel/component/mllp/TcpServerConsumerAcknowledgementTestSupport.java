@@ -30,7 +30,6 @@ import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 
-
 public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelTestSupport {
     static final String TEST_MESSAGE =
         "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
