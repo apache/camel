@@ -38,6 +38,22 @@ public class XJComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add camel-saxon to the classpath. The function is
+     * looked up in the registry, where you can comma to separate multiple
+     * values to lookup.
+     */
+    private String saxonExtensionFunctions;
+    /**
+     * To use a custom Saxon configuration. The option is a
+     * net.sf.saxon.Configuration type.
+     */
+    private String saxonConfiguration;
+    /**
+     * To set custom Saxon configuration properties
+     */
+    private Map<String, Object> saxonConfigurationProperties;
+    /**
      * To use a custom UriResolver which depends on a dynamic endpoint resource
      * URI. Should not be used together with the option 'uriResolver'. The
      * option is a org.apache.camel.component.xslt.XsltUriResolverFactory type.
@@ -57,28 +73,6 @@ public class XJComponentConfiguration
      * operation.
      */
     private Boolean contentCache = true;
-    /**
-     * Whether to use Saxon as the transformerFactoryClass. If enabled then the
-     * class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to
-     * the classpath.
-     */
-    private Boolean saxon = false;
-    /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath. The function is
-     * looked up in the registry, where you can comma to separate multiple
-     * values to lookup.
-     */
-    private String saxonExtensionFunctions;
-    /**
-     * To use a custom Saxon configuration. The option is a java.lang.Object
-     * type.
-     */
-    private String saxonConfiguration;
-    /**
-     * To set custom Saxon configuration properties
-     */
-    private Map<String, Object> saxonConfigurationProperties;
     /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
@@ -105,38 +99,6 @@ public class XJComponentConfiguration
      */
     private Boolean bridgeErrorHandler = false;
 
-    public String getUriResolverFactory() {
-        return uriResolverFactory;
-    }
-
-    public void setUriResolverFactory(String uriResolverFactory) {
-        this.uriResolverFactory = uriResolverFactory;
-    }
-
-    public String getUriResolver() {
-        return uriResolver;
-    }
-
-    public void setUriResolver(String uriResolver) {
-        this.uriResolver = uriResolver;
-    }
-
-    public Boolean getContentCache() {
-        return contentCache;
-    }
-
-    public void setContentCache(Boolean contentCache) {
-        this.contentCache = contentCache;
-    }
-
-    public Boolean getSaxon() {
-        return saxon;
-    }
-
-    public void setSaxon(Boolean saxon) {
-        this.saxon = saxon;
-    }
-
     public String getSaxonExtensionFunctions() {
         return saxonExtensionFunctions;
     }
@@ -160,6 +122,30 @@ public class XJComponentConfiguration
     public void setSaxonConfigurationProperties(
             Map<String, Object> saxonConfigurationProperties) {
         this.saxonConfigurationProperties = saxonConfigurationProperties;
+    }
+
+    public String getUriResolverFactory() {
+        return uriResolverFactory;
+    }
+
+    public void setUriResolverFactory(String uriResolverFactory) {
+        this.uriResolverFactory = uriResolverFactory;
+    }
+
+    public String getUriResolver() {
+        return uriResolver;
+    }
+
+    public void setUriResolver(String uriResolver) {
+        this.uriResolver = uriResolver;
+    }
+
+    public Boolean getContentCache() {
+        return contentCache;
+    }
+
+    public void setContentCache(Boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public Boolean getBasicPropertyBinding() {
