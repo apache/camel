@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.resilience4j;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.timelimiter.TimeLimiter;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.vavr.control.Try;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -48,11 +45,13 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
     private String id;
+    private CircuitBreakerConfig config;
     private final Processor processor;
     private final Processor fallback;
     private final boolean fallbackViaNetwork;
 
-    public ResilienceProcessor(Processor processor, Processor fallback, boolean fallbackViaNetwork) {
+    public ResilienceProcessor(CircuitBreakerConfig config, Processor processor, Processor fallback, boolean fallbackViaNetwork) {
+        this.config = config;
         this.processor = processor;
         this.fallback = fallback;
         this.fallbackViaNetwork = fallbackViaNetwork;
@@ -109,7 +108,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
 //            Future
 //        });
 
-        CircuitBreaker cb = CircuitBreaker.ofDefaults(id);
+        CircuitBreaker cb = CircuitBreaker.of(id, config);
         Supplier<Exchange> task = CircuitBreaker.decorateSupplier(cb, new CircuitBreakerTask(processor, exchange));
         Try.ofSupplier(task)
                 .recover(new CircuitBreakerFallbackTask(fallback, exchange))
