@@ -266,6 +266,7 @@
         <include>org.apache.camel:camel-reactive-streams</include>
         <include>org.apache.camel:camel-reactor</include>
         <include>org.apache.camel:camel-ref</include>
+        <include>org.apache.camel:camel-resilience4j</include>
         <include>org.apache.camel:camel-rest</include>
         <include>org.apache.camel:camel-rest-swagger</include>
         <include>org.apache.camel:camel-ribbon</include>
@@ -616,6 +617,7 @@
         <include>org.apache.camel:camel-reactive-streams-starter</include>
         <include>org.apache.camel:camel-reactor-starter</include>
         <include>org.apache.camel:camel-ref-starter</include>
+        <include>org.apache.camel:camel-resilience4j-starter</include>
         <include>org.apache.camel:camel-rest-starter</include>
         <include>org.apache.camel:camel-rest-swagger-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>

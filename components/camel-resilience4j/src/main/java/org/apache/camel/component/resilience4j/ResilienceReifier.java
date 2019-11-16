@@ -23,6 +23,10 @@ import org.apache.camel.spi.RouteContext;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
+    // TODO: Resilience configuration in camel-core / model
+    // TODO: Timeout
+    // TODO: Bulkhead for viaNetwork
+
     public ResilienceReifier(CircuitBreakerDefinition definition) {
         super(definition);
     }
