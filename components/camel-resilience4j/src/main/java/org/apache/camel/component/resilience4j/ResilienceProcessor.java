@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.resilience4j;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.vavr.control.Try;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;

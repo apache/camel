@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +36,8 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
+    @XmlElement
+    private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlAttribute
     private String configurationRef;
     @XmlElementRef
@@ -122,12 +124,20 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
         this.hystrixConfiguration = hystrixConfiguration;
     }
 
+    public Resilience4jConfigurationCommon getResilience4jConfiguration() {
+        return resilience4jConfiguration;
+    }
+
+    public void setResilience4jConfiguration(Resilience4jConfigurationDefinition resilience4jConfiguration) {
+        this.resilience4jConfiguration = resilience4jConfiguration;
+    }
+
     public String getConfigurationRef() {
         return configurationRef;
     }
 
     /**
-     * Refers to a circuit breaker configuration (such as hystrix, resillient4j, or microprofile-fault-tolerance)
+     * Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance)
      * to use for configuring the circuit breaker EIP.
      */
     public void setConfigurationRef(String configurationRef) {
@@ -161,6 +171,25 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
      */
     public CircuitBreakerDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
         hystrixConfiguration = configuration;
+        return this;
+    }
+
+    /**
+     * Configures the circuit breaker to use Resilience4j.
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the
+     * Circuit Breaker EIP.
+     */
+    public Resilience4jConfigurationDefinition resilience4jConfiguration() {
+        resilience4jConfiguration = resilience4jConfiguration == null ? new Resilience4jConfigurationDefinition(this) : resilience4jConfiguration;
+        return resilience4jConfiguration;
+    }
+
+    /**
+     * Configures the circuit breaker to use Resilience4j with the given configuration.
+     */
+    public CircuitBreakerDefinition resilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
+        resilience4jConfiguration = configuration;
         return this;
     }
 
