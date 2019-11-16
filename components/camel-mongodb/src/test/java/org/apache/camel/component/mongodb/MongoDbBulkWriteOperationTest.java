@@ -30,14 +30,18 @@ import com.mongodb.client.model.WriteModel;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MongoDbBulkWriteOperationTest extends AbstractMongoDbTest {
 
     @Test
     public void testBulkWrite() throws Exception {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
         List<WriteModel<Document>> bulkOperations = Arrays
             .asList(new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
@@ -53,18 +57,18 @@ public class MongoDbBulkWriteOperationTest extends AbstractMongoDbTest {
 
         assertNotNull(result);
         // 1 insert
-        assertEquals("Records inserted should be 2 : ", 1, result.getInsertedCount());
+        assertEquals(1, result.getInsertedCount(), "Records inserted should be 2 : ");
         // 1 updateOne + 100 updateMany + 1 replaceOne
-        assertEquals("Records matched should be 102 : ", 102, result.getMatchedCount());
-        assertEquals("Records modified should be 102 : ", 102, result.getModifiedCount());
+        assertEquals(102, result.getMatchedCount(), "Records matched should be 102 : ");
+        assertEquals(102, result.getModifiedCount(), "Records modified should be 102 : ");
         // 1 deleteOne + 100 deleteMany
-        assertEquals("Records deleted should be 101 : ", 101, result.getDeletedCount());
+        assertEquals(101, result.getDeletedCount(), "Records deleted should be 101 : ");
     }
 
     @Test
     public void testOrderedBulkWriteWithError() throws Exception {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         List<WriteModel<Document>> bulkOperations = Arrays
@@ -81,14 +85,14 @@ public class MongoDbBulkWriteOperationTest extends AbstractMongoDbTest {
         } catch (CamelExecutionException e) {
             extractAndAssertCamelMongoDbException(e, "duplicate key error");
             // count = 1000 records + 1 inserted
-            assertEquals(1001, testCollection.count());
+            assertEquals(1001, testCollection.countDocuments());
         }
     }
 
     @Test
     public void testUnorderedBulkWriteWithError() throws Exception {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         List<WriteModel<Document>> bulkOperations = Arrays
@@ -104,7 +108,7 @@ public class MongoDbBulkWriteOperationTest extends AbstractMongoDbTest {
         } catch (CamelExecutionException e) {
             extractAndAssertCamelMongoDbException(e, "duplicate key error");
             // count = 1000 + 2 inserted + 1 deleted
-            assertEquals(1001, testCollection.count());
+            assertEquals(1001, testCollection.countDocuments());
         }
     }
 

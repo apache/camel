@@ -21,7 +21,11 @@ import java.math.BigDecimal;
 import com.mongodb.BasicDBObject;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbBigDecimalConverterTest extends AbstractMongoDbTest {
 
@@ -37,12 +41,12 @@ public class MongoDbBigDecimalConverterTest extends AbstractMongoDbTest {
 
     @Test
     public void testBigDecimalAutoConversion() {
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         NumberClass testClass = new NumberClass();
         Object result = template.requestBody("direct:insert", testClass);
         assertTrue(result instanceof Document);
         Document b = testCollection.find(new BasicDBObject("_id", testClass._id)).first();
-        assertNotNull("No record with 'testInsertString' _id", b);
+        assertNotNull(b, "No record with 'testInsertString' _id");
 
         assertTrue(testClass.aNumber.equals(new BigDecimal((double) b.get("aNumber"))));
         assertEquals(testClass.bNumber, new BigDecimal((double) b.get("bNumber")));

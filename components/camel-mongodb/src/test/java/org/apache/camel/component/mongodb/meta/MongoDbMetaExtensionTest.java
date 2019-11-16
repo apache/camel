@@ -27,17 +27,17 @@ import org.apache.camel.component.extension.MetaDataExtension;
 import org.apache.camel.component.mongodb.AbstractMongoDbTest;
 import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.bson.Document;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbMetaExtensionTest.class);
-
     // We simulate the presence of an authenticated user
-    @Before
+    @BeforeEach
     public void createAuthorizationUser() {
         super.createAuthorizationUser();
     }
@@ -103,7 +103,7 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         assertNotNull(result.getPayload(JsonNode.class).get("type"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testMissingCollection() throws Exception {
         // When
         final String database = "test";
@@ -118,20 +118,26 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         parameters.put("password", PASSWORD);
 
         // Then
-        MetaDataExtension.MetaData result = component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
+        assertThrows(IllegalArgumentException.class, () -> {
+
+            component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testMissingParameters() throws Exception {
         // When
         MongoDbComponent component = this.getComponent();
         // Given
         Map<String, Object> parameters = new HashMap<>();
+
         // Then
-        MetaDataExtension.MetaData result = component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
+        });
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testNotValidatedCollection() throws Exception {
         // When
         final String database = "test";
@@ -147,7 +153,9 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         parameters.put("password", PASSWORD);
 
         // Then
-        MetaDataExtension.MetaData result = component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(UnsupportedOperationException::new);
+        assertThrows(UnsupportedOperationException.class, () -> {
+            component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(UnsupportedOperationException::new);
+        });
     }
 
 }

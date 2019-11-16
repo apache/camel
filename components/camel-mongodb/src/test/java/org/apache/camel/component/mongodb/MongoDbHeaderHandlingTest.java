@@ -21,17 +21,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
 
     @Test
     public void testInHeadersTransferredToOutOnCount() {
         // a read operation
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         Exchange result = template.request("direct:count", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -39,9 +43,9 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
                 exchange.getIn().setHeader("abc", "def");
             }
         });
-        assertTrue("Result is not of type Long", result.getOut().getBody() instanceof Long);
-        assertEquals("Test collection should not contain any records", 0L, result.getOut().getBody());
-        assertEquals("An input header was not returned", "def", result.getOut().getHeader("abc"));
+        assertTrue(result.getMessage().getBody() instanceof Long, "Result is not of type Long");
+        assertEquals(0L, result.getMessage().getBody(), "Test collection should not contain any records");
+        assertEquals("def", result.getMessage().getHeader("abc"), "An input header was not returned");
     }
 
     @Test
@@ -56,25 +60,25 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
 
         // TODO: WriteResult isn't return when inserting
         // assertTrue(result.getOut().getBody() instanceof WriteResult);
-        assertEquals("An input header was not returned", "def", result.getOut().getHeader("abc"));
+        assertEquals("def", result.getMessage().getHeader("abc"), "An input header was not returned");
         Document b = testCollection.find(eq(MONGO_ID, "testInsertString")).first();
-        assertNotNull("No record with 'testInsertString' _id", b);
+        assertNotNull(b, "No record with 'testInsertString' _id");
     }
 
     @Test
     public void testWriteResultAsHeaderWithWriteOp() {
         // Prepare test
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         Object[] req = new Object[] {new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
                                      new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").toJson()};
         // Object result =
         template.requestBody("direct:insert", req);
         // assertTrue(result instanceof WriteResult);
-        assertEquals("Number of records persisted must be 2", 2, testCollection.count());
+        assertEquals(2, testCollection.countDocuments(), "Number of records persisted must be 2");
 
         // Testing the save logic
         final Document record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
-        assertEquals("Scientist field of 'testSave1' must equal 'Einstein'", "Einstein", record1.get("scientist"));
+        assertEquals("Einstein", record1.get("scientist"), "Scientist field of 'testSave1' must equal 'Einstein'");
         record1.put("scientist", "Darwin");
 
         // test that as a payload, we get back exactly our input, but enriched
@@ -85,12 +89,12 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
                 exchange.getIn().setBody(record1);
             }
         });
-        assertTrue(resultExch.getOut().getBody() instanceof Document);
-        assertTrue(resultExch.getOut().getBody().equals(record1));
-        assertTrue(resultExch.getOut().getHeader(MongoDbConstants.WRITERESULT) instanceof UpdateResult);
+        assertTrue(resultExch.getMessage().getBody() instanceof Document);
+        assertTrue(resultExch.getMessage().getBody().equals(record1));
+        assertTrue(resultExch.getMessage().getHeader(MongoDbConstants.WRITERESULT) instanceof UpdateResult);
 
         Document record2 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
-        assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record2.get("scientist"));
+        assertEquals("Darwin", record2.get("scientist"), "Scientist field of 'testSave1' must equal 'Darwin' after save operation");
 
     }
 
@@ -103,9 +107,9 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
                 exchange.getIn().setHeader("abc", "def");
             }
         });
-        assertTrue(resultExch.getOut().getBody() instanceof Document);
-        assertNull(resultExch.getOut().getHeader(MongoDbConstants.WRITERESULT));
-        assertEquals("def", resultExch.getOut().getHeader("abc"));
+        assertTrue(resultExch.getMessage().getBody() instanceof Document);
+        assertNull(resultExch.getMessage().getHeader(MongoDbConstants.WRITERESULT));
+        assertEquals("def", resultExch.getMessage().getHeader("abc"));
     }
 
     @Override
