@@ -19,14 +19,18 @@ package org.apache.camel.component.mongodb;
 import com.mongodb.DBObject;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
 
     @Test
     public void testInduceParseException() throws Exception {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         // notice missing quote at the end of Einstein
@@ -41,7 +45,7 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
     @Test
     public void testInduceParseAndThenOkException() throws Exception {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         // notice missing quote at the end of Einstein
@@ -61,7 +65,7 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
     @Test
     public void testErroneousDynamicOperation() throws Exception {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         try {

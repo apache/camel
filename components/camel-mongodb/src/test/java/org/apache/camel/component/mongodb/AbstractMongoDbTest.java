@@ -24,13 +24,16 @@ import com.mongodb.client.MongoDatabase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
@@ -71,7 +74,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         testCollection.drop();
         dynamicCollection.drop();
@@ -95,7 +98,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected void createAuthorizationUser() {
         MongoDatabase admin = mongo.getDatabase("admin");
         MongoCollection<Document> usersCollection = admin.getCollection("system.users");
-        if (usersCollection.count() == 0) {
+        if (usersCollection.countDocuments() == 0) {
             usersCollection.insertOne(Document.parse("{\n"
                     + "    \"_id\": \"admin.test-user\",\n"
                     + "    \"user\": \"test-user\",\n"
@@ -126,17 +129,17 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
             IOHelper.close(f);
             testCollection.insertOne(Document.parse(doc));
         }
-        assertEquals("Data pumping of 1000 entries did not complete entirely", 1000L, testCollection.count());
+        assertEquals(1000L, testCollection.countDocuments(), "Data pumping of 1000 entries did not complete entirely");
     }
 
     protected CamelMongoDbException extractAndAssertCamelMongoDbException(Object result, String message) {
-        assertTrue("Result is not an Exception", result instanceof Throwable);
-        assertTrue("Result is not an CamelExecutionException", result instanceof CamelExecutionException);
+        assertTrue(result instanceof Throwable, "Result is not an Exception");
+        assertTrue(result instanceof CamelExecutionException, "Result is not an CamelExecutionException");
         Throwable exc = ((CamelExecutionException)result).getCause();
-        assertTrue("Result is not an CamelMongoDbException", exc instanceof CamelMongoDbException);
+        assertTrue(exc instanceof CamelMongoDbException, "Result is not an CamelMongoDbException");
         CamelMongoDbException camelExc = ObjectHelper.cast(CamelMongoDbException.class, exc);
         if (message != null) {
-            assertTrue("CamelMongoDbException doesn't contain desired message string", camelExc.getMessage().contains(message));
+            assertTrue(camelExc.getMessage().contains(message), "CamelMongoDbException doesn't contain desired message string");
         }
         return camelExc;
     }

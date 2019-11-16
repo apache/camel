@@ -256,12 +256,12 @@ public class MongoDbProducer extends DefaultProducer {
     }
 
     private void copyHeaders(Exchange exchange) {
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), false);
     }
 
     private void moveBodyToOutIfResultIsReturnedAsHeader(Exchange exchange, MongoDbOperation operation) {
         if (isWriteOperation(operation) && endpoint.isWriteResultAsHeader()) {
-            exchange.getOut().setBody(exchange.getIn().getBody());
+            exchange.getMessage().setBody(exchange.getIn().getBody());
         }
     }
 
@@ -269,9 +269,9 @@ public class MongoDbProducer extends DefaultProducer {
         // determine where to set the WriteResult: as the OUT body or as an IN
         // message header
         if (isWriteOperation(operation) && endpoint.isWriteResultAsHeader()) {
-            exchange.getOut().setHeader(WRITERESULT, result);
+            exchange.getMessage().setHeader(WRITERESULT, result);
         } else {
-            exchange.getOut().setBody(result);
+            exchange.getMessage().setBody(result);
         }
     }
 
@@ -301,7 +301,7 @@ public class MongoDbProducer extends DefaultProducer {
                 }
 
                 Document ret = dbCol.find(query).projection(fieldFilter).sort(sortBy).first();
-                exchange.getOut().setHeader(RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
+                exchange.getMessage().setHeader(RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
                 return ret;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Payload is no Document", e);
@@ -339,7 +339,7 @@ public class MongoDbProducer extends DefaultProducer {
 
             try {
                 ret.iterator().forEachRemaining(((List<String>) result)::add);
-                exchange.getOut().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<String>) result).size());
+                exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<String>) result).size());
             } finally {
                 ret.iterator().close();
             }
@@ -397,7 +397,7 @@ public class MongoDbProducer extends DefaultProducer {
                 try {
                     result = new ArrayList<>();
                     ret.iterator().forEachRemaining(((List<Document>)result)::add);
-                    exchange.getOut().setHeader(RESULT_PAGE_SIZE, ((List<Document>)result).size());
+                    exchange.getMessage().setHeader(RESULT_PAGE_SIZE, ((List<Document>)result).size());
                 } finally {
                     ret.iterator().close();
                 }
@@ -479,9 +479,9 @@ public class MongoDbProducer extends DefaultProducer {
                     result = dbCol.updateMany(updateCriteria, objNew, options);
                 }
                 if (result.isModifiedCountAvailable()) {
-                    exchange.getOut().setHeader(RECORDS_AFFECTED, result.getModifiedCount());
+                    exchange.getMessage().setHeader(RECORDS_AFFECTED, result.getModifiedCount());
                 }
-                exchange.getOut().setHeader(RECORDS_MATCHED, result.getMatchedCount());
+                exchange.getMessage().setHeader(RECORDS_MATCHED, result.getMatchedCount());
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for update", e);
@@ -497,7 +497,7 @@ public class MongoDbProducer extends DefaultProducer {
 
                 DeleteResult result = dbCol.deleteMany(removeObj);
                 if (result.wasAcknowledged()) {
-                    exchange.getOut().setHeader(RECORDS_AFFECTED, result.getDeletedCount());
+                    exchange.getMessage().setHeader(RECORDS_AFFECTED, result.getDeletedCount());
                 }
                 return result;
             } catch (InvalidPayloadException e) {
@@ -540,7 +540,7 @@ public class MongoDbProducer extends DefaultProducer {
                     try {
                         result = new ArrayList<>();
                         aggregationResult.iterator().forEachRemaining(((List<Document>) result)::add);
-                        exchange.getOut().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<Document>) result).size());
+                        exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<Document>) result).size());
                     } finally {
                         aggregationResult.iterator().close();
                     }
@@ -584,7 +584,7 @@ public class MongoDbProducer extends DefaultProducer {
                     fieldFilter = new Document();
                 }
                 ret = dbCol.find(o).projection(fieldFilter).first();
-                exchange.getOut().setHeader(RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
+                exchange.getMessage().setHeader(RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
                 return ret;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for findById", e);

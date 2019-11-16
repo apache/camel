@@ -23,17 +23,16 @@ import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.mongodb.AbstractMongoDbTest;
 import org.apache.camel.component.mongodb.MongoDbComponent;
-import org.junit.Before;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbVerifierExtensionTest.class);
-
     // We simulate the presence of an authenticated user
-    @Before
+    @BeforeEach
     public void createAuthorizationUser() {
         super.createAuthorizationUser();
     }

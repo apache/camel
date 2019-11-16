@@ -19,9 +19,10 @@ package org.apache.camel.component.mongodb;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MongoDbStopEndpointTest extends AbstractMongoDbTest {
 
