@@ -37,6 +37,7 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -183,6 +184,26 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     @Override
     public void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration) {
         model.addHystrixConfiguration(id, configuration);
+    }
+
+    @Override
+    public Resilience4jConfigurationDefinition getResilience4jConfiguration(String id) {
+        return model.getResilience4jConfiguration(id);
+    }
+
+    @Override
+    public void setResilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
+        model.setResilience4jConfiguration(configuration);
+    }
+
+    @Override
+    public void setResilience4jConfigurations(List<Resilience4jConfigurationDefinition> configurations) {
+        model.setResilience4jConfigurations(configurations);
+    }
+
+    @Override
+    public void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration) {
+        model.addResilience4jConfiguration(id, configuration);
     }
 
     @Override

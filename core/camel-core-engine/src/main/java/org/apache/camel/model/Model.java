@@ -201,6 +201,39 @@ public interface Model {
     void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
 
     /**
+     * Gets the Resilience4j configuration by the given name. If no name is given the
+     * default configuration is returned, see <tt>setResilience4jConfiguration</tt>
+     *
+     * @param id id of the configuration, or <tt>null</tt> to return the default
+     *            configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been
+     *         registered
+     */
+    Resilience4jConfigurationDefinition getResilience4jConfiguration(String id);
+
+    /**
+     * Sets the default Resilience4j configuration
+     *
+     * @param configuration the configuration
+     */
+    void setResilience4jConfiguration(Resilience4jConfigurationDefinition configuration);
+
+    /**
+     * Sets the Resilience4j configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setResilience4jConfigurations(List<Resilience4jConfigurationDefinition> configurations);
+
+    /**
+     * Adds the Resilience4j configuration
+     *
+     * @param id name of the configuration
+     * @param configuration the configuration
+     */
+    void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration);
+
+    /**
      * Gets the validators that can be referenced in the routes.
      *
      * @return the validators available

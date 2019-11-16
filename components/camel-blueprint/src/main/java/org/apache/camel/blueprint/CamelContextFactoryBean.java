@@ -55,6 +55,7 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -169,6 +170,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private HystrixConfigurationDefinition defaultHystrixConfiguration;
     @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)
     private List<HystrixConfigurationDefinition> hystrixConfigurations;
+    @XmlElement(name = "defaultResilience4jConfiguration")
+    private Resilience4jConfigurationDefinition defaultResilience4jConfiguration;
+    @XmlElement(name = "resilience4jConfiguration", type = Resilience4jConfigurationDefinition.class)
+    private List<Resilience4jConfigurationDefinition> resilience4jConfigurations;
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<>();
     @XmlElement(name = "routeContextRef")
@@ -752,6 +757,24 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setHystrixConfigurations(List<HystrixConfigurationDefinition> hystrixConfigurations) {
         this.hystrixConfigurations = hystrixConfigurations;
+    }
+
+    @Override
+    public Resilience4jConfigurationDefinition getDefaultResilience4jConfiguration() {
+        return defaultResilience4jConfiguration;
+    }
+
+    public void setDefaultResilience4jConfiguration(Resilience4jConfigurationDefinition defaultResilience4jConfiguration) {
+        this.defaultResilience4jConfiguration = defaultResilience4jConfiguration;
+    }
+
+    @Override
+    public List<Resilience4jConfigurationDefinition> getResilience4jConfigurations() {
+        return resilience4jConfigurations;
+    }
+
+    public void setResilience4jConfigurations(List<Resilience4jConfigurationDefinition> resilience4jConfigurations) {
+        this.resilience4jConfigurations = resilience4jConfigurations;
     }
 
     @Override
