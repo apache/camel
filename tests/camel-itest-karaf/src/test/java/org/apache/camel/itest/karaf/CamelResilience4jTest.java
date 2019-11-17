@@ -14,9 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hystrix.processor;
+package org.apache.camel.itest.karaf;
 
-public interface HystrixConstants {
-    String DEFAULT_HYSTRIX_CONFIGURATION_ID = "hystrix-configuration";
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
+
+@RunWith(PaxExam.class)
+@Ignore("Does not work in OSGi")
+public class CamelResilience4jTest extends BaseKarafTest {
+
+    public static final String COMPONENT = extractName(CamelResilience4jTest.class);
+
+    @Test
+    public void test() throws Exception {
+        installCamelFeature(COMPONENT);
+    }
 
 }

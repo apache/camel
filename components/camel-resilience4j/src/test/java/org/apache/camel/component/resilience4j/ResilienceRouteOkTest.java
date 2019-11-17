@@ -17,6 +17,7 @@
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

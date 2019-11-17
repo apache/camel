@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.resilience4j;
 
+import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;

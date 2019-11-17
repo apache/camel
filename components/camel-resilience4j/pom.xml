@@ -48,17 +48,33 @@
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-circuitbreaker</artifactId>
-            <version>1.1.0</version>
+            <version>${resilience4j-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.vavr</groupId>
+                    <artifactId>vavr</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-bulkhead</artifactId>
-            <version>1.1.0</version>
+            <version>${resilience4j-version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-timelimiter</artifactId>
-            <version>1.1.0</version>
+            <version>${resilience4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>${vavr-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr-match</artifactId>
+            <version>${vavr-version}</version>
         </dependency>
 
         <!-- for testing -->

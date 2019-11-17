@@ -14,16 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.resilience4j;
+package org.apache.camel.itest.karaf;
 
-// TODO: Make these as generic constants so we can use it for hystrix and resilience4j
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-public interface CircuitBreakerConstants {
+@RunWith(PaxExam.class)
+public class CamelHystrixTest extends BaseKarafTest {
 
-    String RESPONSE_SUCCESSFUL_EXECUTION = "CamelCircuitBreakerSuccessfulExecution";
-    String RESPONSE_FROM_FALLBACK = "CamelCircuitBreakerResponseFromFallback";
-    String RESPONSE_SHORT_CIRCUITED = "CamelCircuitBreakerResponseShortCircuited";
-    String RESPONSE_TIMED_OUT = "CamelCircuitBreakerResponseTimedOut";
-    String RESPONSE_REJECTED = "CamelCircuitBreakerResponseRejected";
+    public static final String COMPONENT = extractName(CamelHystrixTest.class);
+
+    @Test
+    public void test() throws Exception {
+        installCamelFeature(COMPONENT);
+    }
 
 }

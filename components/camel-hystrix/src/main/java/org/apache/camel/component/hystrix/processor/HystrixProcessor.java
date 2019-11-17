@@ -30,6 +30,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
@@ -208,11 +209,11 @@ public class HystrixProcessor extends AsyncProcessorSupport implements Navigate<
     }
 
     private void commandResponse(Exchange exchange, HystrixCommand command) {
-        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, command.isSuccessfulExecution());
-        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_FROM_FALLBACK, command.isResponseFromFallback());
-        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_SHORT_CIRCUITED, command.isResponseShortCircuited());
-        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_TIMED_OUT, command.isResponseTimedOut());
-        exchange.setProperty(HystrixConstants.HYSTRIX_RESPONSE_REJECTED, command.isResponseRejected());
+        exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, command.isSuccessfulExecution());
+        exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, command.isResponseFromFallback());
+        exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, command.isResponseShortCircuited());
+        exchange.setProperty(CircuitBreakerConstants.RESPONSE_TIMED_OUT, command.isResponseTimedOut());
+        exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, command.isResponseRejected());
     }
 
     @Override

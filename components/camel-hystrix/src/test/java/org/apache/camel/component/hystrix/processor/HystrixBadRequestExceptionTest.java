@@ -19,6 +19,7 @@ package org.apache.camel.component.hystrix.processor;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -31,8 +32,8 @@ public class HystrixBadRequestExceptionTest extends CamelTestSupport {
 
         Exchange out = template.send("direct:start", e -> e.getMessage().setBody("Hello World"));
         assertTrue(out.isFailed());
-        assertFalse(out.getProperty(HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, boolean.class));
-        assertFalse(out.getProperty(HystrixConstants.HYSTRIX_RESPONSE_FROM_FALLBACK, boolean.class));
+        assertFalse(out.getProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, boolean.class));
+        assertFalse(out.getProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, boolean.class));
         assertTrue(out.getException() instanceof HystrixBadRequestException);
 
         assertMockEndpointsSatisfied();

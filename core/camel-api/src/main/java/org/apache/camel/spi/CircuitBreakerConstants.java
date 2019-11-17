@@ -14,9 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hystrix.processor;
+package org.apache.camel.spi;
 
-public interface HystrixConstants {
-    String DEFAULT_HYSTRIX_CONFIGURATION_ID = "hystrix-configuration";
+public interface CircuitBreakerConstants {
+
+    String RESPONSE_SUCCESSFUL_EXECUTION = "CamelCircuitBreakerSuccessfulExecution";
+    String RESPONSE_FROM_FALLBACK = "CamelCircuitBreakerResponseFromFallback";
+    String RESPONSE_SHORT_CIRCUITED = "CamelCircuitBreakerResponseShortCircuited";
+    String RESPONSE_TIMED_OUT = "CamelCircuitBreakerResponseTimedOut";
+    String RESPONSE_REJECTED = "CamelCircuitBreakerResponseRejected";
 
 }
