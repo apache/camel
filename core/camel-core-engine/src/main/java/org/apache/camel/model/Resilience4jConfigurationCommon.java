@@ -26,51 +26,58 @@ import org.apache.camel.spi.Metadata;
 public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
-    @Metadata(defaultValue = "Camel")
-    private String groupKey;
+    @Metadata(label = "circuitbreaker")
+    private String configRef;
     @XmlAttribute
-    @Metadata(defaultValue = "50")
+    @Metadata(label = "circuitbreaker", defaultValue = "50")
     private Float failureRateThreshold;
     @XmlAttribute
-    @Metadata(defaultValue = "10")
+    @Metadata(label = "circuitbreaker", defaultValue = "10")
     private Integer permittedNumberOfCallsInHalfOpenState;
     @XmlAttribute
-    @Metadata(defaultValue = "100")
+    @Metadata(label = "circuitbreaker", defaultValue = "100")
     private Integer slidingWindowSize;
     @XmlAttribute
-    @Metadata(defaultValue = "COUNT_BASED", enums = "TIME_BASED,COUNT_BASED")
+    @Metadata(label = "circuitbreaker", defaultValue = "COUNT_BASED", enums = "TIME_BASED,COUNT_BASED")
     private String slidingWindowType;
     @XmlAttribute
-    @Metadata(defaultValue = "100")
+    @Metadata(label = "circuitbreaker", defaultValue = "100")
     private Integer minimumNumberOfCalls;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(label = "circuitbreaker", defaultValue = "true")
     private Boolean writableStackTraceEnabled;
     @XmlAttribute
-    @Metadata(defaultValue = "60")
+    @Metadata(label = "circuitbreaker", defaultValue = "60")
     private Integer waitDurationInOpenState;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
+    @Metadata(label = "circuitbreaker", defaultValue = "false")
     private Boolean automaticTransitionFromOpenToHalfOpenEnabled;
     @XmlAttribute
-    @Metadata(defaultValue = "100")
+    @Metadata(label = "circuitbreaker", defaultValue = "100")
     private Float slowCallRateThreshold;
     @XmlAttribute
-    @Metadata(defaultValue = "60")
+    @Metadata(label = "circuitbreaker", defaultValue = "60")
     private Integer slowCallDurationThreshold;
+    @Metadata(label = "bulkhead", defaultValue = "false")
+    private Boolean bulkheadEnabled;
+    @Metadata(label = "bulkhead", defaultValue = "25")
+    private Integer bulkheadMaxConcurrentCalls;
+    @Metadata(label = "bulkhead", defaultValue = "0")
+    private Integer bulkheadMaxWaitDuration;
 
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-    public String getGroupKey() {
-        return groupKey;
+    public String getConfigRef() {
+        return configRef;
     }
 
     /**
-     * Sets the group key to use. The default value is Camel.
+     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance
+     * to lookup and use from the registry.
      */
-    public void setGroupKey(String groupKey) {
-        this.groupKey = groupKey;
+    public void setConfigRef(String configRef) {
+        this.configRef = configRef;
     }
 
     public Float getFailureRateThreshold() {
@@ -214,5 +221,42 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
      */
     public void setSlowCallDurationThreshold(Integer slowCallDurationThreshold) {
         this.slowCallDurationThreshold = slowCallDurationThreshold;
+    }
+
+    public Boolean getBulkheadEnabled() {
+        return bulkheadEnabled;
+    }
+
+    /**
+     * Whether bulkhead is enabled or not on the circuit breaker.
+     */
+    public void setBulkheadEnabled(Boolean bulkheadEnabled) {
+        this.bulkheadEnabled = bulkheadEnabled;
+    }
+
+    public Integer getBulkheadMaxConcurrentCalls() {
+        return bulkheadMaxConcurrentCalls;
+    }
+
+    /**
+     * Configures the max amount of concurrent calls the bulkhead will support.
+     */
+    public void setBulkheadMaxConcurrentCalls(Integer bulkheadMaxConcurrentCalls) {
+        this.bulkheadMaxConcurrentCalls = bulkheadMaxConcurrentCalls;
+    }
+
+    public Integer getBulkheadMaxWaitDuration() {
+        return bulkheadMaxWaitDuration;
+    }
+
+    /**
+     * Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has space available, entry
+     * is guaranteed and immediate. If bulkhead is full, calling threads will contest for space, if it becomes available. maxWaitDuration can be set to 0.
+     * <p>
+     * Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking
+     * an event-loop thread will most likely have a negative effect on application throughput.
+     */
+    public void setBulkheadMaxWaitDuration(Integer bulkheadMaxWaitDuration) {
+        this.bulkheadMaxWaitDuration = bulkheadMaxWaitDuration;
     }
 }

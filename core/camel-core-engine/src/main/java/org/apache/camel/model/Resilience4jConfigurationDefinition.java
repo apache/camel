@@ -31,8 +31,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Resilience4jConfigurationDefinition extends Resilience4jConfigurationCommon {
 
-    public static final String DEFAULT_GROUP_KEY = "Camel";
-
     @XmlTransient
     private CircuitBreakerDefinition parent;
 
@@ -47,10 +45,11 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the group key to use. The default value is Camel.
+     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance
+     * to lookup and use from the registry.
      */
-    public Resilience4jConfigurationDefinition groupKey(String groupKey) {
-        setGroupKey(groupKey);
+    public Resilience4jConfigurationDefinition configRef(String ref) {
+        setConfigRef(ref);
         return this;
     }
 
@@ -164,6 +163,34 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      */
     public Resilience4jConfigurationDefinition slowCallDurationThreshold(Integer slowCallDurationThreshold) {
         setSlowCallDurationThreshold(slowCallDurationThreshold);
+        return this;
+    }
+
+    /**
+     * Whether bulkhead is enabled or not on the circuit breaker.
+     */
+    public Resilience4jConfigurationDefinition bulkheadEnabled(Boolean bulkheadEnabled) {
+        setBulkheadEnabled(bulkheadEnabled);
+        return this;
+    }
+
+    /**
+     * Configures the max amount of concurrent calls the bulkhead will support.
+     */
+    public Resilience4jConfigurationDefinition bulkheadMaxConcurrentCalls(Integer bulkheadMaxConcurrentCalls) {
+        setBulkheadMaxWaitDuration(bulkheadMaxConcurrentCalls);
+        return this;
+    }
+
+    /**
+     * Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has space available, entry
+     * is guaranteed and immediate. If bulkhead is full, calling threads will contest for space, if it becomes available. maxWaitDuration can be set to 0.
+     * <p>
+     * Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking
+     * an event-loop thread will most likely have a negative effect on application throughput.
+     */
+    public Resilience4jConfigurationDefinition bulkheadMaxWaitDuration(Integer bulkheadMaxWaitDuration) {
+        setBulkheadMaxWaitDuration(bulkheadMaxWaitDuration);
         return this;
     }
 

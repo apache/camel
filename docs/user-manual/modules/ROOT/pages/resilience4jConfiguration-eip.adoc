@@ -1,0 +1,7 @@
+[[resilience4jConfiguration-eip]]
+= Resilience4j Configuration EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/resilience4jConfiguration-eip.adoc
+
+
+// eip options: START
+// eip options: END

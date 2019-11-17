@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.vavr.control.Try;
@@ -29,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -45,16 +48,17 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
     private String id;
-    private CircuitBreakerConfig config;
+    private CircuitBreakerConfig circuitBreakerConfig;
+    private BulkheadConfig bulkheadConfig;
     private final Processor processor;
     private final Processor fallback;
-    private final boolean fallbackViaNetwork;
 
-    public ResilienceProcessor(CircuitBreakerConfig config, Processor processor, Processor fallback, boolean fallbackViaNetwork) {
-        this.config = config;
+    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
+                               Processor processor, Processor fallback) {
+        this.circuitBreakerConfig = circuitBreakerConfig;
+        this.bulkheadConfig = bulkheadConfig;
         this.processor = processor;
         this.fallback = fallback;
-        this.fallbackViaNetwork = fallbackViaNetwork;
     }
 
     @Override
@@ -70,6 +74,56 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
     @Override
     public String getTraceLabel() {
         return "resilience4j";
+    }
+
+    @ManagedAttribute
+    public float getCircuitBreakerFailureRateThreshold() {
+        return circuitBreakerConfig.getFailureRateThreshold();
+    }
+
+    @ManagedAttribute
+    public float getCircuitBreakerSlowCallRateThreshold() {
+        return circuitBreakerConfig.getSlowCallRateThreshold();
+    }
+
+    @ManagedAttribute
+    public int getCircuitBreakerMinimumNumberOfCalls() {
+        return circuitBreakerConfig.getMinimumNumberOfCalls();
+    }
+
+    @ManagedAttribute
+    public int getCircuitBreakerPermittedNumberOfCallsInHalfOpenState() {
+        return circuitBreakerConfig.getPermittedNumberOfCallsInHalfOpenState();
+    }
+
+    @ManagedAttribute
+    public int getCircuitBreakerSlidingWindowSize() {
+        return circuitBreakerConfig.getSlidingWindowSize();
+    }
+
+    @ManagedAttribute
+    public String getCircuitBreakerSlidingWindowType() {
+        return circuitBreakerConfig.getSlidingWindowType().name();
+    }
+
+    @ManagedAttribute
+    public long getCircuitBreakerWaitDurationInOpenState() {
+        return circuitBreakerConfig.getWaitDurationInOpenState().getSeconds();
+    }
+
+    @ManagedAttribute
+    public boolean isCircuitBreakerTransitionFromOpenToHalfOpenEnabled() {
+        return circuitBreakerConfig.isAutomaticTransitionFromOpenToHalfOpenEnabled();
+    }
+
+    @ManagedAttribute
+    public boolean isCircuitBreakerWritableStackTraceEnabled() {
+        return circuitBreakerConfig.isWritableStackTraceEnabled();
+    }
+
+    @ManagedAttribute
+    public boolean isBulkheadEnabled() {
+        return bulkheadConfig != null;
     }
 
     @Override
@@ -99,19 +153,23 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
 //        Callable<String> callable = TimeLimiter.decorateFutureSupplier(TimeLimiter.of(Duration.ofMillis(500)), futureSupplier);
 //        String result = CircuitBreaker.decorateCheckedSupplier(cb, callable::call).apply();
 
-//        Bulkhead bh = Bulkhead.ofDefaults("ddd");
-//        BulkheadConfig.
-
 //                TimeLimiter time = TimeLimiter.of(Duration.ofSeconds(1));
 //        Supplier<Future<Exchange>> task2 = time.decorateFutureSupplier(() -> {
 //            task.get();
 //            Future
 //        });
 
-        CircuitBreaker cb = CircuitBreaker.of(id, config);
+        CircuitBreaker cb = CircuitBreaker.of(id, circuitBreakerConfig);
+
         Supplier<Exchange> task = CircuitBreaker.decorateSupplier(cb, new CircuitBreakerTask(processor, exchange));
+        Function<Throwable, Exchange> fallbackTask = new CircuitBreakerFallbackTask(fallback, exchange);
+        if (bulkheadConfig != null) {
+            Bulkhead bh = Bulkhead.of(id, bulkheadConfig);
+            task = Bulkhead.decorateSupplier(bh, task);
+        }
+
         Try.ofSupplier(task)
-                .recover(new CircuitBreakerFallbackTask(fallback, exchange))
+                .recover(fallbackTask)
                 .andFinally(() -> callback.done(false)).get();
 
         return false;

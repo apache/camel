@@ -18,21 +18,25 @@ package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
-public class HystrixRouteFallbackViaNetworkTest extends CamelTestSupport {
+public class ResilienceRouteFallbackViaNetworkTest extends CamelTestSupport {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Test
-    public void testHystrix() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
+    public void testResilience() throws Exception {
+        try {
+            context.addRoutes(createRouteBuilder());
+            context.start();
+            fail("Should throw exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(UnsupportedOperationException.class, e.getCause());
+            assertEquals("camel-resilience4j does not support onFallbackViaNetwork", e.getCause().getMessage());
+        }
     }
 
     @Override

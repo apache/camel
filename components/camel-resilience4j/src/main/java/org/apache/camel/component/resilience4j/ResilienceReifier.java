@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 
 import org.apache.camel.CamelContext;
@@ -41,8 +42,9 @@ import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
+    // TODO: metrics with state of CB
+    // TODO: expose metrics as JMX on processor
     // TODO: Timeout
-    // TODO: Bulkhead for viaNetwork
 
     public ResilienceReifier(CircuitBreakerDefinition definition) {
         super(definition);
@@ -56,14 +58,18 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (definition.getOnFallback() != null) {
             fallback = ProcessorReifier.reifier(definition.getOnFallback()).createProcessor(routeContext);
         }
-
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && definition.getOnFallback().isFallbackViaNetwork();
+        if (fallbackViaNetwork) {
+            throw new UnsupportedOperationException("camel-resilience4j does not support onFallbackViaNetwork");
+        }
         final Resilience4jConfigurationCommon config = buildResilience4jConfiguration(routeContext.getCamelContext());
-        CircuitBreakerConfig cfg = configureResilience4j(config);
+        CircuitBreakerConfig cbConfig = configureCircuitBreaker(config);
+        BulkheadConfig bhConfig = configureBulkHead(config);
 
-        return new ResilienceProcessor(cfg, processor, fallback, false);
+        return new ResilienceProcessor(cbConfig, bhConfig, processor, fallback);
     }
 
-    private CircuitBreakerConfig configureResilience4j(Resilience4jConfigurationCommon config) {
+    private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) {
         CircuitBreakerConfig.Builder builder = CircuitBreakerConfig.custom();
         if (config.getAutomaticTransitionFromOpenToHalfOpenEnabled() != null) {
             builder.automaticTransitionFromOpenToHalfOpenEnabled(config.getAutomaticTransitionFromOpenToHalfOpenEnabled());
@@ -94,6 +100,21 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         }
         if (config.getWritableStackTraceEnabled() != null) {
             builder.writableStackTraceEnabled(config.getWritableStackTraceEnabled());
+        }
+        return builder.build();
+    }
+
+    private BulkheadConfig configureBulkHead(Resilience4jConfigurationCommon config) {
+        if (config.getBulkheadEnabled() == null || !config.getBulkheadEnabled()) {
+            return null;
+        }
+
+        BulkheadConfig.Builder builder = BulkheadConfig.custom();
+        if (config.getBulkheadMaxConcurrentCalls() != null) {
+            builder.maxConcurrentCalls(config.getBulkheadMaxConcurrentCalls());
+        }
+        if (config.getBulkheadMaxWaitDuration() != null) {
+            builder.maxWaitDuration(Duration.ofSeconds(config.getBulkheadMaxConcurrentCalls()));
         }
         return builder.build();
     }
