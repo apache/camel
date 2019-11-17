@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main;
 
+import java.util.concurrent.ForkJoinPool;
+
 /**
  * Global configuration for Resilience EIP circuit breaker.
  */
@@ -38,6 +40,7 @@ public class Resilience4jConfigurationProperties {
     private Integer bulkheadMaxConcurrentCalls;
     private Integer bulkheadMaxWaitDuration;
     private Boolean timeoutEnabled;
+    private String timeoutExecutorServiceRef;
     private Integer timeoutDuration;
     private Boolean timeoutCancelRunningFuture;
 
@@ -256,6 +259,17 @@ public class Resilience4jConfigurationProperties {
         this.timeoutEnabled = timeoutEnabled;
     }
 
+    public String getTimeoutExecutorServiceRef() {
+        return timeoutExecutorServiceRef;
+    }
+
+    /**
+     * References to a custom thread pool to use when timeout is enabled (uses {@link ForkJoinPool#commonPool()} by default)
+     */
+    public void setTimeoutExecutorServiceRef(String timeoutExecutorServiceRef) {
+        this.timeoutExecutorServiceRef = timeoutExecutorServiceRef;
+    }
+
     public Integer getTimeoutDuration() {
         return timeoutDuration;
     }
@@ -433,6 +447,14 @@ public class Resilience4jConfigurationProperties {
      */
     public Resilience4jConfigurationProperties withTimeoutEnabled(Boolean timeoutEnabled) {
         this.timeoutEnabled = timeoutEnabled;
+        return this;
+    }
+
+    /**
+     * References to a custom thread pool to use when timeout is enabled (uses {@link ForkJoinPool#commonPool()} by default)
+     */
+    public Resilience4jConfigurationProperties withTimeoutExecutorServiceRef(String timeoutExecutorServiceRef) {
+        this.timeoutExecutorServiceRef = timeoutExecutorServiceRef;
         return this;
     }
 

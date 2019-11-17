@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 
 import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -30,6 +31,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
@@ -43,8 +45,6 @@ import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    // TODO: thread pool bulkhead
-    // TODO: Configure timeout thread-pool globally
     // TODO: spring-boot allow to configure via resilience4j-spring-boot
     // TODO: example
     // TODO: camel-main - configure hystrix/resilience/rest via java code fluent builder (does it work)
@@ -70,7 +70,9 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         BulkheadConfig bhConfig = configureBulkHead(config);
         TimeLimiterConfig tlConfig = configureTimeLimiter(config);
 
-        return new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
+        ResilienceProcessor answer = new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
+        configureTimeoutExecutorService(answer, routeContext, config);
+        return answer;
     }
 
     private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) {
@@ -136,6 +138,24 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             builder.cancelRunningFuture(config.getTimeoutCancelRunningFuture());
         }
         return builder.build();
+    }
+
+    private void configureTimeoutExecutorService(ResilienceProcessor processor, RouteContext routeContext, Resilience4jConfigurationCommon config) {
+        if (config.getTimeoutEnabled() == null || !config.getTimeoutEnabled()) {
+            return;
+        }
+
+        if (config.getTimeoutExecutorServiceRef() != null) {
+            String ref = config.getTimeoutExecutorServiceRef();
+            boolean shutdownThreadPool = false;
+            ExecutorService executorService = routeContext.lookup(ref, ExecutorService.class);
+            if (executorService == null) {
+                executorService = ProcessorDefinitionHelper.lookupExecutorServiceRef(routeContext, "CircuitBreaker", definition, ref);
+                shutdownThreadPool = true;
+            }
+            processor.setExecutorService(executorService);
+            processor.setShutdownExecutorService(shutdownThreadPool);
+        }
     }
 
     // *******************************

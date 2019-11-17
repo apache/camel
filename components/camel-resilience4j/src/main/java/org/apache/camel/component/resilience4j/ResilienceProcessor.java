@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +34,8 @@ import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.vavr.control.Try;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -42,6 +46,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,17 +54,20 @@ import org.slf4j.LoggerFactory;
  * Implementation of Circuit Breaker EIP using resilience4j.
  */
 @ManagedResource(description = "Managed Resilience Processor")
-public class ResilienceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+public class ResilienceProcessor extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
     private volatile CircuitBreaker circuitBreaker;
+    private CamelContext camelContext;
     private String id;
-    private CircuitBreakerConfig circuitBreakerConfig;
-    private BulkheadConfig bulkheadConfig;
-    private TimeLimiterConfig timeLimiterConfig;
+    private final CircuitBreakerConfig circuitBreakerConfig;
+    private final BulkheadConfig bulkheadConfig;
+    private final TimeLimiterConfig timeLimiterConfig;
     private final Processor processor;
     private final Processor fallback;
+    private boolean shutdownExecutorService;
+    private ExecutorService executorService;
 
     public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig, TimeLimiterConfig timeLimiterConfig,
                                Processor processor, Processor fallback) {
@@ -71,6 +79,16 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
     }
 
     @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public String getId() {
         return id;
     }
@@ -78,6 +96,22 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isShutdownExecutorService() {
+        return shutdownExecutorService;
+    }
+
+    public void setShutdownExecutorService(boolean shutdownExecutorService) {
+        this.shutdownExecutorService = shutdownExecutorService;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     @Override
@@ -314,18 +348,17 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
             Bulkhead bh = Bulkhead.of(id, bulkheadConfig);
             task = Bulkhead.decorateCallable(bh, task);
         }
-        // timeout handling is more complex with thread-pools
-        // TODO: Allow to plugin custom thread-pool instead of JDKs
+
         if (timeLimiterConfig != null) {
-            final Callable<Exchange> future = task;
-            Supplier<CompletableFuture<Exchange>> futureSupplier = () -> CompletableFuture.supplyAsync(() -> {
-                try {
-                    return future.call();
-                } catch (Exception e) {
-                    exchange.setException(e);
-                }
-                return exchange;
-            });
+            // timeout handling is more complex with thread-pools
+            final CircuitBreakerTimeoutTask timeoutTask = new CircuitBreakerTimeoutTask(task, exchange);
+            Supplier<CompletableFuture<Exchange>> futureSupplier;
+            if (executorService == null) {
+                futureSupplier = () -> CompletableFuture.supplyAsync(timeoutTask::get);
+            } else {
+                futureSupplier = () -> CompletableFuture.supplyAsync(timeoutTask::get, executorService);
+            }
+
             TimeLimiter tl = TimeLimiter.of(id, timeLimiterConfig);
             task = TimeLimiter.decorateFutureSupplier(tl, futureSupplier);
         }
@@ -339,12 +372,15 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
         circuitBreaker = CircuitBreaker.of(id, circuitBreakerConfig);
     }
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        if (shutdownExecutorService && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        }
     }
 
     private static class CircuitBreakerTask implements Callable<Exchange> {
@@ -437,6 +473,27 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
             exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
+            return exchange;
+        }
+    }
+
+    private static class CircuitBreakerTimeoutTask implements Supplier<Exchange>  {
+
+        private final Callable<Exchange> future;
+        private final Exchange exchange;
+
+        private CircuitBreakerTimeoutTask(Callable<Exchange> future, Exchange exchange) {
+            this.future = future;
+            this.exchange = exchange;
+        }
+
+        @Override
+        public Exchange get() {
+            try {
+                return future.call();
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
             return exchange;
         }
     }

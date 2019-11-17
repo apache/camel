@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.ForkJoinPool;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -66,6 +67,8 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     private Integer bulkheadMaxWaitDuration;
     @Metadata(label = "timeout", defaultValue = "false")
     private Boolean timeoutEnabled;
+    @Metadata(label = "timeout")
+    private String timeoutExecutorServiceRef;
     @Metadata(label = "timeout", defaultValue = "1000")
     private Integer timeoutDuration;
     @Metadata(label = "timeout", defaultValue = "true")
@@ -277,6 +280,17 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
      */
     public void setTimeoutEnabled(Boolean timeoutEnabled) {
         this.timeoutEnabled = timeoutEnabled;
+    }
+
+    public String getTimeoutExecutorServiceRef() {
+        return timeoutExecutorServiceRef;
+    }
+
+    /**
+     * References to a custom thread pool to use when timeout is enabled (uses {@link ForkJoinPool#commonPool()} by default)
+     */
+    public void setTimeoutExecutorServiceRef(String timeoutExecutorServiceRef) {
+        this.timeoutExecutorServiceRef = timeoutExecutorServiceRef;
     }
 
     public Integer getTimeoutDuration() {

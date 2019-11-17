@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.ForkJoinPool;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -201,6 +202,14 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      */
     public Resilience4jConfigurationDefinition timeoutEnabled(Boolean timeoutEnabled) {
         setTimeoutEnabled(timeoutEnabled);
+        return this;
+    }
+
+    /**
+     * References to a custom thread pool to use when timeout is enabled (uses {@link ForkJoinPool#commonPool()} by default)
+     */
+    public Resilience4jConfigurationDefinition timeoutExecutorServiceRef(String executorServiceRef) {
+        setTimeoutExecutorServiceRef(executorServiceRef);
         return this;
     }
 
