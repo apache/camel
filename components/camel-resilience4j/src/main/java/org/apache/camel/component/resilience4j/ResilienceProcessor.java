@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadConfig;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiter;
@@ -231,7 +232,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
     }
 
     @ManagedOperation(description = "Transitions the state machine to a FORCED_OPEN state, stopping state transition, metrics and event publishing.")
-    public void transitionToForceOpenState() {
+    public void transitionToForcedOpenState() {
         if (circuitBreaker != null) {
             circuitBreaker.transitionToForcedOpenState();
         }
@@ -438,8 +439,16 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
                     // the circuit breaker triggered a timeout (and there is no fallback) so lets mark the exchange as failed
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_TIMED_OUT, true);
                     exchange.setException(throwable);
+                    return exchange;
+                } else if (throwable instanceof CallNotPermittedException) {
+                    // the circuit breaker triggered a call rejected
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_REJECTED, true);
                     return exchange;
                 } else {
                     // throw exception so resilient4j know it was a failure
@@ -447,7 +456,10 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
                 }
             }
 
-            // fallback route is handling the exception
+            // fallback route is handling the exception so its short-circuited
+            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+            exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
+            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, true);
 
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
@@ -469,9 +481,6 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
             } catch (Exception e) {
                 exchange.setException(e);
             }
-
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-            exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
             return exchange;
         }
