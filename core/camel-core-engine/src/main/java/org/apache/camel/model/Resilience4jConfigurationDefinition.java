@@ -168,6 +168,7 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
 
     /**
      * Whether bulkhead is enabled or not on the circuit breaker.
+     * Default is false.
      */
     public Resilience4jConfigurationDefinition bulkheadEnabled(Boolean bulkheadEnabled) {
         setBulkheadEnabled(bulkheadEnabled);
@@ -191,6 +192,33 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
      */
     public Resilience4jConfigurationDefinition bulkheadMaxWaitDuration(Integer bulkheadMaxWaitDuration) {
         setBulkheadMaxWaitDuration(bulkheadMaxWaitDuration);
+        return this;
+    }
+
+    /**
+     * Whether timeout is enabled or not on the circuit breaker.
+     * Default is false.
+     */
+    public Resilience4jConfigurationDefinition timeoutEnabled(Boolean timeoutEnabled) {
+        setTimeoutEnabled(timeoutEnabled);
+        return this;
+    }
+
+    /**
+     * Configures the thread execution timeout (millis).
+     * Default value is 1000 millis (1 second).
+     */
+    public Resilience4jConfigurationDefinition timeoutDuration(Integer timeoutDuration) {
+        setTimeoutDuration(timeoutDuration);
+        return this;
+    }
+
+    /**
+     * Configures whether cancel is called on the running future.
+     * Defaults to true.
+     */
+    public Resilience4jConfigurationDefinition timeoutCancelRunningFuture(Boolean timeoutCancelRunningFuture) {
+        setTimeoutCancelRunningFuture(timeoutCancelRunningFuture);
         return this;
     }
 

@@ -21,14 +21,12 @@ import java.util.concurrent.TimeoutException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Hystrix using timeout with Java DSL
+ * Resilience using timeout with Java DSL
  */
-@Ignore
-public class HystrixTimeoutTest extends CamelTestSupport {
+public class ResilienceTimeoutTest extends CamelTestSupport {
 
     @Test
     public void testFast() throws Exception {
@@ -45,7 +43,7 @@ public class HystrixTimeoutTest extends CamelTestSupport {
             fail("Should fail due to timeout");
         } catch (Exception e) {
             // expected a timeout
-            assertIsInstanceOf(TimeoutException.class, e.getCause().getCause());
+            assertIsInstanceOf(TimeoutException.class, e.getCause());
         }
     }
 
@@ -59,7 +57,7 @@ public class HystrixTimeoutTest extends CamelTestSupport {
                 fail("Should fail due to timeout");
             } catch (Exception e) {
                 // expected a timeout
-                assertIsInstanceOf(TimeoutException.class, e.getCause().getCause());
+                assertIsInstanceOf(TimeoutException.class, e.getCause());
             }
         }
     }
@@ -71,13 +69,13 @@ public class HystrixTimeoutTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .circuitBreaker()
-                        // use 2 second timeout
-                        .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
-                        .log("Hystrix processing start: ${threadName}")
+                        // enable and use 2 second timeout
+                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .log("Resilience processing start: ${threadName}")
                         .toD("direct:${body}")
-                        .log("Hystrix processing end: ${threadName}")
+                        .log("Resilience processing end: ${threadName}")
                     .end()
-                    .log("After Hystrix ${body}");
+                    .log("After Resilience ${body}");
 
                 from("direct:fast")
                     // this is a fast route and takes 1 second to respond

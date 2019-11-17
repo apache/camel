@@ -24,6 +24,7 @@ import java.util.Optional;
 import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 
+import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
@@ -44,7 +45,6 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
     // TODO: metrics with state of CB
     // TODO: expose metrics as JMX on processor
-    // TODO: Timeout
     // TODO: thread pool bulkhead
     // TODO: spring-boot allow to configure via resilience4j-spring-boot
     // TODO: example
@@ -69,8 +69,9 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         final Resilience4jConfigurationCommon config = buildResilience4jConfiguration(routeContext.getCamelContext());
         CircuitBreakerConfig cbConfig = configureCircuitBreaker(config);
         BulkheadConfig bhConfig = configureBulkHead(config);
+        TimeLimiterConfig tlConfig = configureTimeLimiter(config);
 
-        return new ResilienceProcessor(cbConfig, bhConfig, processor, fallback);
+        return new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
     }
 
     private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) {
@@ -119,6 +120,21 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         }
         if (config.getBulkheadMaxWaitDuration() != null) {
             builder.maxWaitDuration(Duration.ofSeconds(config.getBulkheadMaxConcurrentCalls()));
+        }
+        return builder.build();
+    }
+
+    private TimeLimiterConfig configureTimeLimiter(Resilience4jConfigurationCommon config) {
+        if (config.getTimeoutEnabled() == null || !config.getTimeoutEnabled()) {
+            return null;
+        }
+
+        TimeLimiterConfig.Builder builder = TimeLimiterConfig.custom();
+        if (config.getTimeoutDuration() != null) {
+            builder.timeoutDuration(Duration.ofMillis(config.getTimeoutDuration()));
+        }
+        if (config.getTimeoutCancelRunningFuture() != null) {
+            builder.cancelRunningFuture(config.getTimeoutCancelRunningFuture());
         }
         return builder.build();
     }

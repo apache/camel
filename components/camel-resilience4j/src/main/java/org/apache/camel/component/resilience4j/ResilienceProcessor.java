@@ -18,6 +18,9 @@ package org.apache.camel.component.resilience4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -25,6 +28,8 @@ import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.timelimiter.TimeLimiter;
+import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.vavr.control.Try;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -50,13 +55,15 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
     private String id;
     private CircuitBreakerConfig circuitBreakerConfig;
     private BulkheadConfig bulkheadConfig;
+    private TimeLimiterConfig timeLimiterConfig;
     private final Processor processor;
     private final Processor fallback;
 
-    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
+    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig, TimeLimiterConfig timeLimiterConfig,
                                Processor processor, Processor fallback) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;
+        this.timeLimiterConfig = timeLimiterConfig;
         this.processor = processor;
         this.fallback = fallback;
     }
@@ -149,26 +156,31 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
         // run this as if we run inside try .. catch so there is no regular Camel error handler
         exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
 
-//        Supplier<CompletableFuture<String>> futureSupplier = () -> CompletableFuture.supplyAsync(() -> "Hello");
-//        Callable<String> callable = TimeLimiter.decorateFutureSupplier(TimeLimiter.of(Duration.ofMillis(500)), futureSupplier);
-//        String result = CircuitBreaker.decorateCheckedSupplier(cb, callable::call).apply();
-
-//                TimeLimiter time = TimeLimiter.of(Duration.ofSeconds(1));
-//        Supplier<Future<Exchange>> task2 = time.decorateFutureSupplier(() -> {
-//            task.get();
-//            Future
-//        });
-
         CircuitBreaker cb = CircuitBreaker.of(id, circuitBreakerConfig);
 
-        Supplier<Exchange> task = CircuitBreaker.decorateSupplier(cb, new CircuitBreakerTask(processor, exchange));
+        Callable<Exchange> task = CircuitBreaker.decorateCallable(cb, new CircuitBreakerTask(processor, exchange));
         Function<Throwable, Exchange> fallbackTask = new CircuitBreakerFallbackTask(fallback, exchange);
         if (bulkheadConfig != null) {
             Bulkhead bh = Bulkhead.of(id, bulkheadConfig);
-            task = Bulkhead.decorateSupplier(bh, task);
+            task = Bulkhead.decorateCallable(bh, task);
+        }
+        // timeout handling is more complex with thread-pools
+        // TODO: Allow to plugin custom thread-pool instead of JDKs
+        if (timeLimiterConfig != null) {
+            final Callable<Exchange> future = task;
+            Supplier<CompletableFuture<Exchange>> futureSupplier = () -> CompletableFuture.supplyAsync(() -> {
+                try {
+                    return future.call();
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+                return exchange;
+            });
+            TimeLimiter tl = TimeLimiter.of(id, timeLimiterConfig);
+            task = TimeLimiter.decorateFutureSupplier(tl, futureSupplier);
         }
 
-        Try.ofSupplier(task)
+        Try.ofCallable(task)
                 .recover(fallbackTask)
                 .andFinally(() -> callback.done(false)).get();
 
@@ -185,7 +197,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
         // noop
     }
 
-    private static class CircuitBreakerTask implements Supplier<Exchange> {
+    private static class CircuitBreakerTask implements Callable<Exchange> {
 
         private final Processor processor;
         private final Exchange exchange;
@@ -196,7 +208,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
         }
 
         @Override
-        public Exchange get() {
+        public Exchange call() throws Exception {
             try {
                 LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
                 // prepare a copy of exchange so downstream processors don't cause side-effects if they mutate the exchange
@@ -235,31 +247,45 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements Naviga
 
         @Override
         public Exchange apply(Throwable throwable) {
-            if (processor != null) {
-                // store the last to endpoint as the failure endpoint
-                if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
-                    exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            if (processor == null) {
+                if (throwable instanceof TimeoutException) {
+                    // the circuit breaker triggered a timeout (and there is no fallback) so lets mark the exchange as failed
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+                    exchange.setProperty(CircuitBreakerConstants.RESPONSE_TIMED_OUT, true);
+                    exchange.setException(throwable);
+                    return exchange;
+                } else {
+                    // throw exception so resilient4j know it was a failure
+                    throw RuntimeExchangeException.wrapRuntimeException(throwable);
                 }
-                // give the rest of the pipeline another chance
-                exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
-                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
-                exchange.removeProperty(Exchange.ROUTE_STOP);
-                exchange.setException(null);
-                // and we should not be regarded as exhausted as we are in a try .. catch block
-                exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
-                // run the fallback processor
-                try {
-                    LOG.debug("Running fallback: {} with exchange: {}", processor, exchange);
-                    // process the fallback until its fully done
-                    processor.process(exchange);
-                    LOG.debug("Running fallback: {} with exchange: {} done", processor, exchange);
-                } catch (Exception e) {
-                    exchange.setException(e);
-                }
-
-                exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
-                exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
             }
+
+            // fallback route is handling the exception
+
+            // store the last to endpoint as the failure endpoint
+            if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
+                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            }
+            // give the rest of the pipeline another chance
+            exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
+            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
+            exchange.removeProperty(Exchange.ROUTE_STOP);
+            exchange.setException(null);
+            // and we should not be regarded as exhausted as we are in a try .. catch block
+            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+            // run the fallback processor
+            try {
+                LOG.debug("Running fallback: {} with exchange: {}", processor, exchange);
+                // process the fallback until its fully done
+                processor.process(exchange);
+                LOG.debug("Running fallback: {} with exchange: {} done", processor, exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+            exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
             return exchange;
         }

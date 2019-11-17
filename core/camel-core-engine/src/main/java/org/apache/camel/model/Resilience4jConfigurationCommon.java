@@ -64,6 +64,12 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     private Integer bulkheadMaxConcurrentCalls;
     @Metadata(label = "bulkhead", defaultValue = "0")
     private Integer bulkheadMaxWaitDuration;
+    @Metadata(label = "timeout", defaultValue = "false")
+    private Boolean timeoutEnabled;
+    @Metadata(label = "timeout", defaultValue = "1000")
+    private Integer timeoutDuration;
+    @Metadata(label = "timeout", defaultValue = "true")
+    private Boolean timeoutCancelRunningFuture;
 
     // Getter/Setter
     // -------------------------------------------------------------------------
@@ -229,6 +235,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     /**
      * Whether bulkhead is enabled or not on the circuit breaker.
+     * Default is false.
      */
     public void setBulkheadEnabled(Boolean bulkheadEnabled) {
         this.bulkheadEnabled = bulkheadEnabled;
@@ -258,5 +265,41 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
      */
     public void setBulkheadMaxWaitDuration(Integer bulkheadMaxWaitDuration) {
         this.bulkheadMaxWaitDuration = bulkheadMaxWaitDuration;
+    }
+
+    public Boolean getTimeoutEnabled() {
+        return timeoutEnabled;
+    }
+
+    /**
+     * Whether timeout is enabled or not on the circuit breaker.
+     * Default is false.
+     */
+    public void setTimeoutEnabled(Boolean timeoutEnabled) {
+        this.timeoutEnabled = timeoutEnabled;
+    }
+
+    public Integer getTimeoutDuration() {
+        return timeoutDuration;
+    }
+
+    /**
+     * Configures the thread execution timeout.
+     * Default value is 1 second.
+     */
+    public void setTimeoutDuration(Integer timeoutDuration) {
+        this.timeoutDuration = timeoutDuration;
+    }
+
+    public Boolean getTimeoutCancelRunningFuture() {
+        return timeoutCancelRunningFuture;
+    }
+
+    /**
+     * Configures whether cancel is called on the running future.
+     * Defaults to true.
+     */
+    public void setTimeoutCancelRunningFuture(Boolean timeoutCancelRunningFuture) {
+        this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
     }
 }

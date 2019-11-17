@@ -37,6 +37,9 @@ public class Resilience4jConfigurationProperties {
     private Boolean bulkheadEnabled;
     private Integer bulkheadMaxConcurrentCalls;
     private Integer bulkheadMaxWaitDuration;
+    private Boolean timeoutEnabled;
+    private Integer timeoutDuration;
+    private Boolean timeoutCancelRunningFuture;
 
     public Resilience4jConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -241,6 +244,42 @@ public class Resilience4jConfigurationProperties {
         this.bulkheadMaxWaitDuration = bulkheadMaxWaitDuration;
     }
 
+    public Boolean getTimeoutEnabled() {
+        return timeoutEnabled;
+    }
+
+    /**
+     * Whether timeout is enabled or not on the circuit breaker.
+     * Default is false.
+     */
+    public void setTimeoutEnabled(Boolean timeoutEnabled) {
+        this.timeoutEnabled = timeoutEnabled;
+    }
+
+    public Integer getTimeoutDuration() {
+        return timeoutDuration;
+    }
+
+    /**
+     * Configures the thread execution timeout (millis).
+     * Default value is 1000 millis (1 second).
+     */
+    public void setTimeoutDuration(Integer timeoutDuration) {
+        this.timeoutDuration = timeoutDuration;
+    }
+
+    public Boolean getTimeoutCancelRunningFuture() {
+        return timeoutCancelRunningFuture;
+    }
+
+    /**
+     * Configures whether cancel is called on the running future.
+     * Defaults to true.
+     */
+    public void setTimeoutCancelRunningFuture(Boolean timeoutCancelRunningFuture) {
+        this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
+    }
+
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance
      * to lookup and use from the registry.
@@ -387,4 +426,32 @@ public class Resilience4jConfigurationProperties {
         this.bulkheadMaxWaitDuration = bulkheadMaxWaitDuration;
         return this;
     }
+
+    /**
+     * Whether timeout is enabled or not on the circuit breaker.
+     * Default is false.
+     */
+    public Resilience4jConfigurationProperties withTimeoutEnabled(Boolean timeoutEnabled) {
+        this.timeoutEnabled = timeoutEnabled;
+        return this;
+    }
+
+    /**
+     * Configures the thread execution timeout (millis).
+     * Default value is 1000 millis (1 second).
+     */
+    public Resilience4jConfigurationProperties withTimeoutDuration(Integer timeoutDuration) {
+        this.timeoutDuration = timeoutDuration;
+        return this;
+    }
+
+    /**
+     * Configures whether cancel is called on the running future.
+     * Defaults to true.
+     */
+    public Resilience4jConfigurationProperties withTimeoutCancelRunningFuture(Boolean timeoutCancelRunningFuture) {
+        this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
+        return this;
+    }
+
 }

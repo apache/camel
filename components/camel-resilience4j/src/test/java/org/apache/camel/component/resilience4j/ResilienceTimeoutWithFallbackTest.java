@@ -19,14 +19,12 @@ package org.apache.camel.component.resilience4j;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Hystrix using timeout and fallback with Java DSL
+ * Resilience using timeout and fallback with Java DSL
  */
-@Ignore
-public class HystrixTimeoutWithFallbackTest extends CamelTestSupport {
+public class ResilienceTimeoutWithFallbackTest extends CamelTestSupport {
 
     @Test
     public void testFast() throws Exception {
@@ -49,18 +47,18 @@ public class HystrixTimeoutWithFallbackTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .circuitBreaker()
-                    // use 2 second timeout
-                    .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
-                        .log("Hystrix processing start: ${threadName}")
+                    // enable and use 2 second timeout
+                    .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .log("Resilience processing start: ${threadName}")
                         .toD("direct:${body}")
-                        .log("Hystrix processing end: ${threadName}")
+                        .log("Resilience processing end: ${threadName}")
                     .onFallback()
                         // use fallback if there was an exception or timeout
-                        .log("Hystrix fallback start: ${threadName}")
+                        .log("Resilience fallback start: ${threadName}")
                         .transform().constant("Fallback response")
-                        .log("Hystrix fallback end: ${threadName}")
+                        .log("Resilience fallback end: ${threadName}")
                     .end()
-                    .log("After Hystrix ${body}")
+                    .log("After Resilience ${body}")
                     .transform(simple("A CHANGE"))
                     .transform(simple("LAST CHANGE"))
                     .log("End ${body}");
