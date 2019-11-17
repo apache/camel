@@ -45,6 +45,9 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     // TODO: metrics with state of CB
     // TODO: expose metrics as JMX on processor
     // TODO: Timeout
+    // TODO: thread pool bulkhead
+    // TODO: spring-boot allow to configure via resilience4j-spring-boot
+    // TODO: example
 
     public ResilienceReifier(CircuitBreakerDefinition definition) {
         super(definition);

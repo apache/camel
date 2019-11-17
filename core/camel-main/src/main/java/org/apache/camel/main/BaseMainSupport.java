@@ -642,7 +642,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
 
-        // now configure context/hystrix/rest with additional properties
+        // now configure context/hystrix/resilience4j/rest with additional properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
 
         // load properties from ENV (override existing)
