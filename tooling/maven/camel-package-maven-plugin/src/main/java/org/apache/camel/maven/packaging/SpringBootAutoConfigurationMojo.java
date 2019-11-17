@@ -255,6 +255,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             createOtherModelConfigurationSource(pkg, model, "camel.hystrix", true);
         }
 
+        // Resilience4j
+        json = loadModelJson(files, "resilience4jConfiguration");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in
+            // camel-resilience4j-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.resilience4j", true);
+        }
+
         // Consul
         json = loadModelJson(files, "consulServiceDiscovery");
         if (json != null) {
