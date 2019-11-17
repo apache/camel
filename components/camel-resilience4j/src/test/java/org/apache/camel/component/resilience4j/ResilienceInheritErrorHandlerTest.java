@@ -18,14 +18,12 @@ package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
-public class HystrixInheritErrorHandlerTest extends CamelTestSupport {
+public class ResilienceInheritErrorHandlerTest extends CamelTestSupport {
 
     @Test
-    public void testHystrix() throws Exception {
+    public void testResilience() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(3 + 1);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);

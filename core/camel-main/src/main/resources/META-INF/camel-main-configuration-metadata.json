@@ -52,6 +52,12 @@
 			"defaultValue":"true"
 		},
 		{
+			"name":"camel.main.automatic-transition-from-open-to-half-open-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed."
+		},
+		{
 			"name":"camel.main.auto-startup",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -101,6 +107,30 @@
 			"type":"org.apache.camel.LoggingLevel",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets the logging level used by bean introspection, logging activity of its usage. The default is TRACE."
+		},
+		{
+			"name":"camel.main.bulkhead-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Whether bulkhead is enabled or not on the circuit breaker."
+		},
+		{
+			"name":"camel.main.bulkhead-max-concurrent-calls",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the max amount of concurrent calls the bulkhead will support."
+		},
+		{
+			"name":"camel.main.bulkhead-max-wait-duration",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has space available, entry is guaranteed and immediate. If bulkhead is full, calling threads will contest for space, if it becomes available. maxWaitDuration can be set to 0. Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application throughput."
+		},
+		{
+			"name":"camel.main.config-ref",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from the registry."
 		},
 		{
 			"name":"camel.main.consumer-template-cache-size",
@@ -156,6 +186,12 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false."
+		},
+		{
+			"name":"camel.main.failure-rate-threshold",
+			"type":"java.lang.Float",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage."
 		},
 		{
 			"name":"camel.main.file-configurations",
@@ -248,6 +284,12 @@
 			"defaultValue":"true"
 		},
 		{
+			"name":"camel.main.minimum-number-of-calls",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate. For example, if minimumNumberOfCalls is 10, then at least 10 calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the CircuitBreaker will not transition to open even if all 9 calls have failed. Default minimumNumberOfCalls is 100"
+		},
+		{
 			"name":"camel.main.name",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -258,6 +300,12 @@
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Sets package names for scanning for org.apache.camel.builder.RouteBuilder classes as candidates to be included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode."
+		},
+		{
+			"name":"camel.main.permitted-number-of-calls-in-half-open-state",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10."
 		},
 		{
 			"name":"camel.main.producer-template-cache-size",
@@ -318,6 +366,30 @@
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Timeout in seconds to graceful shutdown Camel.",
 			"defaultValue":"300"
+		},
+		{
+			"name":"camel.main.sliding-window-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. slidingWindowSize configures the size of the sliding window. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. The slidingWindowSize must be greater than 0. The minimumNumberOfCalls must be greater than 0. If the slidingWindowType is COUNT_BASED, the minimumNumberOfCalls cannot be greater than slidingWindowSize . If the slidingWindowType is TIME_BASED, you can pick whatever you want. Default slidingWindowSize is 100."
+		},
+		{
+			"name":"camel.main.sliding-window-type",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. Default slidingWindowType is COUNT_BASED."
+		},
+		{
+			"name":"camel.main.slow-call-duration-threshold",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds."
+		},
+		{
+			"name":"camel.main.slow-call-rate-threshold",
+			"type":"java.lang.Float",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is greater than slowCallDurationThreshold(Duration. When the percentage of slow calls is equal or greater the threshold, the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 100 percentage which means that all recorded calls must be slower than slowCallDurationThreshold."
 		},
 		{
 			"name":"camel.main.stream-caching-any-spool-rules",
@@ -415,6 +487,18 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"To turn on MDC logging"
+		},
+		{
+			"name":"camel.main.wait-duration-in-open-state",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open. Default value is 60 seconds."
+		},
+		{
+			"name":"camel.main.writable-stack-trace-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Enables writable stack traces. When set to false, Exception.getStackTrace returns a zero length array. This may be used to reduce log spam when the circuit breaker is open as the cause of the exceptions is already known (the circuit breaker is short-circuiting calls)."
 		},
 		{
 			"name":"camel.main.xml-rests",
