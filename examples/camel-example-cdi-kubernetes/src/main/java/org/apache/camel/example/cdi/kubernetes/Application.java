@@ -19,6 +19,7 @@ package org.apache.camel.example.cdi.kubernetes;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;

@@ -24,7 +24,6 @@ import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

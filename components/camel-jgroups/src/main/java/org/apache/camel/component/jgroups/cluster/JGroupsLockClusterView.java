@@ -32,7 +32,6 @@ import org.jgroups.blocks.locking.LockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class JGroupsLockClusterView extends AbstractCamelClusterView {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JGroupsLockClusterView.class);

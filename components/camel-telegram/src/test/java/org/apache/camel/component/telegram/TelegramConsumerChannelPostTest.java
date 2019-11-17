@@ -29,9 +29,9 @@ import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-
 
 /**
  * 
@@ -51,7 +51,7 @@ public class TelegramConsumerChannelPostTest extends TelegramTestSupport {
 
         UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
 
-        when(api.getUpdates(any(), any(), any(), any())).thenReturn(res1).thenAnswer((i) -> defaultRes);
+        when(api.getUpdates(any(), any(), any(), any())).thenReturn(res1).thenAnswer(i -> defaultRes);
     }
     
     @Test

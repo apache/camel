@@ -19,6 +19,7 @@ package org.apache.camel.component.splunk;
 import java.net.ConnectException;
 import java.net.SocketException;
 import java.util.regex.Pattern;
+
 import javax.net.ssl.SSLException;
 
 import com.splunk.Service;

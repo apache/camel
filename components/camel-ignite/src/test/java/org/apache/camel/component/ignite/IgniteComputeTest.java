@@ -25,7 +25,6 @@ import java.util.UUID;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ignite.compute.IgniteComputeComponent;
 import org.apache.camel.util.ObjectHelper;

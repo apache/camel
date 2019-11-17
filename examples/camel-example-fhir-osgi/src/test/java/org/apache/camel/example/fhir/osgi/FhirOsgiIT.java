@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import javax.inject.Inject;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.junit.Test;

@@ -17,6 +17,7 @@
 package org.apache.camel.cdi;
 
 import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 

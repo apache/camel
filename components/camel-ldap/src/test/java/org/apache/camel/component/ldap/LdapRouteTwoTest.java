@@ -18,6 +18,7 @@ package org.apache.camel.component.ldap;
 
 import java.util.Collection;
 import java.util.Hashtable;
+
 import javax.naming.directory.SearchResult;
 
 import org.apache.camel.CamelContext;

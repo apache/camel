@@ -17,7 +17,6 @@
 package org.apache.camel.example.artemis;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.main.Main;

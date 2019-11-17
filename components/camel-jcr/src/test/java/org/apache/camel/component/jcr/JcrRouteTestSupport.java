@@ -18,6 +18,7 @@ package org.apache.camel.component.jcr;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -43,8 +42,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned

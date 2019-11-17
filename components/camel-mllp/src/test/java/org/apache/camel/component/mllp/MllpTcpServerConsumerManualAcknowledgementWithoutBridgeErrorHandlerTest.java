@@ -19,7 +19,6 @@ package org.apache.camel.component.mllp;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
-
 public class MllpTcpServerConsumerManualAcknowledgementWithoutBridgeErrorHandlerTest extends TcpServerConsumerAcknowledgementTestSupport {
     @Override
     protected boolean isBridgeErrorHandler() {

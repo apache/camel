@@ -20,6 +20,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+
 import javax.net.ssl.SSLContext;
 
 import com.github.dockerjava.core.SSLConfig;

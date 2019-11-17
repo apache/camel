@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.jasypt;
 
-import static java.lang.String.format;
-
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.lang.String.format;
 import static org.apache.camel.component.jasypt.JasyptPropertiesParser.JASYPT_PREFIX_TOKEN;
 import static org.apache.camel.component.jasypt.JasyptPropertiesParser.JASYPT_SUFFIX_TOKEN;
 import static org.hamcrest.core.Is.is;

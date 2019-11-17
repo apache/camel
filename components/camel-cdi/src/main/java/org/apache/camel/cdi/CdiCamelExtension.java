@@ -23,20 +23,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Collections.newSetFromMap;
-import static java.util.function.Predicate.isEqual;
-import static java.util.stream.Collectors.collectingAndThen;
-
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.Stream.concat;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
@@ -82,6 +72,11 @@ import org.apache.camel.spi.CamelEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.newSetFromMap;
+import static java.util.function.Predicate.isEqual;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.concat;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;

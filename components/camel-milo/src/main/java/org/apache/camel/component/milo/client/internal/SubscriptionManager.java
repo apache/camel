@@ -34,8 +34,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
-
 import com.google.common.base.Strings;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -73,6 +71,7 @@ import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.apache.camel.component.milo.NodeIds.toNodeId;
 
 public class SubscriptionManager {

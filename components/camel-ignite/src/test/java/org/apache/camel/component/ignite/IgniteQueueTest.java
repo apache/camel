@@ -28,7 +28,6 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.apache.camel.component.ignite.queue.IgniteQueueComponent;
 import org.apache.camel.component.ignite.queue.IgniteQueueEndpoint;
 import org.apache.camel.component.ignite.queue.IgniteQueueOperation;

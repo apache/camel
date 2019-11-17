@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.example.reportincident;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -26,7 +27,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 /**
  * Unit test of our routes

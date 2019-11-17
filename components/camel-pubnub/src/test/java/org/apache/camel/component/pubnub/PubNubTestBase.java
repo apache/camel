@@ -22,7 +22,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.enums.PNLogVerbosity;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;

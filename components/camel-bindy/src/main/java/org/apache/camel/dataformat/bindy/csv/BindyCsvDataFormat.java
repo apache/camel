@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

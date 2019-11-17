@@ -43,7 +43,7 @@ public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("xslt:org/apache/camel/component/xslt/transform_includes_data.xsl")
+                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_includes_data.xsl")
                     .to("mock:result");
             }
         };

@@ -33,7 +33,7 @@ public class SalesforceEndpointTest {
         String[] operationNamesInAnnotation = uriPath.enums().split(",");
         Arrays.sort(operationNamesInAnnotation);
 
-        String[] operationNamesInEnum = Arrays.stream(OperationName.values()).map(OperationName::value).toArray((length) -> new String[length]);
+        String[] operationNamesInEnum = Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
         Arrays.sort(operationNamesInEnum);
 
         Assert.assertArrayEquals("All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "

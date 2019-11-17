@@ -19,6 +19,7 @@ package org.apache.camel.component.jcache;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
+
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;

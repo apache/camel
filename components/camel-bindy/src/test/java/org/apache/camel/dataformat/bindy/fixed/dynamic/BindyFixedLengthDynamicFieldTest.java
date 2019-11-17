@@ -32,7 +32,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 /**
  * This test validates the marshalling / unmarshalling of a fixed-length data field for which the length of the
  * field is defined by the value of another field in the record.

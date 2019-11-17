@@ -89,11 +89,11 @@ public class PrepareReleasePomMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        updatePomAndCommonBin(componentsDir, "camel components");
-        updatePomAndCommonBin(startersDir, "camel starters");
+        updatePomAndCommonBin(componentsDir, "org.apache.camel", "camel components");
+        updatePomAndCommonBin(startersDir, "org.apache.camel.springboot", "camel starters");
     }
 
-    protected void updatePomAndCommonBin(File dir, String token) throws MojoExecutionException, MojoFailureException {
+    protected void updatePomAndCommonBin(File dir, String groupId, String token) throws MojoExecutionException, MojoFailureException {
         SortedSet<String> artifactIds = new TreeSet<>();
 
         try {
@@ -115,7 +115,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
         StringBuilder sb = new StringBuilder();
         for (String aid : artifactIds) {
             sb.append("    <dependency>\n");
-            sb.append("      <groupId>org.apache.camel</groupId>\n");
+            sb.append("      <groupId>" + groupId + "</groupId>\n");
             sb.append("      <artifactId>" + aid + "</artifactId>\n");
             sb.append("      <version>${project.version}</version>\n");
             sb.append("    </dependency>\n");
@@ -133,7 +133,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
         // update common-bin.xml
         sb = new StringBuilder();
         for (String aid : artifactIds) {
-            sb.append("        <include>org.apache.camel:" + aid + "</include>\n");
+            sb.append("        <include>" + groupId + ":" + aid + "</include>\n");
         }
         changed = sb.toString();
         updated = updateXmlFile(commonBinXml, token, changed, "        ");

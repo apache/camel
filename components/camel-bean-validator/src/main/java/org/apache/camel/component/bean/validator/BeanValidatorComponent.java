@@ -18,7 +18,14 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.Map;
 
+import javax.validation.ConstraintValidatorFactory;
+import javax.validation.MessageInterpolator;
+import javax.validation.TraversableResolver;
+import javax.validation.ValidationProviderResolver;
+import javax.validation.ValidatorFactory;
+
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -29,15 +36,91 @@ import org.apache.camel.support.DefaultComponent;
 @Component("bean-validator")
 public class BeanValidatorComponent extends DefaultComponent {
 
+    @Metadata
+    private boolean ignoreXmlConfiguration;
+    @Metadata(label = "advanced")
+    private ValidationProviderResolver validationProviderResolver;
+    @Metadata(label = "advanced")
+    private MessageInterpolator messageInterpolator;
+    @Metadata(label = "advanced")
+    private TraversableResolver traversableResolver;
+    @Metadata(label = "advanced")
+    private ConstraintValidatorFactory constraintValidatorFactory;
+    @Metadata(label = "advanced")
+    private ValidatorFactory validatorFactory;
+
     public BeanValidatorComponent() {
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanValidatorEndpoint endpoint = new BeanValidatorEndpoint(uri, this);
+
         endpoint.setLabel(remaining);
+        endpoint.setIgnoreXmlConfiguration(ignoreXmlConfiguration);
+        endpoint.setValidationProviderResolver(validationProviderResolver);
+        endpoint.setMessageInterpolator(messageInterpolator);
+        endpoint.setTraversableResolver(traversableResolver);
+        endpoint.setConstraintValidatorFactory(constraintValidatorFactory);
+        endpoint.setValidatorFactory(validatorFactory);
+
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public boolean isIgnoreXmlConfiguration() {
+        return ignoreXmlConfiguration;
+    }
+
+    /**
+     * Whether to ignore data from the META-INF/validation.xml file.
+     */
+    public void setIgnoreXmlConfiguration(boolean ignoreXmlConfiguration) {
+        this.ignoreXmlConfiguration = ignoreXmlConfiguration;
+    }
+
+    public ValidationProviderResolver getValidationProviderResolver() {
+        return validationProviderResolver;
+    }
+
+    /**
+     * To use a a custom {@link ValidationProviderResolver}
+     */
+    public void setValidationProviderResolver(ValidationProviderResolver validationProviderResolver) {
+        this.validationProviderResolver = validationProviderResolver;
+    }
+
+    public MessageInterpolator getMessageInterpolator() {
+        return messageInterpolator;
+    }
+
+    /**
+     * To use a custom {@link MessageInterpolator}
+     */
+    public void setMessageInterpolator(MessageInterpolator messageInterpolator) {
+        this.messageInterpolator = messageInterpolator;
+    }
+
+    public TraversableResolver getTraversableResolver() {
+        return traversableResolver;
+    }
+
+    /**
+     * To use a custom {@link TraversableResolver}
+     */
+    public void setTraversableResolver(TraversableResolver traversableResolver) {
+        this.traversableResolver = traversableResolver;
+    }
+
+    public ConstraintValidatorFactory getConstraintValidatorFactory() {
+        return constraintValidatorFactory;
+    }
+
+    /**
+     * To use a custom {@link ConstraintValidatorFactory}
+     */
+    public void setConstraintValidatorFactory(ConstraintValidatorFactory constraintValidatorFactory) {
+        this.constraintValidatorFactory = constraintValidatorFactory;
     }
 
 }

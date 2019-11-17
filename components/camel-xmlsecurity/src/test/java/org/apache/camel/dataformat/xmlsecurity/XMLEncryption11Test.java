@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xmlsecurity;
+
 import java.lang.reflect.Constructor;
 import java.security.Provider;
 import java.security.Security;

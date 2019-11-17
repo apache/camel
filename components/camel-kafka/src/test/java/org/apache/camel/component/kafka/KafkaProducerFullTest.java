@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.kafka;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

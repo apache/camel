@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerTransport;
 
-
 /*
  * Thrift ThreadPoolServer implementation with executors controlled by the Camel Executor Service Manager
  */

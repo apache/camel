@@ -14,22 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier;
+package org.apache.camel.component.xslt.saxon;
 
-import org.apache.camel.Processor;
-import org.apache.camel.model.HystrixDefinition;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.RouteContext;
+import javax.xml.transform.Source;
+import javax.xml.transform.stax.StAXSource;
 
-public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
+import org.apache.camel.Exchange;
+import org.apache.camel.component.xslt.XmlSourceHandlerFactoryImpl;
 
-    public HystrixReifier(ProcessorDefinition<?> definition) {
-        super(HystrixDefinition.class.cast(definition));
-    }
+public class SaxonXmlSourceHandlerFactoryImpl extends XmlSourceHandlerFactoryImpl {
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        throw new IllegalStateException("Cannot find camel-hystrix on the classpath.");
+    protected Source getSource(Exchange exchange, Object body) {
+        // body may already be a source
+        if (body instanceof Source) {
+            return (Source) body;
+        }
+        Source source = null;
+        if (body != null) {
+            // try StAX if enabled
+            source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
+        }
+        if (source == null) {
+            source = super.getSource(exchange, body);
+        }
+        return source;
     }
-
 }

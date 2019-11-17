@@ -19,8 +19,6 @@ package org.apache.camel.websocket.jsr356;
 import java.net.URI;
 import java.util.function.BiConsumer;
 
-import static java.util.Optional.ofNullable;
-
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpointConfig;
@@ -28,6 +26,8 @@ import javax.websocket.server.ServerEndpointConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+
+import static java.util.Optional.ofNullable;
 
 public class JSR356Consumer extends DefaultConsumer {
     private final int sessionCount;

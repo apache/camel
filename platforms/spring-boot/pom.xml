@@ -28,6 +28,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>org.apache.camel.springboot</groupId>
     <artifactId>spring-boot</artifactId>
     <packaging>pom</packaging>
     <name>Camel :: Platforms :: Spring-Boot</name>

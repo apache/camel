@@ -17,7 +17,6 @@
 package org.apache.camel.component.google.mail;
 
 import com.google.api.services.gmail.model.ListMessagesResponse;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;

@@ -18,9 +18,11 @@ package org.apache.camel.component.micrometer;
 
 import java.time.Duration;
 import java.util.function.Predicate;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.ALWAYS;
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_METERS;
 

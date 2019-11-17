@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.blueprint;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
@@ -30,7 +29,6 @@ import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 
 public class MainTest {
 

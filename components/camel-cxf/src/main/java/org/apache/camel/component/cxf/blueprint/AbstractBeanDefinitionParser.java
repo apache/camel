@@ -26,8 +26,6 @@ import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
 import org.osgi.service.blueprint.reflect.BeanMetadata;
 
-
-
 public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser {
     public static String getIdOrName(Element elem) {
         String id = elem.getAttribute("id");

@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import junit.framework.TestCase;
+
 import org.junit.Test;
 
 import static org.apache.camel.util.StringHelper.camelCaseToDash;

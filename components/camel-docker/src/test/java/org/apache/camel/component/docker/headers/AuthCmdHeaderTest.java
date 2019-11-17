@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.github.dockerjava.api.command.AuthCmd;
 import com.github.dockerjava.api.model.AuthConfig;
-
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;

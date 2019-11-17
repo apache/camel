@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 
-
 /**
  * The jira component interacts with the JIRA issue tracker.
  * <p>

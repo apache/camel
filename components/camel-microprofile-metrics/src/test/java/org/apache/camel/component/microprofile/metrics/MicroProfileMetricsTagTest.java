@@ -22,6 +22,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Tag;
 import org.junit.Test;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_METRIC_TAGS;
 
 public class MicroProfileMetricsTagTest extends MicroProfileMetricsTestSupport {

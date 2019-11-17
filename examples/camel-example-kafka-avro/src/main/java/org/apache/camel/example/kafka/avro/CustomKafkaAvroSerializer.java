@@ -24,8 +24,6 @@ import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerializer;
 import io.confluent.kafka.serializers.AvroSchemaUtils;
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
-
-
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;

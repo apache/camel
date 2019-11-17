@@ -28,7 +28,6 @@ import org.w3c.dom.Node;
 
 import org.apache.cxf.staxutils.StaxUtils;
 
-
 public class SoapTargetBean {
     private static QName sayHi = new QName("http://apache.org/hello_world_soap_http/types", "sayHi");
     private static QName greetMe = new QName("http://apache.org/hello_world_soap_http/types", "greetMe");

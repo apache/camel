@@ -2,9 +2,9 @@
 = On Fallback EIP
 :page-source: core/camel-core-engine/src/main/docs/eips/onFallback-eip.adoc
 
-If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback. If you need to call an external service over the network then you should use *onFallbackViaNetwork* that runs in another independent *HystrixCommand* that uses its own thread pool to not exhaust the first command.
-Configuring Hystrix Example
-Hystrix has many options as listed in the table above. For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
+If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback.
+
+If you need to call an external service over the network then you should use *onFallbackViaNetwork* that runs in another independent *HystrixCommand* that uses its own thread pool to not exhaust the first command.
 
 == Options
 
@@ -18,10 +18,13 @@ The On Fallback EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
+Hystrix has many options as listed in xref:hystrixConfiguration-eip.adoc[Hystrix Configuration].
+For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
+
 [source,java]
 ----
 from("direct:start")
-    .hystrix()
+    .circuitBreaker()
         .hystrixConfiguration()
              .executionTimeoutInMilliseconds(5000)
              .circuitBreakerSleepWindowInMilliseconds(10000)
@@ -39,7 +42,7 @@ And in XML DSL:
 <camelContext xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
-    <hystrix>
+    <circuitBreaker>
       <hystrixConfiguration executionTimeoutInMilliseconds="5000"
                             circuitBreakerSleepWindowInMilliseconds="10000"/>
       <to uri="http://fooservice.com/slow"/>
@@ -48,7 +51,7 @@ And in XML DSL:
           <constant>Fallback message</constant>
         </transform>
       </onFallback>
-    </hystrix>
+    </circuitBreaker>
     <to uri="mock:result"/>
   </route>
 </camelContext>
@@ -67,7 +70,7 @@ You can also configure Hystrix globally and then refer to that configuration:
 
   <route>
     <from uri="direct:start"/>
-    <hystrix hystrixConfigurationRef="sharedConfig">
+    <circuitBreaker configurationRef="sharedConfig">
       <to uri="http://fooservice.com/slow"/>
       <onFallback>
         <transform>

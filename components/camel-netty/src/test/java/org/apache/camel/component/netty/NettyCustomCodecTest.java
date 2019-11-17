@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty;
 
 import io.netty.channel.ChannelHandler;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;

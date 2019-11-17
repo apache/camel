@@ -17,6 +17,7 @@
 package org.apache.camel.util.blueprint;
 
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;

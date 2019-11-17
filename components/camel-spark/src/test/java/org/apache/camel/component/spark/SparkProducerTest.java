@@ -20,9 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static java.lang.Boolean.parseBoolean;
-import static java.util.Arrays.asList;
-
 import com.google.common.truth.Truth;
 import org.apache.camel.component.spark.annotations.RddCallback;
 import org.apache.camel.spi.Registry;
@@ -37,6 +34,8 @@ import org.apache.spark.sql.hive.HiveContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.util.Arrays.asList;
 import static org.apache.camel.component.spark.SparkConstants.SPARK_DATAFRAME_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.SparkConstants.SPARK_RDD_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.Sparks.createLocalSparkContext;

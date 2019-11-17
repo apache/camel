@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;

@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -125,10 +124,10 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @After
     public void removeData() {
-        template.request("salesforce:deleteSObject?sObjectName=Merchandise__c&sObjectId=" + merchandiseId, (Processor)(e) -> {
+        template.request("salesforce:deleteSObject?sObjectName=Merchandise__c&sObjectId=" + merchandiseId, (Processor) e -> {
             // NOOP
         });
-        template.request("direct:deleteLineItems", (Processor)(e) -> {
+        template.request("direct:deleteLineItems", (Processor) e -> {
             // NOOP
         });
     }
@@ -164,12 +163,12 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     private void deleteAccountAndContact() {
         if (accountId != null) {
-            template.request("salesforce:deleteSObject?sObjectName=Account&sObjectId=" + accountId, (Processor)(e) -> {
+            template.request("salesforce:deleteSObject?sObjectName=Account&sObjectId=" + accountId, (Processor) e -> {
                 // NOOP
             });
         }
         if (contactId != null) {
-            template.request("salesforce:deleteSObject?sObjectName=Contact&sObjectId=" + contactId, (Processor)(e) -> {
+            template.request("salesforce:deleteSObject?sObjectName=Contact&sObjectId=" + contactId, (Processor) e -> {
                 // NOOP
             });
         }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rest;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;

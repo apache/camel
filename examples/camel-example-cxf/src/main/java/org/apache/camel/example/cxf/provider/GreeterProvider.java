@@ -22,8 +22,6 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 
-
-
 // START SNIPPET: e1
 @WebServiceProvider()
 @ServiceMode(Mode.MESSAGE)

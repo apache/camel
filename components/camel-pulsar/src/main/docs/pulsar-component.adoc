@@ -122,7 +122,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-pulsar-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -147,3 +147,34 @@ The component supports 8 options, which are listed below.
 | *camel.component.pulsar.pulsar-message-receipt-factory* | Provide a factory to create an alternate implementation of PulsarMessageReceipt. The option is a org.apache.camel.component.pulsar.PulsarMessageReceiptFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END
+
+// message-headers options: START
+=== Message headers evaluated by the Pulsar producer
+
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
+| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
+| `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
+|===
+
+=== Message headers set by the Pulsar consumer
+
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| `properties` | `Map<String,String>` | The properties from the Pulsar message or the empty Map if unset on the Pulsar message
+| `producer_name` | `String` | The name of the producer that created the message
+| `sequence_id` | `long` | Sequence identifier of the Pulsar message
+| `publish_time` | `long` | Time the Pulsar message was published to the topic
+| `message_id` | `MessageId` | Unique identifier of the message
+| `event_time` | `long` | The event time associated with the message or 0 if unset on the Pulsar message
+| `key` | `String` | The key of the Pulsar message in String form or the empty string if unset on the Pulsar message
+| `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
+| `topic_name` | `String` | The topic to which the message was published
+| `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
+|===
+// message-headers options: END

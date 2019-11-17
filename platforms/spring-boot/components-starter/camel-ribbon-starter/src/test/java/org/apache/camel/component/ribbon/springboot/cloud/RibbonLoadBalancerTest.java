@@ -39,7 +39,6 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 public class RibbonLoadBalancerTest {
     private static final int PORT1 = AvailablePortFinder.getNextAvailable();
     private static final int PORT2 = AvailablePortFinder.getNextAvailable();

@@ -24,8 +24,7 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
       ">
 
-  <bean id="xslt" class="org.apache.camel.component.xslt.XsltComponent">
-    <property name="saxon" value="true"/>
+  <bean id="xslt-saxon" class="org.apache.camel.component.xslt.saxon.XsltSaxonComponent">
     <property name="saxonConfiguration">
       <bean class="net.sf.saxon.Configuration"/>
     </property>
@@ -40,7 +39,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <to uri="xslt:org/apache/camel/component/xslt/transform.xsl"/>
+      <to uri="xslt-saxon:org/apache/camel/component/xslt/transform.xsl"/>
       <multicast>
         <to uri="mock:result"/>
       </multicast>

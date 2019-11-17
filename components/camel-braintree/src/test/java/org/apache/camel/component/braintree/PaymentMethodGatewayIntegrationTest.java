@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.braintree;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.wordpress.api.service.impl;
+
 import java.util.List;
 
 import org.apache.camel.component.wordpress.api.auth.WordpressBasicAuthentication;

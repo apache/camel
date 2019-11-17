@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.issues;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;

@@ -70,7 +70,8 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
     private CamelContext camelContext;
 
     private String propertyName;
-    private String xslFile;
+    private final String xslFile;
+    private TransformerFactory transformerFactory;
     private String transformerFactoryClass;
     private XsltOutput output = XsltOutput.string;
 
@@ -135,6 +136,10 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
 
     public void setTransformerFactoryClass(String transformerFactoryClass) {
         this.transformerFactoryClass = transformerFactoryClass;
+    }
+
+    public void setTransformerFactory(TransformerFactory transformerFactory) {
+        this.transformerFactory = transformerFactory;
     }
 
     public String getPropertyName() {
@@ -205,9 +210,8 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         return this;
     }
 
-    public XsltAggregationStrategy withSaxon() {
-        setTransformerFactoryClass(XsltEndpoint.SAXON_TRANSFORMER_FACTORY_CLASS_NAME);
-        return this;
+    protected XsltBuilder createXsltBuilder() {
+        return camelContext.getInjector().newInstance(XsltBuilder.class);
     }
 
     @Override
@@ -218,13 +222,15 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         this.propertyName = ObjectHelper.isNotEmpty(propertyName) ? propertyName : DEFAULT_PROPERTY_NAME;
 
         // initialize the XsltBuilder
-        this.xslt = camelContext.getInjector().newInstance(XsltBuilder.class);
+        this.xslt = createXsltBuilder();
 
-        if (transformerFactoryClass != null) {
+        if (transformerFactory == null && transformerFactoryClass != null) {
             Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
                 XsltAggregationStrategy.class.getClassLoader());
             TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
             xslt.setTransformerFactory(factory);
+        } else if (transformerFactory != null) {
+            xslt.setTransformerFactory(transformerFactory);
         }
 
         if (uriResolver == null) {
@@ -234,7 +240,6 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         xslt.setUriResolver(uriResolver);
         xslt.setFailOnNullBody(true);
         xslt.transformerCacheSize(0);
-        xslt.setAllowStAX(true);
 
         configureOutput(xslt, output.name());
         loadResource(xslFile);

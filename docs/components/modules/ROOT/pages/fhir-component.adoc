@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *encoding* (common) | Encoding to use for all request |  | String
-| *fhirVersion* (common) | The FHIR Version to use | DSTU3 | String
+| *fhirVersion* (common) | The FHIR Version to use | R4 | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *log* (common) | Will log every requests and responses | false | boolean
 | *prettyPrint* (common) | Pretty print all request | false | boolean
@@ -149,7 +149,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-fhir-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -175,7 +175,7 @@ The component supports 29 options, which are listed below.
 | *camel.component.fhir.configuration.defer-model-scanning* | What sub operation to use for the selected operation | false | Boolean
 | *camel.component.fhir.configuration.encoding* | Component configuration for FHIR component. |  | String
 | *camel.component.fhir.configuration.fhir-context* | What sub operation to use for the selected operation |  | FhirContext
-| *camel.component.fhir.configuration.fhir-version* | Component configuration for FHIR component. | DSTU3 | String
+| *camel.component.fhir.configuration.fhir-version* | Component configuration for FHIR component. | R4 | String
 | *camel.component.fhir.configuration.force-conformance-check* | What sub operation to use for the selected operation | false | Boolean
 | *camel.component.fhir.configuration.log* | What sub operation to use for the selected operation | false | Boolean
 | *camel.component.fhir.configuration.method-name* | What sub operation to use for the selected operation |  | String

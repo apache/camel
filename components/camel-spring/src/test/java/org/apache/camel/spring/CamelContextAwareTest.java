@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+
 import java.util.Map;
 
 import org.apache.camel.impl.engine.DefaultConsumerTemplate;

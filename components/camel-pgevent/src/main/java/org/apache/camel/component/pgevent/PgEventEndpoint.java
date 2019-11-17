@@ -17,11 +17,11 @@
 package org.apache.camel.component.pgevent;
 
 import java.sql.DriverManager;
+
 import javax.sql.DataSource;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDriver;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

@@ -20,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.DefaultMethod;
+
 /**
  * Default JAX-RS resource that may be used 
  * to support document-only CXFRS consumers  

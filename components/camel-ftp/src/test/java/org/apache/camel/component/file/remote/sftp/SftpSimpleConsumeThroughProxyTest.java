@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import com.jcraft.jsch.ProxyHTTP;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

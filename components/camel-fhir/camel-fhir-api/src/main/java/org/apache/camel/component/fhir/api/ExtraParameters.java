@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir.api;
 
 import java.util.List;
 import java.util.Map;
+
 import ca.uhn.fhir.rest.api.CacheControlDirective;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;

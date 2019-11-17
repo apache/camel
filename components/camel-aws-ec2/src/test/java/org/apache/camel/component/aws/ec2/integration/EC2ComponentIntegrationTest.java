@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.amazonaws.services.ec2.model.InstanceType;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

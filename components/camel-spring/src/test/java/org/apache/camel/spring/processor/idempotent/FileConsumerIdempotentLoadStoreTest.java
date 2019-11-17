@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor.idempotent;
+
 import java.io.File;
 import java.io.FileOutputStream;
 

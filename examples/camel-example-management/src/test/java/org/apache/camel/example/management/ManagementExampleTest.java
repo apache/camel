@@ -17,6 +17,7 @@
 package org.apache.camel.example.management;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

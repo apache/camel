@@ -18,6 +18,7 @@ package org.apache.camel.component.etcd.springboot.cloud;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;

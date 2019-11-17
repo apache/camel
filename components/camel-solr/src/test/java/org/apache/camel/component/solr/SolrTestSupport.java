@@ -18,7 +18,6 @@ package org.apache.camel.component.solr;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.BeforeClass;
 
 public abstract class SolrTestSupport extends CamelTestSupport {

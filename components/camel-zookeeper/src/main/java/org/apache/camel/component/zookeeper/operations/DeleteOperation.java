@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import static java.lang.String.format;
-
 import org.apache.zookeeper.ZooKeeper;
+
+import static java.lang.String.format;
 
 /**
  * <code>setdataOperation</code> sets the content of a ZooKeeper node. An optional version

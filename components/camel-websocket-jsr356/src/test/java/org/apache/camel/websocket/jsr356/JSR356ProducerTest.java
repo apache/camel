@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 
-import static java.util.Collections.singletonList;
-
 import javax.enterprise.context.Dependent;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -38,6 +36,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+
+import static java.util.Collections.singletonList;
 
 public class JSR356ProducerTest extends CamelTestSupport {
     @Rule

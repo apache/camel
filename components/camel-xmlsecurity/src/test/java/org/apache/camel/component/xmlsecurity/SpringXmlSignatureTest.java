@@ -36,7 +36,6 @@ import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class SpringXmlSignatureTest extends XmlSignatureTest {
 
     private static KeyPair rsaPair;

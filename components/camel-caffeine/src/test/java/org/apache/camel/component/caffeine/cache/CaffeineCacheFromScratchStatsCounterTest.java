@@ -17,7 +17,6 @@
 package org.apache.camel.component.caffeine.cache;
 
 import com.codahale.metrics.MetricRegistry;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;

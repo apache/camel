@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.test.blueprint.component.rest;
+
 import java.util.Arrays;
 
 import org.apache.camel.model.ToDefinition;

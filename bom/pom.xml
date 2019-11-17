@@ -59,6 +59,7 @@
                     <dependencies>
                         <includes>
                             <include>org.apache.camel:*</include>
+                            <include>org.apache.camel.springboot:*</include>
                         </includes>
                     </dependencies>
 

@@ -28,7 +28,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <to uri="xslt:org/apache/camel/component/xslt/transform.xsl?transformerFactory=#factory"/>
+      <to uri="xslt-saxon:org/apache/camel/component/xslt/transform.xsl?transformerFactory=#factory"/>
       <multicast>
         <to uri="mock:result"/>
       </multicast>

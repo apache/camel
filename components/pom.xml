@@ -91,8 +91,8 @@
 
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
-        <module>camel-ahc</module>
         <module>camel-ahc-ws</module>
+        <module>camel-ahc</module>
         <module>camel-amqp</module>
         <module>camel-any23</module>
         <module>camel-apns</module>
@@ -124,11 +124,11 @@
         <module>camel-aws-translate</module>
         <module>camel-aws-xray</module>
         <module>camel-azure</module>
+        <module>camel-barcode</module>
         <module>camel-base64</module>
+        <module>camel-bean-validator</module>
         <module>camel-beanio</module>
         <module>camel-beanstalk</module>
-        <module>camel-bean-validator</module>
-        <module>camel-barcode</module>
         <module>camel-bindy</module>
         <module>camel-bonita</module>
         <module>camel-box</module>
@@ -147,9 +147,14 @@
         <module>camel-corda</module>
         <module>camel-couchbase</module>
         <module>camel-couchdb</module>
-        <module>camel-crypto</module>
         <module>camel-crypto-cms</module>
+        <module>camel-crypto</module>
         <module>camel-csv</module>
+        <module>camel-debezium-common</module>
+        <module>camel-debezium-mongodb</module>
+        <module>camel-debezium-mysql</module>
+        <module>camel-debezium-postgres</module>
+        <module>camel-debezium-sqlserver</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
         <module>camel-dns</module>
@@ -157,17 +162,11 @@
         <module>camel-dozer</module>
         <module>camel-drill</module>
         <module>camel-dropbox</module>
-        <module>camel-debezium-common</module>
-        <module>camel-debezium-mysql</module>
-        <module>camel-debezium-postgres</module>
-        <module>camel-debezium-mongodb</module>
-        <module>camel-debezium-sqlserver</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
         <module>camel-etcd</module>
         <module>camel-eventadmin</module>
-        <module>camel-json-validator</module>
         <module>camel-exec</module>
         <module>camel-facebook</module>
         <module>camel-fastjson</module>
@@ -182,12 +181,12 @@
         <module>camel-geocoder</module>
         <module>camel-git</module>
         <module>camel-github</module>
+        <module>camel-google-bigquery</module>
         <module>camel-google-calendar</module>
-        <module>camel-google-sheets</module>
         <module>camel-google-drive</module>
         <module>camel-google-mail</module>
-        <module>camel-google-bigquery</module>
         <module>camel-google-pubsub</module>
+        <module>camel-google-sheets</module>
         <module>camel-gora</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>
@@ -210,25 +209,26 @@
         <module>camel-ironmq</module>
         <module>camel-jackson</module>
         <module>camel-jacksonxml</module>
-        <module>camel-jaxb</module>
         <module>camel-jasypt</module>
+        <module>camel-jaxb</module>
         <module>camel-jbpm</module>
         <module>camel-jcache</module>
         <module>camel-jclouds</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>
-        <module>camel-jgroups</module>
         <module>camel-jgroups-raft</module>
+        <module>camel-jgroups</module>
         <module>camel-jing</module>
         <module>camel-jira</module>
         <module>camel-jmx</module>
-        <module>camel-jolt</module>
         <module>camel-johnzon</module>
+        <module>camel-jolt</module>
         <module>camel-jooq</module>
         <module>camel-jpa</module>
+        <module>camel-jsch</module>
+        <module>camel-json-validator</module>
         <module>camel-jsonapi</module>
         <module>camel-jsonpath</module>
-        <module>camel-jsch</module>
         <module>camel-jt400</module>
         <module>camel-kafka</module>
         <module>camel-kubernetes</module>
@@ -250,16 +250,16 @@
         <module>camel-milo</module>
         <module>camel-mina</module>
         <module>camel-mllp</module>
-        <module>camel-mongodb</module>
         <module>camel-mongodb-gridfs</module>
+        <module>camel-mongodb</module>
         <module>camel-msv</module>
         <module>camel-mustache</module>
         <module>camel-mvel</module>
         <module>camel-mybatis</module>
         <module>camel-nagios</module>
         <module>camel-nats</module>
-        <module>camel-netty</module>
         <module>camel-netty-http</module>
+        <module>camel-netty</module>
         <module>camel-nitrite</module>
         <module>camel-nsq</module>
         <module>camel-ognl</module>
@@ -288,35 +288,35 @@
         <module>camel-rss</module>
         <module>camel-rxjava</module>
         <module>camel-saga</module>
+        <module>camel-salesforce</module>
         <module>camel-sap-netweaver</module>
         <module>camel-saxon</module>
         <module>camel-scheduler</module>
-        <module>camel-salesforce</module>
         <module>camel-schematron</module>
         <module>camel-servicenow</module>
         <module>camel-servlet</module>
         <module>camel-shiro</module>
         <module>camel-sip</module>
+        <module>camel-sjms2</module>
+        <module>camel-sjms</module>
+        <module>camel-slack</module>
         <module>camel-smpp</module>
         <module>camel-snakeyaml</module>
         <module>camel-snmp</module>
-        <module>camel-sjms</module>
-        <module>camel-sjms2</module>
-        <module>camel-slack</module>
         <module>camel-soap</module>
         <module>camel-solr</module>
         <module>camel-soroush</module>
-        <module>camel-spark</module>
         <module>camel-spark-rest</module>
+        <module>camel-spark</module>
         <module>camel-splunk</module>
         <module>camel-spring-batch</module>
         <module>camel-spring-boot</module>
-        <module>camel-spring-cloud</module>
         <module>camel-spring-cloud-consul</module>
         <module>camel-spring-cloud-netflix</module>
         <module>camel-spring-cloud-zookeeper</module>
-        <module>camel-spring-javaconfig</module>
+        <module>camel-spring-cloud</module>
         <module>camel-spring-integration</module>
+        <module>camel-spring-javaconfig</module>
         <module>camel-spring-ldap</module>
         <module>camel-spring-redis</module>
         <module>camel-spring-security</module>
@@ -327,13 +327,13 @@
         <module>camel-stomp</module>
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
-        <module>camel-syslog</module>
         <module>camel-swagger-java</module>
+        <module>camel-syslog</module>
         <module>camel-tagsoup</module>
         <module>camel-tarfile</module>
         <module>camel-telegram</module>
-        <module>camel-tika</module>
         <module>camel-thrift</module>
+        <module>camel-tika</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>
         <module>camel-univocity-parsers</module>
@@ -342,21 +342,22 @@
         <module>camel-weather</module>
         <module>camel-web3j</module>
         <module>camel-webhook</module>
-        <module>camel-websocket</module>
         <module>camel-websocket-jsr356</module>
+        <module>camel-websocket</module>
         <module>camel-wordpress</module>
         <module>camel-xchange</module>
         <module>camel-xj</module>
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
+        <module>camel-xslt-saxon</module>
         <module>camel-xstream</module>
         <module>camel-yammer</module>
         <module>camel-zendesk</module>
         <module>camel-zip-deflater</module>
         <module>camel-zipfile</module>
         <module>camel-zipkin</module>
-        <module>camel-zookeeper</module>
         <module>camel-zookeeper-master</module>
+        <module>camel-zookeeper</module>
     </modules>
 
     <build>

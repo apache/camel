@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-
 public class FutureEventDrivenOperationTest {
     private String data = "Event Received";
     private Stat statistics = new Stat();

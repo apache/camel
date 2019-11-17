@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.commons.lang3.StringUtils;
 
-
 public abstract class AvroProducer extends DefaultAsyncProducer {
 
     Transceiver transceiver;

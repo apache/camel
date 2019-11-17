@@ -22,7 +22,6 @@ import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public abstract class AbstractComponentVerifierTest extends CamelTwitterTestSupport {
 
     protected abstract String getComponentScheme();

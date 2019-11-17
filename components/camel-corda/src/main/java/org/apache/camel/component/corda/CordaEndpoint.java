@@ -18,6 +18,7 @@ package org.apache.camel.component.corda;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCConnection;
 import net.corda.core.messaging.CordaRPCOps;
@@ -25,7 +26,6 @@ import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;

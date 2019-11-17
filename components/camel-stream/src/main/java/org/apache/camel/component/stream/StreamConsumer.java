@@ -70,7 +70,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         // use file watch service if we read from file
         if (endpoint.isFileWatcher()) {
             String dir = new File(endpoint.getFileName()).getParent();
-            fileWatcher = new FileWatcherStrategy(dir, (file) -> {
+            fileWatcher = new FileWatcherStrategy(dir, file -> {
                 String onlyName = file.getName();
                 String target = FileUtil.stripPath(endpoint.getFileName());
                 log.trace("File changed: {}", onlyName);

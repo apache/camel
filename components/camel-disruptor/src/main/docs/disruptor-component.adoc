@@ -8,7 +8,7 @@
 // HEADER END
 
 The Disruptor component provides asynchronous
-http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior much as the
+https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior much as the
 standard SEDA Component, but utilizes a
 https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
 http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
@@ -171,7 +171,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-disruptor-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->

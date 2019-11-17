@@ -17,6 +17,7 @@
 package org.apache.camel.component.jmx;
 
 import java.util.LinkedHashSet;
+
 import javax.management.Notification;
 import javax.management.NotificationFilter;
 

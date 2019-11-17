@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
@@ -100,18 +101,18 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      * Static builder method
      */
     public static JmsComponent jmsComponentClientAcknowledge(ConnectionFactory connectionFactory) {
-        JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setAcknowledgementMode(Session.CLIENT_ACKNOWLEDGE);
-        return jmsComponent(template);
+        JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
+        configuration.setAcknowledgementMode(Session.CLIENT_ACKNOWLEDGE);
+        return jmsComponent(configuration);
     }
 
     /**
      * Static builder method
      */
     public static JmsComponent jmsComponentAutoAcknowledge(ConnectionFactory connectionFactory) {
-        JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
-        return jmsComponent(template);
+        JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
+        configuration.setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
+        return jmsComponent(configuration);
     }
 
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory) {
@@ -122,10 +123,10 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory,
                                                       PlatformTransactionManager transactionManager) {
-        JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setTransactionManager(transactionManager);
-        template.setTransacted(true);
-        return jmsComponent(template);
+        JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
+        configuration.setTransactionManager(transactionManager);
+        configuration.setTransacted(true);
+        return jmsComponent(configuration);
     }
 
     // Properties

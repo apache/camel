@@ -75,7 +75,6 @@ import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.amazonaws.services.s3.model.VersionListing;
-
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 

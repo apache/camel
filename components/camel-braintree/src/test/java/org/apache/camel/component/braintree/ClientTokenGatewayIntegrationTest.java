@@ -21,7 +21,6 @@ import org.apache.camel.component.braintree.internal.ClientTokenGatewayApiMethod
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
-
 public class ClientTokenGatewayIntegrationTest extends AbstractBraintreeTestSupport {
     private static final String PATH_PREFIX = getApiNameAsString(ClientTokenGatewayApiMethod.class);
 

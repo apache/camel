@@ -22,8 +22,6 @@ import org.apache.aries.blueprint.ParserContext;
 import org.apache.camel.component.cxf.transport.CamelConduit;
 import org.osgi.service.blueprint.reflect.Metadata;
 
-
-
 public class CamelConduitDefinitionParser extends AbstractBeanDefinitionParser {
     public Metadata parse(Element element, ParserContext context) {
         return parse(element, context, CamelConduit.class);

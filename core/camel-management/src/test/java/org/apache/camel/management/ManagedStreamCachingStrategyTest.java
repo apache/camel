@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
+
 import static org.apache.camel.util.FileUtil.normalizePath;
 
 public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {

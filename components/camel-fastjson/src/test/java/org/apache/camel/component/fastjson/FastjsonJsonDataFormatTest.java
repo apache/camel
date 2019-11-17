@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
-
 import org.junit.Test;
 
 public class FastjsonJsonDataFormatTest extends FastjsonMarshalTest {

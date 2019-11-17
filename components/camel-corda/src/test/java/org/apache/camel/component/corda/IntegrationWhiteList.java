@@ -18,6 +18,7 @@ package org.apache.camel.component.corda;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.corda.core.serialization.SerializationWhitelist;
 
 public class IntegrationWhiteList implements SerializationWhitelist {

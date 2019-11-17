@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.notnoop.exceptions.RuntimeIOException;
-
 import org.apache.camel.util.IOHelper;
 
 public final class ResourceUtils {

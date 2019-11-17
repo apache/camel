@@ -54,7 +54,6 @@ import com.amazonaws.services.dynamodbv2.model.UpdateItemResult;
 import com.amazonaws.services.dynamodbv2.model.UpdateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.UpdateTableResult;
 
-
 public class AmazonDDBClientMock extends AbstractAmazonDynamoDB {
     public static final long NOW = 1327709390233L;
     DescribeTableRequest describeTableRequest;

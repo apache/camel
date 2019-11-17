@@ -32,8 +32,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * The schematoron Engine. Validates an XML for given scheamtron rules using an XSLT implementation of the Schematron
  * Engine.

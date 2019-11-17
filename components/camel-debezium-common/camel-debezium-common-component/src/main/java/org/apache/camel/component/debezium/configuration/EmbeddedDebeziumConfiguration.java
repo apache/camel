@@ -19,7 +19,6 @@ package org.apache.camel.component.debezium.configuration;
 import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.embedded.EmbeddedEngine;
-
 import io.debezium.embedded.spi.OffsetCommitPolicy;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.spi.Metadata;

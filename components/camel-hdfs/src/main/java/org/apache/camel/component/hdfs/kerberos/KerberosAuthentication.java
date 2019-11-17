@@ -20,10 +20,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static java.lang.String.format;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
+
+import static java.lang.String.format;
 
 public class KerberosAuthentication {
 

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -34,7 +35,6 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.EntityResolver;
@@ -44,7 +44,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -62,7 +61,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class XsltBuilder implements Processor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<>();
     private XMLConverterHelper converter = new XMLConverterHelper();
     private Templates template;
@@ -73,7 +72,6 @@ public class XsltBuilder implements Processor {
     private URIResolver uriResolver;
     private boolean deleteOutputFile;
     private ErrorListener errorListener;
-    private boolean allowStAX = true;
     private EntityResolver entityResolver;
 
     private volatile Object sourceHandlerFactoryLock = new Object();
@@ -114,15 +112,7 @@ public class XsltBuilder implements Processor {
         try {
             Source source = getSourceHandlerFactory().getSource(exchange);
 
-            if (!isAllowStAX() && source instanceof StAXSource) {
-                // Always convert StAXSource to SAXSource.
-                // * Xalan and Saxon-B don't support StAXSource.
-                // * The JDK default implementation (XSLTC) doesn't handle CDATA events
-                //   (see com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX).
-                // * Saxon-HE/PE/EE seem to support StAXSource, but don't advertise this
-                //   officially (via TransformerFactory.getFeature(StAXSource.FEATURE))
-                source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
-            }
+            source = prepareSource(source);
 
             if (source instanceof SAXSource) {
                 tryAddEntityResolver((SAXSource) source);
@@ -138,7 +128,14 @@ public class XsltBuilder implements Processor {
             IOHelper.close(is);
         }
     }
-    
+
+    /**
+     * Allows to prepare the source before transforming.
+     */
+    protected Source prepareSource(Source source) {
+        return source;
+    }
+
     // Builder methods
     // -------------------------------------------------------------------------
 
@@ -240,16 +237,6 @@ public class XsltBuilder implements Processor {
     }
 
     /**
-     * Enables to allow using StAX.
-     * <p/>
-     * When enabled StAX is preferred as the first choice as {@link Source}.
-     */
-    public XsltBuilder allowStAX() {
-        setAllowStAX(true);
-        return this;
-    }
-
-    /**
      * Used for caching {@link Transformer}s.
      * <p/>
      * By default no caching is in use.
@@ -307,16 +294,18 @@ public class XsltBuilder implements Processor {
         if (this.sourceHandlerFactory == null) {
             synchronized (this.sourceHandlerFactoryLock) {
                 if (this.sourceHandlerFactory == null) {
-                    final XmlSourceHandlerFactoryImpl xmlSourceHandlerFactory = new XmlSourceHandlerFactoryImpl();
+                    final XmlSourceHandlerFactoryImpl xmlSourceHandlerFactory = createXmlSourceHandlerFactoryImpl();
                     xmlSourceHandlerFactory.setFailOnNullBody(isFailOnNullBody());
-                    xmlSourceHandlerFactory.setAllowStax(isAllowStAX());
-
                     this.sourceHandlerFactory = xmlSourceHandlerFactory;
                 }
             }
         }
 
         return this.sourceHandlerFactory;
+    }
+
+    protected XmlSourceHandlerFactoryImpl createXmlSourceHandlerFactoryImpl() {
+        return new XmlSourceHandlerFactoryImpl();
     }
 
     public void setSourceHandlerFactory(SourceHandlerFactory sourceHandlerFactory) {
@@ -329,14 +318,6 @@ public class XsltBuilder implements Processor {
 
     public void setResultHandlerFactory(ResultHandlerFactory resultHandlerFactory) {
         this.resultHandlerFactory = resultHandlerFactory;
-    }
-
-    public boolean isAllowStAX() {
-        return allowStAX;
-    }
-
-    public void setAllowStAX(boolean allowStAX) {
-        this.allowStAX = allowStAX;
     }
 
     /**

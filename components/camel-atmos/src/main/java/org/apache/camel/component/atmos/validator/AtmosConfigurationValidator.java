@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.component.atmos.AtmosConfiguration;
 import org.apache.camel.component.atmos.util.AtmosException;
 import org.apache.camel.component.atmos.util.AtmosOperation;
+
 import static org.apache.camel.component.atmos.util.AtmosConstants.ATMOS_FILE_SEPARATOR;
 
 public final class AtmosConfigurationValidator {

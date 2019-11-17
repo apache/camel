@@ -22,7 +22,6 @@ import java.util.Queue;
 import io.iron.ironmq.EmptyQueueException;
 import io.iron.ironmq.Message;
 import io.iron.ironmq.Messages;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

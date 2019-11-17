@@ -20,10 +20,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
-import static java.util.stream.Collectors.toSet;
 
 import javax.enterprise.inject.spi.Annotated;
 
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 
 class AnnotatedDelegate implements Annotated {

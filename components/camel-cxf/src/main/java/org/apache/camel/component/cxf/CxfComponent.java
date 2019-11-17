@@ -27,7 +27,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.PropertiesHelper;
-import org.apache.cxf.message.Message;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>

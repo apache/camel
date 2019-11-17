@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ahc.ws;
+
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;

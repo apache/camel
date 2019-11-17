@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+
 import java.lang.management.ManagementFactory;
 import java.util.Set;
 

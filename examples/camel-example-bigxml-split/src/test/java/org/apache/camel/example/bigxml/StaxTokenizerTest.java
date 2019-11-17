@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 

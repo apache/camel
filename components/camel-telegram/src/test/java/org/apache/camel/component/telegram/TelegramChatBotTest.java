@@ -35,7 +35,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 /**
  * Tests a chain made of a consumer and a producer to create a direct chat-bot.
  */
@@ -58,7 +57,7 @@ public class TelegramChatBotTest extends TelegramTestSupport {
         when(service.getUpdates(any(), any(), any(), any()))
                 .thenReturn(request)
                 .thenReturn(request2)
-                .thenAnswer((i) -> defaultRes);
+                .thenAnswer(i -> defaultRes);
     }
 
     @Test

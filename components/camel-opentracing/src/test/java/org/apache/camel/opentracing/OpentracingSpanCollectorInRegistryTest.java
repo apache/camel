@@ -18,7 +18,6 @@ package org.apache.camel.opentracing;
 
 import io.opentracing.noop.NoopTracer;
 import io.opentracing.noop.NoopTracerFactory;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;

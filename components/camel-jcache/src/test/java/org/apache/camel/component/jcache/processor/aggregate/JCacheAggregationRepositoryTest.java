@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
-
 public class JCacheAggregationRepositoryTest extends JCacheAggregationRepositoryTestSupport {
 
     @Test(expected = UnsupportedOperationException.class)

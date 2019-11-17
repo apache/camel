@@ -21,13 +21,12 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.core.env.Environment;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -51,7 +50,7 @@ public class CamelCloudServiceCallConfigurationTest {
                     "camel.cloud.load-balancer.enabled=false",
                     "debug=false"
             )
-            .run((context) -> {
+            .run(context -> {
                     Environment env = context.getEnvironment();
                     assertFalse(env.getProperty("camel.cloud.enabled", Boolean.class));
                     assertFalse(env.getProperty("camel.cloud.service-discovery.enabled", Boolean.class));

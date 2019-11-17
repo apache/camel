@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.quartz;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 

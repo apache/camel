@@ -17,8 +17,8 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
-import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Assert;
@@ -52,7 +52,7 @@ public class HystrixHierarchicalConfigurationTest {
     @Test
     public void testConfiguration() throws Exception {
         RouteDefinition routeDefinition = camelContext.getExtension(Model.class).getRouteDefinition("hystrix-route");
-        HystrixDefinition hystrixDefinition = findHystrixDefinition(routeDefinition);
+        CircuitBreakerDefinition hystrixDefinition = findCircuitBreaker(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);
 
@@ -68,12 +68,12 @@ public class HystrixHierarchicalConfigurationTest {
     // Helper
     // **********************************************
 
-    private HystrixDefinition findHystrixDefinition(RouteDefinition routeDefinition) throws Exception {
+    private CircuitBreakerDefinition findCircuitBreaker(RouteDefinition routeDefinition) throws Exception {
         return routeDefinition.getOutputs().stream()
-            .filter(HystrixDefinition.class::isInstance)
-            .map(HystrixDefinition.class::cast)
+            .filter(CircuitBreakerDefinition.class::isInstance)
+            .map(CircuitBreakerDefinition.class::cast)
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Unable to find a HystrixDefinition"));
+            .orElseThrow(() -> new IllegalStateException("Unable to find a CircuitBreakerDefinition"));
     }
 }
 

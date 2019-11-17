@@ -22,7 +22,6 @@ import java.util.Map;
 import info.ganglia.gmetric4j.Publisher;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.Before;

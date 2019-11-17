@@ -19,6 +19,7 @@ package org.apache.camel.language.ognl;
 import java.util.Map;
 
 import ognl.ClassResolver;
+
 /**
  * This class is used to wrap the org.apache.camel.spi.ClassResolver with ClassResolver interface
  */

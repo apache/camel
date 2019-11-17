@@ -26,6 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.ObjectHelper;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**

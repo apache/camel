@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty.http;
 
-
 import java.util.List;
 
 import javax.net.ssl.SSLContext;

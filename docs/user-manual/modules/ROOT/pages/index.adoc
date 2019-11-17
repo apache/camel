@@ -471,7 +471,7 @@ camel routes without them knowing
 ** xref:components::json-gson-dataformat.adoc[JSon GSon]
 ** xref:components::json-jackson-dataformat.adoc[JSon Jackson]
 ** xref:components::json-johnzon-dataformat.adoc[JSon Johnzon]
-** xref:components::json-xstream-dataformat.adoc[JSon XStream]components::
+** xref:components::json-xstream-dataformat.adoc[JSon XStream]
 ** xref:components::lzf-dataformat.adoc[LZF Deflate Compression]
 ** xref:components::mime-multipart-dataformat.adoc[MIME Multipart]
 ** xref:components::pgp-dataformat.adoc[PGP]

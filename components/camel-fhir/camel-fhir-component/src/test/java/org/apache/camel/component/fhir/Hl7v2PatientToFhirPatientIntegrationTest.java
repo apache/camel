@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
+
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

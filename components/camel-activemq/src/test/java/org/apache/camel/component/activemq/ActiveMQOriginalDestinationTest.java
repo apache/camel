@@ -30,7 +30,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 
-
 public class ActiveMQOriginalDestinationTest extends CamelTestSupport {
 
     @Test

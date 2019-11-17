@@ -20,10 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.s3.AmazonS3;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;

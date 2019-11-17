@@ -18,6 +18,7 @@ package org.apache.camel.tools.apt;
 
 import java.io.Writer;
 import java.util.Set;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.spring;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.HelloService;

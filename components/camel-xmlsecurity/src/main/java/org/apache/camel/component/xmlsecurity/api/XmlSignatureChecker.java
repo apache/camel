@@ -28,7 +28,6 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.Message;
 
-
 /**
  * This interface gives the application the possibility to check whether the
  * expected parts are signed.

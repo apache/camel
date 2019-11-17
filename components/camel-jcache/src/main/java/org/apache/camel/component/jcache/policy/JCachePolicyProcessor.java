@@ -26,7 +26,6 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class JCachePolicyProcessor extends DelegateAsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessor.class);
 

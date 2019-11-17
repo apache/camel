@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty;
+
 import java.util.concurrent.ThreadFactory;
 
 import io.netty.channel.Channel;

@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 303 in 241 JAR artifacts (0 deprecated)
+Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -609,6 +609,8 @@ Number of Components: 303 in 241 JAR artifacts (0 deprecated)
 | xref:xquery-component.adoc[XQuery] (camel-saxon) | 1.0 | Transforms the message using a XQuery template using Saxon.
 
 | xref:xslt-component.adoc[XSLT] (camel-xslt) | 1.3 | Transforms the message using a XSLT template.
+
+| xref:xslt-saxon-component.adoc[XSLT Saxon] (camel-xslt-saxon) | 3.0 | Transforms the message using a XSLT template using Saxon.
 
 | xref:yammer-component.adoc[Yammer] (camel-yammer) | 2.12 | The yammer component allows you to interact with the Yammer enterprise social network.
 

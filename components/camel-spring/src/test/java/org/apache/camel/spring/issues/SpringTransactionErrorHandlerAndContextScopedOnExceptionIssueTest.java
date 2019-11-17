@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.issues;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelExecutionException;

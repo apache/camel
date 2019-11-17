@@ -19,6 +19,7 @@ package org.apache.camel.component.servlet;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;

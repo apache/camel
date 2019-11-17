@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.example.cafe.Delivery;
 import org.apache.camel.example.cafe.Drink;
 
-
 public class Waiter {
     
     public Delivery prepareDelivery(List<Drink> drinks) {

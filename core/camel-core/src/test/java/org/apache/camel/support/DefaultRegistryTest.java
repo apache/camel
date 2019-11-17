@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.impl.FooBar;
 import org.junit.Test;
 

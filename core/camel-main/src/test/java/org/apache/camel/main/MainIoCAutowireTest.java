@@ -38,7 +38,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class MainIoCAutowireTest extends Assert {
     @Test
     public void autowireNonNullOnlyDisabledTest() {

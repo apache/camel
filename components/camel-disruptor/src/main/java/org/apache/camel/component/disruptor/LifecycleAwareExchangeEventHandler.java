@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.disruptor;
+
 import java.util.concurrent.TimeUnit;
 
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.LifecycleAware;
-
-
 
 /**
  * This interface fuses the EventHandler and LifecycleAware interfaces.

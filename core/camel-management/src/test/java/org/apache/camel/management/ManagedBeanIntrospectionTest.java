@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

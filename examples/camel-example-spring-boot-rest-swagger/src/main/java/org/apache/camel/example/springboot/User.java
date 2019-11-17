@@ -18,7 +18,6 @@ package org.apache.camel.example.springboot;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**

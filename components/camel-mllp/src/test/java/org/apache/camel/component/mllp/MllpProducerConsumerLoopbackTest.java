@@ -36,7 +36,6 @@ import org.junit.Test;
 
 import static org.junit.Assume.assumeTrue;
 
-
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     int mllpPort = AvailablePortFinder.getNextAvailable();
     String mllpHost = "localhost";

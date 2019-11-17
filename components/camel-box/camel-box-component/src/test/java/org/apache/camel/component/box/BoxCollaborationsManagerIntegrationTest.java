@@ -26,7 +26,6 @@ import com.box.sdk.BoxCollaboration;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCollaborationsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;

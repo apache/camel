@@ -28,7 +28,6 @@ import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.After;
 import org.junit.Before;
 
-
 /**
  * Base class for testing arbitrary payload
  */

@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-
 import org.junit.Test;
 
 public class MultiThreadedHttpGetTest extends BaseJettyTest {

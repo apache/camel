@@ -18,6 +18,7 @@ package org.apache.camel.component.xslt;
 
 import java.util.ArrayList;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

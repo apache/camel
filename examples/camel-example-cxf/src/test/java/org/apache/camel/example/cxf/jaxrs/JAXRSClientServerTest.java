@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.example.cxf.jaxrs;
+
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;

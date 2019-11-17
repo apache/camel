@@ -19,6 +19,7 @@ package org.apache.camel.component.kudu;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;

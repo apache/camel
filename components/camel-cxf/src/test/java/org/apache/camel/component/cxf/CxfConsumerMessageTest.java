@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;

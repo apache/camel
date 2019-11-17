@@ -30,7 +30,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
 
-
 public class BeanCallTest extends CamelTestSupport {
 
     @Test

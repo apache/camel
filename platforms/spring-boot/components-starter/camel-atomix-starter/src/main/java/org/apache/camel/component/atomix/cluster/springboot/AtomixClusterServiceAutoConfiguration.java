@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.cluster.springboot;
 
-
 import java.util.stream.Collectors;
 
 import io.atomix.catalyst.transport.Address;

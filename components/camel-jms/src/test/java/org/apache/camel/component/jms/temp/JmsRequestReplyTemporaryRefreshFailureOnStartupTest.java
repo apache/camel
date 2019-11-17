@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.temp;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;

@@ -131,7 +131,7 @@ public class CamelCatalogTest {
         assertTrue(names.contains("aggregate"));
         assertTrue(names.contains("split"));
         assertTrue(names.contains("loadBalance"));
-        assertTrue(names.contains("hystrix"));
+        assertTrue(names.contains("circuitBreaker"));
         assertTrue(names.contains("saga"));
     }
 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;

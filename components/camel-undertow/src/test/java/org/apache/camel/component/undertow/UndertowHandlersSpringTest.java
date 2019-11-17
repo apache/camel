@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
+
 import java.net.URL;
 
 import javax.annotation.Resource;
@@ -25,7 +26,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpOperationFailedException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

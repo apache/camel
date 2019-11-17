@@ -18,7 +18,6 @@ package org.apache.camel.component.netty.http;
 
 import java.util.Locale;
 
-
 /**
  * A {@link org.apache.camel.component.netty.http.ContextPathMatcher} that supports the Rest DSL.
  */

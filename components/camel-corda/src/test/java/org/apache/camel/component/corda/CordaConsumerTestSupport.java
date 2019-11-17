@@ -23,7 +23,6 @@ import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.node.services.vault.Sort;
 import net.corda.core.node.services.vault.SortAttribute;
-
 import org.apache.camel.BindToRegistry;
 import org.junit.Ignore;
 

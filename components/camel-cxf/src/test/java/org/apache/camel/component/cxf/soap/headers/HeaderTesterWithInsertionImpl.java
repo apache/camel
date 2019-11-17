@@ -29,7 +29,6 @@ import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 
-
 public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
     
     @Override

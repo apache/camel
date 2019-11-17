@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.univocity.parsers.common.AbstractWriter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 

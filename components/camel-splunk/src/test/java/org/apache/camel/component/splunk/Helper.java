@@ -20,7 +20,6 @@ import java.net.Socket;
 import java.util.Map;
 
 import com.splunk.Service;
-
 import org.apache.camel.CamelContext;
 
 public final class Helper {

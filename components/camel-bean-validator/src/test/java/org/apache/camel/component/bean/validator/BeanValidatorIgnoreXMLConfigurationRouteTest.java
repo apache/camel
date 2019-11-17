@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.component.bean.validator;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
+import org.apache.camel.CamelContext;
 
-@RunWith(PaxExam.class)
-public class CamelFhirTest extends BaseKarafTest {
+public class BeanValidatorIgnoreXMLConfigurationRouteTest extends BeanValidatorRouteTest {
 
-    public static final String COMPONENT = extractName(CamelFhirTest.class);
-
-    @Test
-    public void test() throws Exception {
-        testDataFormat(COMPONENT, "fhirJson");
-        testDataFormat(COMPONENT, "fhirXml");
-        testComponent(COMPONENT, "fhir");
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camel = super.createCamelContext();
+        camel.getComponent("bean-validator", BeanValidatorComponent.class).setIgnoreXmlConfiguration(true);
+        return camel;
     }
 
 }

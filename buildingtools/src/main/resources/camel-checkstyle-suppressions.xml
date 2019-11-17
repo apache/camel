@@ -25,12 +25,39 @@
               files=".+[\\\/]generated[\\\/].+\.java"
               />
     <suppress checks=".*"
+              files=".*/camel-endpointdsl/src/main/java/org/apache/camel/builder/endpoint/dsl/.*"
+              />
+    <suppress checks=".*"
+              files=".*/platforms/spring-boot/components-starter/camel-.+-starter/src/main/java/org/apache/camel/.*"
+              />
+    <suppress checks=".*"
               files=".+[\\\/]build[\\\/]src[\\\/].+\.java"
               />
     <suppress checks=".*"
               files=".+[\\\/]target[\\\/].+\.java"
-              />              
+              />
     <suppress checks=".*"
               files=".+[\\\/]contrib[\\\/].+\.java"
+              />
+    <suppress checks="LineLength"
+              files=".*/features.xml"
+              />
+    <suppress checks="LineLength"
+              files=".*/main/resources/.*camel-context.xml"
+              />
+    <suppress checks="LineLength"
+              files=".*/test/resources/.*.xml"
+              />
+    <suppress checks="LineLength"
+              files=".*/test/resources/.*.properties"
+              />
+    <suppress checks="LineLength"
+              files=".*/resources/application.properties"
+              />
+    <suppress checks="LineLength"
+              files=".*/resources/example.properties"
+              />
+    <suppress checks="LineLength"
+              files=".*/resources/.*request.xml"
               />
 </suppressions>

@@ -18,7 +18,6 @@ package org.apache.camel.opentracing.decorators;
 
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 

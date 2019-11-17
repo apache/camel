@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.greeter;
 
-
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.AvailablePortFinder;

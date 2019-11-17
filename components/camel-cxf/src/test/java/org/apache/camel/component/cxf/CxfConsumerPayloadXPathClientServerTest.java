@@ -39,8 +39,6 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.Test;
 
-
-
 public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
     private static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
         + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"

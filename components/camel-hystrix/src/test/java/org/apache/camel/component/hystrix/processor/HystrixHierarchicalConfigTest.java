@@ -18,8 +18,8 @@ package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
-import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
@@ -45,8 +45,8 @@ public class HystrixHierarchicalConfigTest {
         registry.bind("ref-hystrix", ref);
 
         final HystrixReifier reifier = new HystrixReifier(
-                new HystrixDefinition()
-                        .hystrixConfiguration("ref-hystrix")
+                new CircuitBreakerDefinition()
+                        .configuration("ref-hystrix")
                         .hystrixConfiguration()
                         .groupKey("local-conf-group-key")
                         .requestLogEnabled(false)
@@ -56,7 +56,7 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(new Integer(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.valueOf(5), config.getCorePoolSize());
     }
 
     @Test
@@ -76,8 +76,8 @@ public class HystrixHierarchicalConfigTest {
         context.getExtension(Model.class).addHystrixConfiguration("ref-hystrix", ref);
 
         final HystrixReifier reifier = new HystrixReifier(
-                new HystrixDefinition()
-                        .hystrixConfiguration("ref-hystrix")
+                new CircuitBreakerDefinition()
+                        .configuration("ref-hystrix")
                         .hystrixConfiguration()
                         .groupKey("local-conf-group-key")
                         .requestLogEnabled(false)
@@ -87,7 +87,7 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(new Integer(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.valueOf(5), config.getCorePoolSize());
     }
 
     @Test
@@ -116,8 +116,8 @@ public class HystrixHierarchicalConfigTest {
         registry.bind("ref-hystrix", ref);
 
         final HystrixReifier reifier = new HystrixReifier(
-                new HystrixDefinition()
-                        .hystrixConfiguration("ref-hystrix")
+                new CircuitBreakerDefinition()
+                        .configuration("ref-hystrix")
                         .hystrixConfiguration()
                         .groupKey("local-conf-group-key")
                         .requestLogEnabled(false)
@@ -127,6 +127,6 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(new Integer(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.valueOf(5), config.getCorePoolSize());
     }
 }

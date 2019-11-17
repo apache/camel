@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.netty.http;
 
-import static java.util.Collections.singleton;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
+import static java.util.Collections.singleton;
 import static org.apache.camel.Exchange.HTTP_QUERY;
 
 public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo4;
 
 import java.util.Iterator;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;

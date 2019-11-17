@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import com.google.common.truth.Truth;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.flink.annotations.AnnotatedDataSetCallback;
 import org.apache.camel.test.junit4.CamelTestSupport;

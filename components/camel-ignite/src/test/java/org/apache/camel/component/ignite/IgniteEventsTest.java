@@ -24,7 +24,6 @@ import javax.cache.expiry.Duration;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;

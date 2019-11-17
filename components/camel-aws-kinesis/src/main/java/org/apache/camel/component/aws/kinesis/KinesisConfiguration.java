@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.kinesis;
 import com.amazonaws.Protocol;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

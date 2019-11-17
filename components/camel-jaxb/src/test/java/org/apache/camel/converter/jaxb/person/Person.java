@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.camel.converter.jaxb.address.Address;
 
+import org.apache.camel.converter.jaxb.address.Address;
 
 /**
  * <p>Java class for anonymous complex type.

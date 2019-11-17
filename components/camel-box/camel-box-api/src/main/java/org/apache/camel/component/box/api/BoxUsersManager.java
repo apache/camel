@@ -26,7 +26,6 @@ import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxUser;
 import com.box.sdk.CreateUserParams;
 import com.box.sdk.EmailAlias;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

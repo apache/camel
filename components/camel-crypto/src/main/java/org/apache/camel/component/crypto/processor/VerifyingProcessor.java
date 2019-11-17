@@ -27,7 +27,6 @@ import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.codec.binary.Base64;
 
-
 /**
  * <code>VerifyingProcessor</code>
  */

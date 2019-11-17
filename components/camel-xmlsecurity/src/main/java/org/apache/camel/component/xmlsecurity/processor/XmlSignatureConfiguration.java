@@ -17,6 +17,7 @@
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.util.Map;
+
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.XMLSignContext;

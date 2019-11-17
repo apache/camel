@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.util.StringHelper;
 
-
 /**
  * Represents a Service.
  *

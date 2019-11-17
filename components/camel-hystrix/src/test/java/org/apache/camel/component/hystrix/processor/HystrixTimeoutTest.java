@@ -68,7 +68,7 @@ public class HystrixTimeoutTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .hystrix()
+                    .circuitBreaker()
                         // use 2 second timeout
                         .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
                         .log("Hystrix processing start: ${threadName}")

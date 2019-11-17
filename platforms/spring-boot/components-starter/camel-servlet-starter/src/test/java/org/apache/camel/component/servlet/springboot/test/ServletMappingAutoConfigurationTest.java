@@ -18,7 +18,6 @@ package org.apache.camel.component.servlet.springboot.test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

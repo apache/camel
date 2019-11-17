@@ -17,6 +17,7 @@
 package org.apache.camel.component.jcache.policy;
 
 import java.util.Set;
+
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;

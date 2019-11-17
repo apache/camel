@@ -14,23 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xslt;
+package org.apache.camel.component.xslt.saxon;
 
-import org.apache.camel.builder.RouteBuilder;
+import net.sf.saxon.TransformerFactoryImpl;
+import org.apache.camel.component.xslt.XsltAggregationStrategy;
+import org.apache.camel.component.xslt.XsltBuilder;
 
-/**
- *
- */
-public class XsltRouteAllowStAXTest extends XsltRouteTest {
+public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
+
+    public XsltSaxonAggregationStrategy(String xslFileLocation) {
+        super(xslFileLocation);
+        setTransformerFactory(new TransformerFactoryImpl());
+    }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/transform.xsl?allowStAX=true").multicast().bean("testBean").to("mock:result");
-            }
-        };
+    protected XsltBuilder createXsltBuilder() {
+        XsltSaxonBuilder answer = getCamelContext().getInjector().newInstance(XsltSaxonBuilder.class);
+        answer.setAllowStAX(true);
+        return answer;
     }
 
 }

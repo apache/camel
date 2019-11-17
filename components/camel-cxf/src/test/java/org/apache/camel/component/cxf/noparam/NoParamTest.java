@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.noparam;
+
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestSupport;

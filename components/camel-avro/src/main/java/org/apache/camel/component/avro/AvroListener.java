@@ -35,7 +35,6 @@ import org.eclipse.jetty.util.log.Log;
 import static org.apache.camel.component.avro.AvroConstants.AVRO_HTTP_TRANSPORT;
 import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT;
 
-
 /**
  * This class holds server that listen to given protocol:host:port combination and dispatches messages to
  * different routes mapped.

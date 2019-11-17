@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
+
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;

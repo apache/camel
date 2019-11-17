@@ -41,7 +41,6 @@ import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Maps the XML signature to a camel message. A output node is determined from
  * the XML signature document via a node search and then serialized and set to

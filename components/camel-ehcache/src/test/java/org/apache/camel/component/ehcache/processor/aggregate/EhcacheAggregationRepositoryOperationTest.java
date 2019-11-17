@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ehcache.processor.aggregate;
+
 import java.util.Set;
 
 import org.apache.camel.Exchange;

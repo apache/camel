@@ -30,39 +30,36 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
-/**
- * Hystrix Circuit Breaker EIP
- */
 @Metadata(label = "eip,routing,circuitbreaker")
-@XmlRootElement(name = "hystrix")
+@XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> implements OutputNode {
+public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreakerDefinition> implements OutputNode {
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
+    @XmlAttribute
+    private String configurationRef;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private OnFallbackDefinition onFallback;
-    @XmlAttribute
-    private String hystrixConfigurationRef;
 
-    public HystrixDefinition() {
+    public CircuitBreakerDefinition() {
     }
 
     @Override
     public String toString() {
-        return "Hystrix[" + getOutputs() + "]";
+        return "CircuitBreaker[" + getOutputs() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "hystrix";
+        return "circuitBreaker";
     }
 
     @Override
     public String getLabel() {
-        return "hystrix";
+        return "circuitBreaker";
     }
 
     @Override
@@ -126,15 +123,16 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
         this.hystrixConfiguration = hystrixConfiguration;
     }
 
-    public String getHystrixConfigurationRef() {
-        return hystrixConfigurationRef;
+    public String getConfigurationRef() {
+        return configurationRef;
     }
 
     /**
-     * Refers to a Hystrix configuration to use for configuring the Hystrix EIP.
+     * Refers to a circuit breaker configuration (such as hystrix, resillient4j, or microprofile-fault-tolerance)
+     * to use for configuring the circuit breaker EIP.
      */
-    public void setHystrixConfigurationRef(String hystrixConfigurationRef) {
-        this.hystrixConfigurationRef = hystrixConfigurationRef;
+    public void setConfigurationRef(String configurationRef) {
+        this.configurationRef = configurationRef;
     }
 
     public OnFallbackDefinition getOnFallback() {
@@ -149,26 +147,10 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the group key to use. The default value is CamelHystrix.
-     */
-    public HystrixDefinition groupKey(String groupKey) {
-        hystrixConfiguration().groupKey(groupKey);
-        return this;
-    }
-
-    /**
-     * Sets the thread pool key to use. The default value is CamelHystrix.
-     */
-    public HystrixDefinition threadPoolKey(String threadPoolKey) {
-        hystrixConfiguration().threadPoolKey(threadPoolKey);
-        return this;
-    }
-
-    /**
-     * Configures the Hystrix EIP
+     * Configures the circuit breaker to use Hystrix.
      * <p/>
      * Use <tt>end</tt> when configuration is complete, to return back to the
-     * Hystrix EIP.
+     * Circuit Breaker EIP.
      */
     public HystrixConfigurationDefinition hystrixConfiguration() {
         hystrixConfiguration = hystrixConfiguration == null ? new HystrixConfigurationDefinition(this) : hystrixConfiguration;
@@ -176,46 +158,41 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> im
     }
 
     /**
-     * Configures the Hystrix EIP using the given configuration
+     * Configures the circuit breaker to use Hystrix with the given configuration.
      */
-    public HystrixDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
+    public CircuitBreakerDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
         hystrixConfiguration = configuration;
         return this;
     }
 
     /**
-     * Refers to a Hystrix configuration to use for configuring the Hystrix EIP.
+     * Refers to a configuration to use for configuring the circuit breaker.
      */
-    public HystrixDefinition hystrixConfiguration(String ref) {
-        hystrixConfigurationRef = ref;
+    public CircuitBreakerDefinition configuration(String ref) {
+        configurationRef = ref;
         return this;
     }
 
     /**
-     * The Hystrix fallback route path to execute that does <b>not</b> go over
+     * The fallback route path to execute that does <b>not</b> go over
      * the network.
      * <p>
      * This should be a static or cached result that can immediately be returned
      * upon failure. If the fallback requires network connection then use
      * {@link #onFallbackViaNetwork()}.
      */
-    public HystrixDefinition onFallback() {
+    public CircuitBreakerDefinition onFallback() {
         onFallback = new OnFallbackDefinition();
         onFallback.setParent(this);
         return this;
     }
 
     /**
-     * The Hystrix fallback route path to execute that will go over the network.
+     * The fallback route path to execute that will go over the network.
      * <p/>
-     * If the fallback will go over the network it is another possible point of
-     * failure and so it also needs to be wrapped by a HystrixCommand. It is
-     * important to execute the fallback command on a separate thread-pool,
-     * otherwise if the main command were to become latent and fill the
-     * thread-pool this would prevent the fallback from running if the two
-     * commands share the same pool.
+     * If the fallback will go over the network it is another possible point of failure.
      */
-    public HystrixDefinition onFallbackViaNetwork() {
+    public CircuitBreakerDefinition onFallbackViaNetwork() {
         onFallback = new OnFallbackDefinition();
         onFallback.setFallbackViaNetwork(true);
         onFallback.setParent(this);

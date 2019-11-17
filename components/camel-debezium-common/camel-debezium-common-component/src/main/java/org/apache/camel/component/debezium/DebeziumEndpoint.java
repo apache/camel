@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import io.debezium.data.Envelope;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
