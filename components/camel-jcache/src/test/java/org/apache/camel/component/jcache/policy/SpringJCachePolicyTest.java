@@ -51,7 +51,7 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
         //reset mock
         MockEndpoint mock = getMockEndpoint("mock:spring");
         mock.reset();
-        mock.whenAnyExchangeReceived((e) ->
+        mock.whenAnyExchangeReceived(e ->
             e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 

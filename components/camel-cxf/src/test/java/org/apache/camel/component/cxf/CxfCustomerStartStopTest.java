@@ -27,6 +27,7 @@ import org.apache.cxf.transport.http_jetty.JettyHTTPServerEngineFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 @org.junit.Ignore
 public class CxfCustomerStartStopTest extends Assert {
     static final int PORT1 = CXFTestSupport.getPort1();  

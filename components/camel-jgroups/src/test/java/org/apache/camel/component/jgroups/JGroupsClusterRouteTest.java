@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jgroups;
 
-import static java.util.UUID.randomUUID;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +24,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.component.jgroups.JGroupsExpressions.delayIfContextNotStarted;
 import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
 

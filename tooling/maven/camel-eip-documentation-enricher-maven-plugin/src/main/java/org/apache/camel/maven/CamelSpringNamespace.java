@@ -17,6 +17,7 @@
 package org.apache.camel.maven;
 
 import java.util.Iterator;
+
 import javax.xml.namespace.NamespaceContext;
 
 /**

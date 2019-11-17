@@ -26,7 +26,6 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;

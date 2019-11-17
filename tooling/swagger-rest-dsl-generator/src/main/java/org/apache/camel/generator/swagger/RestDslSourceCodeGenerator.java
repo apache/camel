@@ -29,10 +29,8 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -66,7 +64,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
     public RestDslSourceCodeGenerator<T> withClassName(final String className) {
         notEmpty(className, "className");
-        this.classNameGenerator = (s) -> className;
+        this.classNameGenerator = s -> className;
 
         return this;
     }
@@ -85,7 +83,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
     public RestDslSourceCodeGenerator<T> withPackageName(final String packageName) {
         notEmpty(packageName, "packageName");
-        this.packageNameGenerator = (s) -> packageName;
+        this.packageNameGenerator = s -> packageName;
 
         return this;
     }

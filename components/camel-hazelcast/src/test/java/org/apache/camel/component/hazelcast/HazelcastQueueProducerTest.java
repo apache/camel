@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
@@ -141,7 +140,7 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
     
     @Test
     public void removeIf() throws InterruptedException {
-        Predicate<String> i  = (s)-> s.length() > 5;
+        Predicate<String> i  = s -> s.length() > 5;
         template.sendBody("direct:removeIf", i);
         verify(queue).removeIf(i);
     }

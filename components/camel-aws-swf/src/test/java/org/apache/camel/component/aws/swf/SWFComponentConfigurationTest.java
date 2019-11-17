@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.swf;
 
 import com.amazonaws.regions.Regions;
-
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

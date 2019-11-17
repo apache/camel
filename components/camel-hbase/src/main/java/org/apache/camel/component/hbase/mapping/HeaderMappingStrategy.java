@@ -19,6 +19,7 @@ package org.apache.camel.component.hbase.mapping;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.hbase.HBaseAttribute;

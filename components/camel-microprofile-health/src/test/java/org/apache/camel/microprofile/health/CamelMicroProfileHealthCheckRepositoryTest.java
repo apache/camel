@@ -20,7 +20,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import io.smallrye.health.SmallRyeHealth;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;

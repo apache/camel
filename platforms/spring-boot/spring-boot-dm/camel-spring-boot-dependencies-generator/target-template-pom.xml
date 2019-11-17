@@ -25,7 +25,7 @@
 
     <parent>
         <artifactId>camel-spring-boot-dm</artifactId>
-        <groupId>org.apache.camel</groupId>
+        <groupId>org.apache.camel.springboot</groupId>
         <version>${project.version}</version>
     </parent>
 

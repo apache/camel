@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.zipfile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.zip.ZipEntry;

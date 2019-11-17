@@ -21,7 +21,6 @@ import java.io.IOException;
 import javax.annotation.processing.Filer;
 
 import com.squareup.javapoet.JavaFile;
-
 import io.swagger.models.Swagger;
 
 final class FilerGenerator extends RestDslSourceCodeGenerator<Filer> {

@@ -30,7 +30,6 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.SetQueueAttributesResult;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;

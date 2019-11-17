@@ -37,7 +37,6 @@ import io.undertow.util.MimeMappings;
 import io.undertow.util.StatusCodes;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

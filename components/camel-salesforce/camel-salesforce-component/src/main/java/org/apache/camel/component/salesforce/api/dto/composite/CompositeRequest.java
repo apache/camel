@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-
 import org.apache.camel.component.salesforce.api.dto.XStreamFieldOrder;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite.Method;
 

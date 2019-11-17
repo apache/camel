@@ -25,7 +25,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

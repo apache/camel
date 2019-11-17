@@ -19,7 +19,6 @@ package org.apache.camel.component.google.mail.stream;
 import java.util.Map;
 
 import com.google.api.services.gmail.Gmail;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;

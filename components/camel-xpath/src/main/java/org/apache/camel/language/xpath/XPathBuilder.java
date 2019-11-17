@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.xpath.XPath;
@@ -62,6 +63,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -1030,6 +1032,9 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             }
 
             if (resultQName != null) {
+                if (document == null) {
+                    document = new XMLConverterHelper().createDocument();
+                }
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource)document;
                     answer = xpathExpression.evaluate(inputSource, resultQName);
@@ -1050,6 +1055,12 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                     answer = xpathExpression.evaluate(document);
                 }
             }
+        } catch (ParserConfigurationException e) {
+            String message = getText();
+            if (ObjectHelper.isNotEmpty(getHeaderName())) {
+                message = message + " with headerName " + getHeaderName();
+            }
+            throw new RuntimeCamelException(message, e);
         } catch (XPathExpressionException e) {
             String message = getText();
             if (ObjectHelper.isNotEmpty(getHeaderName())) {

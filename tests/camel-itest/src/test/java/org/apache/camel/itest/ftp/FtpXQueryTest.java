@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.ftp;
+
 import java.io.File;
 
 import org.apache.camel.Exchange;

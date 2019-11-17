@@ -17,8 +17,8 @@
 package org.apache.camel.cdi;
 
 import javax.enterprise.event.Event;
-import org.apache.camel.Exchange;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

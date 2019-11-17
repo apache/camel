@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.ws;
+
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;

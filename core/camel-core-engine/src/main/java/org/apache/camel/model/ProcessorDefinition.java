@@ -1188,22 +1188,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Ends the current block and returns back to the {@link HystrixDefinition
-     * hystrix()} DSL.
+     * Ends the current block and returns back to the {@link CircuitBreakerDefinition
+     * circuitBreaker()} DSL.
      *
      * @return the builder
      */
-    public HystrixDefinition endHystrix() {
+    public CircuitBreakerDefinition endCircuitBreaker() {
         ProcessorDefinition<?> def = this;
 
         // are we already a try?
-        if (def instanceof HystrixDefinition) {
-            return (HystrixDefinition)def;
+        if (def instanceof CircuitBreakerDefinition) {
+            return (CircuitBreakerDefinition)def;
         }
 
         // okay end this and get back to the try
         def = end();
-        return (HystrixDefinition)def;
+        return (CircuitBreakerDefinition)def;
     }
 
     /**
@@ -1351,14 +1351,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Creates a Hystrix Circuit Breaker EIP.
+     * Creates a Circuit Breaker EIP.
      * <p/>
-     * This requires having camel-hystrix on the classpath.
+     * This requires having an implementation on the classpath such as camel-hystrix, or camel-microprofile-fault-tolerance.
      *
      * @return the builder
      */
-    public HystrixDefinition hystrix() {
-        HystrixDefinition answer = new HystrixDefinition();
+    public CircuitBreakerDefinition circuitBreaker() {
+        CircuitBreakerDefinition answer = new CircuitBreakerDefinition();
         addOutput(answer);
         return answer;
     }

@@ -18,8 +18,10 @@ package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
 import io.micrometer.core.instrument.Meter;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;

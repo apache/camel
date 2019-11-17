@@ -30,7 +30,6 @@ import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class JGroupsRaftClusterView extends AbstractCamelClusterView {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JGroupsRaftClusterView.class);

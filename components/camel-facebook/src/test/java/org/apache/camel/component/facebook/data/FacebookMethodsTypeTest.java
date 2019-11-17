@@ -19,12 +19,10 @@ package org.apache.camel.component.facebook.data;
 import java.lang.reflect.Method;
 
 import facebook4j.Facebook;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 
 /**
  * Test that all *Methods methods are mapped in {@link FacebookMethodsType}.

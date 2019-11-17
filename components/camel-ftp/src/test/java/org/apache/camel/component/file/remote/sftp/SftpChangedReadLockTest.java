@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote.sftp;
+
 import java.io.File;
 import java.io.FileOutputStream;
 

@@ -18,11 +18,11 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-
 import javax.validation.ValidationProviderResolver;
 
 import org.hibernate.validator.HibernateValidator;
+
+import static java.util.Collections.singletonList;
 
 /**
  * OSGi-friendly implementation of {@code javax.validation.ValidationProviderResolver} returning

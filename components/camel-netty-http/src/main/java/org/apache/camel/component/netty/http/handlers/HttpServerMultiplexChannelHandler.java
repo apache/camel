@@ -125,7 +125,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
             boolean isRestrictedToOptions = handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null
                 && handler.getConsumer().getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
             if ("OPTIONS".equals(request.method().name()) && !isRestrictedToOptions) {
-                String allowedMethods = CamelServlet.METHODS.stream().filter((m) -> isHttpMethodAllowed(request, m)).collect(Collectors.joining(","));
+                String allowedMethods = CamelServlet.METHODS.stream().filter(m -> isHttpMethodAllowed(request, m)).collect(Collectors.joining(","));
                 if (allowedMethods == null && handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null) {
                     allowedMethods = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
                 }

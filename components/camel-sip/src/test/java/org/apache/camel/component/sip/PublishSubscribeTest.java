@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sip;
+
 import javax.sip.message.Request;
 
 import org.apache.camel.EndpointInject;

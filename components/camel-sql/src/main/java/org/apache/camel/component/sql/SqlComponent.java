@@ -18,6 +18,7 @@ package org.apache.camel.component.sql;
 
 import java.util.Map;
 import java.util.Set;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;

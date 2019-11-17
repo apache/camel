@@ -17,10 +17,12 @@
 package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.function.Predicate;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;

@@ -17,6 +17,7 @@
 package org.apache.camel.http.common;
 
 import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

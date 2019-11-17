@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.StringReader;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;

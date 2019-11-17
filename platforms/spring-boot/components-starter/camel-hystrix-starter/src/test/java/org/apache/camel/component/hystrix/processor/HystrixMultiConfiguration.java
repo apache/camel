@@ -21,6 +21,7 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.springframework.context.annotation.Bean;
 
 public class HystrixMultiConfiguration {
+
     @Bean(name = "bean-conf")
     public HystrixConfigurationDefinition hystrixBeanConfiguration() {
         return new HystrixConfigurationDefinition()
@@ -34,16 +35,16 @@ public class HystrixMultiConfiguration {
             public void configure() throws Exception {
                 from("direct:start-1")
                     .routeId("hystrix-route-1")
-                    .hystrix()
-                        .hystrixConfiguration("conf-1")
+                    .circuitBreaker()
+                        .configuration("conf-1")
                         .to("direct:foo")
                     .onFallback()
                         .transform().constant("Fallback message")
                     .end();
                 from("direct:start-2")
                     .routeId("hystrix-route-2")
-                    .hystrix()
-                        .hystrixConfiguration("conf-2")
+                    .circuitBreaker()
+                        .configuration("conf-2")
                         .to("direct:foo")
                     .onFallback()
                         .transform().constant("Fallback message")

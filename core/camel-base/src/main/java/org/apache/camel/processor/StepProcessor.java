@@ -51,7 +51,7 @@ public class StepProcessor extends Pipeline {
 
         EventHelper.notifyStepStarted(exchange.getContext(), exchange, stepId);
 
-        return super.process(exchange, (sync) -> {
+        return super.process(exchange, sync -> {
             // then fire event to signal the step is done
             boolean failed = exchange.isFailed();
             try {

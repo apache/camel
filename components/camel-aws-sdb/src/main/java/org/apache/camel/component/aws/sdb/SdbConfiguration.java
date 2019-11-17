@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.lambda;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;

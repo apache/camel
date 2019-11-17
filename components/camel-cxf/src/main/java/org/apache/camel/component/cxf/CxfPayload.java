@@ -32,7 +32,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.staxutils.StaxUtils;
 
-
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
  */

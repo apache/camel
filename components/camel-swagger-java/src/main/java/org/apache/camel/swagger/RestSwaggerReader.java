@@ -29,8 +29,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.lang.invoke.MethodHandles.publicLookup;
-
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
@@ -79,6 +77,8 @@ import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
+
+import static java.lang.invoke.MethodHandles.publicLookup;
 
 /**
  * A Camel REST-DSL swagger reader that parse the rest-dsl into a swagger model representation.

@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer.json;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;

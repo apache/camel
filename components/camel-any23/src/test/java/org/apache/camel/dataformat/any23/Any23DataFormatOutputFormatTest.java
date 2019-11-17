@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;

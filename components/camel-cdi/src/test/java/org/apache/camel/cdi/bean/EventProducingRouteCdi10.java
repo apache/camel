@@ -17,8 +17,8 @@
 package org.apache.camel.cdi.bean;
 
 import javax.enterprise.context.ApplicationScoped;
-
 import javax.inject.Inject;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CdiEventEndpoint;
 import org.apache.camel.cdi.pojo.EventPayloadInteger;

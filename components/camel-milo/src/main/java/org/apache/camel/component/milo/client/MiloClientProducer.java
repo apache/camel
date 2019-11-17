@@ -18,13 +18,13 @@ package org.apache.camel.component.milo.client;
 
 import java.util.concurrent.CompletableFuture;
 
-import static java.lang.Boolean.TRUE;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
+
+import static java.lang.Boolean.TRUE;
 
 public class MiloClientProducer extends DefaultAsyncProducer {
 

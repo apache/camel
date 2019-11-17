@@ -24,6 +24,7 @@ import com.amazonaws.services.s3.AmazonS3EncryptionClient;
 import org.apache.camel.component.aws.s3.S3Configuration;
 import org.junit.Assert;
 import org.junit.Test;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

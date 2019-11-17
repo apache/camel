@@ -17,6 +17,7 @@
 package org.apache.camel.component.metrics.messagehistory;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.JmxReporter;

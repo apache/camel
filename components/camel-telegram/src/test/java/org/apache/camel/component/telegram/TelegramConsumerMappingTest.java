@@ -52,7 +52,7 @@ public class TelegramConsumerMappingTest extends TelegramTestSupport {
 
         UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
 
-        when(api.getUpdates(any(), any(), any(), any())).thenReturn(res1).thenAnswer((i) -> defaultRes);
+        when(api.getUpdates(any(), any(), any(), any())).thenReturn(res1).thenAnswer(i -> defaultRes);
     }
 
     @Test

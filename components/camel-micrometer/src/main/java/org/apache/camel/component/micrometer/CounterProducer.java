@@ -17,11 +17,13 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.function.Function;
+
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
 

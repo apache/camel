@@ -22,7 +22,6 @@ import java.util.Iterator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
-
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Result;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;

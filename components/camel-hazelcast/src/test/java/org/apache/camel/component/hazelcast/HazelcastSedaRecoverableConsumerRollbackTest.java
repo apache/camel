@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
-
 public class HazelcastSedaRecoverableConsumerRollbackTest extends HazelcastSedaRecoverableConsumerTest {
 
     @Override

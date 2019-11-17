@@ -248,32 +248,6 @@ public interface XJEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use Saxon as the transformerFactoryClass. If enabled then
-         * the class net.sf.saxon.TransformerFactoryImpl. You would need to add
-         * Saxon to the classpath.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default XJEndpointBuilder saxon(boolean saxon) {
-            doSetProperty("saxon", saxon);
-            return this;
-        }
-        /**
-         * Whether to use Saxon as the transformerFactoryClass. If enabled then
-         * the class net.sf.saxon.TransformerFactoryImpl. You would need to add
-         * Saxon to the classpath.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default XJEndpointBuilder saxon(String saxon) {
-            doSetProperty("saxon", saxon);
-            return this;
-        }
-        /**
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
@@ -308,6 +282,63 @@ public interface XJEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default XJEndpointBuilder basic() {
             return (XJEndpointBuilder) this;
+        }
+        /**
+         * To use a custom Saxon configuration.
+         * 
+         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXJEndpointBuilder saxonConfiguration(
+                Object saxonConfiguration) {
+            doSetProperty("saxonConfiguration", saxonConfiguration);
+            return this;
+        }
+        /**
+         * To use a custom Saxon configuration.
+         * 
+         * The option will be converted to a
+         * <code>net.sf.saxon.Configuration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXJEndpointBuilder saxonConfiguration(
+                String saxonConfiguration) {
+            doSetProperty("saxonConfiguration", saxonConfiguration);
+            return this;
+        }
+        /**
+         * Allows you to use a custom
+         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
+         * camel-saxon to the classpath. The function is looked up in the
+         * registry, where you can comma to separate multiple values to lookup.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXJEndpointBuilder saxonExtensionFunctions(
+                List<Object> saxonExtensionFunctions) {
+            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
+            return this;
+        }
+        /**
+         * Allows you to use a custom
+         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
+         * camel-saxon to the classpath. The function is looked up in the
+         * registry, where you can comma to separate multiple values to lookup.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXJEndpointBuilder saxonExtensionFunctions(
+                String saxonExtensionFunctions) {
+            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
+            return this;
         }
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
@@ -421,62 +452,6 @@ public interface XJEndpointBuilderFactory {
         default AdvancedXJEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
             doSetProperty("resultHandlerFactory", resultHandlerFactory);
-            return this;
-        }
-        /**
-         * To use a custom Saxon configuration.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXJEndpointBuilder saxonConfiguration(
-                Object saxonConfiguration) {
-            doSetProperty("saxonConfiguration", saxonConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom Saxon configuration.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXJEndpointBuilder saxonConfiguration(
-                String saxonConfiguration) {
-            doSetProperty("saxonConfiguration", saxonConfiguration);
-            return this;
-        }
-        /**
-         * Allows you to use a custom
-         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
-         * camel-saxon to the classpath. The function is looked up in the
-         * registry, where you can comma to separate multiple values to lookup.
-         * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXJEndpointBuilder saxonExtensionFunctions(
-                List<Object> saxonExtensionFunctions) {
-            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
-            return this;
-        }
-        /**
-         * Allows you to use a custom
-         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
-         * camel-saxon to the classpath. The function is looked up in the
-         * registry, where you can comma to separate multiple values to lookup.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedXJEndpointBuilder saxonExtensionFunctions(
-                String saxonExtensionFunctions) {
-            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
         }
         /**

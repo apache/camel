@@ -18,7 +18,6 @@ package org.apache.camel.component.apns;
 
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.utils.ApnsServerStub;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;

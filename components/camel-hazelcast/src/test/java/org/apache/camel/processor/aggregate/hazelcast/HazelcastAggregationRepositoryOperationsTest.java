@@ -21,7 +21,6 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
-
 public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
 

@@ -91,10 +91,11 @@ lengths, if/try depths, etc...
 	</module>
 	 -->
 
-    <module name="TreeWalker">
-        <!-- Enable FileContentsHolder to allow us to in turn turn on suppression comments -->
-        <module name="FileContentsHolder" />
+    <module name="LineLength">
+        <property name="max" value="250"/>
+    </module>
 
+    <module name="TreeWalker">
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
         <!--
@@ -138,6 +139,9 @@ lengths, if/try depths, etc...
         <module name="ImportOrder">
             <property name="groups" value="java,javax,org.w3c,org.xml,junit"/>
             <property name="ordered" value="true"/>
+            <property name="option" value="bottom"/>
+            <property name="separated" value="true"/>
+            <property name="separatedStaticGroups" value="true"/>
         </module>
         <!--
         <module name="ImportControl">
@@ -152,9 +156,6 @@ lengths, if/try depths, etc...
         </module>
         <module name="ExecutableStatementCount">
             <property name="max" value="180"/>
-        </module>
-        <module name="LineLength">
-            <property name="max" value="250"/>
         </module>
         <module name="MethodLength">
             <property name="max" value="250"/>
@@ -366,14 +367,14 @@ lengths, if/try depths, etc...
             <property name="caseIndent" value="0"/>
         </module>
         <!--<module name="RequiredRegexp">-->
-    </module>
-    <module name="SuppressionCommentFilter">
-        <property name="offCommentFormat" value="CHECKSTYLE\:OFF"/>
-        <property name="onCommentFormat" value="CHECKSTYLE\:ON"/>
-    </module>
-    <module name="SuppressionCommentFilter">
-        <property name="offCommentFormat" value="CHECKSTYLE.OFF\:([\w\|]+)"/>
-        <property name="onCommentFormat" value="CHECKSTYLE.ON\:([\w\|]+)"/>
-        <property name="checkFormat" value="$1"/>
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE\:OFF"/>
+            <property name="onCommentFormat" value="CHECKSTYLE\:ON"/>
+        </module>
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE.OFF\:([\w\|]+)"/>
+            <property name="onCommentFormat" value="CHECKSTYLE.ON\:([\w\|]+)"/>
+            <property name="checkFormat" value="$1"/>
+        </module>
     </module>
 </module>

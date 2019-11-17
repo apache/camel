@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;

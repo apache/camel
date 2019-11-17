@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.test;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import org.apache.camel.ProducerTemplate;

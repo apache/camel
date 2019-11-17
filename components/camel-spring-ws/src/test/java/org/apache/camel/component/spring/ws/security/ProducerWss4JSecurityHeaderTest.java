@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.ws.security;
+
 import net.javacrumbs.calc.model.PlusRequest;
 import net.javacrumbs.calc.model.PlusResponse;
 import org.apache.camel.Produce;

@@ -41,32 +41,6 @@ public interface BeanValidatorEndpointBuilderFactory {
             return (AdvancedBeanValidatorEndpointBuilder) this;
         }
         /**
-         * To use a custom ConstraintValidatorFactory.
-         * 
-         * The option is a:
-         * <code>javax.validation.ConstraintValidatorFactory</code> type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder constraintValidatorFactory(
-                Object constraintValidatorFactory) {
-            doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
-            return this;
-        }
-        /**
-         * To use a custom ConstraintValidatorFactory.
-         * 
-         * The option will be converted to a
-         * <code>javax.validation.ConstraintValidatorFactory</code> type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder constraintValidatorFactory(
-                String constraintValidatorFactory) {
-            doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
-            return this;
-        }
-        /**
          * To use a custom validation group.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -75,6 +49,30 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder group(String group) {
             doSetProperty("group", group);
+            return this;
+        }
+        /**
+         * Whether to ignore data from the META-INF/validation.xml file.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default BeanValidatorEndpointBuilder ignoreXmlConfiguration(
+                boolean ignoreXmlConfiguration) {
+            doSetProperty("ignoreXmlConfiguration", ignoreXmlConfiguration);
+            return this;
+        }
+        /**
+         * Whether to ignore data from the META-INF/validation.xml file.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default BeanValidatorEndpointBuilder ignoreXmlConfiguration(
+                String ignoreXmlConfiguration) {
+            doSetProperty("ignoreXmlConfiguration", ignoreXmlConfiguration);
             return this;
         }
         /**
@@ -117,84 +115,6 @@ public interface BeanValidatorEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
-        /**
-         * To use a custom MessageInterpolator.
-         * 
-         * The option is a: <code>javax.validation.MessageInterpolator</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder messageInterpolator(
-                Object messageInterpolator) {
-            doSetProperty("messageInterpolator", messageInterpolator);
-            return this;
-        }
-        /**
-         * To use a custom MessageInterpolator.
-         * 
-         * The option will be converted to a
-         * <code>javax.validation.MessageInterpolator</code> type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder messageInterpolator(
-                String messageInterpolator) {
-            doSetProperty("messageInterpolator", messageInterpolator);
-            return this;
-        }
-        /**
-         * To use a custom TraversableResolver.
-         * 
-         * The option is a: <code>javax.validation.TraversableResolver</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder traversableResolver(
-                Object traversableResolver) {
-            doSetProperty("traversableResolver", traversableResolver);
-            return this;
-        }
-        /**
-         * To use a custom TraversableResolver.
-         * 
-         * The option will be converted to a
-         * <code>javax.validation.TraversableResolver</code> type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder traversableResolver(
-                String traversableResolver) {
-            doSetProperty("traversableResolver", traversableResolver);
-            return this;
-        }
-        /**
-         * To use a a custom ValidationProviderResolver.
-         * 
-         * The option is a:
-         * <code>javax.validation.ValidationProviderResolver</code> type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder validationProviderResolver(
-                Object validationProviderResolver) {
-            doSetProperty("validationProviderResolver", validationProviderResolver);
-            return this;
-        }
-        /**
-         * To use a a custom ValidationProviderResolver.
-         * 
-         * The option will be converted to a
-         * <code>javax.validation.ValidationProviderResolver</code> type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder validationProviderResolver(
-                String validationProviderResolver) {
-            doSetProperty("validationProviderResolver", validationProviderResolver);
-            return this;
-        }
     }
 
     /**
@@ -233,6 +153,58 @@ public interface BeanValidatorEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom ConstraintValidatorFactory.
+         * 
+         * The option is a:
+         * <code>javax.validation.ConstraintValidatorFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
+                Object constraintValidatorFactory) {
+            doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
+            return this;
+        }
+        /**
+         * To use a custom ConstraintValidatorFactory.
+         * 
+         * The option will be converted to a
+         * <code>javax.validation.ConstraintValidatorFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
+                String constraintValidatorFactory) {
+            doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
+            return this;
+        }
+        /**
+         * To use a custom MessageInterpolator.
+         * 
+         * The option is a: <code>javax.validation.MessageInterpolator</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
+                Object messageInterpolator) {
+            doSetProperty("messageInterpolator", messageInterpolator);
+            return this;
+        }
+        /**
+         * To use a custom MessageInterpolator.
+         * 
+         * The option will be converted to a
+         * <code>javax.validation.MessageInterpolator</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
+                String messageInterpolator) {
+            doSetProperty("messageInterpolator", messageInterpolator);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -256,6 +228,58 @@ public interface BeanValidatorEndpointBuilderFactory {
         default AdvancedBeanValidatorEndpointBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * To use a custom TraversableResolver.
+         * 
+         * The option is a: <code>javax.validation.TraversableResolver</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder traversableResolver(
+                Object traversableResolver) {
+            doSetProperty("traversableResolver", traversableResolver);
+            return this;
+        }
+        /**
+         * To use a custom TraversableResolver.
+         * 
+         * The option will be converted to a
+         * <code>javax.validation.TraversableResolver</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder traversableResolver(
+                String traversableResolver) {
+            doSetProperty("traversableResolver", traversableResolver);
+            return this;
+        }
+        /**
+         * To use a a custom ValidationProviderResolver.
+         * 
+         * The option is a:
+         * <code>javax.validation.ValidationProviderResolver</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
+                Object validationProviderResolver) {
+            doSetProperty("validationProviderResolver", validationProviderResolver);
+            return this;
+        }
+        /**
+         * To use a a custom ValidationProviderResolver.
+         * 
+         * The option will be converted to a
+         * <code>javax.validation.ValidationProviderResolver</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
+                String validationProviderResolver) {
+            doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
     }

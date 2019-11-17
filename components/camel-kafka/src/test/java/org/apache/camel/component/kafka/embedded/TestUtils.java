@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-
 final class TestUtils {
 
     private static final String TMPDIR = System.getProperty("java.io.tmpdir");

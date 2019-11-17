@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rabbitmq.qpid;
+
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 

@@ -17,7 +17,9 @@
 package org.apache.camel.model.rest.springboot;
 
 import java.util.Map;
+
 import javax.annotation.Generated;
+
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestHostNameResolver;
 import org.springframework.boot.context.properties.ConfigurationProperties;

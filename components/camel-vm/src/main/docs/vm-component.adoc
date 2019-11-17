@@ -8,7 +8,7 @@
 // HEADER END
 
 The VM component provides asynchronous
-http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging
+https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior, exchanging
 messages on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
 and invoking consumers in a separate thread pool.
@@ -120,7 +120,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-vm-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->

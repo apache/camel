@@ -39,7 +39,7 @@ public class DockerITTestSupport extends CamelTestSupport {
         properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
 
         Map<String, Object> options = new HashMap<>();
-        properties.entrySet().forEach((e) -> options.put(e.getKey().toString(), e.getValue()));
+        properties.entrySet().forEach(e -> options.put(e.getKey().toString(), e.getValue()));
 
         DockerConfiguration configuration = new DockerConfiguration();
         PropertyBindingSupport.bindProperties(context, configuration, options);

@@ -18,6 +18,7 @@ package org.apache.camel.component.microprofile.metrics.event.notifier.route;
 
 import org.apache.camel.CamelContext;
 import org.eclipse.microprofile.metrics.Tag;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME;

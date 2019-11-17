@@ -24,7 +24,6 @@ import com.github.dockerjava.core.LocalDirectorySSLConfig;
 import com.github.dockerjava.core.SSLConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.exception.DockerException;

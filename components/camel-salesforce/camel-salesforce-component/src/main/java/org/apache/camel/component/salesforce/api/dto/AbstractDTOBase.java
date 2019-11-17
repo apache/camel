@@ -21,7 +21,6 @@ import java.io.StringWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
 // avoid running into Salesforce backward compatibility breaks

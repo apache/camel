@@ -17,7 +17,6 @@
 package org.apache.camel.component.kubernetes;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

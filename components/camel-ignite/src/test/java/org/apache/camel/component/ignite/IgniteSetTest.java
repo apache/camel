@@ -23,7 +23,6 @@ import java.util.Set;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.apache.camel.component.ignite.set.IgniteSetComponent;
 import org.apache.camel.component.ignite.set.IgniteSetEndpoint;
 import org.apache.camel.component.ignite.set.IgniteSetOperation;

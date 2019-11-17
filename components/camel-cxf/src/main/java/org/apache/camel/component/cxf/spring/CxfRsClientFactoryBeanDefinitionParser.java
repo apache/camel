@@ -26,7 +26,6 @@ import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
-
 public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
 
     public CxfRsClientFactoryBeanDefinitionParser() {

@@ -31,6 +31,7 @@ import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ClaimCheckDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.DelayDefinition;
@@ -39,7 +40,6 @@ import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FinallyDefinition;
-import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.InOnlyDefinition;
 import org.apache.camel.model.InOutDefinition;
@@ -120,6 +120,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         map.put(BeanDefinition.class, BeanReifier::new);
         map.put(CatchDefinition.class, CatchReifier::new);
         map.put(ChoiceDefinition.class, ChoiceReifier::new);
+        map.put(CircuitBreakerDefinition.class, CircuitBreakerReifier::new);
         map.put(ClaimCheckDefinition.class, ClaimCheckReifier::new);
         map.put(ConvertBodyDefinition.class, ConvertBodyReifier::new);
         map.put(DelayDefinition.class, DelayReifier::new);
@@ -127,7 +128,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         map.put(EnrichDefinition.class, EnrichReifier::new);
         map.put(FilterDefinition.class, FilterReifier::new);
         map.put(FinallyDefinition.class, FinallyReifier::new);
-        map.put(HystrixDefinition.class, HystrixReifier::new);
         map.put(IdempotentConsumerDefinition.class, IdempotentConsumerReifier::new);
         map.put(InOnlyDefinition.class, SendReifier::new);
         map.put(InOutDefinition.class, SendReifier::new);
@@ -351,16 +351,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             log.trace("{} is part of OnException so no error handler is applied", definition);
             // do not use error handler for onExceptions blocks as it will
             // handle errors itself
-        } else if (definition instanceof HystrixDefinition || ProcessorDefinitionHelper.isParentOfType(HystrixDefinition.class, definition, true)) {
-            // do not use error handler for hystrix as it offers circuit
-            // breaking with fallback for its outputs
-            // however if inherit error handler is enabled, we need to wrap an
-            // error handler on the hystrix parent
+        } else if (definition instanceof CircuitBreakerDefinition || ProcessorDefinitionHelper.isParentOfType(CircuitBreakerDefinition.class, definition, true)) {
+            // do not use error handler for circuit breaker
+            // however if inherit error handler is enabled, we need to wrap an error handler on the parent
             if (inheritErrorHandler != null && inheritErrorHandler && child == null) {
-                // only wrap the parent (not the children of the hystrix)
+                // only wrap the parent (not the children of the circuit breaker)
                 wrap = true;
             } else {
-                log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", definition);
+                log.trace("{} is part of CircuitBreaker so no error handler is applied", definition);
             }
         } else if (definition instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained

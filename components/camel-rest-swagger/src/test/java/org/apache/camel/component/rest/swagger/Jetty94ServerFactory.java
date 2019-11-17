@@ -24,7 +24,6 @@ import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.jetty9.JettyHttpServer;
 import com.github.tomakehurst.wiremock.jetty9.JettyHttpServerFactory;
-
 import org.eclipse.jetty.io.NetworkTrafficListener;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;

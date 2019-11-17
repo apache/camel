@@ -78,7 +78,6 @@ import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
  * Test signing using all available signature methods, apart from EC-algorithms which are
  * tested in ECDSASignatureTest.

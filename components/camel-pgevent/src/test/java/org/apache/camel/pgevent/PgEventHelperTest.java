@@ -19,13 +19,13 @@ package org.apache.camel.pgevent;
 import java.sql.Connection;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
-
 import org.apache.camel.component.pgevent.PgEventHelper;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -19,7 +19,6 @@ package org.apache.camel.component.nats;
 import java.io.IOException;
 
 import io.nats.client.Message;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;

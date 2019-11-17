@@ -28,7 +28,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 
-
 @ContextConfiguration
 public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTests {
 

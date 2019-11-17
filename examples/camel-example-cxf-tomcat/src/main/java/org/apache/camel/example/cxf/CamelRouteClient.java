@@ -23,7 +23,6 @@ import org.apache.camel.example.cxf.incident.OutputReportIncident;
 import org.apache.camel.example.cxf.incident.OutputStatusIncident;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 
-
 public class CamelRouteClient {
 
     private static final String URL = "http://localhost:8080/camel-example-cxf-tomcat/webservices/incident";

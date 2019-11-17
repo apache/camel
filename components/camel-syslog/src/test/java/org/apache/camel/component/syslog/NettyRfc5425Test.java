@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

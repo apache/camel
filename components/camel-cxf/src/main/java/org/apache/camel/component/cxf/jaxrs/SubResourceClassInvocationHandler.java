@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
+
 // This class only return the sub class instance
 public class SubResourceClassInvocationHandler implements InvocationHandler {
 

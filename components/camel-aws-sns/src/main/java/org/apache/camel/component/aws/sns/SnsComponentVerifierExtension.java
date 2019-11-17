@@ -26,7 +26,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
-
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;

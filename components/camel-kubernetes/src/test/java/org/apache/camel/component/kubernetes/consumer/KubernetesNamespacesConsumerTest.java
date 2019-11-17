@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Namespace;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

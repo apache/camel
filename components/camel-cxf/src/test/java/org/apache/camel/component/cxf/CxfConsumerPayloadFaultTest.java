@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-
 import java.io.StringReader;
 import java.net.URL;
 
@@ -40,8 +39,6 @@ import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Test;
-
-
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode

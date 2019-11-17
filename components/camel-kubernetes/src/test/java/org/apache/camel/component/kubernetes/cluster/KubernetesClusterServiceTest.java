@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
-
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.cluster.utils.ConfigMapLockSimulator;
 import org.apache.camel.component.kubernetes.cluster.utils.LeaderRecorder;

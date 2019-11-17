@@ -22,7 +22,6 @@ import java.util.concurrent.TimeoutException;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

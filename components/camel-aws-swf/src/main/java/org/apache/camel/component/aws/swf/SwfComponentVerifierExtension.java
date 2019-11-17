@@ -27,7 +27,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow;
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClientBuilder;
 import com.amazonaws.services.simpleworkflow.model.ListDomainsRequest;
-
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;

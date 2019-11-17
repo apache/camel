@@ -19,6 +19,7 @@ package org.apache.camel.component.jcache;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
 import javax.cache.Cache;
 
 import org.apache.camel.test.junit4.CamelTestSupport;

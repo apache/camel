@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.xray;
 
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;

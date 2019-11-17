@@ -18,7 +18,6 @@ package org.apache.camel.component.weather.geolocation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.weather.WeatherComponent;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;

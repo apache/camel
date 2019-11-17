@@ -24,7 +24,6 @@ import com.amazonaws.services.simpleworkflow.flow.DataConverter;
 import com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions;
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions;
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.servicenow.releases.helsinki;
 
 import java.io.InputStream;
+
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

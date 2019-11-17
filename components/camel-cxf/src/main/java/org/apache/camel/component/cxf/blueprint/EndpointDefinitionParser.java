@@ -30,7 +30,6 @@ import org.apache.cxf.helpers.DOMUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.reflect.Metadata;
 
-
 public class EndpointDefinitionParser extends AbstractBeanDefinitionParser {
     
     public Metadata parse(Element element, ParserContext context) {

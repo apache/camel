@@ -18,6 +18,7 @@ package org.apache.camel.component.printer;
 
 import java.io.InputStream;
 import java.util.Locale;
+
 import javax.print.DocFlavor;
 import javax.print.PrintException;
 import javax.print.PrintService;

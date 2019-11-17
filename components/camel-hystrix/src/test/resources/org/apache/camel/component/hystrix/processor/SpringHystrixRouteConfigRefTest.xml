@@ -29,14 +29,14 @@
 
     <route>
       <from uri="direct:start"/>
-      <hystrix hystrixConfigurationRef="hysConfig">
+      <circuitBreaker configurationRef="hysConfig">
         <to uri="direct:foo"/>
         <onFallback>
           <transform>
             <constant>Fallback message</constant>
           </transform>
         </onFallback>
-      </hystrix>
+      </circuitBreaker>
       <to uri="mock:result"/>
     </route>
 

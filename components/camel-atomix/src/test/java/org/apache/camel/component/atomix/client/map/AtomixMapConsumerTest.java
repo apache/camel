@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.map;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
 import io.atomix.collections.DistributedMap;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Component;
 import org.apache.camel.RoutesBuilder;

@@ -19,8 +19,6 @@ package org.apache.camel.component.milo.client;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static java.util.Objects.requireNonNull;
-
 import org.apache.camel.component.milo.client.internal.SubscriptionManager;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
@@ -29,6 +27,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodResult;
+
+import static java.util.Objects.requireNonNull;
 
 public class MiloClientConnection implements AutoCloseable {
 

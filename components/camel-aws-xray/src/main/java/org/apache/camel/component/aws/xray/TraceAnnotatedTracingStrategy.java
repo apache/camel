@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.xray;
 
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
+
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Subsegment;
 import org.apache.camel.CamelContext;

@@ -112,7 +112,7 @@ public class FhirComponentConfiguration
         /**
          * Component configuration for FHIR component.
          */
-        private String fhirVersion = "DSTU3";
+        private String fhirVersion = "R4";
         /**
          * Component configuration for FHIR component.
          */

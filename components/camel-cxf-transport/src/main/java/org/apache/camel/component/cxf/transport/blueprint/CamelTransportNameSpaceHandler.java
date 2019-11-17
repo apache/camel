@@ -28,10 +28,8 @@ import org.apache.aries.blueprint.ParserContext;
 import org.apache.cxf.helpers.BaseNamespaceHandler;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class CamelTransportNameSpaceHandler extends BaseNamespaceHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTransportNameSpaceHandler.class);

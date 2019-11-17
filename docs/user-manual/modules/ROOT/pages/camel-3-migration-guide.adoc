@@ -80,7 +80,32 @@ We have also modularized many of the core components and moved them out of `came
 - camel-vm
 - camel-xpath
 - camel-xslt
+- camel-xslt-saxon
 - camel-zip-deflater
+
+== Spring Boot starters Maven coordinate change
+
+The Maven `groupId` for the Spring Boot starters changed to: `org.apache.camel.springboot`.
+
+Instead of:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-component-starter</artifactId>
+</dependency>
+----
+
+Use:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-component-starter</artifactId>
+</dependency>
+----
 
 == Multiple CamelContexts per application not supported
 
@@ -159,6 +184,14 @@ The `quartz2` component has been renamed to `quartz`, and it's corresponding com
 The `rxjava2` component has been renamed to `rxjava`, and it's corresponding component package from `org.apache.camel.component.rxjava2` to `org.apache.camel.component.rxjava`.
 
 We have also renamed `camel-jetty9` to `camel-jetty`. The supported scheme is now `jetty`.
+
+=== Hystrix EIP
+
+The Hystrix EIP has been generalized as circuit breaker to allow to plugin other implementations.
+
+In the Java DSL you need to migrate from `.hystrix()` to `.circuitBreaker()`.
+And in XML DSL `<hystrix>` should be `<circuitBreaker>`.
+
 
 === Using endpoint options with consumer. prefix
 
@@ -266,6 +299,11 @@ The component `camel-aws` has been split into multiple components:
 
 So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
 
+=== FHIR
+
+The camel-fhir component has upgraded it's hapi-fhir dependency to 4.1.0; Karaf support has been dropped until the hapi-fhir Karaf features are fixed and released.
+The default FHIR version has been changed to R4. Therefore if DSTU3 is desired it has to be explicitly set.
+
 === Kafka
 
 The `camel-kafka` component has removed the options `bridgeEndpoint` and `circularEndpointDetection` as this is no longer needed as the component is acting as briding would work on Camel 2.x. In other words `camel-kafka` will send messages to the topic from the endpoint uri. To override this use the `KafkaConstants.OVERRIDE_TOPIC` header with the new topic. See more details in the `camel-kafka` component documentation.
@@ -287,6 +325,13 @@ If you run Camel standalone with just `camel-core` as a dependency, and you want
 For using `ManagedCamelContext` you now need to get this an extension from `CamelContext` as follows:
 
     ManagedCamelContext managed = camelContext.getExtension(ManagedCamelContext.class);
+
+=== XSLT
+
+The XSLT component has moved out of camel-core into `camel-xslt` and `camel-xslt-saxon`. The component is separated so `camel-xslt` is for using the JDK XSTL engine (Xalan), and `camel-xslt-saxon` is when you use Saxon.
+This means that you should use `xslt` and `xslt-saxon` as component name in your Camel endpoint URIs.
+If you are using XSLT aggregation strategy, then use `org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy` for Saxon support.
+And use `org.apache.camel.component.xslt.saxon.XsltSaxonBuilder` for Saxon support if using xslt builder. Also notice that `allowStax` is also only supported in `camel-xslt-saxon` as this is not supported by the JDK XSLT.
 
 === Configuring global options on CamelContext
 

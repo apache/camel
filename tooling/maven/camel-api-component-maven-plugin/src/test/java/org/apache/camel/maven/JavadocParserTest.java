@@ -17,6 +17,7 @@
 package org.apache.camel.maven;
 
 import java.io.InputStreamReader;
+
 import javax.swing.text.html.parser.DTD;
 
 import org.junit.Assert;

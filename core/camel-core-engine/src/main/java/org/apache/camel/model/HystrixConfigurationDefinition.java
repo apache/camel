@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,12 +36,12 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     public static final String DEFAULT_GROUP_KEY = "CamelHystrix";
 
     @XmlTransient
-    private HystrixDefinition parent;
+    private CircuitBreakerDefinition parent;
 
     public HystrixConfigurationDefinition() {
     }
 
-    public HystrixConfigurationDefinition(HystrixDefinition parent) {
+    public HystrixConfigurationDefinition(CircuitBreakerDefinition parent) {
         this.parent = parent;
     }
 
@@ -375,7 +376,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     /**
      * End of configuration.
      */
-    public HystrixDefinition end() {
+    public CircuitBreakerDefinition end() {
         return parent;
     }
 

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.dataformat.base64;
 
-
-
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import static org.apache.camel.dataformat.base64.Base64TestConstants.DECODED;
 
 public class SpringBase64DataFormatLineLengthTest extends SpringBase64DataFormatTestBase {

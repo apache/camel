@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;

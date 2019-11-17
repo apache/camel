@@ -120,9 +120,7 @@ public final class GrpcUtils {
             StreamObserver<Object> requestObserver = (StreamObserver<Object>) ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
             if (request instanceof List) {
                 List<Object> requestList = (List<Object>)request;
-                requestList.forEach((requestItem) -> {
-                    requestObserver.onNext(requestItem);
-                });
+                requestList.forEach(requestObserver::onNext);
             } else {
                 requestObserver.onNext(request);
             }

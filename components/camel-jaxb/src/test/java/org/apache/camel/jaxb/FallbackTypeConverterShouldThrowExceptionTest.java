@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupport {

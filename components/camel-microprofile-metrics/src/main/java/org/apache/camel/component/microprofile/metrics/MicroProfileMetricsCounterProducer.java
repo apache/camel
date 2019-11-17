@@ -24,6 +24,7 @@ import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
+
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_COUNTER_INCREMENT;
 
 public class MicroProfileMetricsCounterProducer extends AbstractMicroProfileMetricsProducer<Counter> {

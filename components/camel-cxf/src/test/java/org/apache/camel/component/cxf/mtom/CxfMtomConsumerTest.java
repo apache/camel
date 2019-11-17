@@ -36,7 +36,6 @@ import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class CxfMtomConsumerTest extends CamelTestSupport {
     protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:"
         + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";

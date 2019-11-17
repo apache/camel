@@ -26,7 +26,6 @@ import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.CamelEvent.RouteStartedEvent;
 import org.apache.camel.spi.CamelEvent.RouteStoppedEvent;
 
-
 public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifier<RouteEvent> {
 
     private final AtomicLong routesAdded = new AtomicLong();

@@ -24,7 +24,6 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxGroup;
 import com.box.sdk.BoxGroupMembership;
 import com.box.sdk.BoxUser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

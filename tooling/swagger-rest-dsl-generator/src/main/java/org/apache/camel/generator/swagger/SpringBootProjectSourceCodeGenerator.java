@@ -18,6 +18,7 @@ package org.apache.camel.generator.swagger;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 

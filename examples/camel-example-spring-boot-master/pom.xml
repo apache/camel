@@ -53,7 +53,7 @@
             </dependency>
             <!-- Camel BOM -->
             <dependency>
-                <groupId>org.apache.camel</groupId>
+                <groupId>org.apache.camel.springboot</groupId>
                 <artifactId>camel-spring-boot-dependencies</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
@@ -68,15 +68,15 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-core-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-master-starter</artifactId>
         </dependency>
     </dependencies>

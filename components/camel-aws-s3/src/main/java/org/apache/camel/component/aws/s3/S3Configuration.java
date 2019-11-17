@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.s3;
 import com.amazonaws.Protocol;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

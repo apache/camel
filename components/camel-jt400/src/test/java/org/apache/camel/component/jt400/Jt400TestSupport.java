@@ -17,7 +17,6 @@
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400ConnectionPool;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;

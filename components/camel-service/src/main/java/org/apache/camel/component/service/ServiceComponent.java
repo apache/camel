@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.service;
 
-
 import java.util.HashMap;
 import java.util.Map;
 

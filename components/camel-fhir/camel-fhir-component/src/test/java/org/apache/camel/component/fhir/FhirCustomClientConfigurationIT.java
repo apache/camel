@@ -18,7 +18,9 @@ package org.apache.camel.component.fhir;
 
 import java.util.List;
 import java.util.Map;
+
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.interceptor.api.IInterceptorService;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.UriDt;
 import ca.uhn.fhir.rest.api.EncodingEnum;
@@ -47,7 +49,6 @@ import ca.uhn.fhir.rest.gclient.ITransaction;
 import ca.uhn.fhir.rest.gclient.IUntypedQuery;
 import ca.uhn.fhir.rest.gclient.IUpdate;
 import ca.uhn.fhir.rest.gclient.IValidate;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -74,17 +75,6 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
     
     @BindToRegistry("customClientFactory")
     private CustomClientFactory clientFactory = new CustomClientFactory();
-    
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createRegistry());
-
-        // add FhirComponent to Camel context but don't set up componentConfiguration
-        final FhirComponent component = new FhirComponent(context);
-        context.addComponent("fhir", component);
-
-        return context;
-    }
 
     @Test
     public void testConfigurationWithCustomClient() throws Exception {
@@ -302,6 +292,16 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
+        public IInterceptorService getInterceptorService() {
+            return null;
+        }
+
+        @Override
+        public void setInterceptorService(IInterceptorService theInterceptorService) {
+
+        }
+
+        @Override
         public <T extends IBaseResource> T fetchResourceFromUrl(Class<T> theResourceType, String theUrl) {
             return null;
         }
@@ -318,11 +318,6 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
         @Override
         public IHttpClient getHttpClient() {
-            return null;
-        }
-
-        @Override
-        public List<IClientInterceptor> getInterceptors() {
             return null;
         }
 

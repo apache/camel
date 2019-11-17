@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -36,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;

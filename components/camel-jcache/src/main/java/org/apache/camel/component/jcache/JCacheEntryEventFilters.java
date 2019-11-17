@@ -19,6 +19,7 @@ package org.apache.camel.component.jcache;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.cache.event.CacheEntryEvent;
 import javax.cache.event.CacheEntryEventFilter;
 import javax.cache.event.CacheEntryListenerException;

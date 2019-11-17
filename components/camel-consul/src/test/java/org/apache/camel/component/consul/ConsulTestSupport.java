@@ -22,7 +22,6 @@ import java.util.UUID;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.junit5.Wait;

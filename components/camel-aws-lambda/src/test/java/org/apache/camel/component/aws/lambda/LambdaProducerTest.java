@@ -37,7 +37,6 @@ import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.util.IOUtils;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

@@ -20,7 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupport {

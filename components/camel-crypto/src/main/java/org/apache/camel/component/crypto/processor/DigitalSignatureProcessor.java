@@ -33,7 +33,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
-
 public abstract class DigitalSignatureProcessor implements Processor {
 
     protected DigitalSignatureConfiguration config;

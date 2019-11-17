@@ -28,7 +28,6 @@ import javax.json.stream.JsonParser;
 
 import io.smallrye.health.SmallRyeHealth;
 import io.smallrye.health.SmallRyeHealthReporter;
-
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;

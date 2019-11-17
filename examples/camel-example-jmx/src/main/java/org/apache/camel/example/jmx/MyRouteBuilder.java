@@ -17,6 +17,7 @@
 package org.apache.camel.example.jmx;
 
 import java.lang.management.ManagementFactory;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

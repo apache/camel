@@ -17,7 +17,6 @@
 package com.example;
 
 import io.swagger.models.Operation;
-
 import org.apache.camel.generator.swagger.DestinationGenerator;
 
 public class MyDestinationGenerator implements DestinationGenerator {

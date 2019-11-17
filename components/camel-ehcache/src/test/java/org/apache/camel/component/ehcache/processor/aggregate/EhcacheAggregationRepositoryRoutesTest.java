@@ -28,7 +28,6 @@ import org.apache.camel.component.ehcache.EhcacheTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
     private static final String ENDPOINT_MOCK = "mock:result";
     private static final String ENDPOINT_DIRECT = "direct:one";

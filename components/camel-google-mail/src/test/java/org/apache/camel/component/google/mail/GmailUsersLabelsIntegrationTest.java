@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.api.services.gmail.model.Label;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersLabelsApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;

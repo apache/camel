@@ -19,11 +19,10 @@ package org.apache.camel.component.wordpress.api;
 import java.io.Serializable;
 import java.util.Objects;
 
-import static java.util.Objects.hash;
-
 import org.apache.camel.component.wordpress.api.auth.WordpressAuthentication;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
+import static java.util.Objects.hash;
 
 /**
  * Model for the API configuration.

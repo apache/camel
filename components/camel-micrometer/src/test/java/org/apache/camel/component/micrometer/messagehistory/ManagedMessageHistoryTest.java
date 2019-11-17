@@ -17,14 +17,15 @@
 package org.apache.camel.component.micrometer.messagehistory;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 import io.micrometer.jmx.JmxMeterRegistry;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

@@ -41,7 +41,6 @@ import org.jsmpp.util.DefaultDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and
  * {@link SmppMessage} to and from a SMPP {@link Command}

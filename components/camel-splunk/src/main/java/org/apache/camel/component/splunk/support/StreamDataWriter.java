@@ -23,7 +23,6 @@ import com.splunk.Args;
 import com.splunk.Index;
 import com.splunk.Receiver;
 import com.splunk.Service;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.splunk.SplunkEndpoint;
 import org.slf4j.Logger;

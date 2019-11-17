@@ -16,7 +16,6 @@
  */
 package org.apache.camel.coap;
 
-
 import java.util.LinkedList;
 import java.util.List;
 

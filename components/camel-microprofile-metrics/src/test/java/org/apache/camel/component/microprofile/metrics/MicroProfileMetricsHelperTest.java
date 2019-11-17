@@ -17,12 +17,12 @@
 package org.apache.camel.component.microprofile.metrics;
 
 import io.smallrye.metrics.MetricRegistries;
-
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 public class MicroProfileMetricsHelperTest {

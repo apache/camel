@@ -103,7 +103,6 @@ import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.LoadBalanceDefinition;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;

@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;

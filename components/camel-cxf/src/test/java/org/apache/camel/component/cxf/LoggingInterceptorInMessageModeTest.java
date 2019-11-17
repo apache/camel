@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -34,8 +35,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-
 
 @ContextConfiguration
 public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringContextTests {

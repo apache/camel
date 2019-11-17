@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import com.google.zxing.BarcodeFormat;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.junit.Before;

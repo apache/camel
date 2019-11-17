@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;

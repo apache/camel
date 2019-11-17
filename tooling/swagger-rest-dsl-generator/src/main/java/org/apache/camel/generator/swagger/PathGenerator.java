@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import com.squareup.javapoet.JavaFile;
-
 import io.swagger.models.Swagger;
 
 final class PathGenerator extends RestDslSourceCodeGenerator<Path> {

@@ -45,7 +45,7 @@ public class HystrixBadRequestExceptionTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("log:start")
-                    .hystrix()
+                    .circuitBreaker()
                         .throwException(new HystrixBadRequestException("Should not fallback"))
                     .onFallback()
                         .to("mock:fallback")

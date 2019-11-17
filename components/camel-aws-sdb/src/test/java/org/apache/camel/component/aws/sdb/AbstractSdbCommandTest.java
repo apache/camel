@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.UpdateCondition;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;

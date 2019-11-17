@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;

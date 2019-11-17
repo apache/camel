@@ -52,7 +52,7 @@ public class TelegramConsumerServiceErrorTest extends TelegramTestSupport {
                 .thenThrow(new RuntimeException("Service exception"))
                 .thenReturn(logicalErrorRes)
                 .thenReturn(res1)
-                .thenAnswer((i) -> defaultRes);
+                .thenAnswer(i -> defaultRes);
     }
 
     @Test

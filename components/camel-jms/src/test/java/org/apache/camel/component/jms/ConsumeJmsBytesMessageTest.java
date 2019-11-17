@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-
 import java.util.Arrays;
 
 import javax.jms.BytesMessage;
@@ -37,7 +36,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 
 public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
     protected JmsTemplate jmsTemplate;

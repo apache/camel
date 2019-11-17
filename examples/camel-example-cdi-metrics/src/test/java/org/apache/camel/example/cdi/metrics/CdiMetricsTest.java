@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.metrics;
 
 import javax.inject.Inject;
+
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.annotation.Metric;

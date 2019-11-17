@@ -48,7 +48,7 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.camel</groupId>
+                <groupId>org.apache.camel.springboot</groupId>
                 <artifactId>camel-spring-boot-dependencies</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
@@ -60,11 +60,11 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-metrics-starter</artifactId>
         </dependency>
 

@@ -19,14 +19,13 @@ package org.apache.camel.swagger;
 import java.lang.invoke.MethodType;
 import java.util.List;
 
-import static java.lang.invoke.MethodHandles.publicLookup;
-
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.SerializableParameter;
 import io.swagger.models.properties.Property;
-
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
+
+import static java.lang.invoke.MethodHandles.publicLookup;
 
 public final class ParameterAssert extends ObjectAssert<Parameter> {
 

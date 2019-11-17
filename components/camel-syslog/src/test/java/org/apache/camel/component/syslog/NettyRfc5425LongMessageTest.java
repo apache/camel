@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
-import io.netty.buffer.ByteBuf;
 
+import io.netty.buffer.ByteBuf;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

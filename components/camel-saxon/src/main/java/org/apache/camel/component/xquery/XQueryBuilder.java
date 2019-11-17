@@ -50,6 +50,7 @@ import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
@@ -508,7 +509,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
-            Object body = null;
+            Object body;
             if (ObjectHelper.isNotEmpty(getHeaderName())) {
                 body = in.getHeader(getHeaderName());
             } else {
@@ -536,8 +537,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     throw new NoTypeConversionAvailableException(body, Source.class);
                 }
 
-                DocumentInfo doc = config.buildDocument(source);
-                dynamicQueryContext.setContextItem(doc);
+                TreeInfo doc = config.buildDocumentTree(source);
+                dynamicQueryContext.setContextItem(doc.getRootNode());
             } finally {
                 // can deal if is is null
                 IOHelper.close(is);

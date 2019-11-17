@@ -17,6 +17,7 @@
 package org.apache.camel.example.olingo4.blueprint;
 
 import java.io.IOException;
+
 import org.apache.camel.component.olingo4.Olingo4Configuration;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpGet;

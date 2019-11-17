@@ -38,7 +38,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.function.Suppliers;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

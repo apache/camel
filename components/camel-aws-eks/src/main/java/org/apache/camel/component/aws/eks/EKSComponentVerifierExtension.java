@@ -27,7 +27,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.eks.AmazonEKS;
 import com.amazonaws.services.eks.AmazonEKSClientBuilder;
 import com.amazonaws.services.eks.model.ListClustersRequest;
-
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;

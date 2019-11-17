@@ -30,9 +30,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
-import org.apache.camel.component.xslt.XsltComponent;
-import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.component.xslt.XsltUriResolver;
+import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
@@ -44,6 +43,7 @@ import org.springframework.ws.soap.SoapMessage;
  * Message filter that transforms the header of a soap message
  */
 public class HeaderTransformationMessageFilter implements MessageFilter {
+    private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
     private static final String SOAP_HEADER_TRANSFORMATION_PROBLEM = "Soap header transformation problem";
     private static final Logger LOG = LoggerFactory.getLogger(HeaderTransformationMessageFilter.class);
     private String xslt;
@@ -168,8 +168,8 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
         final ClassResolver resolver = context.getClassResolver();
         try {
             Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(
-                    XsltEndpoint.SAXON_TRANSFORMER_FACTORY_CLASS_NAME, TransformerFactory.class,
-                    XsltComponent.class.getClassLoader());
+                    SAXON_TRANSFORMER_FACTORY_CLASS_NAME, TransformerFactory.class,
+                    XsltSaxonComponent.class.getClassLoader());
 
             if (factoryClass != null) {
                 return ObjectHelper.newInstance(factoryClass);

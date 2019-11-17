@@ -17,6 +17,7 @@
 package org.apache.camel.component.jcr;
 
 import java.io.File;
+
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.security.AccessControlList;

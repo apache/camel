@@ -24,14 +24,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.Credential;
 import io.undertow.security.idm.DigestCredential;
 import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.idm.PasswordCredential;
 import io.undertow.util.HexConverter;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 class MapIdentityManager implements IdentityManager {
 

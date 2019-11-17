@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -215,8 +216,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             if (configuration.getTaskExecutor() instanceof ExecutorService) {
                 consumer.setListenerContainerExecutorService((ExecutorService) configuration.getTaskExecutor(), false);
             }
-        } else if ((listenerContainer instanceof DefaultJmsMessageListenerContainer && configuration.getDefaultTaskExecutorType() == null)
-                || !(listenerContainer instanceof DefaultJmsMessageListenerContainer)) {
+        } else if (!(listenerContainer instanceof DefaultJmsMessageListenerContainer) || configuration.getDefaultTaskExecutorType() == null) {
             // preserve backwards compatibility if an explicit Default TaskExecutor Type was not set;
             // otherwise, defer the creation of the TaskExecutor
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing

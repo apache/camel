@@ -46,8 +46,8 @@ public class FhirConfiguration {
     @UriParam(description = "The FHIR server base URL")
     private String serverUrl;
 
-    @UriParam(description = "The FHIR Version to use", defaultValue = "DSTU3", javaType = "java.lang.String")
-    private FhirVersionEnum fhirVersion = FhirVersionEnum.DSTU3;
+    @UriParam(description = "The FHIR Version to use", defaultValue = "R4", javaType = "java.lang.String")
+    private FhirVersionEnum fhirVersion = FhirVersionEnum.R4;
 
     @UriParam(description = "Pretty print all request")
     private boolean prettyPrint;
@@ -346,6 +346,8 @@ public class FhirConfiguration {
                     && ObjectHelper.equal(proxyPort, otherFhirConfiguration.getProxyPort())
                     && ObjectHelper.equal(proxyUser, otherFhirConfiguration.getProxyUser())
                     && ObjectHelper.equal(proxyPassword, otherFhirConfiguration.getProxyPassword())
+                    && ObjectHelper.equal(client, otherFhirConfiguration.getClient())
+                    && ObjectHelper.equal(clientFactory, otherFhirConfiguration.getClientFactory())
                     && ObjectHelper.equal(serverUrl, otherFhirConfiguration.getServerUrl());
         }
         return false;

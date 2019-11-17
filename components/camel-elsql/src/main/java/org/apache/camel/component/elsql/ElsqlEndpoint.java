@@ -19,6 +19,7 @@ package org.apache.camel.component.elsql;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSql;

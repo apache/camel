@@ -19,7 +19,6 @@ package org.apache.camel.component.google.mail.stream;
 import java.util.Map;
 
 import com.google.api.services.gmail.Gmail;
-
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;

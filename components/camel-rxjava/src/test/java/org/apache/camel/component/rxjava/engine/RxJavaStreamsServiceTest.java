@@ -23,7 +23,6 @@ import java.util.function.Function;
 
 import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;

@@ -35,7 +35,6 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.model.EndpointInfo;
 
-
 /**
  * Just copy the from WSDLGetInterceptor to provide backward compatible support for 2.7.x
  */

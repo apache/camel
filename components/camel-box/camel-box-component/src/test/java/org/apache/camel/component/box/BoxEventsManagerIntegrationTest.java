@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxFolder;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxEventsManager;

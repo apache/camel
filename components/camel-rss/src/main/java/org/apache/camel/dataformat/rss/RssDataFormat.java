@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.rometools.rome.feed.synd.SyndFeed;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;

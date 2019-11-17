@@ -26,7 +26,6 @@ import java.time.Instant;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.Test;
 

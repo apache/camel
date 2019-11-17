@@ -292,7 +292,7 @@ public final class Olingo4AppImpl implements Olingo4App {
     public void delete(final String resourcePath, final Map<String, String> endpointHttpHeaders, final Olingo4ResponseHandler<HttpStatusCode> responseHandler) {
         HttpDelete deleteRequest = new HttpDelete(createUri(resourcePath));
 
-        Consumer<HttpRequestBase> deleteFunction = (request) -> {
+        Consumer<HttpRequestBase> deleteFunction = request -> {
             execute(request, contentType, endpointHttpHeaders, new AbstractFutureCallback<HttpStatusCode>(responseHandler) {
                 @Override
                 public void onCompleted(HttpResponse result) {

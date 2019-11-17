@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.model.DeleteMessageResult;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

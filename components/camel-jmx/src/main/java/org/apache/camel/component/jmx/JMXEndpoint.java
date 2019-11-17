@@ -19,6 +19,7 @@ package org.apache.camel.component.jmx;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;

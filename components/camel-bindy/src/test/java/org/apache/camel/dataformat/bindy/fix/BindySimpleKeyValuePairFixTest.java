@@ -34,7 +34,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-
 @ContextConfiguration
 public class BindySimpleKeyValuePairFixTest extends AbstractJUnit4SpringContextTests {
     private static final String[] FIX_REQUESTS = new String[] {

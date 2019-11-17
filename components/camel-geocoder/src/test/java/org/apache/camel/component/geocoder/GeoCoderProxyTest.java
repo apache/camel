@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.geocoder;
 
-
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.GeocodingApiRequest;

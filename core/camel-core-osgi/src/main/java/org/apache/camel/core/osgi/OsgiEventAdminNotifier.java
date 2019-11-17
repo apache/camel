@@ -21,7 +21,6 @@ import java.util.Hashtable;
 
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

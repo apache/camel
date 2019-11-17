@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.dozer.dto;
 
-
 import java.io.Serializable;
 
 public class CustomerDTO implements Serializable {

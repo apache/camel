@@ -22,7 +22,6 @@ import java.net.Socket;
 import com.splunk.Args;
 import com.splunk.Service;
 import com.splunk.TcpInput;
-
 import org.apache.camel.component.splunk.SplunkEndpoint;
 
 public class TcpDataWriter extends SplunkDataWriter {

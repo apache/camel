@@ -19,6 +19,7 @@ package org.apache.camel.tools.apt;
 import java.io.Writer;
 import java.util.Map;
 import java.util.StringJoiner;
+
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;

@@ -20,13 +20,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Set;
 
-import static java.util.Collections.emptySet;
-import static java.util.stream.Collectors.toSet;
-
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Named;
 
+import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 
 class SyntheticBeanAttributes<T> {

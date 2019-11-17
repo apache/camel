@@ -18,6 +18,7 @@ package org.apache.camel.component.gson;
 
 import java.io.*;
 import java.util.*;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

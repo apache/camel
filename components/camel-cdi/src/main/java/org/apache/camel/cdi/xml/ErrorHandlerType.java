@@ -23,7 +23,6 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
-
 import org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder;
 
 /**

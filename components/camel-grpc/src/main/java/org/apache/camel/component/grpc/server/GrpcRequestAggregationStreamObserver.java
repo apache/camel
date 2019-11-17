@@ -70,9 +70,7 @@ public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStr
 
             if (responseBody instanceof List) {
                 List<?> responseList = (List<?>)responseBody;
-                responseList.forEach((responseItem) -> {
-                    responseObserver.onNext(responseItem);
-                });
+                responseList.forEach(responseObserver::onNext);
             } else {
                 responseObserver.onNext(responseBody);
             }

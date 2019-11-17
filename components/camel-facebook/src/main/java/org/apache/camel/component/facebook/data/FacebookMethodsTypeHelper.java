@@ -29,12 +29,10 @@ import java.util.Set;
 
 import facebook4j.Facebook;
 import facebook4j.FacebookException;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.facebook.config.FacebookNameStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Helper class for working with {@link FacebookMethodsType}.

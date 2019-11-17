@@ -17,10 +17,12 @@
 package org.apache.camel.component.micrometer.routepolicy;
 
 import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.util;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 

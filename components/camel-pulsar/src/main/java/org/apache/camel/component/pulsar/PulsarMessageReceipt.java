@@ -17,6 +17,7 @@
 package org.apache.camel.component.pulsar;
 
 import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.pulsar.client.api.MessageId;

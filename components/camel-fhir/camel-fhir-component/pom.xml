@@ -80,6 +80,18 @@
         <!-- These aren't needed for compilation but makes camel-fhir easier to use for third party projects/users e.g wildfly-camel -->
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r5</artifactId>
+            <version>${hapi-fhir-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
+            <version>${hapi-fhir-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-structures-dstu3</artifactId>
             <version>${hapi-fhir-version}</version>
         </dependency>

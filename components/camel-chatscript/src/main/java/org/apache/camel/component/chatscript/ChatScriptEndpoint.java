@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.chatscript;
 
-
-
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -32,7 +29,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
+
 /**
  * Represents a ChatScript endpoint.
  */

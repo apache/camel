@@ -17,6 +17,7 @@
 package org.apache.camel.component.jcache.policy;
 
 import java.util.UUID;
+
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -25,15 +26,12 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 
-
-
-
 public class JCachePolicyTestBase extends CamelTestSupport {
 
     @Before
     public void before() {
         //Setup mock
-        getMockEndpoint("mock:value").whenAnyExchangeReceived((e) ->
+        getMockEndpoint("mock:value").whenAnyExchangeReceived(e ->
                 e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
@@ -54,7 +52,7 @@ public class JCachePolicyTestBase extends CamelTestSupport {
     public void after() {
         //The RouteBuilder code is called for every test, so we destroy cache after each test
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
-        cacheManager.getCacheNames().forEach((s) -> cacheManager.destroyCache(s));
+        cacheManager.getCacheNames().forEach(s -> cacheManager.destroyCache(s));
         Caching.getCachingProvider().close();
     }
 }

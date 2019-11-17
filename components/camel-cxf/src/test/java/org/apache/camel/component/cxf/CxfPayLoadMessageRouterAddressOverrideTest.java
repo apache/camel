@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
-
 /**
  * A unit test for testing reading SOAP body with address override in PAYLOAD mode.
  */

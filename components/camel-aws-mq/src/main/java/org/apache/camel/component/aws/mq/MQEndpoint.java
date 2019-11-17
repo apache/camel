@@ -25,7 +25,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.AmazonMQClient;
 import com.amazonaws.services.mq.AmazonMQClientBuilder;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

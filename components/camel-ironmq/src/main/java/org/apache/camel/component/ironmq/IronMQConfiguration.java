@@ -17,7 +17,6 @@
 package org.apache.camel.component.ironmq;
 
 import io.iron.ironmq.Client;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

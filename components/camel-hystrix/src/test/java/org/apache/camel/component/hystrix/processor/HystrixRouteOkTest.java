@@ -39,7 +39,7 @@ public class HystrixRouteOkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .hystrix()
+                    .circuitBreaker()
                         .to("direct:foo")
                         .to("log:foo")
                     .onFallback()

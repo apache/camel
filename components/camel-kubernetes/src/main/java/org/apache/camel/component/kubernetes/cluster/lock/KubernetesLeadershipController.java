@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.slf4j.Logger;

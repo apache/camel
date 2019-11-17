@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer.messagehistory;
 
 import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;

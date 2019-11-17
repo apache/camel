@@ -19,7 +19,6 @@ package org.apache.camel.component.docker;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.RemoveImageCmd;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docker.headers.BaseDockerHeaderTest;
 import org.junit.Ignore;

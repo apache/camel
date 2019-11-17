@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 
 import io.iron.ironmq.Client;
 import io.iron.ironmq.Cloud;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

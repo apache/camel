@@ -22,7 +22,6 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;

@@ -22,7 +22,6 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-
 public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest extends TcpServerConsumerAcknowledgementTestSupport {
     @Override
     protected boolean isBridgeErrorHandler() {

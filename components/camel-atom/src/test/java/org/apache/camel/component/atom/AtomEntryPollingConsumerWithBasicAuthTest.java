@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atom;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -18,7 +18,6 @@ package org.apache.camel.processor.mllp;
 
 import org.apache.camel.component.mllp.internal.Hl7Util;
 
-
 /*
  * Exception thrown by the HL7AcknowledgmentGenerator in the event of a failure.
  */
