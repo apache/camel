@@ -56,9 +56,21 @@ public class ResilienceManagementTest extends CamelTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("start", routeId);
 
-        // should be id of the node
         Integer num = (Integer) mbeanServer.getAttribute(on, "CircuitBreakerMinimumNumberOfCalls");
         assertEquals("100", num.toString());
+
+        Integer totalRequests = (Integer) mbeanServer.getAttribute(on, "NumberOfSuccessfulCalls");
+        assertEquals(1, totalRequests.intValue());
+
+        Integer errorCount = (Integer) mbeanServer.getAttribute(on, "NumberOfFailedCalls");
+        assertEquals(0, errorCount.intValue());
+
+        String state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
+        assertEquals("CLOSED", state);
+
+        mbeanServer.invoke(on, "transitionToOpenState", null, null);
+        state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
+        assertEquals("OPEN", state);
     }
 
     @Override
