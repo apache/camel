@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.pulsar;
 
-import static org.mockito.Mockito.mock;
-
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
 import org.junit.Test;
+
+import static org.mockito.Mockito.mock;
 
 public class PulsarNegativeAcknowledgementTest {
 

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,7 +53,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint to;
 
-    Producer<String> producer;
+    private Producer<String> producer;
 
     @Before
     public void setup() throws Exception {

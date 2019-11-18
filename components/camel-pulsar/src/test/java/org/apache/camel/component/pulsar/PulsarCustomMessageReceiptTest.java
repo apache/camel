@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,13 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.pulsar;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
@@ -41,6 +34,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarCustomMessageReceiptTest.class);
@@ -48,9 +48,9 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
 
-    public PulsarMessageReceiptFactory mockPulsarMessageReceiptFactory = mock(PulsarMessageReceiptFactory.class);
+    private PulsarMessageReceiptFactory mockPulsarMessageReceiptFactory = mock(PulsarMessageReceiptFactory.class);
 
-    public PulsarMessageReceipt mockPulsarMessageReceipt = mock(PulsarMessageReceipt.class);
+    private PulsarMessageReceipt mockPulsarMessageReceipt = mock(PulsarMessageReceipt.class);
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI
             + "?numberOfConsumers=1&subscriptionType=Exclusive"
@@ -63,7 +63,7 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint to;
 
-    Producer<String> producer;
+    private Producer<String> producer;
 
     @Before
     public void setup() throws Exception {
