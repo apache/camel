@@ -1,6 +1,5 @@
 [[serviceCall-eip]]
 = Service Call EIP
-*Available as of Camel 2.18*
 
 The Service Call EIP allows to call remote services in a distributed system.
 The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Etcd, Zookeeper, DNS.
