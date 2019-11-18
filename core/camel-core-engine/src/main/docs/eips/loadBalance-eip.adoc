@@ -18,7 +18,6 @@ Camel provides the following policies out-of-the-box:
 | Weighted Round-Robin |The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to the others. In addition to the weight, endpoint selection is then further refined using *round-robin* distribution based on weight.
 | Weighted Random |The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others.In addition to the weight, endpoint selection is then further refined using *random* distribution based on weight.
 | Custom |The preferred way of using a custom Load Balancer is to use this policy, as the ref attribute is not supported anymore.
-| Circuit Breaker |Implements the Circuit Breaker pattern as described in "Release it!" book.
 |=======================================================================
 
 == Options
