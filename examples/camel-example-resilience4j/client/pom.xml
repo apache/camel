@@ -66,15 +66,15 @@
 
         <!-- camel -->
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-http-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-resilience4j-starter</artifactId>
         </dependency>
 
