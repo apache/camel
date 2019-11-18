@@ -115,35 +115,35 @@ to send the reply?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/ContentBasedRouterIcon.gif[image]
-|Content Based Router |How do we handle
+|xref:content-based-router-eip.adoc[Content Based Router] |How do we handle
 a situation where the implementation of a single logical function (e.g.,
 inventory check) is spread across multiple physical systems?
 
 a|image::eip/MessageFilterIcon.gif[image]
-|Message Filter |How can a component avoid
+|xref:filter-eip.adoc[Message Filter] |How can a component avoid
 receiving uninteresting messages?
 
 a|image::eip/DynamicRouterIcon.gif[image]
-|Dynamic Router |How can you avoid the
+|xref:dynamicRouter-eip.adoc[Dynamic Router] |How can you avoid the
 dependency of the router on all possible destinations while maintaining
 its efficiency?
 
 a|image::eip/RecipientListIcon.gif[image]
-|Recipient List |How do we route a message to
+|xref:recipientList-eip.adoc[Recipient List] |How do we route a message to
 a list of (static or dynamically) specified recipients?
 
 a|image::eip/SplitterIcon.gif[image]
-|Splitter |How can we process a message if it
+|xref:split-eip.adoc[Splitter] |How can we process a message if it
 contains multiple elements, each of which may have to be processed in a
 different way?
 
 a|image::eip/AggregatorIcon.gif[image]
-|Aggregator |How do we combine the results of
+|xref:aggregate-eip.adoc[Aggregator] |How do we combine the results of
 individual, but related messages so that they can be processed as a
 whole?
 
 a|image::eip/ResequencerIcon.gif[image]
-|Resequencer |How can we get a stream of related
+|xref:resequence-eip.adoc[Resequencer] |How can we get a stream of related
 but out-of-sequence messages back into the correct order?
 
 a|image::eip/DistributionAggregateIcon.gif[image]
@@ -158,40 +158,39 @@ overall message flow when a message needs to be sent to multiple
 recipients, each of which may send a reply?
 
 a|image::eip/RoutingTableIcon.gif[image]
-|Routing Slip |How do we route a message
+|xref:routingSlip-eip.adoc[Routing Slip] |How do we route a message
 consecutively through a series of processing steps when the sequence of
 steps is not known at design-time and may vary for each message?
 
 |
-|Throttler |How can I throttle messages to ensure
+|xref:throttle-eip.adoc[Throttler] |How can I throttle messages to ensure
 that a specific endpoint does not get overloaded, or we don't exceed an
 agreed SLA with some external service?
 
 |
-|Sampling |How can I sample one message out of many
+|xref:sample-eip.adoc[Sampling] |How can I sample one message out of many
 in a given period to avoid downstream route does not get overloaded?
 
 |
-|Delayer |How can I delay the sending of a message?
+|xref:delay-eip.adoc[Delayer] |How can I delay the sending of a message?
 
 |
-|Load Balancer |How can I balance load across a
+|xref:loadBalance-eip.adoc[Load Balancer] |How can I balance load across a
 number of endpoints?
 
 |
-|Hystrix |How can I stop to call an external service if the service is broken?
+|xref:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop to call an external service if the service is broken?
 
 |
-|Service Call |How can I call a remote service in a distributed system
+|xref:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
 where the service is looked up from a service registry of some sorts?
 
 |
-|Saga |How can I define a series of related actions in a Camel route
+|xref:saga-eip.adoc[Saga] |How can I define a series of related actions in a Camel route
 that should be either completed successfully (all of them) or not-executed/compensated?
 
-
 |
-|Multicast |How can I route a message to a number
+|xref:multicast-eip.adoc[Multicast] |How can I route a message to a number
 of endpoints at the same time?
 
 |
@@ -204,16 +203,16 @@ of endpoints at the same time?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/DataEnricherIcon.gif[image]
-|Content Enricher |How do we communicate
+|[xref:content-enricher.adoc[Content Enricher] |How do we communicate
 with another system if the message originator does not have all the
 required data items available?
 
 a|image::eip/ContentFilterIcon.gif[image]
-|Content Filter |How do you simplify dealing
+|xref:content-filter-eip.adoc[Content Filter] |How do you simplify dealing
 with a large message, when you are interested only in a few data items?
 
 a|image::eip/StoreInLibraryIcon.gif[image]
-|Claim Check |How can we reduce the data volume
+|xref:claimCheck-eip.adoc[Claim Check] |How can we reduce the data volume
 of message sent across the system without sacrificing information
 content?
 
@@ -224,7 +223,8 @@ semantically equivalent, but arrive in a different format?
 |
 |xref:sort-eip.adoc[Sort] |How can I sort the body of a message?
 
-|  |Script |How do I execute a script which may not change the message?
+|
+|xref:script-eip.adoc[Script] |How do I execute a script which may not change the message?
 
 |
 |xref:validate-eip.adoc[Validate] |How can I validate a message?
@@ -265,11 +265,11 @@ a|image::eip/DurableSubscriptionIcon.gif[image]
 avoid missing messages while it's not listening for them?
 
 |
-|Idempotent Consumer |How can a message
+|xref:idempotentConsumer-eip.adoc[Idempotent Consumer] |How can a message
 receiver deal with duplicate messages?
 
 a|image::eip/TransactionalClientIcon.gif[image]
-|Transactional Client |How can a client
+|[xref:transactional-client.adoc[Transactional Client] |How can a client
 control its transactions with the messaging system?
 
 a|image::eip/MessagingGatewayIcon.gif[image]
@@ -298,7 +298,7 @@ intermediate steps to perform validation, testing or debugging
 functions?
 
 a|image::eip/WireTapIcon.gif[image]
-|Wire Tap |How do you inspect messages that travel
+|xref:wireTap-eip.adoc[Wire Tap] |How do you inspect messages that travel
 on a point-to-point channel?
 
 |
