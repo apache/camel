@@ -27,4 +27,7 @@ public interface PulsarMessageHeaders {
     String KEY = "key";
     String KEY_BYTES = "key_bytes";
     String TOPIC_NAME = "topic_name";
+    String KEY_OUT = "CamelPulsarProducerMessageKey";
+    String PROPERTIES_OUT = "CamelPulsarProducerMessageProperties";
+    String EVENT_TIME_OUT = "CamelPulsarProducerMessageEventTime";
 }
