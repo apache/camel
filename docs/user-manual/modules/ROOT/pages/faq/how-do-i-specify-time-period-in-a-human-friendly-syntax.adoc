@@ -1,7 +1,7 @@
 [[HowdoIspecifytimeperiodinahumanfriendlysyntax-HowdoIspecifytimeperiodinahumanfriendlysyntax]]
 = How do I specify time period in a human friendly syntax?
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 Some of the Camel xref:component.adoc[components] offers options to
 specify a time period, which must be entered in milli second as unit.

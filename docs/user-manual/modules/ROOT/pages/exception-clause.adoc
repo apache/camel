@@ -233,7 +233,7 @@ Will retry from *`processor2`* - not the complete route.
 [[ExceptionClause-ReusingRedeliveryPolicy]]
 == Reusing RedeliveryPolicy
 
-*Available as of Camel 1.5.1 or later*
+*Since Camel 1.5.1 or later*
 
 You can reference a *`RedeliveryPolicy`* so you can reuse existing
 configurations and use standard spring bean style configuration that
@@ -256,7 +256,7 @@ supports property placeholders.
 [[ExceptionClause-AsynchronousDelayedRedelivery]]
 == Asynchronous Delayed Redelivery
 
-*Available as of Camel 2.4*
+*Since Camel 2.4*
 
 From *Camel 2.4*: Camel has a feature to *not block* while waiting for a
 delayed redelivery to occur. However if you use transacted routes then
@@ -276,7 +276,7 @@ control pool settings.
 [[ExceptionClause-CatchingMultipleExceptions]]
 == Catching Multiple Exceptions
 
-*Available as of Camel 1.5*
+*Since Camel 1.5*
 
 In Camel 1.5 the *exception* clauses has been renamed to *`onException`*
 and it also supports multiple exception classes:
@@ -330,7 +330,7 @@ using a producer template from Exchange.
 [[ExceptionClause-MarkingExceptionsasHandled]]
 == Marking Exceptions as Handled
 
-*Available as of Camel 1.5*
+*Since Camel 1.5*
 
 == Continued
 
@@ -425,7 +425,7 @@ message with the caused exception message:
 [[ExceptionClause-HandleandContinueExceptions]]
 == Handle and Continue Exceptions
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 In Camel 2.3 we introduced a new option `continued` which allows you to
 both *`handle`* and *`continue`* routing in the original route as if the
@@ -622,7 +622,7 @@ that is selected.
 [[ExceptionClause-UsingFineGrainedSelectionUsingonWhenPredicate]]
 == Using Fine Grained Selection Using `onWhen` Predicate
 
-*Available as of Camel 1.5.1 or later*
+*Since Camel 1.5.1 or later*
 
 You can attach an xref:expression.adoc[Expression] to the exception
 clause to have fine grained control when a clause should be selected or
@@ -644,7 +644,7 @@ default error handler will kick in.
 [[ExceptionClause-UsingonRedeliveryProcessor]]
 == Using `onRedelivery` Processor
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 xref:dead-letter-channel.adoc[Dead Letter Channel] has support
 for *`onRedelivery`* to allow custom processing of a Message before its
@@ -685,7 +685,7 @@ class as this code is based on unit testing):
 [[ExceptionClause-UsingonExceptionOccurredProcessor]]
 == Using `onExceptionOccurred` Processor
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 xref:dead-letter-channel.adoc[Dead Letter Channel] has support
 for *`onExceptionOccurred`* to allow custom processing of a Message just
@@ -737,7 +737,7 @@ to refer to a spring bean id that is your custom processor:
 [[ExceptionClause-UsingFineGrainedRetryUsingretryWhilePredicate]]
 == Using Fine Grained Retry Using `retryWhile` Predicate
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 === RetryUntil
 

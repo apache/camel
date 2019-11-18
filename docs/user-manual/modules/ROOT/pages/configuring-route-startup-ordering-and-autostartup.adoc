@@ -1,7 +1,7 @@
 [[Configuringroutestartuporderingandautostartup-Configuringroutesstartuporderingandautostartup]]
 = Configuring routes startup ordering and autostartup
 
-*Available as of Camel 2.1*
+*Since Camel 2.1*
 
 Camel now supports configuring two aspects:
 
@@ -87,7 +87,7 @@ from("activemq:queue:special").noAutoStartup().to("file://backup");
 [[Configuringroutestartuporderingandautostartup-ConfiguringwhetherarouteshouldbestartedornotusingabooleanorStringinJavaDSL]]
 == Configuring whether a route should be started or not, using a boolean or String, in Java DSL
 
-*Available as of Camel 2.9*
+*Since Camel 2.9*
 
 To startup based on a boolean, String or
 xref:components::properties-component.adoc[Property], do one of the following:

@@ -1,6 +1,6 @@
 = RoutePolicy
 
-*Available as of Camel 2.1*
+*Since Camel 2.1*
 
 A route policy *`org.apache.camel.spi.RoutePolicy`* is used to control
 route(s) at runtime. For example you can use it to determine whether a

@@ -623,7 +623,7 @@ containing the number of records deleted (copied from
 
 ==== bulkWrite
 
-*Available as of Camel 2.21*
+*Since Camel 2.21*
 
 Performs write operations in bulk with controls for order of execution.
 Requires a `List<WriteModel<Document>>` as the IN message body containing commands for insert, update, and delete operations.

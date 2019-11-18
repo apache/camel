@@ -1,7 +1,7 @@
 [[MicroProfileConfig]]
 = MicroProfile Config
 
-*Available as of Camel 3.0*
+*Since Camel 3.0*
 
 The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels
 properties component. This allows to use configuration management from Eclipse MicroProfile with Camel.

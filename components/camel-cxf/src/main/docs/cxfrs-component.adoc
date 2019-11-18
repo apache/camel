@@ -193,7 +193,7 @@ setting the message with the key of "CamelDestinationOverrideUrl".
 
 == Consuming a REST Request - Simple Binding Style
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 The `Default` binding style is rather low-level, requiring the user to
 manually process the `MessageContentsList` object coming into the route.

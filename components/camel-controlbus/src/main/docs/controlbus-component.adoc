@@ -165,7 +165,7 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 [[ControlBus-Gettingperformancestatistics]]
 == Getting performance statistics
 
-*Available as of Camel 2.11.1*
+*Since Camel 2.11.1*
 
 This requires JMX to be enabled (is by default) then you can get the
 performance statics per route, or for the

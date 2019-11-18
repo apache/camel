@@ -1,7 +1,7 @@
 [[Transformer-Transformer]]
 = Transformer
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 Transformer performs declarative transformation of the message according
 to the declared `Input Type` and/or `Output Type` on a route definition which declares

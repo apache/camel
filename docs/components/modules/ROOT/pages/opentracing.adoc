@@ -2,7 +2,7 @@
 = OpenTracing Component
 :page-source: components/camel-opentracing/src/main/docs/opentracing.adoc
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 The OpenTracing component is used for tracing and timing incoming and
 outgoing Camel messages using http://opentracing.io/[OpenTracing].

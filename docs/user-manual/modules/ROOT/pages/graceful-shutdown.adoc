@@ -1,7 +1,7 @@
 [[GracefulShutdown-GracefulShutdown]]
 = Graceful Shutdown
 
-*Available as of Camel 2.2*
+*Since Camel 2.2*
 
 Camel now supports a pluggable shutdown strategy using
 `org.apache.camel.spi.ShutdownStrategy`. Its responsible for shutting
@@ -64,7 +64,7 @@ processed before it can shutdown.
 == Suppressing logging due to timeout not allowing all inflight messages to complete
 
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
@@ -88,7 +88,7 @@ control.
 [[GracefulShutdown-Logginginflightexchangeinformationontimeout]]
 == Logging inflight exchange information on timeout
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
@@ -378,7 +378,7 @@ JMX console. For example you can change the timeout value.
 [[GracefulShutdown-Shuttingdownindividualroutes]]
 == Shutting down individual routes
 
-*Available as of Camel 2.3* 
+*Since Camel 2.3* 
  Its now possible to gracefully shutdown an individual route using
 `shutdownRoute(routeId)` method on `CamelContext`. Its also possible to
 provide a specific timeout to use instead of the default timeout

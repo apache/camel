@@ -1,7 +1,7 @@
 [[Clustering-Clustering]]
 = Clustering
 
-*Available as of Camel 2.20*
+*Since Camel 2.20*
 
 [WARNING]
 ====

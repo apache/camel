@@ -1,7 +1,7 @@
 [[TransactionErrorHandler-TransactionErrorHandler]]
 = TransactionErrorHandler
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 This is the new default transaction error handler in Camel 2.0 onwards,
 used for transacted routes.

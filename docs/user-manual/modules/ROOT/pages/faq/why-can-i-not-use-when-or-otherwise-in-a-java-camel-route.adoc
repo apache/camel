@@ -85,7 +85,7 @@ xref:split-eip.adoc[Splitter] EIP has a sub-route which denotes the
 routing of each splitted message. You would also have to use
 `.endChoice()` to indicate the end of the sub-route and to return back
 to the xref:content-based-router-eip.adoc[Content Based Router]. Note
-`.endChoice()` is *available as of Camel 2.7*.
+`.endChoice()` is *Since Camel 2.7*.
 
 [[WhycanInotusewhenorotherwiseinaJavaCamelroute-Stillproblems]]
 == Still problems
