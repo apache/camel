@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar.utils.message;
+package org.apache.camel.component.pulsar;
 
-public interface PulsarMessageHeaders {
+import org.apache.camel.Exchange;
+import org.apache.pulsar.client.api.Consumer;
+import org.apache.pulsar.client.api.Message;
 
-    String PROPERTIES = "properties";
-    String PRODUCER_NAME = "producer_name";
-    String SEQUENCE_ID = "sequence_id";
-    String PUBLISH_TIME = "publish_time";
-    String MESSAGE_ID = "message_id";
-    String EVENT_TIME = "event_time";
-    String KEY = "key";
-    String KEY_BYTES = "key_bytes";
-    String TOPIC_NAME = "topic_name";
-    String MESSAGE_RECEIPT = "message_receipt";
-    String KEY_OUT = "CamelPulsarProducerMessageKey";
-    String PROPERTIES_OUT = "CamelPulsarProducerMessageProperties";
-    String EVENT_TIME_OUT = "CamelPulsarProducerMessageEventTime";
+/**
+ * Factory to create a new {@link PulsarMessageReceipt} to store on the {@link Exchange}.
+ * <p>
+ * Implement this interface if an alternate implementation of {@link PulsarMessageReceipt} is required
+ * as newer Pulsar clients may have acknowledgement functionality not yet supported by {@link DefaultPulsarMessageReceipt}.
+ */
+public interface PulsarMessageReceiptFactory {
+
+    /**
+     * Creates a new instance of {@link PulsarMessageReceipt}.
+     */
+    PulsarMessageReceipt newInstance(Exchange exchange, Message message, Consumer consumer);
+
 }

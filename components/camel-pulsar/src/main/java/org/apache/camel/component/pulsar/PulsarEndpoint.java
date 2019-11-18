@@ -89,4 +89,9 @@ public class PulsarEndpoint extends DefaultEndpoint {
         return topicUri;
     }
 
+    @Override
+    public PulsarComponent getComponent() {
+        return (PulsarComponent) super.getComponent();
+    }
+
 }

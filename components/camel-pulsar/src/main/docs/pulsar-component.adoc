@@ -29,7 +29,7 @@ pulsar:[persistent|non-persistent]://tenant/namespace/topic
 
 
 // component options: START
-The Apache Pulsar component supports 3 options, which are listed below.
+The Apache Pulsar component supports 5 options, which are listed below.
 
 
 
@@ -38,6 +38,8 @@ The Apache Pulsar component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *autoConfiguration* (common) | The pulsar autoconfiguration |  | AutoConfiguration
 | *pulsarClient* (common) | The pulsar client |  | PulsarClient
+| *allowManual Acknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not immediately acknowledged after being consumed. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
+| *pulsarMessageReceipt Factory* (consumer) | Provide a factory to create an alternate implementation of PulsarMessageReceipt. |  | PulsarMessageReceipt Factory
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -65,12 +67,15 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+=== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
+| *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
+| *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not immediately acknowledged after being consumed. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumerName* (consumer) | Name of the consumer when subscription is EXCLUSIVE | sole-consumer | String
 | *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
@@ -149,5 +154,6 @@ The component supports 3 options, which are listed below.
 | `key` | `String` | The key of the Pulsar message in String form or the empty string if unset on the Pulsar message
 | `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
 | `topic_name` | `String` | The topic to which the message was published
+| `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
 |===
 // message-headers options: END
