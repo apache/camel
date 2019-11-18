@@ -1,6 +1,5 @@
 [[circuitBreaker-eip]]
 = CircuitBreaker EIP
-:page-source: core/camel-core-engine/src/main/docs/eips/circuitBreaker-eip.adoc
 
 The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
 which is used to detect excessive current draw and fail fast to protect electrical equipment.

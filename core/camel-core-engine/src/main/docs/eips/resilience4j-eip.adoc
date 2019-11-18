@@ -112,7 +112,7 @@ You can find an example with the source code: https://github.com/apache/camel/tr
 
 == Using Resilience4j with Spring Boot
 
-See the xref:components::resilience4j-component.adoc[Resilience4j Component].
+See the xref:components::resilience4j.adoc[Resilience4j Component].
 
 == Camel's Error Handler and Circuit Breaker EIP
 
