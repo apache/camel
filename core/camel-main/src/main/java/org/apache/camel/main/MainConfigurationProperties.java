@@ -35,6 +35,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     // extended configuration
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
+    private final Resilience4jConfigurationProperties resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
     private final RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties(this);
 
     // extended
@@ -45,6 +46,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public HystrixConfigurationProperties hystrix() {
         return hystrixConfigurationProperties;
+    }
+
+    /**
+     * To configure Circuit Breaker EIP with Resilience4j
+     */
+    public Resilience4jConfigurationProperties resilience4j() {
+        return resilience4jConfigurationProperties;
     }
 
     /**

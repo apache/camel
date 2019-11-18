@@ -18,9 +18,7 @@ package org.apache.camel.model.rest.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.Generated;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.RestConfiguration;

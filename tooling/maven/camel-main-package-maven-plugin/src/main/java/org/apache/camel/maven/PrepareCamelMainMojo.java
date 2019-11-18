@@ -74,6 +74,8 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 String prefix;
                 if (file.getName().contains("Hystrix")) {
                     prefix = "camel.hystrix.";
+                } else if (file.getName().contains("Resilience")) {
+                    prefix = "camel.resilience4j.";
                 } else if (file.getName().contains("Rest")) {
                     prefix = "camel.rest.";
                 } else {
@@ -143,12 +145,17 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             group2.put("description", "camel-hystrix configurations.");
             group2.put("sourceType", "org.apache.camel.main.HystrixConfigurationProperties");
             Map group3 = new LinkedHashMap();
-            group3.put("name", "camel.rest");
-            group3.put("description", "camel-rest configurations.");
-            group3.put("sourceType", "org.apache.camel.spi.RestConfiguration");
+            group3.put("name", "camel.resilience4j");
+            group3.put("description", "camel-resilience4j configurations.");
+            group3.put("sourceType", "org.apache.camel.main.Resilience4jConfigurationProperties");
+            Map group4 = new LinkedHashMap();
+            group4.put("name", "camel.rest");
+            group4.put("description", "camel-rest configurations.");
+            group4.put("sourceType", "org.apache.camel.spi.RestConfiguration");
             groups.add(group1);
             groups.add(group2);
             groups.add(group3);
+            groups.add(group4);
 
             Map map = new LinkedHashMap();
             map.put("groups", groups);

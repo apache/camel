@@ -17,7 +17,6 @@
 package org.apache.camel.model.cloud.springboot;
 
 import java.util.Map;
-
 import javax.annotation.Generated;
 
 /**

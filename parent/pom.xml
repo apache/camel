@@ -540,6 +540,7 @@
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
+        <resilience4j-version>1.1.0</resilience4j-version>
         <rest-assured-version>4.1.2</rest-assured-version>
         <revapi-java-version>0.20.0</revapi-java-version>
         <revapi-maven-plugin-version>0.11.2</revapi-maven-plugin-version>
@@ -635,6 +636,7 @@
         <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
         <validation-1-api-version>1.1.0.Final</validation-1-api-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
+        <vavr-version>0.10.2</vavr-version>
         <velocity-bundle-version>1.7_6</velocity-bundle-version>
         <velocity-tools-version>2.0</velocity-tools-version>
         <velocity-version>2.0</velocity-version>
@@ -1959,6 +1961,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ref</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-resilience4j</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3533,6 +3540,11 @@
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-ref-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-resilience4j-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

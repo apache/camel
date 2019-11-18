@@ -197,7 +197,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
 
         // Spring-boot configuration has been moved on starters
-        File starterDir = SpringBootHelper.starterDir(baseDir, project.getArtifactId());
+        File starterDir = SpringBootHelper.starterDir(baseDir, getStarterArtifactId());
         if (!starterDir.exists() || !(new File(starterDir, "pom.xml").exists())) {
             // If the starter does not exist, no configuration can be created
             getLog().info("Component auto-configuration will not be created: the starter does not exist");
@@ -209,9 +209,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private void executeAll() throws MojoExecutionException, MojoFailureException {
         Map<File, Supplier<String>> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json")).stream()
-            .collect(Collectors.toMap(Function.identity(), s -> cache(() -> loadJson(s))));
+                .collect(Collectors.toMap(Function.identity(), s -> cache(() -> loadJson(s))));
 
-        executeModels(files);
+        // special for camel-core-engine where we generate some special auto-configuration source code
+        if ("camel-core-engine".equals(project.getArtifactId())) {
+            executeModels(files);
+        }
+
         executeComponent(files);
         executeDataFormat(files);
         executeLanguage(files);
@@ -250,9 +254,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = model.getJavaType().lastIndexOf(".");
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-            // Generate properties, auto-configuration happens in
-            // camel-hystrix-starter
+            // Generate properties, auto-configuration for camel-core-starter
             createOtherModelConfigurationSource(pkg, model, "camel.hystrix", true);
+        }
+
+        // Resilience4j
+        json = loadModelJson(files, "resilience4jConfiguration");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration for camel-core-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.resilience4j", true);
         }
 
         // Consul
@@ -263,8 +278,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = model.getJavaType().lastIndexOf(".");
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-            // Generate properties, auto-configuration happens in
-            // camel-consul-starter
+            // Generate properties, auto-configuration for camel-core-starter
             createOtherModelConfigurationSource(pkg, model, "camel.cloud.consul.service-discovery", true);
         }
 
@@ -276,8 +290,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = model.getJavaType().lastIndexOf(".");
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-            // Generate properties, auto-configuration happens in
-            // camel-dns-starter
+            // Generate properties, auto-configuration for camel-core-starter
             createOtherModelConfigurationSource(pkg, model, "camel.cloud.dns.service-discovery", true);
         }
 
@@ -289,8 +302,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = model.getJavaType().lastIndexOf(".");
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-            // Generate properties, auto-configuration happens in
-            // camel-etcd-starter
+            // Generate properties, auto-configuration for camel-core-starter
             createOtherModelConfigurationSource(pkg, model, "camel.cloud.etcd.service-discovery", true);
         }
 
@@ -315,8 +327,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = model.getJavaType().lastIndexOf(".");
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-            // Generate properties, auto-configuration happens in
-            // camel-kubernetes-starter
+            // Generate properties, auto-configuration for camel-core-starter
             createOtherModelConfigurationSource(pkg, model, "camel.cloud.ribbon.load-balancer", true);
         }
 
@@ -328,8 +339,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = model.getJavaType().lastIndexOf(".");
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-            // Generate properties, auto-configuration happens in
-            // camel-kubernetes-starter
+            // Generate properties, auto-configuration for camel-core-starter
             createRestConfigurationSource(pkg, model, "camel.rest");
             createRestModuleAutoConfigurationSource(pkg, model);
         }
@@ -2165,7 +2175,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private void writeSourceIfChanged(String source, String fileName) throws MojoFailureException {
 
-        File target = new File(SpringBootHelper.starterSrcDir(baseDir, project.getArtifactId()), fileName);
+        File target = new File(SpringBootHelper.starterSrcDir(baseDir, getStarterArtifactId()), fileName);
 
         deleteFileOnMainArtifact(target);
 
@@ -2191,7 +2201,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append(lineToAdd);
 
         String fileName = "META-INF/spring.factories";
-        File target = new File(SpringBootHelper.starterResourceDir(baseDir, project.getArtifactId()), fileName);
+        File target = new File(SpringBootHelper.starterResourceDir(baseDir, getStarterArtifactId()), fileName);
 
         deleteFileOnMainArtifact(target);
 
@@ -2255,12 +2265,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
+    private String getStarterArtifactId() {
+        if ("camel-core-engine".equals(project.getArtifactId())) {
+            return "camel-core";
+        } else {
+            return project.getArtifactId();
+        }
+    }
+
     private void deleteFileOnMainArtifact(File starterFile) {
         if (!DELETE_FILES_ON_MAIN_ARTIFACTS) {
             return;
         }
 
-        String relativePath = SpringBootHelper.starterDir(baseDir, project.getArtifactId()).toPath().relativize(starterFile.toPath()).toString();
+        String relativePath = SpringBootHelper.starterDir(baseDir, getStarterArtifactId()).toPath().relativize(starterFile.toPath()).toString();
         File mainArtifactFile = new File(baseDir, relativePath);
         if (mainArtifactFile.exists()) {
             boolean deleted = mainArtifactFile.delete();

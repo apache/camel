@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
+import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
@@ -29,8 +30,8 @@ public class BlueprintHystrixRouteFallbackTest extends CamelBlueprintTestSupport
     @Test
     public void testHystrix() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, false);
-        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_FROM_FALLBACK, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
         template.sendBody("direct:start", "Hello World");
 
