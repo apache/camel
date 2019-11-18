@@ -225,7 +225,7 @@ qualified classname:
 ----
 
 In @XPath: +
- *Available as of Camel 2.1*
+ *Since Camel 2.1*
 
 [source,java]
 ----
@@ -238,7 +238,7 @@ type so the concat function works.
 
 == Using XPath on Headers
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 Some users may have XML stored in a header. To apply an XPath to a
 header's value you can do this by defining the 'headerName' attribute.
@@ -305,7 +305,7 @@ public class Foo {
 
 == Using XPathBuilder without an Exchange
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 You can now use the `org.apache.camel.builder.XPathBuilder` without the
 need for an Exchange. This comes handy if you want
@@ -345,7 +345,7 @@ String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese<
 
 == Using Saxon with XPathBuilder
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 You need to add *camel-saxon* as dependency to your project.
 
@@ -360,7 +360,7 @@ The easy one
 
 == Setting a custom XPathFactory using System Property
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 Camel now supports reading the
 http://java.sun.com/j2se/1.5.0/docs/api/javax/xml/xpath/XPathFactory.html#newInstance(java.lang.String)[JVM
@@ -387,7 +387,7 @@ To use Apache Xerces you can configure the system property
 
 == Enabling Saxon from Spring DSL
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 Similarly to Java DSL, to enable Saxon from Spring DSL you have three
 options:
@@ -415,7 +415,7 @@ Shortcut
 
 == Namespace auditing to aid debugging
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 A large number of XPath-related issues that users frequently face are
 linked to the usage of namespaces. You may have some misalignment
@@ -509,7 +509,7 @@ xmlns:b=[http://apache.org/camelA, http://apache.org/camelB]}
 
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +

@@ -1,7 +1,7 @@
 [[SpringBoot-SpringBoot]]
 = Spring Boot
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 Spring Boot component provides auto-configuration for Apache Camel. Our
 opinionated auto-configuration of the Camel context auto-detects Camel
@@ -28,7 +28,7 @@ automatically auto-configure Camel for you.
 [[SpringBoot-CamelSpringBootStarter]]
 == Camel Spring Boot Starter
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 Apache Camel ships
 a https://github.com/spring-projects/spring-boot/tree/master/spring-boot-project/spring-boot-starters[Spring

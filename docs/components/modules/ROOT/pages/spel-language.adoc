@@ -142,7 +142,7 @@ from("direct:foo")
 
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +

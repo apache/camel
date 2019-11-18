@@ -1,7 +1,7 @@
 [[ShiroSecurity-ShiroSecurityComponent]]
 = Shiro Security Component
 
-*Available as of Camel 2.5*
+*Since Camel 2.5*
 
 The Shiro Security component in Camel is a security focused component,
 based on the Apache Shiro security project.

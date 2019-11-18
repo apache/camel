@@ -1,7 +1,7 @@
 [[Async-Async]]
 = Async
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 The asynchronous API in Camel has been rewritten for Camel 2.0, and the
 information on this page applies for Camel 2.0 and later.

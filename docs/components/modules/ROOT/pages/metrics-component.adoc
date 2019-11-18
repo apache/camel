@@ -577,7 +577,7 @@ if (registryService != null) {
 
 == MetricsMessageHistoryFactory
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 This factory allows to use metrics to
 capture Message History performance
@@ -653,7 +653,7 @@ with `name=MetricsMessageHistoryService`.
 
 == InstrumentedThreadPoolFactory
 
-*Available as of Camel 2.18*
+*Since Camel 2.18*
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.

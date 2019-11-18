@@ -56,7 +56,7 @@ String ret = template.requestBody("cxf:bean:HelloWorldService", "<hello/>", Stri
 [[ProducerTemplate-Fluentinterface]]
 == Fluent interface
 
-*Available as of Camel 2.18.0*
+*Since Camel 2.18.0*
 
 The FluentProducerTemplate provides a fluent syntax to
 ProducerTemplate.

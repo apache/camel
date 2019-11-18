@@ -99,7 +99,7 @@ from(uri).to("bean:myBean?method=methodName");
 [[POJOConsuming-Usingapropertytodefinetheendpoint]]
 == Using a property to define the endpoint
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 The following annotations @Consume, @Produce, @EndpointInject, now
 offers a `property` attribute you can use to define the endpoint as a

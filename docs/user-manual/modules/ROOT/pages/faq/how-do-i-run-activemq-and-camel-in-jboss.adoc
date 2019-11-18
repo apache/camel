@@ -9,7 +9,7 @@ solution here].
 [[HowdoIrunActiveMQandCamelinJBoss-UsingCamelinJBoss]]
 == Using Camel in JBoss
 
-*Available as of Camel 2.1*
+*Since Camel 2.1*
 
 We have now created a https://github.com/camel-extra/camel-extra/blob/master/components/camel-jboss/src/main/docs/jboss-component.adoc[camel-jboss] component which
 allows you to run Camel inside JBoss. Unfortunately JBoss uses LGPL

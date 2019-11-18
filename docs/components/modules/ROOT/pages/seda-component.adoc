@@ -147,7 +147,7 @@ The component supports 9 options, which are listed below.
 
 == Choosing BlockingQueue implementation
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 By default, the SEDA component always intantiates LinkedBlockingQueue,
 but you can use different implementation, you can reference your own
@@ -321,7 +321,7 @@ unit test.
 
 == Using multipleConsumers
 
-*Available as of Camel 2.2*
+*Since Camel 2.2*
 
 In this example we have defined two consumers and registered them as
 spring beans.

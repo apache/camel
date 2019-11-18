@@ -2,7 +2,7 @@
 = AWS XRay Component
 :page-source: components/camel-aws-xray/src/main/docs/aws-xray.adoc
 
-*Available as of Camel 2.21*
+*Since Camel 2.21*
 
 The camel-aws-xray component is used for tracing and timing incoming and outgoing Camel messages using https://aws.amazon.com/xray/[AWS XRay].
 

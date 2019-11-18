@@ -296,7 +296,7 @@ Is this header is absent, normal redelivery rules apply.
 [[deadLetterChannel-Whichendpointfailed]]
 == Which endpoint failed
 
-*Available as of Camel 2.1*
+*Since Camel 2.1*
 
 When Camel routes messages it will decorate the
 xref:exchange.adoc[Exchange] with a property that contains the *last*
@@ -351,7 +351,7 @@ still contain the value of `\http://someserver/somepath`.
 [[deadLetterChannel-OnPrepareFailure]]
 == OnPrepareFailure
 
-*Available as of Camel 2.16*
+*Since Camel 2.16*
 
 Before the exchange is sent to the dead letter queue, you can use
 onPrepare to allow a custom `Processor` to prepare the exchange, such as
@@ -392,7 +392,7 @@ The onPrepare is also available using the default error handler.
 [[deadLetterChannel-Whichroutefailed]]
 == Which route failed
 
-*Available as of Camel 2.10.4/2.11*
+*Since Camel 2.10.4/2.11*
 
 When Camel error handler handles an error such as
 xref:dead-letter-channel.adoc[Dead Letter Channel] or using
@@ -415,7 +415,7 @@ letter queue and use that for error reporting.
 [[deadLetterChannel-Controlifredeliveryisallowedduringstoppingshutdown]]
 == Control if redelivery is allowed during stopping/shutdown
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 Prior to Camel 2.10, Camel will perform redelivery while stopping a
 route, or shutting down Camel. This has improved a bit in Camel 2.10

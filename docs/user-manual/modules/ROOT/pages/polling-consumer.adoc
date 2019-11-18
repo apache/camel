@@ -280,7 +280,7 @@ From *Camel 2.8*: the default value is *`true`*.
 [[PollingConsumer-UsingbackofftoLettheSchedulerbeLessAggressive]]
 === Using `backoff` to Let the Scheduler be Less Aggressive
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 The scheduled xref:polling-consumer.adoc[Polling Consumer] is by default
 static by using the same poll frequency whether or not there is messages
@@ -332,7 +332,7 @@ the endpoint successfully.
 [[PollingConsumer-UsingaCustomScheduler]]
 === Using a Custom Scheduler
 
-*Available as of Camel 2.12:*
+*Since Camel 2.12:*
 
 The SPI interface
 *`org.apache.camel.spi.ScheduledPollConsumerScheduler`* allows to

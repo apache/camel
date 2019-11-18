@@ -231,7 +231,7 @@ from("direct:start")
 [[OnCompletion-UsingonCompletionwithorwithoutthreadpool]]
 == Using onCompletion with or without thread pool
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 OnCompletion will from Camel 2.14 onwards not use thread pool by
 default. To use thread pool then either set a `executorService` or set
@@ -275,7 +275,7 @@ to be used, using the executorServiceRef option
 [[OnCompletion-UsingonCompletiontorunbeforerouteconsumersendsbackresponsetocallee]]
 == Using onCompletion to run before route consumer sends back response to callee
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 OnCompletion supports two modes
 

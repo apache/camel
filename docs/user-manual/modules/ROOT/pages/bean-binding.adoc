@@ -222,7 +222,7 @@ public class Bar {
 [[BeanBinding-Parameterbindingusingmethodoption]]
 == Parameter binding using method option
 
-*Available as of Camel 2.9*
+*Since Camel 2.9*
 
 Camel uses the following rules to determine if it's a parameter value in
 the method option
@@ -341,7 +341,7 @@ use `.to` instead as shown:
 [[BeanBinding-Usingtypequalifierstoselectamongoverloadedmethods]]
 == Using type qualifiers to select among overloaded methods
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 If you have a xref:bean-eip.adoc[Bean] with overloaded methods, you can now
 specify parameter types in the method name so Camel can match the method

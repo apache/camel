@@ -1,7 +1,7 @@
 [[HowdoIimportrestsfromotherXMLfiles-HowdoIimportrestsfromotherXMLfiles]]
 = How do I import rests from other XML files?
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 When defining rests in Camel using xref:xml-configuration.adoc[Xml
 Configuration] you may want to define some rests in other XML files. For

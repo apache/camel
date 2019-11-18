@@ -1,7 +1,7 @@
 [[Kura-EclipseKuracomponent]]
 = Eclipse Kura component
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 This documentation page covers the integration options of Camel with the
 https://eclipse.org/kura/[Eclipse Kura] M2M gateway. The common reason

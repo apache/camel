@@ -1,7 +1,7 @@
 [[HowdoIenablestreamswhendebugloggingmessagesinCamel-HowdoIenablestreamswhendebugloggingmessagesinCamel]]
 = How do I enable streams when debug logging messages in Camel
 
-*Available as of Camel 2.1*
+*Since Camel 2.1*
 
 When you run Camel with `DEBUG` level as logging, it will log the
 messages and its content from time to time.

@@ -1,7 +1,7 @@
 [[BatchConsumer-BatchConsumer]]
 = Batch Consumer
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 Batch Consumer is basically a xref:polling-consumer.adoc[Polling
 Consumer] that is capable of polling multiple

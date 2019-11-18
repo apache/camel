@@ -584,7 +584,7 @@ from("direct:detached")
 
 == XAdES-BES/EPES for the Signer Endpoint
 
-*Available as of Camel 2.15.0* 
+*Since Camel 2.15.0* 
 
 http://www.etsi.org/deliver/etsi_ts/101900_101999/101903/01.04.02_60/ts_101903v010402p.pdf[XML
 Advanced Electronic Signatures (XAdES)] defines extensions to XML

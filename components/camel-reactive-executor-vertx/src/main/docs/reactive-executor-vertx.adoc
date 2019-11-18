@@ -1,6 +1,6 @@
 = ReactiveExecutor VertX
 
-*Available as of Camel 3.0*
+*Since Camel 3.0*
 
 The camel-reactive-executor-vertx is a VertX based implementation of the `ReactiveExecutor` SPI.
 

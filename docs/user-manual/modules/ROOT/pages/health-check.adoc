@@ -1,7 +1,7 @@
 [[HealthCheck-HealthCheck]]
 = Health Checks
 
-*Available as of Camel 2.20*
+*Since Camel 2.20*
 
 Camel provides support to probe the state of an integration via a pluggable Health Check strategy based on the following concepts:
 

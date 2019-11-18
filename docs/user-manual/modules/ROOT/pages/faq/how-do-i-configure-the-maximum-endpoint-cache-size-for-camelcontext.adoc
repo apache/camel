@@ -7,7 +7,7 @@ used endpoints (based on a LRUCache).
 [[HowdoIconfigurethemaximumendpointcachesizeforCamelContext-Configuringcachesize]]
 == Configuring cache size
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 You can configure the default maximum cache size by setting the
 `Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE` property on

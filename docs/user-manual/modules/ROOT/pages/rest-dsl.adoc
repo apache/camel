@@ -182,7 +182,7 @@ For example:
 
 == Using Dynamic To in Rest DSL
 
-*Available as of Camel 2.16*
+*Since Camel 2.16*
 
 The Rest DSL supports the new .toD <toD> as dynamic
 to in the rest-dsl. For example to do a request/reply
@@ -638,7 +638,7 @@ example configure 2 component options, and 3 endpoint options etc.
 
 == Enabling or disabling Jackson JSON features
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 When using JSON binding you may want to turn specific Jackson features
 on or off. For example to disable failing on unknown properties (eg json
@@ -688,7 +688,7 @@ The rest configuration is of course also possible using XML DSL
 
 == Default CORS headers
 
-*Available as of Camel 2.14.1*
+*Since Camel 2.14.1*
 
 If CORS is enabled then the follow headers is in use by default. You can
 configure custom CORS headers which takes precedence over the default

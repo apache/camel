@@ -552,7 +552,7 @@ In XML:
 ----
 
 == Using manual commit with Kafka consumer
-*Available as of Camel 2.21*
+*Since Camel 2.21*
 
 By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
 
@@ -584,7 +584,7 @@ If you want to use a custom implementation of `KafkaManualCommit` then you can c
 on the `KafkaComponent` that creates instances of your custom implementation.
 
 == Kafka Headers propagation
-*Available as of Camel 2.22*
+*Since Camel 2.22*
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.
 Producing flow backed by same behaviour - camel headers of particular exchange will be propagated to kafka message headers.

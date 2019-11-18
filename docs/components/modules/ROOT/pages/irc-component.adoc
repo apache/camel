@@ -226,7 +226,7 @@ ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTr
 
 == Using keys
 
-*Available as of Camel 2.2*
+*Since Camel 2.2*
 
 Some irc rooms requires you to provide a key to be able to join that
 channel. The key is just a secret word.
