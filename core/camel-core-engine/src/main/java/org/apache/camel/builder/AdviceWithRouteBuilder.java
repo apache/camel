@@ -112,9 +112,19 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
         return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
+                if (builder instanceof AdviceWithRouteBuilder) {
+                    setLogRouteAsXml(((AdviceWithRouteBuilder) builder).isLogRouteAsXml());
+                }
                 builder.accept(this);
             }
         });
+    }
+
+    public AdviceWithRouteBuilder() {
+    }
+
+    public AdviceWithRouteBuilder(CamelContext context) {
+        super(context);
     }
 
     /**

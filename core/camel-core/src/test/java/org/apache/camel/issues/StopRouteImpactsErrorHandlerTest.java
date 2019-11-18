@@ -17,6 +17,7 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
@@ -30,7 +31,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
     @Test
     public void testIssue() throws Exception {
         RouteDefinition testRoute = context.getRouteDefinition("TestRoute");
-        RouteReifier.adviceWith(testRoute, context, new RouteBuilder() {
+        RouteReifier.adviceWith(testRoute, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("log:seda").throwException(new IllegalArgumentException("Forced"));
@@ -38,7 +39,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         });
 
         RouteDefinition smtpRoute = context.getRouteDefinition("smtpRoute");
-        RouteReifier.adviceWith(smtpRoute, context, new RouteBuilder() {
+        RouteReifier.adviceWith(smtpRoute, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("smtp*").to("log:smtp").skipSendToOriginalEndpoint().to("mock:smtp");
