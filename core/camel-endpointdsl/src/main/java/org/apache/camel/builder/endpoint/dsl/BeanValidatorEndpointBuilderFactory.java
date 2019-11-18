@@ -282,6 +282,31 @@ public interface BeanValidatorEndpointBuilderFactory {
             doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
+        /**
+         * To use a custom ValidatorFactory.
+         * 
+         * The option is a: <code>javax.validation.ValidatorFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder validatorFactory(
+                Object validatorFactory) {
+            doSetProperty("validatorFactory", validatorFactory);
+            return this;
+        }
+        /**
+         * To use a custom ValidatorFactory.
+         * 
+         * The option will be converted to a
+         * <code>javax.validation.ValidatorFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanValidatorEndpointBuilder validatorFactory(
+                String validatorFactory) {
+            doSetProperty("validatorFactory", validatorFactory);
+            return this;
+        }
     }
     /**
      * Bean Validator (camel-bean-validator)
