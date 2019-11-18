@@ -145,4 +145,15 @@ The component supports 3 options, which are listed below.
 | `topic_name` | `String` | The topic to which the message was published
 | `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
 |===
+
+=== Message headers evaluated by the Pulsar producer
+
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
+| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
+| `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
+|===
 // message-headers options: END
