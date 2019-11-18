@@ -22,6 +22,14 @@ Maven users will need to add the following dependency to their pom.xml to use th
 == Configuration options
 
 // eip options: START
+The Hystrix EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resilienceConfiguration* | Configures the Resilience EIP Use end when configuration is complete, to return back to the Resilience EIP. |  | ResilienceConfigurationDefinition
+| *resilienceConfigurationRef* | Refers to a Resilience configuration to use for configuring the Resilience EIP. |  | String
+|===
 // eip options: END
 
 See xref:resilience4jConfiguration-eip.adoc[Resilience4j Configuration] for all the configuration options on Resilience Circuit Breaker.
@@ -59,11 +67,10 @@ And in XML DSL:
 </camelContext>
 ----
 
-== Configuring Resilienc4j
+== Configuring Resilience4j
 
 You can fine-tune Resilience4j by the many xref:resilience4jConfiguration-eip.adoc[Resilience4j Configuration] options.
 
-TODO: Update example!!!
 For example to use a 2 second execution timeout, you can do as follows:
 
 [source,java]
@@ -71,12 +78,12 @@ For example to use a 2 second execution timeout, you can do as follows:
 from("direct:start")
     .circuitBreaker()
         // use 2 second timeout
-        .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
-        .log("Hystrix processing start: ${threadName}")
+        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+        .log("Resilience processing start: ${threadName}")
         .toD("direct:${body}")
-        .log("Hystrix processing end: ${threadName}")
+        .log("Resilience processing end: ${threadName}")
     .end()
-    .log("After Hystrix ${body}");
+    .log("After Resilience ${body}");
 ----
 
 And in XML:
@@ -86,12 +93,12 @@ And in XML:
 <route>
   <from uri="direct:start"/>
   <circuitBreaker>
-    <hystrixConfiguration executionTimeoutInMilliseconds="2000"/>
-    <log message="Hystrix processing start: ${threadName}"/>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+    <log message="Resilience processing start: ${threadName}"/>
     <toD uri="direct:${body}"/>
-    <log message="Hystrix processing end: ${threadName}"/>
+    <log message="Resilience processing end: ${threadName}"/>
   </circuitBreaker>
-  <log message="After Hystrix: ${body}"/>
+  <log message="After Resilience: ${body}"/>
 </route>
 ----
 
@@ -101,7 +108,7 @@ See xref:onFallback-eip.adoc[onFallback].
 
 == Other examples
 
-You can find an example with the source code: https://github.com/apache/camel/tree/master/examples/camel-example-hystrix[camel-example-hystrix].
+You can find an example with the source code: https://github.com/apache/camel/tree/master/examples/camel-example-resilience4j[camel-example-resilience4j].
 
 == Using Resilience4j with Spring Boot
 
