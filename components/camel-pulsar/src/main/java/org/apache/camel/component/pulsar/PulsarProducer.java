@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,9 +26,9 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
+import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.ProducerBuilder;
 import org.apache.pulsar.client.api.TypedMessageBuilder;
