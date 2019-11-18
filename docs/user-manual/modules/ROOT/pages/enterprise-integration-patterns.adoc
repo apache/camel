@@ -3,26 +3,12 @@
 
 Camel supports most of the
 http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
-from the excellent book by
-http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Gregor%20Hohpe[Gregor
-Hohpe] and
-http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Bobby%20Woolf[Bobby
-Woolf].
+from the excellent book by Gregor Hohpe and Bobby Woolf.
 
 If you are new to Camel you might want to try the
 Getting Started in the
 User Guide before attempting to implement these
 patterns.
-
-The EIP icons library is available as a Visio stencil file adapted to
-render the icons with the Camel color : sand. Download it
-link:{attachmentsdir}/Hohpe_EIP_camel_20150622.zip[here]
-for your presentation, functional and technical analysis documents. The
-original EIP stencil is also available in
-link:{attachmentsdir}/Hohpe_EIP_camel_OpenOffice.zip[OpenOffice
-3.x Draw] (thanks to Marco Garbelini) ,
-http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft
-Visio], or http://www.graffletopia.com/stencils/137[Omnigraffle].
 
 [[EnterpriseIntegrationPatterns-MessagingSystems]]
 == Messaging Systems
@@ -269,7 +255,7 @@ avoid missing messages while it's not listening for them?
 receiver deal with duplicate messages?
 
 a|image::eip/TransactionalClientIcon.gif[image]
-|[xref:transactional-client.adoc[Transactional Client] |How can a client
+|xref:transactional-client.adoc[Transactional Client] |How can a client
 control its transactions with the messaging system?
 
 a|image::eip/MessagingGatewayIcon.gif[image]
@@ -293,7 +279,7 @@ messaging system that is distributed across multiple platforms and a
 wide geographic area?
 
 a|image::eip/DetourIcon.gif[image]
-|Detour |How can you route a message through
+|xref:intercept.adoc[Detour] |How can you route a message through
 intermediate steps to perform validation, testing or debugging
 functions?
 
@@ -306,5 +292,21 @@ on a point-to-point channel?
 analyze and debug the flow of messages in a loosely coupled system?
 
 |
-|Log |How can I log processing a message?
+|xref:log-eip.adoc[Log] |How can I log processing a message?
+
+|
+|xref:step-eip.adoc[Step] | Steps groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
+
 |=======================================================================
+
+=== EIP Icons
+
+The EIP icons library is available as a Visio stencil file adapted to
+render the icons with the Camel color : sand. Download it
+link:{attachmentsdir}/Hohpe_EIP_camel_20150622.zip[here]
+for your presentation, functional and technical analysis documents. The
+original EIP stencil is also available in
+link:{attachmentsdir}/Hohpe_EIP_camel_OpenOffice.zip[OpenOffice
+3.x Draw] (thanks to Marco Garbelini) ,
+http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft
+Visio], or http://www.graffletopia.com/stencils/137[Omnigraffle].
