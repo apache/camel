@@ -42,6 +42,12 @@ public class PulsarConfiguration {
     private String producerName;
     @UriParam(label = "consumer", defaultValue = "cons")
     private String consumerNamePrefix = "cons";
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean allowManualAcknowledgement;
+    @UriParam(label = "consumer", defaultValue = "10000")
+    private long ackTimeoutMillis = 10000;
+    @UriParam(label = "consumer", defaultValue = "100")
+    private long ackGroupTimeMillis = 100;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer", description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError", defaultValue = "false")
@@ -139,6 +145,43 @@ public class PulsarConfiguration {
      */
     public void setConsumerNamePrefix(String consumerNamePrefix) {
         this.consumerNamePrefix = consumerNamePrefix;
+    }
+
+    public boolean isAllowManualAcknowledgement() {
+        return allowManualAcknowledgement;
+    }
+
+    /**
+     * Whether to allow manual message acknowledgements.
+     * <p/>
+     * If this option is enabled, then messages are not immediately acknowledged after being consumed.
+     * Instead, an instance of {@link PulsarMessageReceipt} is stored as a header on the {@link org.apache.camel.Exchange}.
+     * Messages can then be acknowledged using {@link PulsarMessageReceipt} at any time before the ackTimeout occurs.
+     */
+    public void setAllowManualAcknowledgement(boolean allowManualAcknowledgement) {
+        this.allowManualAcknowledgement = allowManualAcknowledgement;
+    }
+
+    public long getAckTimeoutMillis() {
+        return ackTimeoutMillis;
+    }
+
+    /**
+     * Timeout for unacknowledged messages in milliseconds - defaults to 10000
+     */
+    public void setAckTimeoutMillis(long ackTimeoutMillis) {
+        this.ackTimeoutMillis = ackTimeoutMillis;
+    }
+
+    public long getAckGroupTimeMillis() {
+        return ackGroupTimeMillis;
+    }
+
+    /**
+     * Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100
+     */
+    public void setAckGroupTimeMillis(long ackGroupTimeMillis) {
+        this.ackGroupTimeMillis = ackGroupTimeMillis;
     }
 
     /**

@@ -62,6 +62,7 @@ public class PulsarComponentTest extends CamelTestSupport {
         assertNull(endpoint.getPulsarConfiguration().getProducerName());
         assertEquals("subs", endpoint.getPulsarConfiguration().getSubscriptionName());
         assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getPulsarConfiguration().getSubscriptionType());
+        assertFalse(endpoint.getPulsarConfiguration().isAllowManualAcknowledgement());
     }
 
     @Test
@@ -74,4 +75,17 @@ public class PulsarComponentTest extends CamelTestSupport {
 
         verify(autoConfiguration).ensureNameSpaceAndTenant(Matchers.anyString());
     }
+
+    @Test
+    public void testPulsarEndpointAllowManualAcknowledgementDefaultTrue() throws Exception {
+        PulsarComponent component = new PulsarComponent(context);
+        component.setAllowManualAcknowledgement(true);
+
+        // allowManualAcknowledgement is absent as a query parameter.
+        PulsarEndpoint endpoint = (PulsarEndpoint)component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
+
+        assertNotNull(endpoint);
+        assertTrue(endpoint.getPulsarConfiguration().isAllowManualAcknowledgement());
+    }
+
 }
