@@ -1,6 +1,5 @@
 [[sample-eip]]
 = Sample EIP
-*Available as of Camel 2.1*
 
 A sampling throttler allows you to extract a sample of the exchanges from the traffic through a route. +
 It is configured with a sampling period during which only a single exchange is allowed to pass through. All other exchanges will be stopped.
