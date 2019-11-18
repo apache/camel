@@ -7,30 +7,24 @@ from version 2.x to 3.0.
 
 Camel 3 supports Java 11. Support for Java 8 is best effort for the earlier versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
 
-However, in Java 11 JAXB modules have been **removed** from the JDK, therefore you will need to add them as Maven dependencies since there are couple of components rely on them:
-
-        <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-            <version>${javax.activation.version}</version>
-        </dependency>
-        
+However, in Java 11 JAXB modules have been **removed** from the JDK, therefore you will need to add them as Maven dependencies (if you use JAXB such as when using XML DSL or the camel-jaxb component):
+       
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${jaxb.api.version}</version>
+            <version>2.3.1</version>
         </dependency>
  
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>${jaxb.api.version}</version>
+            <version>2.3.0.1</version>
         </dependency>
  
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb.api.version}</version>
+            <version>2.3.2</version>
         </dependency>
 
 == Modularization of camel-core
