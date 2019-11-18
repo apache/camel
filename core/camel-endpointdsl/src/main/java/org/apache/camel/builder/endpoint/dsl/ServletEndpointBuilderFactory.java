@@ -704,7 +704,7 @@ public interface ServletEndpointBuilderFactory {
      * container.
      * 
      * Category: http
-     * Available as of version: 2.0
+     * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-servlet
      * 
      * Syntax: <code>servlet:contextPath</code>

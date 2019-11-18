@@ -299,7 +299,7 @@ public interface IgniteEventsEndpointBuilderFactory {
      * listener.
      * 
      * Category: nosql,cache,compute,messaging,data
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-events:endpointId</code>

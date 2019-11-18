@@ -201,7 +201,7 @@ public interface MasterEndpointBuilderFactory {
      * CamelClusterView has the leadership.
      * 
      * Category: clustering
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-master
      * 
      * Syntax: <code>master:namespace:delegateUri</code>

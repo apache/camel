@@ -845,7 +845,7 @@ public interface TwilioEndpointBuilderFactory {
      * using Twilio Java SDK.
      * 
      * Category: api,messaging,cloud
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-twilio
      * 
      * Syntax: <code>twilio:apiName/methodName</code>

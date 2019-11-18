@@ -2384,7 +2384,7 @@ public interface AS2EndpointBuilderFactory {
      * internet using the AS2 protocol.
      * 
      * Category: AS2
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-as2
      * 
      * Syntax: <code>as2:apiName/methodName</code>

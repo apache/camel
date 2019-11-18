@@ -857,7 +857,7 @@ public interface StreamEndpointBuilderFactory {
      * system-err streams as well as allowing streaming of file.
      * 
      * Category: file,system
-     * Available as of version: 1.3
+     * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-stream
      * 
      * Syntax: <code>stream:kind</code>

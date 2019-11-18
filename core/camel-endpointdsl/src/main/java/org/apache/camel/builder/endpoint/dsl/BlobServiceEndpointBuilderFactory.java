@@ -1181,7 +1181,7 @@ public interface BlobServiceEndpointBuilderFactory {
      * Azure Storage Blob Service.
      * 
      * Category: cloud,database,nosql
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      * 
      * Syntax: <code>azure-blob:containerOrBlobUri</code>

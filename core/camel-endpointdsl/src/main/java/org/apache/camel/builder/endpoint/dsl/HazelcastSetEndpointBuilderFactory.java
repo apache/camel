@@ -651,7 +651,7 @@ public interface HazelcastSetEndpointBuilderFactory {
      * The camel Endpoint to access Hazelcast distributed set.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-set:cacheName</code>

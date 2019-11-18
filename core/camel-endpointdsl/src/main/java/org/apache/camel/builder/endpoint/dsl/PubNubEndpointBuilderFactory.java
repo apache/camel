@@ -783,7 +783,7 @@ public interface PubNubEndpointBuilderFactory {
      * devices.
      * 
      * Category: cloud,iot,messaging
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-pubnub
      * 
      * Syntax: <code>pubnub:channel</code>

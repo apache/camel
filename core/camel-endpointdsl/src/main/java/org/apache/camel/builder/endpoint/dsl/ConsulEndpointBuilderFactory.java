@@ -393,7 +393,7 @@ public interface ConsulEndpointBuilderFactory {
      * system.
      * 
      * Category: api,cloud
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-consul
      * 
      * Syntax: <code>consul:apiEndpoint</code>

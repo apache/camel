@@ -266,7 +266,7 @@ public interface FlinkEndpointBuilderFactory {
      * cluster.
      * 
      * Category: hadoop
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
      * 
      * Syntax: <code>flink:endpointType</code>

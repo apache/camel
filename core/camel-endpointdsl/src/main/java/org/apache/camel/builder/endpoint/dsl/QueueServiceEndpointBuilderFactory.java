@@ -652,7 +652,7 @@ public interface QueueServiceEndpointBuilderFactory {
      * from Azure Storage Queue Service.
      * 
      * Category: cloud,queue,azure
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      * 
      * Syntax: <code>azure-queue:containerAndQueueUri</code>

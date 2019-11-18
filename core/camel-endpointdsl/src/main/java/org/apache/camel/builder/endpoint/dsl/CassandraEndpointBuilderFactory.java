@@ -1375,7 +1375,7 @@ public interface CassandraEndpointBuilderFactory {
      * (not the Thrift API).
      * 
      * Category: database,nosql
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-cassandraql
      * 
      * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>

@@ -206,7 +206,7 @@ public interface BeanEndpointBuilderFactory {
      * The bean component is for invoking Java beans from Camel.
      * 
      * Category: core,java
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-bean
      * 
      * Syntax: <code>bean:beanName</code>

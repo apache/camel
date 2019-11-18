@@ -539,7 +539,7 @@ public interface XsltSaxonEndpointBuilderFactory {
      * Transforms the message using a XSLT template using Saxon.
      * 
      * Category: core,transformation
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xslt-saxon
      * 
      * Syntax: <code>xslt-saxon:resourceUri</code>

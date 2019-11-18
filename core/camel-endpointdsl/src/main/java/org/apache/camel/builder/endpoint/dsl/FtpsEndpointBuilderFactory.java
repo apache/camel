@@ -5346,7 +5346,7 @@ public interface FtpsEndpointBuilderFactory {
      * downloading files from FTP servers.
      * 
      * Category: file
-     * Available as of version: 2.2
+     * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-ftp
      * 
      * Syntax: <code>ftps:host:port/directoryName</code>

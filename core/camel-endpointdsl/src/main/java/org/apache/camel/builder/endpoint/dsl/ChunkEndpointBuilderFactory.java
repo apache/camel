@@ -219,7 +219,7 @@ public interface ChunkEndpointBuilderFactory {
      * Transforms the message using a Chunk template.
      * 
      * Category: transformation
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-chunk
      * 
      * Syntax: <code>chunk:resourceUri</code>

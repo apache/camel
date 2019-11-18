@@ -534,7 +534,7 @@ public interface PgEventEndpointBuilderFactory {
      * related to the listen/notify commands.
      * 
      * Category: database,sql
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-pgevent
      * 
      * Syntax: <code>pgevent:host:port/database/channel</code>

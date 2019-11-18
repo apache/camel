@@ -253,7 +253,7 @@ public interface LanguageEndpointBuilderFactory {
      * executes a script by any of the supported Languages in Camel.
      * 
      * Category: core,script
-     * Available as of version: 2.5
+     * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-language
      * 
      * Syntax: <code>language:languageName:resourceUri</code>

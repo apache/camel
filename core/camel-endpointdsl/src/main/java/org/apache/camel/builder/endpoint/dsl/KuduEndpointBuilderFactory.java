@@ -180,7 +180,7 @@ public interface KuduEndpointBuilderFactory {
      * Apache Hadoop ecosystem.
      * 
      * Category: cloud,database,iot
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
      * 
      * Syntax: <code>kudu:host:port/tableName</code>

@@ -251,7 +251,7 @@ public interface NeutronEndpointBuilderFactory {
      * OpenStack network services.
      * 
      * Category: cloud,paas
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      * 
      * Syntax: <code>openstack-neutron:host</code>

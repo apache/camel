@@ -1276,7 +1276,7 @@ public interface GrpcEndpointBuilderFactory {
      * with protobuf dataformat
      * 
      * Category: rpc
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-grpc
      * 
      * Syntax: <code>grpc:host:port/service</code>

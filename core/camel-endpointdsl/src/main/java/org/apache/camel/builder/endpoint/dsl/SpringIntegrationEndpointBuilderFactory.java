@@ -497,7 +497,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
      * Bridges Camel with Spring Integration.
      * 
      * Category: spring,eventbus
-     * Available as of version: 1.4
+     * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-spring-integration
      * 
      * Syntax: <code>spring-integration:defaultChannel</code>

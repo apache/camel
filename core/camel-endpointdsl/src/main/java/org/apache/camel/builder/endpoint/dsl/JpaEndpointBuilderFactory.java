@@ -1793,7 +1793,7 @@ public interface JpaEndpointBuilderFactory {
      * databases using JPA.
      * 
      * Category: database,sql
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jpa
      * 
      * Syntax: <code>jpa:entityType</code>

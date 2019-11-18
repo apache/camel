@@ -168,7 +168,7 @@ public interface IPFSEndpointBuilderFactory {
      * System (IPFS).
      * 
      * Category: file,ipfs
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-ipfs
      * 
      * Syntax: <code>ipfs:ipfsHost:ipfsPort/ipfsCmd</code>

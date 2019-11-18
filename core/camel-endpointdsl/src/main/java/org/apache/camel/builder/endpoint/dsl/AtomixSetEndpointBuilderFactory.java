@@ -1277,7 +1277,7 @@ public interface AtomixSetEndpointBuilderFactory {
      * The atomix-set component is used to access Atomix's distributed set.
      * 
      * Category: clustering
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
      * 
      * Syntax: <code>atomix-set:resourceName</code>

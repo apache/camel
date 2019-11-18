@@ -1932,7 +1932,7 @@ public interface CxfRsEndpointBuilderFactory {
      * The cxfrs component is used for JAX-RS REST services using Apache CXF.
      * 
      * Category: rest
-     * Available as of version: 2.0
+     * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cxf
      * 
      * Syntax: <code>cxfrs:beanId:address</code>

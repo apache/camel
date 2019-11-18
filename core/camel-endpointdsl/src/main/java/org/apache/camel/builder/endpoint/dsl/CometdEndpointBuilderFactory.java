@@ -1075,7 +1075,7 @@ public interface CometdEndpointBuilderFactory {
      * implementation of the cometd/bayeux protocol.
      * 
      * Category: websocket
-     * Available as of version: 2.0
+     * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
      * 
      * Syntax: <code>cometd:host:port/channelName</code>
@@ -1099,7 +1099,7 @@ public interface CometdEndpointBuilderFactory {
      * implementation of the cometd/bayeux protocol.
      * 
      * Category: websocket
-     * Available as of version: 2.0
+     * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
      * 
      * Syntax: <code>cometds:host:port/channelName</code>
@@ -1123,7 +1123,7 @@ public interface CometdEndpointBuilderFactory {
      * implementation of the cometd/bayeux protocol.
      * 
      * Category: websocket
-     * Available as of version: 2.0
+     * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
      */
     default CometdEndpointBuilder cometd(String scheme, String path) {

@@ -510,7 +510,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
      * the Signature Service of the Java Cryptographic Extension (JCE).
      * 
      * Category: security,transformation
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-crypto
      * 
      * Syntax: <code>crypto:cryptoOperation:name</code>

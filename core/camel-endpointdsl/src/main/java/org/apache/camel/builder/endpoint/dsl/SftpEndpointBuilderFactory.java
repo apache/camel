@@ -5065,7 +5065,7 @@ public interface SftpEndpointBuilderFactory {
      * files from SFTP servers.
      * 
      * Category: file
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
      * 
      * Syntax: <code>sftp:host:port/directoryName</code>

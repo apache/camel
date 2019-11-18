@@ -955,7 +955,7 @@ public interface JcrEndpointBuilderFactory {
      * content repository.
      * 
      * Category: cms,database
-     * Available as of version: 1.3
+     * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-jcr
      * 
      * Syntax: <code>jcr:host/base</code>

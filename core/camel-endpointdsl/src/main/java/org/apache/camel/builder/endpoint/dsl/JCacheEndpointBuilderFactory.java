@@ -1404,7 +1404,7 @@ public interface JCacheEndpointBuilderFactory {
      * JSR107/JCache as cache implementation.
      * 
      * Category: cache,datagrid,clustering
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
      * 
      * Syntax: <code>jcache:cacheName</code>

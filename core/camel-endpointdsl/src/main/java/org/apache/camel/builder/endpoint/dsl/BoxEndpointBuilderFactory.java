@@ -1577,7 +1577,7 @@ public interface BoxEndpointBuilderFactory {
      * collaborations etc on box DOT com.
      * 
      * Category: api,file,cloud
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-box
      * 
      * Syntax: <code>box:apiName/methodName</code>

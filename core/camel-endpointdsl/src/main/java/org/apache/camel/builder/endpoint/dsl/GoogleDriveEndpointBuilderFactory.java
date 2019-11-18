@@ -1204,7 +1204,7 @@ public interface GoogleDriveEndpointBuilderFactory {
      * service.
      * 
      * Category: api,cloud,file
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-google-drive
      * 
      * Syntax: <code>google-drive:apiName/methodName</code>

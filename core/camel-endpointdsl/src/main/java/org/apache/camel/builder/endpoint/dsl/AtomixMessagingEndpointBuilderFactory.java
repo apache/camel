@@ -1373,7 +1373,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * messaging.
      * 
      * Category: clustering
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
      * 
      * Syntax: <code>atomix-messaging:resourceName</code>

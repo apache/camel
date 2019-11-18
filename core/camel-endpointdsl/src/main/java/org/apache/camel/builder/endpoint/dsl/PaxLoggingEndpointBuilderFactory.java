@@ -204,7 +204,7 @@ public interface PaxLoggingEndpointBuilderFactory {
      * PaxLogging events and process them.
      * 
      * Category: monitoring
-     * Available as of version: 2.6
+     * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-paxlogging
      * 
      * Syntax: <code>paxlogging:appender</code>

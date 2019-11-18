@@ -720,7 +720,7 @@ public interface AvroEndpointBuilderFactory {
      * Working with Apache Avro for data serialization.
      * 
      * Category: messaging,transformation
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-avro
      * 
      * Syntax: <code>avro:transport:host:port/messageName</code>

@@ -390,7 +390,7 @@ public interface EventEndpointBuilderFactory {
      * Events.
      * 
      * Category: spring,eventbus
-     * Available as of version: 1.4
+     * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-spring
      * 
      * Syntax: <code>spring-event:name</code>

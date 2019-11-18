@@ -1011,7 +1011,7 @@ public interface JettyHttpEndpointBuilder9Factory {
      * To use Jetty as a HTTP server as consumer for Camel routes.
      * 
      * Category: http
-     * Available as of version: 1.2
+     * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jetty
      * 
      * Syntax: <code>jetty:httpUri</code>

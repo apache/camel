@@ -152,8 +152,6 @@ aggregator. If not provided Camel will thrown an Exception on startup.
 
 == Pre-completion mode
 
-*available as of Camel 2.16*
-
 There can be use-cases where you want the incoming
 xref:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
@@ -199,8 +197,6 @@ xref:components::leveldb.adoc[LevelDB], or xref:components::sql-component.adoc[S
 
 == Using TimeoutAwareAggregationStrategy
 
-*Available as of Camel 2.9.2*
-
 If your aggregation strategy implements
 `TimeoutAwareAggregationStrategy`, then Camel will invoke the `timeout`
 method when the timeout occurs. Notice that the values for index and
@@ -210,8 +206,6 @@ from the `timeout` method.
 
 == Using CompletionAwareAggregationStrategy
 
-*Available as of Camel 2.9.3*
-
 If your aggregation strategy implements
 `CompletionAwareAggregationStrategy`, then Camel will invoke the
 `onComplete` method when the aggregated Exchange is completed. This
@@ -220,8 +214,6 @@ resources, or additional work on the exchange as it's now completed. +
  You must *not* throw any exceptions from the `onCompletion` method.
 
 == Completing current group decided from the AggregationStrategy
-
-*Available as of Camel 2.15*
 
 The `AggregationStrategy` can now included a property on the
 returned `Exchange` that contains a boolean to indicate if the current
@@ -254,8 +246,6 @@ the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
 == Completing all previous group decided from the AggregationStrategy
 
-*Available as of Camel 2.21*
-
 The `AggregationStrategy` can now included a property on the
 returned `Exchange` that contains a boolean to indicate if all previous
 groups should be completed. This allows to overrule any existing
@@ -286,11 +276,7 @@ setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
     }
 ----
 
- 
-
 == Manually Force the Completion of All Aggregated Exchanges Immediately
-
-*Available as of Camel 2.9*
 
 You can manually trigger completion of all current aggregated exchanges
 by sending a message containing the header
@@ -298,15 +284,11 @@ by sending a message containing the header
 considered a signal message only, the message headers/contents will not
 be processed otherwise.
 
-*Available as of Camel 2.11*
-
 You can alternatively set the header
 `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE` to `true` to trigger
 completion of all groups after processing the current message.
 
 == Using a List<V> in AggregationStrategy
-
-*Available as of Camel 2.11*
 
 If you want to aggregate some value from the messages `<V>` into a `List<V>`
 then we have added a
@@ -319,8 +301,6 @@ For example to aggregate a `List<Integer>` you can extend this class as
 shown below, and implement the `getValue` method:
 
 == Using AggregateController
-
-*Available as of Camel 2.16*
 
 The `org.apache.camel.processor.aggregate.AggregateController` allows
 you to control the aggregate at runtime using Java or JMX API. This can
@@ -415,8 +395,6 @@ List<Exchange> grouped = exchange.getIn().getBody(List.class);
 ----
 
 == Using POJOs as AggregationStrategy
-
-*Available as of Camel 2.12*
 
 To use the `AggregationStrategy` you had to implement the
 `org.apache.camel.AggregationStrategy` interface,

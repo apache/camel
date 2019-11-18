@@ -254,7 +254,7 @@ public interface BonitaEndpointBuilderFactory {
      * Used for communicating with a remote Bonita BPM process engine.
      * 
      * Category: process
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-bonita
      * 
      * Syntax: <code>bonita:operation</code>

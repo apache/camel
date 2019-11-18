@@ -831,7 +831,7 @@ public interface IgniteCacheEndpointBuilderFactory {
      * you to interact with an Ignite Cache.
      * 
      * Category: nosql,cache,compute
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-cache:cacheName</code>

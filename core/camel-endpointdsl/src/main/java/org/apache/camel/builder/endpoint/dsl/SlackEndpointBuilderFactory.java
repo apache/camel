@@ -888,7 +888,7 @@ public interface SlackEndpointBuilderFactory {
      * The slack component allows you to send messages to Slack.
      * 
      * Category: social
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-slack
      * 
      * Syntax: <code>slack:channel</code>

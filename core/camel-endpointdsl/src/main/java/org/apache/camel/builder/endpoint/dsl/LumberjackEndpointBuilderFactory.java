@@ -230,7 +230,7 @@ public interface LumberjackEndpointBuilderFactory {
      * protocol.
      * 
      * Category: log
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-lumberjack
      * 
      * Syntax: <code>lumberjack:host:port</code>

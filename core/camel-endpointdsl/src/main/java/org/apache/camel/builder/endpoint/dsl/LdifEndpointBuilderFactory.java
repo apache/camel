@@ -144,7 +144,7 @@ public interface LdifEndpointBuilderFactory {
      * body content.
      * 
      * Category: ldap
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-ldif
      * 
      * Syntax: <code>ldif:ldapConnectionName</code>

@@ -262,7 +262,7 @@ public interface SparkEndpointBuilderFactory {
      * Spark cluster.
      * 
      * Category: bigdata,iot
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-spark
      * 
      * Syntax: <code>spark:endpointType</code>

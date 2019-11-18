@@ -122,7 +122,6 @@ If no logger name or logger instance is passed to log DSL,
  If more instances are found, the behavior defaults to creating a new instance of logger.
 
 == Configuring log name globally
-*Available as of Camel 2.17*
 
 By default the log name is the route id. If you want to use a different log name, you would need to configure the logName option. However if you have many logs and you want all of them to use the same log name, then you would need to set that logName option on all of them.
 
@@ -143,7 +142,6 @@ And in XML
 ----
 
 == Using slf4j Marker
-*Available as of Camel 2.9*
 
 You can specify a marker name in the DSL
 [source,xml]
@@ -163,7 +161,6 @@ When using log DSL inside OSGi (e.g., in Karaf), the underlying logging mechanis
 In some scenarios it is required that the bundle associated with logger should be the bundle which contains route definition. This is possible using provided logger instance both for Java DSL and Spring DSL (see the examples above).
 
 == Masking sensitive information like password
-*Available as of Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
 Note that this option also affects xref:components::log-component.adoc[Log] component.

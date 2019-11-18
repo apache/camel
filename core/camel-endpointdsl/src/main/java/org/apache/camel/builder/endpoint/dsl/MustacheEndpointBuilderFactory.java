@@ -199,7 +199,7 @@ public interface MustacheEndpointBuilderFactory {
      * Transforms the message using a Mustache template.
      * 
      * Category: transformation
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mustache
      * 
      * Syntax: <code>mustache:resourceUri</code>

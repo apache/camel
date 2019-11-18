@@ -227,7 +227,7 @@ public interface DrillEndpointBuilderFactory {
      * cluster.
      * 
      * Category: database,sql
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-drill
      * 
      * Syntax: <code>drill:host</code>

@@ -1531,7 +1531,7 @@ public interface MiloClientEndpointBuilderFactory {
      * telemetry data
      * 
      * Category: iot
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
      * 
      * Syntax: <code>milo-client:endpointUri</code>

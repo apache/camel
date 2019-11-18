@@ -1502,7 +1502,7 @@ public interface SplunkEndpointBuilderFactory {
      * The splunk component allows to publish or search for events in Splunk.
      * 
      * Category: log,monitoring
-     * Available as of version: 2.13
+     * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
      * 
      * Syntax: <code>splunk:name</code>

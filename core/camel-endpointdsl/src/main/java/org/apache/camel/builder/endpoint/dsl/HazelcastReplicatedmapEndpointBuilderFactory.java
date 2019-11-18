@@ -657,7 +657,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      * replicated map.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-replicatedmap:cacheName</code>

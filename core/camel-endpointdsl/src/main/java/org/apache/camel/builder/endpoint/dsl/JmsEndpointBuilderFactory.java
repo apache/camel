@@ -5184,7 +5184,7 @@ public interface JmsEndpointBuilderFactory {
      * Queue or Topic.
      * 
      * Category: messaging
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jms
      * 
      * Syntax: <code>jms:destinationType:destinationName</code>

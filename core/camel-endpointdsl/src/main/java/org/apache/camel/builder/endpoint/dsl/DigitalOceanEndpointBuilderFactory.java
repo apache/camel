@@ -337,7 +337,7 @@ public interface DigitalOceanEndpointBuilderFactory {
      * within the DigitalOcean cloud.
      * 
      * Category: cloud,management
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-digitalocean
      * 
      * Syntax: <code>digitalocean:operation</code>

@@ -347,7 +347,7 @@ public interface MsvEndpointBuilderFactory {
      * Validates the payload of a message using the MSV Library.
      * 
      * Category: validation
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-msv
      * 
      * Syntax: <code>msv:resourceUri</code>

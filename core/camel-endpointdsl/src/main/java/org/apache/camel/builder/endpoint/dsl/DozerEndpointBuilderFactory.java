@@ -242,7 +242,7 @@ public interface DozerEndpointBuilderFactory {
      * the Dozer mapping library.
      * 
      * Category: transformation
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-dozer
      * 
      * Syntax: <code>dozer:name</code>

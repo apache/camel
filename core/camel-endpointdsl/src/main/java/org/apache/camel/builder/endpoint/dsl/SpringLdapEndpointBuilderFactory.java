@@ -201,7 +201,7 @@ public interface SpringLdapEndpointBuilderFactory {
      * using filters as the message payload.
      * 
      * Category: spring,ldap
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-ldap
      * 
      * Syntax: <code>spring-ldap:templateName</code>

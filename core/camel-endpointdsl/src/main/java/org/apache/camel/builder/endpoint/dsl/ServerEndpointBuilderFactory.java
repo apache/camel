@@ -1546,7 +1546,7 @@ public interface ServerEndpointBuilderFactory {
      * other geographically widespread control systems.
      * 
      * Category: iot
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-iec60870
      * 
      * Syntax: <code>iec60870-server:uriPath</code>

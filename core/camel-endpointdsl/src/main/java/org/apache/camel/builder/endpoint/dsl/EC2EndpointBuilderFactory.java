@@ -317,7 +317,7 @@ public interface EC2EndpointBuilderFactory {
      * The aws-ec2 is used for managing Amazon EC2 instances.
      * 
      * Category: cloud,management
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-aws-ec2
      * 
      * Syntax: <code>aws-ec2:label</code>

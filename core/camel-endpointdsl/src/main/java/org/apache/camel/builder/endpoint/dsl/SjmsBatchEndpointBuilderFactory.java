@@ -785,7 +785,7 @@ public interface SjmsBatchEndpointBuilderFactory {
      * transactional batch consumption from a JMS queue.
      * 
      * Category: messaging
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-sjms
      * 
      * Syntax: <code>sjms-batch:destinationName</code>

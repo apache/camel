@@ -929,7 +929,7 @@ public interface CoAPEndpointBuilderFactory {
      * capable devices.
      * 
      * Category: iot
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
      * 
      * Syntax: <code>coap:uri</code>
@@ -946,7 +946,7 @@ public interface CoAPEndpointBuilderFactory {
      * capable devices.
      * 
      * Category: iot
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
      * 
      * Syntax: <code>coap+tcp:uri</code>
@@ -963,7 +963,7 @@ public interface CoAPEndpointBuilderFactory {
      * capable devices.
      * 
      * Category: iot
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
      * 
      * Syntax: <code>coaps:uri</code>
@@ -980,7 +980,7 @@ public interface CoAPEndpointBuilderFactory {
      * capable devices.
      * 
      * Category: iot
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
      * 
      * Syntax: <code>coaps+tcp:uri</code>
@@ -997,7 +997,7 @@ public interface CoAPEndpointBuilderFactory {
      * capable devices.
      * 
      * Category: iot
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
      */
     default CoAPEndpointBuilder coap(String scheme, String path) {

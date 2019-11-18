@@ -313,7 +313,7 @@ public interface IAMEndpointBuilderFactory {
      * The aws-iam is used for managing Amazon IAM
      * 
      * Category: cloud,management
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-aws-iam
      * 
      * Syntax: <code>aws-iam:label</code>

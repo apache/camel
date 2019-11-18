@@ -628,7 +628,7 @@ public interface ZooKeeperEndpointBuilderFactory {
      * The zookeeper component allows interaction with a ZooKeeper cluster.
      * 
      * Category: clustering
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
      * 
      * Syntax: <code>zookeeper:serverUrls/path</code>

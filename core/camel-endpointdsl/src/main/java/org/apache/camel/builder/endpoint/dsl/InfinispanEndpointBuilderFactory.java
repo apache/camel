@@ -1270,7 +1270,7 @@ public interface InfinispanEndpointBuilderFactory {
      * data grid.
      * 
      * Category: cache,datagrid,clustering
-     * Available as of version: 2.13
+     * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan
      * 
      * Syntax: <code>infinispan:cacheName</code>

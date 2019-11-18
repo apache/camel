@@ -229,7 +229,7 @@ public interface FreemarkerEndpointBuilderFactory {
      * Transforms the message using a FreeMarker template.
      * 
      * Category: transformation
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-freemarker
      * 
      * Syntax: <code>freemarker:resourceUri</code>

@@ -246,7 +246,7 @@ public interface LuceneEndpointBuilderFactory {
      * To insert or query from Apache Lucene databases.
      * 
      * Category: database,search
-     * Available as of version: 2.2
+     * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-lucene
      * 
      * Syntax: <code>lucene:host:operation</code>

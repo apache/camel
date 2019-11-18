@@ -2816,7 +2816,7 @@ public interface SipEndpointBuilderFactory {
      * mobile).
      * 
      * Category: mobile
-     * Available as of version: 2.5
+     * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-sip
      * 
      * Syntax: <code>sip:uri</code>
@@ -2834,7 +2834,7 @@ public interface SipEndpointBuilderFactory {
      * mobile).
      * 
      * Category: mobile
-     * Available as of version: 2.5
+     * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-sip
      * 
      * Syntax: <code>sips:uri</code>
@@ -2852,7 +2852,7 @@ public interface SipEndpointBuilderFactory {
      * mobile).
      * 
      * Category: mobile
-     * Available as of version: 2.5
+     * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-sip
      */
     default SipEndpointBuilder sip(String scheme, String path) {
