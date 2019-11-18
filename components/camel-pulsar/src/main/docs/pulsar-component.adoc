@@ -128,6 +128,17 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 // message-headers options: START
+=== Message headers evaluated by the Pulsar producer
+
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
+| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
+| `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
+|===
+
 === Message headers set by the Pulsar consumer
 
 
@@ -144,16 +155,5 @@ The component supports 3 options, which are listed below.
 | `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
 | `topic_name` | `String` | The topic to which the message was published
 | `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
-|===
-
-=== Message headers evaluated by the Pulsar producer
-
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|===
-| Header | Type | Description
-| `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
-| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
-| `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
 |===
 // message-headers options: END
