@@ -221,7 +221,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
      * MyBatis.
      * 
      * Category: database,sql
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-mybatis
      * 
      * Syntax: <code>mybatis-bean:beanName:methodName</code>

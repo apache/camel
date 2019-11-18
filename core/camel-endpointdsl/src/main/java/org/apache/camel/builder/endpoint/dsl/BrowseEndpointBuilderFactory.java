@@ -391,7 +391,7 @@ public interface BrowseEndpointBuilderFactory {
      * endpoints that supports BrowsableEndpoint.
      * 
      * Category: core,monitoring
-     * Available as of version: 1.3
+     * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-browse
      * 
      * Syntax: <code>browse:name</code>

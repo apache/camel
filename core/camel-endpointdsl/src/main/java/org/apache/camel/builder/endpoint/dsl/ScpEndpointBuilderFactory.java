@@ -625,7 +625,7 @@ public interface ScpEndpointBuilderFactory {
      * To copy files using the secure copy protocol (SCP).
      * 
      * Category: file
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-jsch
      * 
      * Syntax: <code>scp:host:port/directoryName</code>

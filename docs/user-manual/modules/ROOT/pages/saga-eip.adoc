@@ -2,8 +2,6 @@
 = Saga EIP
 :page-source: core/camel-core-engine/src/main/docs/eips/saga-eip.adoc
 
-*Available as of Camel 2.21*
-
 The Saga EIP provides a way to define a series of related actions in a Camel route that should be either completed successfully (*all of them*) or not-executed/compensated.
 Sagas implementations are able to coordinate *distributed services communicating using any transport* towards a globally *consistent outcome*.
 

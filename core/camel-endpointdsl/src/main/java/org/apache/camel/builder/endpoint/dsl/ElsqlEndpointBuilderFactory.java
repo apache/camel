@@ -2261,7 +2261,7 @@ public interface ElsqlEndpointBuilderFactory {
      * uses ElSql to define the SQL queries.
      * 
      * Category: database,sql
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-elsql
      * 
      * Syntax: <code>elsql:elsqlName:resourceUri</code>

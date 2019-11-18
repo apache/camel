@@ -470,7 +470,7 @@ public interface OptaPlannerEndpointBuilderFactory {
      * Solves the planning problem contained in a message with OptaPlanner.
      * 
      * Category: engine,planning
-     * Available as of version: 2.13
+     * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-optaplanner
      * 
      * Syntax: <code>optaplanner:configFile</code>

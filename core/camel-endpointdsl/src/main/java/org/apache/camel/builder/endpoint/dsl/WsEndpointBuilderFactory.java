@@ -1275,7 +1275,7 @@ public interface WsEndpointBuilderFactory {
      * To exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-ahc-ws
      * 
      * Syntax: <code>ahc-ws:httpUri</code>
@@ -1291,7 +1291,7 @@ public interface WsEndpointBuilderFactory {
      * To exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-ahc-ws
      * 
      * Syntax: <code>ahc-wss:httpUri</code>
@@ -1307,7 +1307,7 @@ public interface WsEndpointBuilderFactory {
      * To exchange data with external Websocket servers using Async Http Client.
      * 
      * Category: websocket
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-ahc-ws
      */
     default WsEndpointBuilder ahcWs(String scheme, String path) {

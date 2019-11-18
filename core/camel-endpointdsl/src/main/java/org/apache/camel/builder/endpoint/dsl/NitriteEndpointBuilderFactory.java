@@ -618,7 +618,7 @@ public interface NitriteEndpointBuilderFactory {
      * Used for integrating Camel with Nitrite databases.
      * 
      * Category: database,nosql
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-nitrite
      * 
      * Syntax: <code>nitrite:database</code>

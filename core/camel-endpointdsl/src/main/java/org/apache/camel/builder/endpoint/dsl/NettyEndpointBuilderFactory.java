@@ -3857,7 +3857,7 @@ public interface NettyEndpointBuilderFactory {
      * Socket level networking using TCP or UDP with the Netty 4.x library.
      * 
      * Category: networking,tcp,udp
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
      * 
      * Syntax: <code>netty:protocol:host:port</code>

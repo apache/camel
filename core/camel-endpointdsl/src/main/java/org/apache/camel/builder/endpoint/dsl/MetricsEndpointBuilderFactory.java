@@ -291,7 +291,7 @@ public interface MetricsEndpointBuilderFactory {
      * DropWizard metrics library.
      * 
      * Category: monitoring
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-metrics
      * 
      * Syntax: <code>metrics:metricsType:metricsName</code>

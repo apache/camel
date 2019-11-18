@@ -1051,7 +1051,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      * Used to sign and verify exchanges using the XML signature specification.
      * 
      * Category: security,transformation
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
      * 
      * Syntax: <code>xmlsecurity:command:name</code>

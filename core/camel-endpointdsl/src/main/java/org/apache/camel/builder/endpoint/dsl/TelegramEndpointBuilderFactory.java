@@ -1020,7 +1020,7 @@ public interface TelegramEndpointBuilderFactory {
      * The telegram component provides access to the Telegram Bot API.
      * 
      * Category: chat
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-telegram
      * 
      * Syntax: <code>telegram:type</code>

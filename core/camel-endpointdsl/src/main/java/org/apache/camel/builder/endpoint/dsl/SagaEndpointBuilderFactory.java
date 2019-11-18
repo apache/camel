@@ -144,7 +144,7 @@ public interface SagaEndpointBuilderFactory {
      * flow in the Saga EIP.
      * 
      * Category: core,endpoint
-     * Available as of version: 2.21
+     * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-saga
      * 
      * Syntax: <code>saga:action</code>

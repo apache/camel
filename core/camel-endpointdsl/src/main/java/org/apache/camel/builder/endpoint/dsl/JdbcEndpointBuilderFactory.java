@@ -475,7 +475,7 @@ public interface JdbcEndpointBuilderFactory {
      * SQL queries are sent in the message body.
      * 
      * Category: database,sql
-     * Available as of version: 1.2
+     * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
      * 
      * Syntax: <code>jdbc:dataSourceName</code>

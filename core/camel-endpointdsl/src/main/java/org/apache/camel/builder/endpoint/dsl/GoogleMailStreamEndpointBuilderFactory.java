@@ -750,7 +750,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
      * The google-mail component provides access to Google Mail.
      * 
      * Category: api,cloud,mail
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 
      * Syntax: <code>google-mail-stream:index</code>

@@ -1268,7 +1268,7 @@ public interface HttpEndpointBuilderFactory {
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
      * 
      * Category: http
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      * 
      * Syntax: <code>http:httpUri</code>
@@ -1284,7 +1284,7 @@ public interface HttpEndpointBuilderFactory {
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
      * 
      * Category: http
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      * 
      * Syntax: <code>https:httpUri</code>
@@ -1300,7 +1300,7 @@ public interface HttpEndpointBuilderFactory {
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
      * 
      * Category: http
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      */
     default HttpEndpointBuilder http(String scheme, String path) {

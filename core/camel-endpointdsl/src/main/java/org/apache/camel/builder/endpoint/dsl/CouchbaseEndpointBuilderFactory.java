@@ -1831,7 +1831,7 @@ public interface CouchbaseEndpointBuilderFactory {
      * and/or produce various type of operations.
      * 
      * Category: database,nosql
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
      * 
      * Syntax: <code>couchbase:protocol:hostname:port</code>

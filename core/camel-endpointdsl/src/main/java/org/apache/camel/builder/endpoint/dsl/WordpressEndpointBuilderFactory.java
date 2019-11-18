@@ -822,7 +822,7 @@ public interface WordpressEndpointBuilderFactory {
      * Integrates Camel with Wordpress.
      * 
      * Category: cms
-     * Available as of version: 2.21
+     * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
      * 
      * Syntax: <code>wordpress:operation</code>

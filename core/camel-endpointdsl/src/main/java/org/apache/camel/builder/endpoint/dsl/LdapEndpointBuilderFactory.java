@@ -210,7 +210,7 @@ public interface LdapEndpointBuilderFactory {
      * filters as the message payload.
      * 
      * Category: ldap
-     * Available as of version: 1.5
+     * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
      * 
      * Syntax: <code>ldap:dirContextName</code>

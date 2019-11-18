@@ -2303,7 +2303,7 @@ public interface SqsEndpointBuilderFactory {
      * Amazon's SQS service.
      * 
      * Category: cloud,messaging
-     * Available as of version: 2.6
+     * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-aws-sqs
      * 
      * Syntax: <code>aws-sqs:queueNameOrArn</code>

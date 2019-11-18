@@ -1597,7 +1597,7 @@ public interface Olingo2EndpointBuilderFactory {
      * Communicates with OData 2.0 services using Apache Olingo.
      * 
      * Category: cloud
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-olingo2
      * 
      * Syntax: <code>olingo2:apiName/methodName</code>

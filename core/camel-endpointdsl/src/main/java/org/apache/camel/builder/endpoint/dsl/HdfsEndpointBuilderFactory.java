@@ -2198,7 +2198,7 @@ public interface HdfsEndpointBuilderFactory {
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
      * 
      * Category: hadoop,file
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-hdfs
      * 
      * Syntax: <code>hdfs:hostName:port/path</code>

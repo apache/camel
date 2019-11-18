@@ -175,7 +175,7 @@ public interface MvelEndpointBuilderFactory {
      * Transforms the message using a MVEL template.
      * 
      * Category: transformation,script
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mvel
      * 
      * Syntax: <code>mvel:resourceUri</code>

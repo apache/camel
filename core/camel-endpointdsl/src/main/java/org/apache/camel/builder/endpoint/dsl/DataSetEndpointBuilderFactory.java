@@ -798,7 +798,7 @@ public interface DataSetEndpointBuilderFactory {
      * testing of your system.
      * 
      * Category: core,testing
-     * Available as of version: 1.3
+     * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
      * 
      * Syntax: <code>dataset:name</code>

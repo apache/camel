@@ -391,7 +391,7 @@ public interface RefEndpointBuilderFactory {
      * Registry.
      * 
      * Category: core,endpoint
-     * Available as of version: 1.2
+     * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-ref
      * 
      * Syntax: <code>ref:name</code>

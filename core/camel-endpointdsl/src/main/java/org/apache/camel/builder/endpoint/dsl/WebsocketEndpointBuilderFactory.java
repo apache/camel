@@ -1183,7 +1183,7 @@ public interface WebsocketEndpointBuilderFactory {
      * communicating with clients using websocket.
      * 
      * Category: websocket
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-websocket
      * 
      * Syntax: <code>websocket:host:port/resourceUri</code>

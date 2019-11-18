@@ -1264,7 +1264,7 @@ public interface SWFEndpointBuilderFactory {
      * Workflow.
      * 
      * Category: cloud,workflow
-     * Available as of version: 2.13
+     * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-aws-swf
      * 
      * Syntax: <code>aws-swf:type</code>

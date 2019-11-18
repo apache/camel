@@ -314,7 +314,7 @@ public interface BeanValidatorEndpointBuilderFactory {
      * using the Java Bean Validation API.
      * 
      * Category: validation
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-bean-validator
      * 
      * Syntax: <code>bean-validator:label</code>

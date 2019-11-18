@@ -346,7 +346,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
      * Camel metrics exposed with Eclipse MicroProfile Metrics
      * 
      * Category: monitoring
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-microprofile-metrics
      * 
      * Syntax: <code>microprofile-metrics:metricType:metricName</code>

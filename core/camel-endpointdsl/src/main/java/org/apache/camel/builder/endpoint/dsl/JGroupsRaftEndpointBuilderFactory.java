@@ -421,7 +421,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
      * JGroups clusters.
      * 
      * Category: clustering,messaging
-     * Available as of version: 2.24
+     * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-jgroups-raft
      * 
      * Syntax: <code>jgroups-raft:clusterName</code>

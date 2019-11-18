@@ -448,7 +448,7 @@ public interface SnsEndpointBuilderFactory {
      * Notification Topic.
      * 
      * Category: cloud,mobile,messaging
-     * Available as of version: 2.8
+     * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-sns
      * 
      * Syntax: <code>aws-sns:topicNameOrArn</code>

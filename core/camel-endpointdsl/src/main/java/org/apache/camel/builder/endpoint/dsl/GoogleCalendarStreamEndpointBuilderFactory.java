@@ -816,7 +816,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
      * streaming mode.
      * 
      * Category: api,cloud
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-calendar
      * 
      * Syntax: <code>google-calendar-stream:index</code>

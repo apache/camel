@@ -276,7 +276,7 @@ public interface IgniteSetEndpointBuilderFactory {
      * you to interact with Ignite Set data structures.
      * 
      * Category: nosql,cache
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-set:name</code>

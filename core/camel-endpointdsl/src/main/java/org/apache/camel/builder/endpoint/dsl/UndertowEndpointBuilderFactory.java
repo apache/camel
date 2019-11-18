@@ -1304,7 +1304,7 @@ public interface UndertowEndpointBuilderFactory {
      * consuming and producing HTTP/WebSocket requests.
      * 
      * Category: http,websocket
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-undertow
      * 
      * Syntax: <code>undertow:httpURI</code>

@@ -390,7 +390,7 @@ public interface MiloServerEndpointBuilderFactory {
      * Make telemetry data available as an OPC UA server
      * 
      * Category: iot
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
      * 
      * Syntax: <code>milo-server:itemId</code>

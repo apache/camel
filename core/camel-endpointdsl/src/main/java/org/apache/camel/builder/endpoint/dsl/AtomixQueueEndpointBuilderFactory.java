@@ -1216,7 +1216,7 @@ public interface AtomixQueueEndpointBuilderFactory {
      * The atomix-queue component is used to access Atomix's distributed queue.
      * 
      * Category: clustering
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
      * 
      * Syntax: <code>atomix-queue:resourceName</code>

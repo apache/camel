@@ -351,7 +351,7 @@ public interface PdfEndpointBuilderFactory {
      * content from PDF documents.
      * 
      * Category: document,transformation,printing
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
      * 
      * Syntax: <code>pdf:operation</code>

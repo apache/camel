@@ -956,7 +956,7 @@ public interface HipchatEndpointBuilderFactory {
      * Hipchat service.
      * 
      * Category: api,cloud
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-hipchat
      * 
      * Syntax: <code>hipchat:protocol:host:port</code>

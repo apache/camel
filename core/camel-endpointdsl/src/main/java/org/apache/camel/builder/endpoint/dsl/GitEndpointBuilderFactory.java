@@ -654,7 +654,7 @@ public interface GitEndpointBuilderFactory {
      * The git component is used for working with git repositories.
      * 
      * Category: file
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-git
      * 
      * Syntax: <code>git:localPath</code>

@@ -1527,7 +1527,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
      * To exchange data with external Websocket clients using Atmosphere.
      * 
      * Category: websocket
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
      * 
      * Syntax: <code>atmosphere-websocket:servicePath</code>

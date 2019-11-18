@@ -1249,7 +1249,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
      * node operations and a consumer to consume node events.
      * 
      * Category: container,cloud,paas
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 
      * Syntax: <code>kubernetes-deployments:masterUrl</code>

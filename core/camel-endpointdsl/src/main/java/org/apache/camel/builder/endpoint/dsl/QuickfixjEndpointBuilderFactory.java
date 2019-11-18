@@ -574,7 +574,7 @@ public interface QuickfixjEndpointBuilderFactory {
      * messages to the QuickFix engine.
      * 
      * Category: messaging
-     * Available as of version: 2.1
+     * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-quickfix
      * 
      * Syntax: <code>quickfix:configurationName</code>

@@ -641,7 +641,7 @@ public interface SchedulerEndpointBuilderFactory {
      * scheduler fires.
      * 
      * Category: core,scheduling
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-scheduler
      * 
      * Syntax: <code>scheduler:name</code>

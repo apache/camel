@@ -230,7 +230,7 @@ public interface RestApiEndpointBuilderFactory {
      * services which has been defined using the rest-dsl in Camel.
      * 
      * Category: core,rest
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-rest
      * 
      * Syntax: <code>rest-api:path/contextIdPattern</code>

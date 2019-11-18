@@ -164,8 +164,6 @@ By also enabling `roundRobin` mode, then it will keep retrying until it success.
 
 == Weighted Round-Robin and Random Load Balancing
 
-*Available as of Camel 2.5*
-
 In many enterprise environments where server nodes of unequal processing power & performance characteristics are utilized to host services and processing endpoints, it is frequently necessary to distribute processing load based on their individual server capabilities so that some endpoints are not unfairly burdened with requests. Obviously simple round-robin or random load balancing do not alleviate problems of this nature. A Weighted Round-Robin and/or Weighted Random load balancer can be used to address this problem.
 The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others. You can specify this as a positive processing weight for each server. A larger number indicates that the server can handle a larger load. The weight is utilized to determine the payload distribution ratio to different processing endpoints with respect to others.
 
@@ -180,8 +178,6 @@ The parameters that can be used are
 |=======================================================================
 
 == Using Weighted round-robin & random load balancing
-
-*Available as of Camel 2.5*
 
 An example using Java DSL:
 [source,java]

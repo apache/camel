@@ -458,7 +458,7 @@ public interface JGroupsEndpointBuilderFactory {
      * JGroups clusters.
      * 
      * Category: clustering,messaging
-     * Available as of version: 2.13
+     * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-jgroups
      * 
      * Syntax: <code>jgroups:clusterName</code>

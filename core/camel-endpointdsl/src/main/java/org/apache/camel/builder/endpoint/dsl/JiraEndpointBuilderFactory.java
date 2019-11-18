@@ -750,7 +750,7 @@ public interface JiraEndpointBuilderFactory {
      * The jira component interacts with the JIRA issue tracker.
      * 
      * Category: api,reporting
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jira
      * 
      * Syntax: <code>jira:type</code>

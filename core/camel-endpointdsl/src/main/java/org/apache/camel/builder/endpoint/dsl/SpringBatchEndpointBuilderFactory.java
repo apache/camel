@@ -224,7 +224,7 @@ public interface SpringBatchEndpointBuilderFactory {
      * further processing.
      * 
      * Category: spring,batch,scheduling
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
      * 
      * Syntax: <code>spring-batch:jobName</code>

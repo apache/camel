@@ -997,7 +997,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * WebServices.
      * 
      * Category: spring,soap,webservice
-     * Available as of version: 2.6
+     * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-spring-ws
      * 
      * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>

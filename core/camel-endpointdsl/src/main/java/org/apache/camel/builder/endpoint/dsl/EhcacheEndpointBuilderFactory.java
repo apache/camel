@@ -1023,7 +1023,7 @@ public interface EhcacheEndpointBuilderFactory {
      * Ehcache as cache implementation.
      * 
      * Category: cache,datagrid,clustering
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-ehcache
      * 
      * Syntax: <code>ehcache:cacheName</code>

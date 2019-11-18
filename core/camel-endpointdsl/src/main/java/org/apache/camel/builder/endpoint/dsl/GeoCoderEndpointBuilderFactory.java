@@ -305,7 +305,7 @@ public interface GeoCoderEndpointBuilderFactory {
      * longitude) for a given address, or reverse lookup.
      * 
      * Category: api,location
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-geocoder
      * 
      * Syntax: <code>geocoder:address:latlng</code>

@@ -2,8 +2,6 @@
 = Resilience4j EIP
 :page-source: core/camel-core-engine/src/main/docs/eips/resilience4j-eip.adoc
 
-*Available as of Camel 3.0*
-
 This component supports the Circuit Breaker EIP with the Resilience4j library.
 
 NOTE: Camel provides the Circuit Breaker EIP in the route model, which allows to plugin different implementations.

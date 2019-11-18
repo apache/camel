@@ -177,7 +177,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
      * Google BigQuery data warehouse for analytics (using SQL queries).
      * 
      * Category: cloud,messaging
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      * 
      * Syntax: <code>google-bigquery-sql:projectId:query</code>

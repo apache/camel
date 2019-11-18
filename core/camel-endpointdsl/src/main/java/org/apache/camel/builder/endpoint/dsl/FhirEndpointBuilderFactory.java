@@ -2242,7 +2242,7 @@ public interface FhirEndpointBuilderFactory {
      * care).
      * 
      * Category: hl7,api
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-fhir
      * 
      * Syntax: <code>fhir:apiName/methodName</code>

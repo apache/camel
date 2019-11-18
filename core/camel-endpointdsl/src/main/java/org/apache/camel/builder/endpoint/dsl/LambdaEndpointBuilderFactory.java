@@ -322,7 +322,7 @@ public interface LambdaEndpointBuilderFactory {
      * Lambda.
      * 
      * Category: cloud,computing,serverless
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-aws-lambda
      * 
      * Syntax: <code>aws-lambda:function</code>

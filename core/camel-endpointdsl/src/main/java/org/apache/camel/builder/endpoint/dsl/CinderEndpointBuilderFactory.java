@@ -250,7 +250,7 @@ public interface CinderEndpointBuilderFactory {
      * block storage services.
      * 
      * Category: cloud,paas
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      * 
      * Syntax: <code>openstack-cinder:host</code>

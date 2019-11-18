@@ -144,7 +144,7 @@ public interface StAXEndpointBuilderFactory {
      * ContentHandler.
      * 
      * Category: transformation
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-stax
      * 
      * Syntax: <code>stax:contentHandlerClass</code>

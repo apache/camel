@@ -445,7 +445,7 @@ public interface XsltEndpointBuilderFactory {
      * Transforms the message using a XSLT template.
      * 
      * Category: core,transformation
-     * Available as of version: 1.3
+     * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-xslt
      * 
      * Syntax: <code>xslt:resourceUri</code>

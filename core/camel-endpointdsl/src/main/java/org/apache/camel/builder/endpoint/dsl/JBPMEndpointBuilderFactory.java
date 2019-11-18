@@ -1866,7 +1866,7 @@ public interface JBPMEndpointBuilderFactory {
      * Management).
      * 
      * Category: process
-     * Available as of version: 2.6
+     * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-jbpm
      * 
      * Syntax: <code>jbpm:connectionURL</code>

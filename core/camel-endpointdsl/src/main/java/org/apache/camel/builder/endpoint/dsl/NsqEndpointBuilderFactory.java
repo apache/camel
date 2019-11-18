@@ -772,7 +772,7 @@ public interface NsqEndpointBuilderFactory {
      * Represents a nsq endpoint.
      * 
      * Category: messaging
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-nsq
      * 
      * Syntax: <code>nsq:servers</code>

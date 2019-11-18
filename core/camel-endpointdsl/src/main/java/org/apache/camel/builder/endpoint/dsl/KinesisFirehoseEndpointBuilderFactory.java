@@ -286,7 +286,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
      * Firehose streams.
      * 
      * Category: cloud,messaging
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-aws-kinesis
      * 
      * Syntax: <code>aws-kinesis-firehose:streamName</code>

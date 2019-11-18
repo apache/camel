@@ -951,7 +951,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
      * respond to them.
      * 
      * Category: database,nosql,mongodb
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mongodb
      * 
      * Syntax: <code>debezium-mongodb:name</code>
