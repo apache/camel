@@ -25,6 +25,7 @@ public class Resilience4jConfigurationProperties {
 
     private final MainConfigurationProperties parent;
 
+    private String circuitBreakerRef;
     private String configRef;
     private Float failureRateThreshold;
     private Integer permittedNumberOfCallsInHalfOpenState;
@@ -54,6 +55,19 @@ public class Resilience4jConfigurationProperties {
 
     // getter and setters
     // --------------------------------------------------------------
+
+    public String getCircuitBreakerRef() {
+        return circuitBreakerRef;
+    }
+
+    /**
+     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance
+     * to lookup and use from the registry. When using this, then any other circuit breaker options
+     * are not in use.
+     */
+    public void setCircuitBreakerRef(String circuitBreakerRef) {
+        this.circuitBreakerRef = circuitBreakerRef;
+    }
 
     public String getConfigRef() {
         return configRef;
@@ -292,6 +306,16 @@ public class Resilience4jConfigurationProperties {
      */
     public void setTimeoutCancelRunningFuture(Boolean timeoutCancelRunningFuture) {
         this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
+    }
+
+    /**
+     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance
+     * to lookup and use from the registry. When using this, then any other circuit breaker options
+     * are not in use.
+     */
+    public Resilience4jConfigurationProperties withCircuitBreakerRef(String circuitBreakerRef) {
+        this.circuitBreakerRef = circuitBreakerRef;
+        return this;
     }
 
     /**

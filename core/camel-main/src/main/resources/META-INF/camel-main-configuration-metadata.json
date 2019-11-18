@@ -646,6 +646,12 @@
 			"description":"Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has space available, entry is guaranteed and immediate. If bulkhead is full, calling threads will contest for space, if it becomes available. maxWaitDuration can be set to 0. Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application throughput."
 		},
 		{
+			"name":"camel.resilience4j.circuit-breaker-ref",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use."
+		},
+		{
 			"name":"camel.resilience4j.config-ref",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",

@@ -28,6 +28,9 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
     @Metadata(label = "circuitbreaker")
+    private String circuitBreakerRef;
+    @XmlAttribute
+    @Metadata(label = "circuitbreaker")
     private String configRef;
     @XmlAttribute
     @Metadata(label = "circuitbreaker", defaultValue = "50")
@@ -76,6 +79,19 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     // Getter/Setter
     // -------------------------------------------------------------------------
+
+    public String getCircuitBreakerRef() {
+        return circuitBreakerRef;
+    }
+
+    /**
+     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance
+     * to lookup and use from the registry. When using this, then any other circuit breaker options
+     * are not in use.
+     */
+    public void setCircuitBreakerRef(String circuitBreakerRef) {
+        this.circuitBreakerRef = circuitBreakerRef;
+    }
 
     public String getConfigRef() {
         return configRef;

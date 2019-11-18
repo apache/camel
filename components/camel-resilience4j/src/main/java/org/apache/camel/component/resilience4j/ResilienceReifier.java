@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 import io.github.resilience4j.bulkhead.BulkheadConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
@@ -37,6 +38,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -72,6 +74,11 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
         ResilienceProcessor answer = new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
         configureTimeoutExecutorService(answer, routeContext, config);
+        // using any existing circuit breakers?
+        if (config.getCircuitBreakerRef() != null) {
+            CircuitBreaker cb = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), config.getCircuitBreakerRef(), CircuitBreaker.class);
+            answer.setCircuitBreaker(cb);
+        }
         return answer;
     }
 

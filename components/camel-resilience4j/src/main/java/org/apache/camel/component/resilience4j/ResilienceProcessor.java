@@ -99,6 +99,14 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
         this.id = id;
     }
 
+    public CircuitBreaker getCircuitBreaker() {
+        return circuitBreaker;
+    }
+
+    public void setCircuitBreaker(CircuitBreaker circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
+    }
+
     public boolean isShutdownExecutorService() {
         return shutdownExecutorService;
     }
@@ -374,7 +382,9 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-        circuitBreaker = CircuitBreaker.of(id, circuitBreakerConfig);
+        if (circuitBreaker == null) {
+            circuitBreaker = CircuitBreaker.of(id, circuitBreakerConfig);
+        }
     }
 
     @Override

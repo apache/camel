@@ -46,6 +46,17 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     // -------------------------------------------------------------------------
 
     /**
+     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance
+     * to lookup and use from the registry. When using this, then any other circuit breaker options
+     * are not in use.
+     */
+    public Resilience4jConfigurationDefinition circuitBreakerRef(String circuitBreakerRef) {
+        setCircuitBreakerRef(circuitBreakerRef);
+        return this;
+    }
+
+
+    /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance
      * to lookup and use from the registry.
      */
