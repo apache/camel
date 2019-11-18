@@ -159,8 +159,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         log.debug("AdviceWith route before: {}", this);
 
-        // inject this route into the advice route builder so it can access this
-        // route
+        // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
         boolean logRoutesAsXml = true;
         if (builder instanceof AdviceWithRouteBuilder) {
@@ -191,7 +190,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         String beforeAsXml = null;
         if (logRoutesAsXml && log.isInfoEnabled()) {
-            beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, definition);
+            try {
+                beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, definition);
+            } catch (Throwable e) {
+                // ignore, it may be due jaxb is not on classpath etc
+            }
         }
 
         // stop and remove this existing route
@@ -218,9 +221,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             log.info("AdviceWith route after: {}", merged);
         }
 
-        if (logRoutesAsXml && log.isInfoEnabled()) {
-            String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
-            log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
+        if (beforeAsXml != null && logRoutesAsXml && log.isInfoEnabled()) {
+            try {
+                String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
+                log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
+            } catch (Throwable e) {
+                // ignore, it may be due jaxb is not on classpath etc
+            }
         }
 
         // If the camel context is started then we start the route

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
@@ -42,7 +43,7 @@ public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredic
         final Predicate fail = PredicateBuilder.or(header(Exchange.REDELIVERY_COUNTER).isNull(), header(Exchange.REDELIVERY_COUNTER).isLessThan(5));
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new RouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().process(new Processor() {
