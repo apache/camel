@@ -18,17 +18,16 @@ package sample.camel;
 
 import org.apache.camel.main.Main;
 
-//CHECKSTYLE:OFF
 /**
- * A Java main that runs Camel service 2 using Camel Main
+ * A Camel Main application that runs the Camel Resilience client application that calls service 1 and service 2 (as fallback)
  */
-public class Service2Application {
+public class Client2Application {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new Service2Route());
+        main.addRoutesBuilder(new Client2Route());
+        main.bind("counterBean", new CounterBean());
         main.run();
     }
 
 }
-//CHECKSTYLE:ON

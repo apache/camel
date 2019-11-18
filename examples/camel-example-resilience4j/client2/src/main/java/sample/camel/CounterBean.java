@@ -16,19 +16,12 @@
  */
 package sample.camel;
 
-import org.apache.camel.main.Main;
+public class CounterBean {
 
-//CHECKSTYLE:OFF
-/**
- * A Java main that runs Camel service 2 using Camel Main
- */
-public class Service2Application {
+    private int counter;
 
-    public static void main(String[] args) throws Exception {
-        Main main = new Main();
-        main.addRoutesBuilder(new Service2Route());
-        main.run();
+    public String someMethod(String body) {
+        return "" + ++counter;
     }
 
 }
-//CHECKSTYLE:ON

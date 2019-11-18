@@ -50,10 +50,23 @@ $ mvn compile camel:run
 
 And then start the client that calls service1 every second.
 
+We have provided two clients, one is using Spring Boot, the other Camel Main.
+You can run either one of them.
+
+To use Spring Boot
+
 [source,sh]
 ----
 $ cd client
 $ mvn compile spring-boot:run
+----
+
+Or to use Camel Main
+
+[source,sh]
+----
+$ cd client2
+$ mvn compile camel:run
 ----
 
 You can then stop service1 and see that the client should fallback to

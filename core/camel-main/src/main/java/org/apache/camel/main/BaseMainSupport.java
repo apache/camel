@@ -712,7 +712,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 resilience4j = new Resilience4jConfigurationDefinition();
                 model.setResilience4jConfiguration(resilience4j);
             }
-            setPropertiesOnTarget(camelContext, resilience4j, hystrixProperties, null, "camel.resilience4j.",
+            setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, null, "camel.resilience4j.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!restProperties.isEmpty()) {

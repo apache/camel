@@ -47,9 +47,6 @@ import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    // TODO: spring-boot allow to configure via resilience4j-spring-boot
-    // TODO: camel-main - configure hystrix/resilience/rest via java code fluent builder (does it work)
-
     public ResilienceReifier(CircuitBreakerDefinition definition) {
         super(definition);
     }
