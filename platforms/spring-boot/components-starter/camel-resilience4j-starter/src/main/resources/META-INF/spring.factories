@@ -14,18 +14,6 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.resilience.springboot.ResilienceAutoConfiguration
 
-server.port=8080
-
-# configure resilience4j
-# when we have more than 5 requests per 10 seconds that 50%+ fails
-# then open circuit and call fallback immediately
-camel.resilience4j.minimum-number-of-calls=5
-camel.resilience4j.sliding-window-size=10
-camel.resilience4j.sliding-window-type=TIME_BASED
-camel.resilience4j.failure-rate-threshold=50
-# stay in open for 10s before switching back to half-open
-camel.resilience4j.wait-duration-in-open-state=10
-
-# resilience4j logging
-#logging.level.org.apache.camel.component.resilience=DEBUG
