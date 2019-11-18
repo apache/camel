@@ -5,9 +5,10 @@
 This example shows how to use Camel with Resilience4j EIP as circuit breaker
 in Camel routes
 
-The example includes three sub maven modules that implement
+The example includes four sub maven modules that implement
 
-* client
+* client (spring boot)
+* client2 (camel main)
 * service1
 * service2
 
