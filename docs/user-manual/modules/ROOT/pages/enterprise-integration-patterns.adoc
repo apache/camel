@@ -24,7 +24,7 @@ a|image::eip/MessageIcon.gif[image]
 message channel exchange a piece of information?
 
 a|image::eip/PipesAndFiltersIcon.gif[image]
-|xref:pipeline-eip.adoc[Pipes and Filters |How can we perform
+|xref:pipeline-eip.adoc[Pipes and Filters] |How can we perform
 complex processing on a message while maintaining independence and
 flexibility?
 
@@ -189,7 +189,7 @@ of endpoints at the same time?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/DataEnricherIcon.gif[image]
-|[xref:content-enricher.adoc[Content Enricher] |How do we communicate
+|xref:content-enricher.adoc[Content Enricher] |How do we communicate
 with another system if the message originator does not have all the
 required data items available?
 
