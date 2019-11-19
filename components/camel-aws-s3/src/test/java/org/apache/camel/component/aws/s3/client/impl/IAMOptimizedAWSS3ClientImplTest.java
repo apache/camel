@@ -29,12 +29,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Basic testing to ensure that the IAMOptimizedAWSS3ClientImplTest class is returning a standard client that is
- * capable of encryption given certain parameters. This client is new to Camel as of 02-15-2018 and enables IAM
+ * Basic testing to ensure that the IAMOptimizedAWSS3ClientImplTest class is
+ * returning a standard client that is capable of encryption given certain
+ * parameters. This client is new to Camel as of 02-15-2018 and enables IAM
  * temporary credentials to improve security.
  */
 public class IAMOptimizedAWSS3ClientImplTest {
     private static final int MAX_CONNECTIONS = 1;
+
     @Test
     public void iamOptimizedAWSS3ClientImplNoEncryption() {
         S3ClientIAMOptimizedImpl iamOptimizedAWSS3Client = new S3ClientIAMOptimizedImpl(getS3ConfigurationNoEncryption(), MAX_CONNECTIONS);
@@ -58,7 +60,7 @@ public class IAMOptimizedAWSS3ClientImplTest {
         Assert.assertNotNull(s3Client);
         Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
 
-        ClientConfiguration configuration = ((AmazonS3Client) s3Client).getClientConfiguration();
+        ClientConfiguration configuration = ((AmazonS3Client)s3Client).getClientConfiguration();
         Assert.assertEquals(Protocol.HTTP, configuration.getProxyProtocol());
     }
 

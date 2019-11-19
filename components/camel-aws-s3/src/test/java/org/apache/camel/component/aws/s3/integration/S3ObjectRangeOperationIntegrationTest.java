@@ -21,6 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.S3Object;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -35,27 +41,20 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.S3Object;
-
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);
 
     @BindToRegistry("amazonS3Client")
-    AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("xxx", "yyy"))).withRegion(Regions.US_WEST_1).build();
-    
+    AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("xxx", "yyy"))).withRegion(Regions.US_WEST_1)
+        .build();
+
     @EndpointInject
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
-    private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);
-
 
     @Test
     public void sendIn() throws Exception {
@@ -82,19 +81,19 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
                 String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObjectRange";
 
                 from("direct:getObjectRange").to(awsEndpoint).process(new Processor() {
-					
-					@Override
-					public void process(Exchange exchange) throws Exception {
-						S3Object s3 = exchange.getIn().getBody(S3Object.class);
-						displayTextInputStream(s3.getObjectContent());
-						
-					}
-				}).to("mock:result");
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        S3Object s3 = exchange.getIn().getBody(S3Object.class);
+                        displayTextInputStream(s3.getObjectContent());
+
+                    }
+                }).to("mock:result");
 
             }
         };
     }
-    
+
     private static void displayTextInputStream(InputStream input) throws IOException {
         // Read the text input stream one line at a time and display each line.
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));

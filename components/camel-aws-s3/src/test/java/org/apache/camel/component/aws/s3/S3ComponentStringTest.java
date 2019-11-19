@@ -35,7 +35,7 @@ public class S3ComponentStringTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock client = new AmazonS3ClientMock();
-    
+
     @EndpointInject("direct:sendString")
     ProducerTemplate templateSendString;
 

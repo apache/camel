@@ -372,15 +372,15 @@ public class S3Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(res);
     }
-    
+
     private void getObjectRange(AmazonS3 s3Client, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
         final String sourceKey = determineKey(exchange);
         final String rangeStart = exchange.getIn().getHeader(S3Constants.RANGE_START, String.class);
         final String rangeEnd = exchange.getIn().getHeader(S3Constants.RANGE_END, String.class);
-        
+
         if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
-        	throw new IllegalArgumentException("A Range start and range end header must be configured to perform a range get operation.");
+            throw new IllegalArgumentException("A Range start and range end header must be configured to perform a range get operation.");
         }
 
         GetObjectRequest req = new GetObjectRequest(bucketName, sourceKey).withRange(Long.parseLong(rangeStart), Long.parseLong(rangeEnd));

@@ -29,7 +29,7 @@ public class S3BatchConsumerMaxMessagesPerPollTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 

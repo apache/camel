@@ -38,7 +38,7 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPrefix());
         assertTrue(endpoint.getConfiguration().isIncludeBody());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
 

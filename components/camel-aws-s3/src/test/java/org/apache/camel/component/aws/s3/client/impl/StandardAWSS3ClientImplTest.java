@@ -29,9 +29,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Basic testing to ensure that the StandardAWSS3ClientImpl class is returning a standard client that is
- * capable of encryption given certain parameters. These clients have been in existence for a long time, but haven't
- * been properly unit tested.
+ * Basic testing to ensure that the StandardAWSS3ClientImpl class is returning a
+ * standard client that is capable of encryption given certain parameters. These
+ * clients have been in existence for a long time, but haven't been properly
+ * unit tested.
  */
 public class StandardAWSS3ClientImplTest {
     private static final int MAX_CONNECTIONS = 1;
@@ -59,7 +60,7 @@ public class StandardAWSS3ClientImplTest {
         Assert.assertNotNull(s3Client);
         Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
 
-        ClientConfiguration configuration = ((AmazonS3Client) s3Client).getClientConfiguration();
+        ClientConfiguration configuration = ((AmazonS3Client)s3Client).getClientConfiguration();
         Assert.assertEquals(Protocol.HTTP, configuration.getProxyProtocol());
     }
 
