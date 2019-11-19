@@ -137,7 +137,7 @@ public final class ArquillianPackager {
             PomEquippedResolveStage pom = resolver(config).loadPomFromFile("pom.xml");
             List<MavenResolvedArtifact> resolved = Arrays.asList(pom.importCompileAndRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
             for (MavenResolvedArtifact dep : resolved) {
-                if (dep.getCoordinate().getGroupId().equals("org.apache.camel")) {
+                if (dep.getCoordinate().getGroupId().equals("org.apache.camel.springboot")) {
                     version = dep.getCoordinate().getVersion();
                     break;
                 }
