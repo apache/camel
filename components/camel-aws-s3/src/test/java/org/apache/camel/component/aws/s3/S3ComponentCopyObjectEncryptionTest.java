@@ -31,7 +31,7 @@ public class S3ComponentCopyObjectEncryptionTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3EncryptionClientMock clientMock = new AmazonS3EncryptionClientMock();
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 

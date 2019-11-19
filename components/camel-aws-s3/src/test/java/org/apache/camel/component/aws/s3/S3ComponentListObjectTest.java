@@ -28,10 +28,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentListObjectTest extends CamelTestSupport {
-    
+
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @EndpointInject("direct:listBuckets")
     private ProducerTemplate template;
 

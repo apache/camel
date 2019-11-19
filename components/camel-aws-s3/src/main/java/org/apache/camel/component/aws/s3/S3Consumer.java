@@ -45,7 +45,7 @@ import org.apache.camel.util.URISupport;
  * <a href="http://aws.amazon.com/s3/">AWS S3</a>
  */
 public class S3Consumer extends ScheduledBatchPollingConsumer {
-    
+
     private String marker;
     private transient String s3ConsumerToString;
 
@@ -58,11 +58,11 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         // must reset for each poll
         shutdownRunningTask = null;
         pendingExchanges = 0;
-        
+
         String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
         Queue<Exchange> exchanges;
-        
+
         if (fileName != null) {
             log.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
@@ -79,7 +79,8 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             if (maxMessagesPerPoll > 0) {
                 listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
             }
-            // if there was a marker from previous poll then use that to continue from where we left last time
+            // if there was a marker from previous poll then use that to
+            // continue from where we left last time
             if (marker != null) {
                 log.trace("Resuming from marker: {}", marker);
                 listObjectsRequest.setMarker(marker);
@@ -101,14 +102,14 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         }
         return processBatch(CastUtils.cast(exchanges));
     }
-    
+
     protected Queue<Exchange> createExchanges(S3Object s3Object) {
         Queue<Exchange> answer = new LinkedList<>();
         Exchange exchange = getEndpoint().createExchange(s3Object);
         answer.add(exchange);
         return answer;
     }
-    
+
     protected Queue<Exchange> createExchanges(List<S3ObjectSummary> s3ObjectSummaries) {
         if (log.isTraceEnabled()) {
             log.trace("Received {} messages in this poll", s3ObjectSummaries.size());
@@ -134,7 +135,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
         return answer;
     }
-    
+
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
@@ -177,7 +178,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
         return total;
     }
-    
+
     /**
      * Strategy to delete the message after being processed.
      *
@@ -188,9 +189,9 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             if (getConfiguration().isDeleteAfterRead()) {
                 String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
                 String key = exchange.getIn().getHeader(S3Constants.KEY, String.class);
-                
+
                 log.trace("Deleting object from bucket {} with key {}...", bucketName, key);
-                
+
                 getAmazonS3Client().deleteObject(bucketName, key);
 
                 log.trace("Deleted object from bucket {} with key {}...", bucketName, key);
@@ -217,14 +218,14 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     protected S3Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
-    
+
     protected AmazonS3 getAmazonS3Client() {
         return getEndpoint().getS3Client();
     }
-    
+
     @Override
     public S3Endpoint getEndpoint() {
-        return (S3Endpoint) super.getEndpoint();
+        return (S3Endpoint)super.getEndpoint();
     }
 
     @Override

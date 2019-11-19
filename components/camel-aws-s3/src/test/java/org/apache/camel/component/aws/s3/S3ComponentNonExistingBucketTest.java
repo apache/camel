@@ -38,7 +38,7 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock client = new AmazonS3ClientMock();
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 
