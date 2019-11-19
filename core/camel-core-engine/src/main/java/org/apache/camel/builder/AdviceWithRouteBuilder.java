@@ -47,6 +47,13 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     private final List<AdviceWithTask> adviceWithTasks = new ArrayList<>();
     private boolean logRouteAsXml = true;
 
+    public AdviceWithRouteBuilder() {
+    }
+
+    public AdviceWithRouteBuilder(CamelContext context) {
+        super(context);
+    }
+
     /**
      * Advices this route with the route builder using a lambda expression. It
      * can be used as following:
@@ -118,13 +125,6 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
                 builder.accept(this);
             }
         });
-    }
-
-    public AdviceWithRouteBuilder() {
-    }
-
-    public AdviceWithRouteBuilder(CamelContext context) {
-        super(context);
     }
 
     /**
