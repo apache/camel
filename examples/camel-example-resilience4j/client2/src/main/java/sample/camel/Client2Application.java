@@ -21,7 +21,10 @@ import org.apache.camel.main.Main;
 /**
  * A Camel Main application that runs the Camel Resilience client application that calls service 1 and service 2 (as fallback)
  */
-public class Client2Application {
+public final class Client2Application {
+
+    private Client2Application() {
+    }
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
