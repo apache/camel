@@ -18,7 +18,7 @@ package org.apache.camel.component.iota;
 
 import java.net.URL;
 
-import jota.IotaAPI;
+import org.iota.jota.IotaAPI;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -74,7 +74,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         final URL u = new URL(url);
-        apiClient = new IotaAPI.Builder().protocol(u.getProtocol()).host(u.getHost()).port(String.valueOf(u.getPort())).build();
+        apiClient = new IotaAPI.Builder().protocol(u.getProtocol()).host(u.getHost()).port(u.getPort()).build();
 
         super.doStart();
     }
@@ -92,7 +92,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     /**
      * Component name
-     * 
+     *
      * @param url
      */
     public void setName(String name) {
@@ -105,7 +105,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     /**
      * Node url
-     * 
+     *
      * @param url
      */
     public void setUrl(String url) {
@@ -118,7 +118,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     /**
      * TAG
-     * 
+     *
      * @param tag
      */
     public void setTag(String tag) {
@@ -131,7 +131,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     /**
      * Address security level
-     * 
+     *
      * @param security level
      */
     public void setSecurityLevel(Integer securityLevel) {
@@ -146,7 +146,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
      * The minWeightMagnitude is the minimum number of zeroes that a
      * proof-of-work output/transaction hash must end with to be considered
      * valid by full nodes
-     * 
+     *
      * @param minWeightMagnitude
      */
 
@@ -160,7 +160,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     /**
      * The depth determines how deep the tangle is analysed for getting Tips
-     * 
+     *
      * @param depth
      */
     public void setDepth(Integer depth) {
@@ -177,7 +177,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     /**
      * Supported operations are 'sendTransfer', 'getNewAddress'
-     * 
+     *
      * @param operation
      */
     public void setOperation(String operation) {
