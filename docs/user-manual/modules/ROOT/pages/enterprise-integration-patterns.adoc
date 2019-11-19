@@ -16,29 +16,29 @@ patterns.
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/ChannelIcon.gif[image]
-|Message Channel |How does one application
+|xref:message-channel.adoc[Message Channel] |How does one application
 communicate with another using messaging?
 
 a|image::eip/MessageIcon.gif[image]
-|Message |How can two applications connected by a
+|xref:message.adoc[Message] |How can two applications connected by a
 message channel exchange a piece of information?
 
 a|image::eip/PipesAndFiltersIcon.gif[image]
-|Pipes and Filters |How can we perform
+|xref:pipeline-eip.adoc[Pipes and Filters |How can we perform
 complex processing on a message while maintaining independence and
 flexibility?
 
 a|image::eip/ContentBasedRouterIcon.gif[image]
-|Message Router |How can you decouple
+|xref:message-router.adoc[Message Router] |How can you decouple
 individual processing steps so that messages can be passed to different
 filters depending on a set of conditions?
 
 a|image::eip/MessageTranslatorIcon.gif[image]
-|Message Translator |How can systems using
+|xref:message-translator.adoc[Message Translator] |How can systems using
 different data formats communicate with each other using messaging?
 
 a|image::eip/MessageEndpointIcon.gif[image]
-|Message Endpoint |How does an application
+|xref:message-endpoint.adoc[Message Endpoint] |How does an application
 connect to a messaging channel to send and receive messages?
 |=======================================================================
 
@@ -48,25 +48,25 @@ connect to a messaging channel to send and receive messages?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/PointToPointIcon.gif[image]
-|Point to Point Channel |How can the
+|xref:point-to-point-channel.adoc[Point to Point Channel] |How can the
 caller be sure that exactly one receiver will receive the document or
 perform the call?
 
 a|image::eip/PublishSubscribeIcon.gif[image]
-|Publish Subscribe Channel |How can
+|xref:publish-subscribe-channel.adoc[Publish Subscribe Channel] |How can
 the sender broadcast an event to all interested receivers?
 
 a|image::eip/DeadLetterChannelIcon.gif[image]
-|Dead Letter Channel |What will the
+|xref:dead-letter-channel.adoc[Dead Letter Channel] |What will the
 messaging system do with a message it cannot deliver?
 
 a|image::eip/GuaranteedMessagingIcon.gif[image]
-|Guaranteed Delivery |How can the sender
+|xref:guaranteed-delivery.adoc[Guaranteed Delivery] |How can the sender
 make sure that a message will be delivered, even if the messaging system
 fails?
 
 a|image::eip/MessageBusIcon.gif[image]
-|Message Bus |What is an architecture that
+|xref:message-bus.adoc[Message Bus] |What is an architecture that
 enables separate applications to work together, but in a de-coupled
 fashion such that applications can be easily added or removed without
 affecting the others?
@@ -78,20 +78,20 @@ affecting the others?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/EventMessageIcon.gif[image]
-|Event Message |How can messaging be used to
+|xref:event-message.adoc[Event Message] |How can messaging be used to
 transmit events from one application to another?
 
 a|image::eip/RequestReplyIcon.gif[image]
-|Request Reply |When an application sends a
+|xref:requestReply-eip.adoc[Request Reply] |When an application sends a
 message, how can it get a response from the receiver?
 
 a|image::eip/CorrelationIdentifierIcon.gif[image]
-|Correlation Identifier |How does a
+|xref:correlation-identifier.adoc[Correlation Identifier] |How does a
 requestor that has received a reply know which request this is the reply
 for?
 
 a|image::eip/ReturnAddressIcon.gif[image]
-|Return Address |How does a replier know where
+|xref:return-address.adoc[Return Address] |How does a replier know where
 to send the reply?
 |=======================================================================
 
@@ -227,11 +227,11 @@ between domain objects and the messaging infrastructure while keeping
 the two independent of each other?
 
 a|image::eip/EventDrivenConsumerIcon.gif[image]
-|Event Driven Consumer |How can an
+|xref:eventDrivenConsumer-eip.adoc[Event Driven Consumer] |How can an
 application automatically consume messages as they become available?
 
 a|image::eip/PollingConsumerIcon.gif[image]
-|Polling Consumer |How can an application
+|xref:polling-consumer.adoc[Polling Consumer] |How can an application
 consume a message when the application is ready?
 
 a|image::eip/CompetingConsumersIcon.gif[image]
