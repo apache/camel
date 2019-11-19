@@ -31,6 +31,9 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class ProtobufConverter {
 
+    private ProtobufConverter() {
+    }
+
     public static Message toProto(final Map<?, ?> inputData, final Message defaultInstance) {
         ObjectHelper.notNull(inputData, "inputData");
         ObjectHelper.notNull(defaultInstance, "defaultInstance");
@@ -134,16 +137,16 @@ public final class ProtobufConverter {
         Object result;
 
         switch (fieldDescriptor.getJavaType()) {
-            case ENUM:
-            case BYTE_STRING:
-                result = value.toString();
-                break;
-            case MESSAGE:
-                result = convertProtoMessageToMap((Message)value);
-                break;
-            default:
-                result = value;
-                break;
+        case ENUM:
+        case BYTE_STRING:
+            result = value.toString();
+            break;
+        case MESSAGE:
+            result = convertProtoMessageToMap((Message)value);
+            break;
+        default:
+            result = value;
+            break;
         }
 
         return result;
