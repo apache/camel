@@ -2302,7 +2302,8 @@ public interface S3EndpointBuilderFactory {
         deleteBucket,
         listBuckets,
         downloadLink,
-        getObject;
+        getObject,
+        getObjectRange;
     }
     /**
      * AWS S3 Storage Service (camel-aws-s3)

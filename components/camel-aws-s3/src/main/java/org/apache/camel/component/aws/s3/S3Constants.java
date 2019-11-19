@@ -45,4 +45,6 @@ public interface S3Constants {
     String SERVER_SIDE_ENCRYPTION          = "CamelAwsS3ServerSideEncryption";
     String EXPIRATION_TIME                 = "CamelAwsS3ExpirationTime";
     String REPLICATION_STATUS              = "CamelAwsS3ReplicationStatus";
+    String RANGE_START                     = "CamelAwsS3RangeStart";
+    String RANGE_END                       = "CamelAwsS3RangeEnd";
 }
