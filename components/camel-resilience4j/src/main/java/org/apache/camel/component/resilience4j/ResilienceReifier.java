@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -170,20 +169,16 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(camelContext, properties, Suppliers.firstNotNull(
-                () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
-                () -> lookup(camelContext, "Camel", Resilience4jConfigurationDefinition.class))
-        );
+        loadProperties(camelContext, properties, Suppliers.firstNotNull(() -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
+        () -> lookup(camelContext, "Camel", Resilience4jConfigurationDefinition.class)));
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
             final String ref = definition.getConfigurationRef();
 
-            loadProperties(camelContext, properties, Suppliers.firstNotNull(
-                    () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
-                    () -> mandatoryLookup(camelContext, ref, Resilience4jConfigurationDefinition.class))
-            );
+            loadProperties(camelContext, properties, Suppliers.firstNotNull(() -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
+            () -> mandatoryLookup(camelContext, ref, Resilience4jConfigurationDefinition.class)));
         }
 
         // Extract properties from local configuration

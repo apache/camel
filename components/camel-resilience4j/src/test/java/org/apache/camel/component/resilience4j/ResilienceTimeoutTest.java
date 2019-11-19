@@ -37,7 +37,8 @@ public class ResilienceTimeoutTest extends CamelTestSupport {
 
     @Test
     public void testSlow() throws Exception {
-        // this calls the slow route and therefore causes a timeout which triggers an exception
+        // this calls the slow route and therefore causes a timeout which
+        // triggers an exception
         try {
             template.requestBody("direct:start", "slow");
             fail("Should fail due to timeout");
@@ -49,7 +50,8 @@ public class ResilienceTimeoutTest extends CamelTestSupport {
 
     @Test
     public void testSlowLoop() throws Exception {
-        // this calls the slow route and therefore causes a timeout which triggers an exception
+        // this calls the slow route and therefore causes a timeout which
+        // triggers an exception
         for (int i = 0; i < 10; i++) {
             try {
                 log.info(">>> test run " + i + " <<<");
@@ -67,29 +69,18 @@ public class ResilienceTimeoutTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .circuitBreaker()
-                        // enable and use 2 second timeout
-                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
-                        .log("Resilience processing start: ${threadName}")
-                        .toD("direct:${body}")
-                        .log("Resilience processing end: ${threadName}")
-                    .end()
-                    .log("After Resilience ${body}");
+                from("direct:start").circuitBreaker()
+                    // enable and use 2 second timeout
+                    .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end().log("Resilience processing start: ${threadName}").toD("direct:${body}")
+                    .log("Resilience processing end: ${threadName}").end().log("After Resilience ${body}");
 
                 from("direct:fast")
                     // this is a fast route and takes 1 second to respond
-                    .log("Fast processing start: ${threadName}")
-                    .delay(1000)
-                    .transform().constant("Fast response")
-                    .log("Fast processing end: ${threadName}");
+                    .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response").log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
                     // this is a slow route and takes 3 second to respond
-                    .log("Slow processing start: ${threadName}")
-                    .delay(3000)
-                    .transform().constant("Slow response")
-                    .log("Slow processing end: ${threadName}");
+                    .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response").log("Slow processing end: ${threadName}");
             }
         };
     }
