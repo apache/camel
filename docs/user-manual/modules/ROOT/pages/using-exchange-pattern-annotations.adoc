@@ -3,7 +3,7 @@
 
 When working with xref:pojo-producing.adoc[POJO Producing] or
 xref:spring-remoting.adoc[Spring Remoting] you invoke methods which
-typically by default are InOut for xref:requestReply-eip.adoc[Request
+typically by default are InOut for xref:request-reply.adoc[Request
 Reply]. That is there is an In message and an Out for the result.
 Typically invoking this operation will be synchronous, the caller will
 block until the server returns a result.

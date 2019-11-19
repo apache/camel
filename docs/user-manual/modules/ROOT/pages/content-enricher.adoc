@@ -92,7 +92,7 @@ Camel comes with two flavors of content enricher in the DSL
 * `pollEnrich`
 
 `enrich` uses a `Producer` to obtain the additional data. It is usually
-used for xref:requestReply-eip.adoc[Request Reply] messaging, for instance
+used for xref:request-reply.adoc[Request Reply] messaging, for instance
 to invoke an external web service. +
 `pollEnrich` on the other hand uses a xref:polling-consumer.adoc[Polling
 Consumer] to obtain the additional data. It is usually used for
