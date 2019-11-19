@@ -5645,13 +5645,14 @@
                         <skipProvidedScope>false</skipProvidedScope>
                         <skipRuntimeScope>false</skipRuntimeScope>
                         <skipTestScope>true</skipTestScope>
+                        <skipSystemScope>true</skipSystemScope>
                         <format>ALL</format>
                     </configuration>
                     <executions>
                         <execution>
                             <phase>validate</phase>
                             <goals>
-                                <goal>check</goal>
+                                <goal>aggregate</goal>
                             </goals>
                         </execution>
                     </executions>
