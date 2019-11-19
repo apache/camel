@@ -39,18 +39,9 @@ public class ResilienceRouteOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .circuitBreaker()
-                        .to("direct:foo")
-                        .to("log:foo")
-                    .onFallback()
-                        .transform().constant("Fallback message")
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                from("direct:start").circuitBreaker().to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
 
-                from("direct:foo")
-                    .transform().constant("Bye World");
+                from("direct:foo").transform().constant("Bye World");
             }
         };
     }

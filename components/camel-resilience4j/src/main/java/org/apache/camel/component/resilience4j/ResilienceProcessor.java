@@ -70,8 +70,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
 
-    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig, TimeLimiterConfig timeLimiterConfig,
-                               Processor processor, Processor fallback) {
+    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig, TimeLimiterConfig timeLimiterConfig, Processor processor,
+                               Processor fallback) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;
         this.timeLimiterConfig = timeLimiterConfig;
@@ -348,7 +348,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // run this as if we run inside try .. catch so there is no regular Camel error handler
+        // run this as if we run inside try .. catch so there is no regular
+        // Camel error handler
         exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
 
         Callable<Exchange> task = CircuitBreaker.decorateCallable(circuitBreaker, new CircuitBreakerTask(processor, exchange));
@@ -372,9 +373,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
             task = TimeLimiter.decorateFutureSupplier(tl, futureSupplier);
         }
 
-        Try.ofCallable(task)
-                .recover(fallbackTask)
-                .andFinally(() -> callback.done(false)).get();
+        Try.ofCallable(task).recover(fallbackTask).andFinally(() -> callback.done(false)).get();
 
         return false;
     }
@@ -394,7 +393,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
         }
     }
 
-    private static class CircuitBreakerTask implements Callable<Exchange> {
+    private static final class CircuitBreakerTask implements Callable<Exchange> {
 
         private final Processor processor;
         private final Exchange exchange;
@@ -408,7 +407,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
         public Exchange call() throws Exception {
             try {
                 LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
-                // prepare a copy of exchange so downstream processors don't cause side-effects if they mutate the exchange
+                // prepare a copy of exchange so downstream processors don't
+                // cause side-effects if they mutate the exchange
                 // in case timeout processing and continue with the fallback etc
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false, false);
                 // process the processor until its fully done
@@ -432,7 +432,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
         }
     }
 
-    private static class CircuitBreakerFallbackTask implements Function<Throwable, Exchange> {
+    private static final class CircuitBreakerFallbackTask implements Function<Throwable, Exchange> {
 
         private final Processor processor;
         private final Exchange exchange;
@@ -446,7 +446,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
         public Exchange apply(Throwable throwable) {
             if (processor == null) {
                 if (throwable instanceof TimeoutException) {
-                    // the circuit breaker triggered a timeout (and there is no fallback) so lets mark the exchange as failed
+                    // the circuit breaker triggered a timeout (and there is no
+                    // fallback) so lets mark the exchange as failed
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
                     exchange.setProperty(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, false);
@@ -480,7 +481,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
             exchange.removeProperty(Exchange.ROUTE_STOP);
             exchange.setException(null);
-            // and we should not be regarded as exhausted as we are in a try .. catch block
+            // and we should not be regarded as exhausted as we are in a try ..
+            // catch block
             exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
             // run the fallback processor
             try {
@@ -496,7 +498,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
         }
     }
 
-    private static class CircuitBreakerTimeoutTask implements Supplier<Exchange>  {
+    private static final class CircuitBreakerTimeoutTask implements Supplier<Exchange> {
 
         private final Callable<Exchange> future;
         private final Exchange exchange;
