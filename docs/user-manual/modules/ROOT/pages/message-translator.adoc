@@ -54,7 +54,7 @@ invoke a bean
 
 You can also use xref:templating.adoc[Templating] to consume a message
 from one destination, transform it with something like
-xref:components::velocity-component.adoc[Velocity] or xref:components::velocity-component.adoc[XQuery] and then send
+xref:components::velocity-component.adoc[Velocity] or xref:components::xquery-component.adoc[XQuery] and then send
 it on to another destination. For example using InOnly (one way
 messaging)
 
