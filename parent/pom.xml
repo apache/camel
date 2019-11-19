@@ -240,7 +240,7 @@
         <google-truth-version>0.30</google-truth-version>
         <graphql-java-version>13.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
-        <grpc-version>1.24.1</grpc-version>
+        <grpc-version>1.25.0</grpc-version>
         <grpc-google-auth-library-version>0.13.0</grpc-google-auth-library-version>
         <grpc-guava-version>26.0-android</grpc-guava-version>
         <grpc-java-jwt-version>3.7.0</grpc-java-jwt-version>
