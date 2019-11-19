@@ -82,7 +82,7 @@ a|image::eip/EventMessageIcon.gif[image]
 transmit events from one application to another?
 
 a|image::eip/RequestReplyIcon.gif[image]
-|xref:requestReply-eip.adoc[Request Reply] |When an application sends a
+|xref:request-reply.adoc[Request Reply] |When an application sends a
 message, how can it get a response from the receiver?
 
 a|image::eip/CorrelationIdentifierIcon.gif[image]
