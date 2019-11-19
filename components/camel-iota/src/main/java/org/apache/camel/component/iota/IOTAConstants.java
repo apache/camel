@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.iota;
 
-import jota.utils.Constants;
+import org.iota.jota.utils.Constants;
 
 public final class IOTAConstants {
 
