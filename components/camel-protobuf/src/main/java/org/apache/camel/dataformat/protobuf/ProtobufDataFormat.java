@@ -147,8 +147,8 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
     private Message convertGraphToMessage(final Exchange exchange, final Object inputData) throws NoTypeConversionAvailableException {
         final Map<?, ?> messageInMap = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, inputData);
         if (messageInMap != null) {
-            final ProtobufConverter protobufConverter = ProtobufConverter.create(defaultInstance);
-            return protobufConverter.toProto(messageInMap);
+            //final ProtobufConverter protobufConverter = ProtobufConverter.create(defaultInstance);
+            return ProtobufConverter.toProto(messageInMap, defaultInstance);
         }
         return exchange.getContext().getTypeConverter().mandatoryConvertTo(Message.class, exchange, inputData);
     }
