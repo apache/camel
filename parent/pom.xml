@@ -517,7 +517,7 @@
         <pdfbox-version>2.0.17</pdfbox-version>
         <perfmark-version>0.17.0</perfmark-version>
         <pgjdbc-driver-version>42.2.6</pgjdbc-driver-version>
-        <pgjdbc-ng-driver-version>0.8.2</pgjdbc-ng-driver-version>
+        <pgjdbc-ng-driver-version>0.8.3</pgjdbc-ng-driver-version>
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
         <protobuf-version>3.9.1</protobuf-version>
         <protobuf-guava-version>26.0-android</protobuf-guava-version>
