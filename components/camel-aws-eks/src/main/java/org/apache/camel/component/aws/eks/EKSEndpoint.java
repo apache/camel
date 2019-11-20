@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-kms is used for managing Amazon EKS
+ * The aws-eks is used for managing Amazon EKS
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "aws-eks", title = "AWS EKS", syntax = "aws-eks:label", producerOnly = true, label = "cloud,management")
 public class EKSEndpoint extends ScheduledPollEndpoint {
