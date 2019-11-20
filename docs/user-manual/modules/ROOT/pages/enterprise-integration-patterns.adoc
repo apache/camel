@@ -58,6 +58,10 @@ a|image::eip/DeadLetterChannelIcon.gif[image]
 |xref:dead-letter-channel.adoc[Dead Letter Channel] |What will the
 messaging system do with a message it cannot deliver?
 
+a|image::eip/ChannelAdapterIcon.gif[image]
+|xref:channel-adapter.adoc[Channel Adapter] |How can you connect an
+application to the messaging system so that it can send and receive messages?
+
 a|image::eip/GuaranteedMessagingIcon.gif[image]
 |xref:guaranteed-delivery.adoc[Guaranteed Delivery] |How can the sender
 make sure that a message will be delivered, even if the messaging system

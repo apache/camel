@@ -5,9 +5,7 @@ Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageChannel.html[Message
 Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns]. The Message Channel is an internal implementation detail of
-the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
-interface and all interactions with the Message Channel are via the
+the `Endpoint` interface and all interactions with the Message Channel are via the
 Endpoint interfaces.
 
 image::eip/MessageChannelSolution.gif[image]
