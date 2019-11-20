@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.amqp;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
@@ -35,6 +38,7 @@ public class AMQPComponent extends JmsComponent {
     // Constructors
 
     public AMQPComponent() {
+        super();
     }
 
     public AMQPComponent(JmsConfiguration configuration) {
@@ -47,6 +51,20 @@ public class AMQPComponent extends JmsComponent {
 
     public AMQPComponent(ConnectionFactory connectionFactory) {
         setConnectionFactory(connectionFactory);
+    }
+
+    // Factory methods
+
+    public static AMQPComponent amqpComponent(String uri) {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
+    }
+
+    public static AMQPComponent amqpComponent(String uri, String username, String password) {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(username, password, uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
     }
 
     // Life-cycle
@@ -65,18 +83,36 @@ public class AMQPComponent extends JmsComponent {
         super.doStart();
     }
 
-    // Factory methods
-
-    public static AMQPComponent amqpComponent(String uri) {
-        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
-        connectionFactory.setTopicPrefix("topic://");
-        return new AMQPComponent(connectionFactory);
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) super.createEndpoint(uri, remaining, parameters);
+        endpoint.setBinding(new AMQPJmsBinding(endpoint));
+        return endpoint;
     }
 
-    public static AMQPComponent amqpComponent(String uri, String username, String password) {
-        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(username, password, uri);
-        connectionFactory.setTopicPrefix("topic://");
-        return new AMQPComponent(connectionFactory);
+    /**
+     * Factory method to create the default configuration instance
+     *
+     * @return a newly created configuration object which can then be further
+     *         customized
+     */
+    @Override
+    protected JmsConfiguration createConfiguration() {
+        return new AMQPConfiguration();
+    }
+
+    // Properties
+
+    /**
+     * Whether to include AMQP annotations when mapping from AMQP to Camel Message.
+     * Setting this to true will map AMQP message annotations to message headers.
+     * Due to limitations in Apache Qpid JMS API, currently delivery annotations
+     * are ignored.
+     */
+    public void setIncludeAmqpAnnotations(boolean includeAmqpAnnotations) {
+        if (getConfiguration() instanceof AMQPConfiguration) {
+            ((AMQPConfiguration) getConfiguration()).setIncludeAmqpAnnotations(includeAmqpAnnotations);
+        }
     }
 
 }
