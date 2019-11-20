@@ -81,7 +81,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             message.setType(Message.Type.normal);
 
             ChatManager chatManager = ChatManager.getInstanceFor(connection);
-            Chat chat = getOrCreateChat(chatManager, participant, thread);
+            Chat chat = getOrCreateChat(chatManager, participant);
 
             endpoint.getBinding().populateXmppMessage(message, exchange);
 
@@ -95,9 +95,9 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         }
     }
 
-    private Chat getOrCreateChat(ChatManager chatManager, final String participant, String thread) throws XmppStringprepException {
+    private Chat getOrCreateChat(ChatManager chatManager, final String participant) throws XmppStringprepException {
         // this starts a new chat or retrieves the pre-existing one in a threadsafe manner
-        return chatManager.chatWith(JidCreate.entityBareFrom(participant + "@" + thread));
+        return chatManager.chatWith(JidCreate.entityBareFrom(participant));
     }
 
     private synchronized void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
