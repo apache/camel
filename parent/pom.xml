@@ -29,7 +29,6 @@
   <packaging>pom</packaging>
   <name>Camel :: Parent</name>
   <description>Camel Parent POM</description>
-
   <properties>
     <compiler.fork>true</compiler.fork>
     <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
@@ -622,7 +621,7 @@
     <servicemix-specs-version>2.9.0</servicemix-specs-version>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>
     <servlet-version-range>[3,4)</servlet-version-range>
-    <shiro-version>1.4.0</shiro-version>
+    <shiro-version>1.4.2</shiro-version>
     <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
     <shrinkwrap-resolver-version>3.1.3</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6</shrinkwrap-version>
