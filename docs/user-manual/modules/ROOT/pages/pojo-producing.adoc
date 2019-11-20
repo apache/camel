@@ -6,18 +6,15 @@ xref:endpoint.adoc[Endpoint] from a POJO.
 [[POJOProducing-EndpointInject]]
 == Via `@EndpointInject`
 
-To allow sending of messages from POJOs you can use the
-`org.apache.camel.EndpointInject`
-annotation. This will inject a
-`org.apache.camel.ProducerTemplate`
-so that the bean can participate in message exchanges.
+To allow sending of messages from POJOs you can use the `org.apache.camel.EndpointInject` annotation.
+This will inject a `org.apache.camel.ProducerTemplate` so that the bean can participate in message exchanges.
 
-Example: send a message to the *`foo.bar`* ActiveMQ queue:
+Example: Send a message to the *`foo.bar`* ActiveMQ queue:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public class Foo {
-  @EndpointInject(uri="activemq:foo.bar")
+  @EndpointInject("activemq:foo.bar")
   ProducerTemplate producer;
 
   public void doSomething() {
@@ -50,14 +47,14 @@ add the *`@Produce`* annotation to an injection point (a field or
 property setter) using a *`ProducerTemplate`* *or* using some interface
 you use in your business logic. Example:
 
-[source,syntaxhighlighter-pre]
+[source,java]
 ----
 public interface MyListener {
     String sayHello(String name);
 }
 
 public class MyBean {
-    @Produce(uri = "activemq:foo")
+    @Produce("activemq:foo")
     protected MyListener producer;
 
     public void doSomething() {
@@ -75,6 +72,5 @@ xref:spring-remoting.adoc[Spring Remoting] mechanism it is sent to the
 endpoint - in this case the xref:components::activemq-component.adoc[ActiveMQ] endpoint to
 queue *`foo`*; then the caller blocks for a response.
 
-If you want to make asynchronous message sends then use
-xref:using-exchange-pattern-annotations.adoc[an @InOnly annotation on
-the injection point].
+If you want to make asynchronous message sends then use an
+xref:using-exchange-pattern-annotations.adoc[@InOnly] annotation on the injection point.

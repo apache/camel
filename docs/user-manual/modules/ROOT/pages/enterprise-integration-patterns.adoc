@@ -257,11 +257,11 @@ a|image::eip/TransactionalClientIcon.gif[image]
 control its transactions with the messaging system?
 
 a|image::eip/MessagingGatewayIcon.gif[image]
-|Messaging Gateway |How do you encapsulate
+|xref:messaging-gateway.adoc[Messaging Gateway] |How do you encapsulate
 access to the messaging system from the rest of the application?
 
 a|image::eip/MessagingAdapterIcon.gif[image]
-|Service Activator |How can an application
+|xref:service-activator.adoc[Service Activator] |How can an application
 design a service to be invoked both via various messaging technologies
 and via non-messaging techniques?
 |=======================================================================
@@ -286,7 +286,7 @@ a|image::eip/WireTapIcon.gif[image]
 on a point-to-point channel?
 
 |
-|Message History |How can we effectively
+|xref:message-history.adoc[Message History] |How can we effectively
 analyze and debug the flow of messages in a loosely coupled system?
 
 |
