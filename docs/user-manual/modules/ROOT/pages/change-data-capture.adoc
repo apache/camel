@@ -4,7 +4,7 @@
 Camel supports the https://en.wikipedia.org/wiki/Change_data_capture[Change Data Capture] pattern.
 
 This patterns allows to track changes in databases, and then let applications listen to change events,
-and react accordingly. For example this can be used as a xref:messaging-brdige[Messaging Bridge] to
+and react accordingly. For example this can be used as a xref:messaging-bridge.adoc[Messaging Bridge] to
 bridge two systems.
 
 image::eip/CDC-Debezium.png[image]
