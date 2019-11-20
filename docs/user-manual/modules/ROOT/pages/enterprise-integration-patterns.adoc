@@ -58,20 +58,28 @@ a|image::eip/DeadLetterChannelIcon.gif[image]
 |xref:dead-letter-channel.adoc[Dead Letter Channel] |What will the
 messaging system do with a message it cannot deliver?
 
-a|image::eip/ChannelAdapterIcon.gif[image]
-|xref:channel-adapter.adoc[Channel Adapter] |How can you connect an
-application to the messaging system so that it can send and receive messages?
-
 a|image::eip/GuaranteedMessagingIcon.gif[image]
 |xref:guaranteed-delivery.adoc[Guaranteed Delivery] |How can the sender
 make sure that a message will be delivered, even if the messaging system
 fails?
+
+a|image::eip/ChannelAdapterIcon.gif[image]
+|xref:channel-adapter.adoc[Channel Adapter] |How can you connect an
+application to the messaging system so that it can send and receive messages?
+
+a|image::eip/MessagingBridgeIcon.gif[image]
+|xref:messaging-bridge.adoc[Messaging Bridge] |How can multiple messaging systems
+be connected so that messages available on one are also available on the others??
 
 a|image::eip/MessageBusIcon.gif[image]
 |xref:message-bus.adoc[Message Bus] |What is an architecture that
 enables separate applications to work together, but in a de-coupled
 fashion such that applications can be easily added or removed without
 affecting the others?
+
+a|image::eip/MessagingBridgeIcon.gif[image]
+|xref:change-data-capture.adoc[Change Data Capture] | Data synchronization by capturing
+changes made to a database, and apply those changes to another system.
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageConstruction]]
