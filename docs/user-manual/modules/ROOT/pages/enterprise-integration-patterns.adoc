@@ -133,7 +133,7 @@ a|image::eip/ResequencerIcon.gif[image]
 but out-of-sequence messages back into the correct order?
 
 a|image::eip/DistributionAggregateIcon.gif[image]
-|Composed Message Processor |How
+|xref:composed-message-processor.adoc[Composed Message Processor] |How
 can you maintain the overall message flow when processing a message
 consisting of multiple elements, each of which may require different
 processing?

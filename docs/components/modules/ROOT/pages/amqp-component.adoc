@@ -41,13 +41,14 @@ xref:jms-component.adoc[JMS] component after the destination name.
 
 
 // component options: START
-The AMQP component supports 82 options, which are listed below.
+The AMQP component supports 83 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *includeAmqpAnnotations* (common) | Whether to include AMQP annotations when mapping from AMQP to Camel Message. Setting this to true will map AMQP message annotations to message headers. Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored. | false | boolean
 | *configuration* (advanced) | To use a shared JMS configuration |  | JmsConfiguration
 | *acceptMessagesWhile Stopping* (consumer) | Specifies whether the consumer accept messages while it is stopping. You may consider enabling this option, if you start and stop JMS routes at runtime, while there are still messages enqueued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected, and the JMS broker would have to attempt redeliveries, which yet again may be rejected, and eventually the message may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option. | false | boolean
 | *allowReplyManagerQuick Stop* (consumer) | Whether the DefaultMessageListenerContainer used in the reply managers for request-reply messaging allow the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by default in the regular JMS consumers but to enable for reply managers you must enable this flag. | false | boolean
@@ -276,7 +277,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 83 options, which are listed below.
+The component supports 84 options, which are listed below.
 
 
 
@@ -323,6 +324,7 @@ The component supports 83 options, which are listed below.
 | *camel.component.amqp.idle-consumer-limit* | Specify the limit for the number of consumers that are allowed to be idle at any given time. | 1 | Integer
 | *camel.component.amqp.idle-task-execution-limit* | Specifies the limit for idle executions of a receive task, not having received any message within its execution. If this limit is reached, the task will shut down and leave receiving to other executing tasks (in the case of dynamic scheduling; see the maxConcurrentConsumers setting). There is additional doc available from Spring. | 1 | Integer
 | *camel.component.amqp.include-all-j-m-s-x-properties* | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply. | false | Boolean
+| *camel.component.amqp.include-amqp-annotations* | Whether to include AMQP annotations when mapping from AMQP to Camel Message. Setting this to true will map AMQP message annotations to message headers. Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored. | false | Boolean
 | *camel.component.amqp.include-sent-j-m-s-message-i-d* | Only applicable when sending to JMS destination using InOnly (eg fire and forget). Enabling this option will enrich the Camel Exchange with the actual JMSMessageID that was used by the JMS client when the message was sent to the JMS destination. | false | Boolean
 | *camel.component.amqp.jms-key-format-strategy* | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation. The option is a org.apache.camel.component.jms.JmsKeyFormatStrategy type. |  | String
 | *camel.component.amqp.jms-operations* | Allows you to use your own implementation of the org.springframework.jms.core.JmsOperations interface. Camel uses JmsTemplate as default. Can be used for testing purpose, but not used much as stated in the spring API docs. The option is a org.springframework.jms.core.JmsOperations type. |  | String
