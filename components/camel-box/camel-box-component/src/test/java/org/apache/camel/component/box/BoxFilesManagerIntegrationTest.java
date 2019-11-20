@@ -400,7 +400,6 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         LOG.debug("updateFileMetadata: " + result);
     }
 
-    @Ignore
     @Test
     public void testUploadFile() throws Exception {
         com.box.sdk.BoxFile result = null;
@@ -418,6 +417,35 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
             result = requestBodyAndHeaders("direct://UPLOADFILE", null, headers);
 
             assertNotNull("uploadFile result", result);
+            LOG.debug("uploadFile: " + result);
+        } finally {
+            if (result != null) {
+                try {
+                    result.delete();
+                } catch (Throwable t) {
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testUploadOverwriteFile() throws Exception {
+        com.box.sdk.BoxFile result = null;
+
+        try {
+            final Map<String, Object> headers = new HashMap<String, Object>();
+            headers.put("CamelBox.parentFolderId", "0");
+            headers.put("CamelBox.content", getClass().getResourceAsStream(CAMEL_TEST_FILE));
+            headers.put("CamelBox.fileName", CAMEL_TEST_UPLOAD_FILE_NAME);
+            headers.put("CamelBox.created", null);
+            headers.put("CamelBox.modified", null);
+            headers.put("CamelBox.size", null);
+            headers.put("CamelBox.listener", null);
+
+            result = requestBodyAndHeaders("direct://UPLOADFILE", null, headers);
+            assertNotNull("uploadFile result", result);
+            result = requestBodyAndHeaders("direct://UPLOADFILEOVERWRITE", null, headers);
+            assertNotNull("uploadFile overwrite result", result);
             LOG.debug("uploadFile: " + result);
         } finally {
             if (result != null) {
@@ -524,6 +552,9 @@ public class BoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
                 // test route for uploadFile
                 from("direct://UPLOADFILE").to("box://" + PATH_PREFIX + "/uploadFile");
+
+                // test route for uploadFile to overwrite
+                from("direct://UPLOADFILEOVERWRITE").to("box://" + PATH_PREFIX + "/uploadFile?check=true");
 
                 // test route for uploadNewFileVersion
                 from("direct://UPLOADNEWFILEVERSION").to("box://" + PATH_PREFIX + "/uploadNewFileVersion");
