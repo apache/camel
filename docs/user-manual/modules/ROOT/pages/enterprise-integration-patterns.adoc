@@ -5,10 +5,8 @@ Camel supports most of the
 http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
 from the excellent book by Gregor Hohpe and Bobby Woolf.
 
-If you are new to Camel you might want to try the
-Getting Started in the
-User Guide before attempting to implement these
-patterns.
+If you are new to Camel you might want to try the xref:getting-started[Getting Started] in the
+User Guide before attempting to implement these patterns.
 
 [[EnterpriseIntegrationPatterns-MessagingSystems]]
 == Messaging Systems
@@ -139,7 +137,7 @@ consisting of multiple elements, each of which may require different
 processing?
 
 |
-|Scatter-Gather |How do you maintain the
+|xref:scatter-gather.adoc[Scatter-Gather] |How do you maintain the
 overall message flow when a message needs to be sent to multiple
 recipients, each of which may send a reply?
 
@@ -302,11 +300,11 @@ analyze and debug the flow of messages in a loosely coupled system?
 === EIP Icons
 
 The EIP icons library is available as a Visio stencil file adapted to
-render the icons with the Camel color : sand. Download it
+render the icons with the Camel color. Download it
 link:{attachmentsdir}/Hohpe_EIP_camel_20150622.zip[here]
-for your presentation, functional and technical analysis documents. The
-original EIP stencil is also available in
-link:{attachmentsdir}/Hohpe_EIP_camel_OpenOffice.zip[OpenOffice
-3.x Draw] (thanks to Marco Garbelini) ,
-http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft
-Visio], or http://www.graffletopia.com/stencils/137[Omnigraffle].
+for your presentation, functional and technical analysis documents.
+
+The original EIP stencil is also available in
+link:{attachmentsdir}/Hohpe_EIP_camel_OpenOffice.zip[OpenOffice 3.x Draw],
+http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft Visio],
+or http://www.graffletopia.com/stencils/137[Omnigraffle].
