@@ -201,7 +201,7 @@ of message sent across the system without sacrificing information
 content?
 
 a|image::eip/NormalizerIcon.gif[image]
-|Normalizer |How do you process messages that are
+|xref:normalizer.adoc[Normalizer] |How do you process messages that are
 semantically equivalent, but arrive in a different format?
 
 |
