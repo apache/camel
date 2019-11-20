@@ -1,9 +1,9 @@
 [[Composed-Message-Processor]]
 = Composed Message Processor
 
-The
-http://www.enterpriseintegrationpatterns.com/MessageRouter.html[Composed
-Message Processor] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/DistributionAggregate.html[Composed Message Processor]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
 
 How can you maintain the overall message flow when processing a message consisting of multiple elements, each of which may require different processing?
 
