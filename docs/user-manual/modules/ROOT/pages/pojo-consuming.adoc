@@ -16,7 +16,7 @@ a TextMessage from JMS
 ----
 public class Foo {
 
-  @Consume(uri="activemq:cheese")
+  @Consume("activemq:cheese")
   public void onCheese(String name) {
     ...
   }
