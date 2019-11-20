@@ -5,7 +5,7 @@ Camel supports most of the
 http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
 from the excellent book by Gregor Hohpe and Bobby Woolf.
 
-If you are new to Camel you might want to try the xref:getting-started[Getting Started] in the
+If you are new to Camel you might want to try the xref:getting-started.adoc[Getting Started] in the
 User Guide before attempting to implement these patterns.
 
 [[EnterpriseIntegrationPatterns-MessagingSystems]]

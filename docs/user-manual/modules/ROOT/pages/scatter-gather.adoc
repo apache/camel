@@ -11,7 +11,7 @@ specified recipients and re-aggregate the responses back into a single message.
 image::eip/BroadcastAggregate.gif[image]
 
 With Camel this pattern is implemented by using the xref:recipientList-eip.adoc[Recipient List]
-and the xref:aggregate-eip[Aggregate] patterns.
+and the xref:aggregate-eip.adoc[Aggregate] patterns.
 
 == Sample
 

@@ -18,7 +18,7 @@ Since the Messaging Mapper is implemented as a separate class that references th
 and the messaging layer, neither layer is aware of the other. The layers don't even know about the Messaging Mapper.
 
 With Camel this pattern is often implemented directly via Camel components that provides
-xref:type-converter[Type Converter]'s from the messaging infrastructure to common Java types or
+xref:type-converter.adoc[Type Converter]'s from the messaging infrastructure to common Java types or
 Java Objects representing the data model of the component in question. Combining this with the
 xref:message-translator.adoc[Message Translator] to have the Messaging Mapper EIP pattern.
 
