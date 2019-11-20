@@ -54,9 +54,9 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:aws-ec2-component.adoc[AWS EC2] (camel-aws-ec2) | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
 
-| xref:aws-ecs-component.adoc[AWS ECS] (camel-aws-ecs) | 3.0 | The aws-kms is used for managing Amazon ECS
+| xref:aws-ecs-component.adoc[AWS ECS] (camel-aws-ecs) | 3.0 | The aws-ecs is used for managing Amazon ECS
 
-| xref:aws-eks-component.adoc[AWS EKS] (camel-aws-eks) | 3.0 | The aws-kms is used for managing Amazon EKS
+| xref:aws-eks-component.adoc[AWS EKS] (camel-aws-eks) | 3.0 | The aws-eks is used for managing Amazon EKS
 
 | xref:aws-iam-component.adoc[AWS IAM] (camel-aws-iam) | 2.23 | The aws-iam is used for managing Amazon IAM
 
@@ -70,7 +70,7 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:aws-mq-component.adoc[AWS MQ] (camel-aws-mq) | 2.21 | The aws-mq is used for managing Amazon MQ instances.
 
-| xref:aws-msk-component.adoc[AWS MSK] (camel-aws-msk) | 3.0 | The aws-kms is used for managing Amazon KMS
+| xref:aws-msk-component.adoc[AWS MSK] (camel-aws-msk) | 3.0 | The aws-msk is used for managing Amazon MSK
 
 | xref:aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws-s3) | 2.8 | The aws-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.
 
