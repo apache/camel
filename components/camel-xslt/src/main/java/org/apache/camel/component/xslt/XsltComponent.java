@@ -38,6 +38,10 @@ public class XsltComponent extends DefaultComponent {
     private XsltUriResolverFactory uriResolverFactory;
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;
+    @Metadata(label = "advanced")
+    private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
+    @Metadata(label = "advanced")
+    private String transformerFactoryClass;
 
     public XsltComponent() {
     }
@@ -75,6 +79,29 @@ public class XsltComponent extends DefaultComponent {
      */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
+    }
+
+    public TransformerFactoryConfigurationStrategy getTransformerFactoryConfigurationStrategy() {
+        return transformerFactoryConfigurationStrategy;
+    }
+
+    /**
+     * A configuration strategy to apply on freshly created instances of TransformerFactory.
+     */
+    public void setTransformerFactoryConfigurationStrategy(
+            TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
+        this.transformerFactoryConfigurationStrategy = transformerFactoryConfigurationStrategy;
+    }
+
+    public String getTransformerFactoryClass() {
+        return transformerFactoryClass;
+    }
+
+    /**
+     * To use a custom XSLT transformer factory, specified as a FQN class name
+     */
+    public void setTransformerFactoryClass(String transformerFactoryClass) {
+        this.transformerFactoryClass = transformerFactoryClass;
     }
 
     @Override
