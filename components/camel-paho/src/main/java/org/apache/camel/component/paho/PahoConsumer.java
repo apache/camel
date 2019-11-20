@@ -84,8 +84,10 @@ public class PahoConsumer extends DefaultConsumer {
         super.doStop();
 
         if (getEndpoint().getClient().isConnected()) {
-            String topic = getEndpoint().getTopic();
-            getEndpoint().getClient().unsubscribe(topic);
+            if (getEndpoint().getConnectOptions().isCleanSession()) {
+                String topic = getEndpoint().getTopic();
+                getEndpoint().getClient().unsubscribe(topic);
+            }
         }
     }
 
