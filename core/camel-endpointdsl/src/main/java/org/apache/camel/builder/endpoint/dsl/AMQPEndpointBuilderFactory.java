@@ -59,10 +59,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the default connection factory to be used if a connection
-         * factory is not specified for either
-         * setTemplateConnectionFactory(ConnectionFactory) or
-         * setListenerConnectionFactory(ConnectionFactory).
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
@@ -74,10 +72,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the default connection factory to be used if a connection
-         * factory is not specified for either
-         * setTemplateConnectionFactory(ConnectionFactory) or
-         * setListenerConnectionFactory(ConnectionFactory).
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
@@ -684,11 +680,11 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Whether the DefaultMessageListenerContainer used in the reply
          * managers for request-reply messaging allow the
-         * DefaultMessageListenerContainer#runningAllowed() flag to quick stop
-         * in case JmsConfiguration#isAcceptMessagesWhileStopping() is enabled,
-         * and org.apache.camel.CamelContext is currently being stopped. This
-         * quick stop ability is enabled by default in the regular JMS consumers
-         * but to enable for reply managers you must enable this flag.
+         * DefaultMessageListenerContainer.runningAllowed flag to quick stop in
+         * case JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and
+         * org.apache.camel.CamelContext is currently being stopped. This quick
+         * stop ability is enabled by default in the regular JMS consumers but
+         * to enable for reply managers you must enable this flag.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -702,11 +698,11 @@ public interface AMQPEndpointBuilderFactory {
         /**
          * Whether the DefaultMessageListenerContainer used in the reply
          * managers for request-reply messaging allow the
-         * DefaultMessageListenerContainer#runningAllowed() flag to quick stop
-         * in case JmsConfiguration#isAcceptMessagesWhileStopping() is enabled,
-         * and org.apache.camel.CamelContext is currently being stopped. This
-         * quick stop ability is enabled by default in the regular JMS consumers
-         * but to enable for reply managers you must enable this flag.
+         * DefaultMessageListenerContainer.runningAllowed flag to quick stop in
+         * case JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and
+         * org.apache.camel.CamelContext is currently being stopped. This quick
+         * stop ability is enabled by default in the regular JMS consumers but
+         * to enable for reply managers you must enable this flag.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -841,11 +837,11 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * If eagerLoadingOfProperties is enabled and the JMS message payload
-         * (JMS body or JMS properties) (cannot be read/mapped), then set this
-         * text as the message body instead so the message can be processed (the
-         * cause of the poison are already stored as exception on the Exchange).
-         * This can be turned off by setting eagerPoisonBody=false. See also the
-         * option eagerLoadingOfProperties.
+         * (JMS body or JMS properties) is poison (cannot be read/mapped), then
+         * set this text as the message body instead so the message can be
+         * processed (the cause of the poison are already stored as exception on
+         * the Exchange). This can be turned off by setting
+         * eagerPoisonBody=false. See also the option eagerLoadingOfProperties.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -997,7 +993,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when isTransferExchange() is true. This requires that the objects are
+         * when transferExchange is true. This requires that the objects are
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
@@ -1012,7 +1008,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when isTransferExchange() is true. This requires that the objects are
+         * when transferExchange is true. This requires that the objects are
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
@@ -1496,7 +1492,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * When sending, specifies whether message IDs should be added. This is
-         * just an hint to the JMS Broker. If the JMS provider accepts this
+         * just an hint to the JMS broker. If the JMS provider accepts this
          * hint, these messages must have the message ID set to null; if the
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
@@ -1512,7 +1508,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * When sending, specifies whether message IDs should be added. This is
-         * just an hint to the JMS Broker. If the JMS provider accepts this
+         * just an hint to the JMS broker. If the JMS provider accepts this
          * hint, these messages must have the message ID set to null; if the
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
@@ -1562,9 +1558,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Specifies whether timestamps should be enabled by default on sending
-         * messages. This is just an hint to the JMS Broker. If the JMS provider
+         * messages. This is just an hint to the JMS broker. If the JMS provider
          * accepts this hint, these messages must have the timestamp set to
-         * zero; if the provider ignores the hint, the timestamp must be set to
+         * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1578,9 +1574,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Specifies whether timestamps should be enabled by default on sending
-         * messages. This is just an hint to the JMS Broker. If the JMS provider
+         * messages. This is just an hint to the JMS broker. If the JMS provider
          * accepts this hint, these messages must have the timestamp set to
-         * zero; if the provider ignores the hint, the timestamp must be set to
+         * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -2021,10 +2017,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the default connection factory to be used if a connection
-         * factory is not specified for either
-         * setTemplateConnectionFactory(ConnectionFactory) or
-         * setListenerConnectionFactory(ConnectionFactory).
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
@@ -2036,10 +2030,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the default connection factory to be used if a connection
-         * factory is not specified for either
-         * setTemplateConnectionFactory(ConnectionFactory) or
-         * setListenerConnectionFactory(ConnectionFactory).
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
@@ -2277,8 +2269,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether date headers should be formatted according to the ISO
-         * 8601 standard.
+         * Sets whether JMS date properties should be formatted according to the
+         * ISO 8601 standard.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2290,8 +2282,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether date headers should be formatted according to the ISO
-         * 8601 standard.
+         * Sets whether JMS date properties should be formatted according to the
+         * ISO 8601 standard.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2736,13 +2728,10 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Use this JMS property to correlate messages in InOut exchange pattern
-         * (request-reply) instead of JMSCorrelationID property. This allows you
-         * to exchange messages with systems that do not correlate messages
-         * using JMSCorrelationID JMS property. If used JMSCorrelationID will
-         * not be used or set by Camel. The value of here named property will be
-         * generated if not supplied in the header of the message under the same
-         * name.
+         * When using InOut exchange pattern use this JMS property instead of
+         * JMSCorrelationID JMS property to correlate messages. If set messages
+         * will be correlated solely on the value of this property
+         * JMSCorrelationID property will be ignored and not set by Camel.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2925,7 +2914,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when isTransferExchange() is true. This requires that the objects are
+         * when transferExchange is true. This requires that the objects are
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
@@ -2940,7 +2929,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when isTransferExchange() is true. This requires that the objects are
+         * when transferExchange is true. This requires that the objects are
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
@@ -3424,7 +3413,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * When sending, specifies whether message IDs should be added. This is
-         * just an hint to the JMS Broker. If the JMS provider accepts this
+         * just an hint to the JMS broker. If the JMS provider accepts this
          * hint, these messages must have the message ID set to null; if the
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
@@ -3440,7 +3429,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * When sending, specifies whether message IDs should be added. This is
-         * just an hint to the JMS Broker. If the JMS provider accepts this
+         * just an hint to the JMS broker. If the JMS provider accepts this
          * hint, these messages must have the message ID set to null; if the
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
@@ -3490,9 +3479,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Specifies whether timestamps should be enabled by default on sending
-         * messages. This is just an hint to the JMS Broker. If the JMS provider
+         * messages. This is just an hint to the JMS broker. If the JMS provider
          * accepts this hint, these messages must have the timestamp set to
-         * zero; if the provider ignores the hint, the timestamp must be set to
+         * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
          * The option is a: <code>boolean</code> type.
@@ -3506,9 +3495,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Specifies whether timestamps should be enabled by default on sending
-         * messages. This is just an hint to the JMS Broker. If the JMS provider
+         * messages. This is just an hint to the JMS broker. If the JMS provider
          * accepts this hint, these messages must have the timestamp set to
-         * zero; if the provider ignores the hint, the timestamp must be set to
+         * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -3949,10 +3938,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the default connection factory to be used if a connection
-         * factory is not specified for either
-         * setTemplateConnectionFactory(ConnectionFactory) or
-         * setListenerConnectionFactory(ConnectionFactory).
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
@@ -3963,10 +3950,8 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the default connection factory to be used if a connection
-         * factory is not specified for either
-         * setTemplateConnectionFactory(ConnectionFactory) or
-         * setListenerConnectionFactory(ConnectionFactory).
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
@@ -4149,7 +4134,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when isTransferExchange() is true. This requires that the objects are
+         * when transferExchange is true. This requires that the objects are
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
@@ -4164,7 +4149,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when isTransferExchange() is true. This requires that the objects are
+         * when transferExchange is true. This requires that the objects are
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
@@ -4644,7 +4629,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * When sending, specifies whether message IDs should be added. This is
-         * just an hint to the JMS Broker. If the JMS provider accepts this
+         * just an hint to the JMS broker. If the JMS provider accepts this
          * hint, these messages must have the message ID set to null; if the
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
@@ -4660,7 +4645,7 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * When sending, specifies whether message IDs should be added. This is
-         * just an hint to the JMS Broker. If the JMS provider accepts this
+         * just an hint to the JMS broker. If the JMS provider accepts this
          * hint, these messages must have the message ID set to null; if the
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
@@ -4710,9 +4695,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Specifies whether timestamps should be enabled by default on sending
-         * messages. This is just an hint to the JMS Broker. If the JMS provider
+         * messages. This is just an hint to the JMS broker. If the JMS provider
          * accepts this hint, these messages must have the timestamp set to
-         * zero; if the provider ignores the hint, the timestamp must be set to
+         * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
          * The option is a: <code>boolean</code> type.
@@ -4726,9 +4711,9 @@ public interface AMQPEndpointBuilderFactory {
         }
         /**
          * Specifies whether timestamps should be enabled by default on sending
-         * messages. This is just an hint to the JMS Broker. If the JMS provider
+         * messages. This is just an hint to the JMS broker. If the JMS provider
          * accepts this hint, these messages must have the timestamp set to
-         * zero; if the provider ignores the hint, the timestamp must be set to
+         * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
          * The option will be converted to a <code>boolean</code> type.
