@@ -613,7 +613,7 @@ public final class PropertyBindingSupport {
                 } else {
                     throw new IllegalStateException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
                 }
-            } else if (value.toString().equals("#bean:")) {
+            } else if (value.toString().startsWith("#bean:")) {
                 String key = value.toString().substring(6);
                 value = context.getRegistry().lookupByName(key);
             }
