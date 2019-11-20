@@ -11,7 +11,7 @@ documentation before continuing:
 * Longer Getting Started Guide
 * Find out about xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
   and how to implement them with Camel
-* Review the Architecture guide to see how to build Routes using the xref:java-dsl[Java DSL]
+* Review the Architecture guide to see how to build Routes using the xref:java-dsl.adoc[Java DSL]
   or xref:xml-configuration.adoc[XML DSL]
 
 [[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
