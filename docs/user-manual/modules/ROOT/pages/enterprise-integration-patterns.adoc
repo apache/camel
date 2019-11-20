@@ -220,7 +220,7 @@ semantically equivalent, but arrive in a different format?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 |
-|Messaging Mapper |How do you move data
+|xref:messaging-mapper.adoc[Messaging Mapper] |How do you move data
 between domain objects and the messaging infrastructure while keeping
 the two independent of each other?
 
@@ -233,15 +233,15 @@ a|image::eip/PollingConsumerIcon.gif[image]
 consume a message when the application is ready?
 
 a|image::eip/CompetingConsumersIcon.gif[image]
-|Competing Consumers |How can a messaging
+|xref:competing-consumers.adoc[Competing Consumers] |How can a messaging
 client process multiple messages concurrently?
 
 a|image::eip/MessageDispatcherIcon.gif[image]
-|Message Dispatcher |How can multiple
+|xref:message-dispatcher.adoc[Message Dispatcher] |How can multiple
 consumers on a single channel coordinate their message processing?
 
 a|image::eip/MessageSelectorIcon.gif[image]
-|Selective Consumer |How can a message
+|xref:selective-consumer.adoc[Selective Consumer] |How can a message
 consumer select which messages it wishes to receive?
 
 a|image::eip/DurableSubscriptionIcon.gif[image]
