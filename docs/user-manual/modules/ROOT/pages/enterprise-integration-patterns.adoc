@@ -95,14 +95,19 @@ a|image::eip/RequestReplyIcon.gif[image]
 |xref:request-reply.adoc[Request Reply] |When an application sends a
 message, how can it get a response from the receiver?
 
+a|image::eip/ReturnAddressIcon.gif[image]
+|xref:return-address.adoc[Return Address] |How does a replier know where
+to send the reply?
+
 a|image::eip/CorrelationIdentifierIcon.gif[image]
 |xref:correlation-identifier.adoc[Correlation Identifier] |How does a
 requestor that has received a reply know which request this is the reply
 for?
 
-a|image::eip/ReturnAddressIcon.gif[image]
-|xref:return-address.adoc[Return Address] |How does a replier know where
-to send the reply?
+a|image::eip/MessageExpirationIcon.gif[image]
+|xref:message-expiration.adoc[Message Expiration] |How can a sender indicate
+when a message should be considered stale and thus shouldn’t be processed?
+
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageRouting]]
