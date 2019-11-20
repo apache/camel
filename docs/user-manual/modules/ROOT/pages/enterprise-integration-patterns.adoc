@@ -245,7 +245,7 @@ a|image::eip/MessageSelectorIcon.gif[image]
 consumer select which messages it wishes to receive?
 
 a|image::eip/DurableSubscriptionIcon.gif[image]
-|Durable Subscriber |How can a subscriber
+|xref:durable-subscriber.adoc[Durable Subscriber] |How can a subscriber
 avoid missing messages while it's not listening for them?
 
 |
