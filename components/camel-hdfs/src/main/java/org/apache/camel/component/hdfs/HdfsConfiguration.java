@@ -546,8 +546,8 @@ public class HdfsConfiguration {
 
     /**
      * To define a maximum messages to gather per poll.
-     * By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
-     * Set a value of 0 or negative to disabled it.
+     * By default a limit of 100 is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
+     * Values can only be greater than 0.
      * Notice: If this option is in use then the limit will be applied on the valid files.
      * For example if you have 100000 files and use maxMessagesPerPoll=500, then only the first 500 files will be picked up.
      */
