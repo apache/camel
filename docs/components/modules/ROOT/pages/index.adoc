@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 304 in 242 JAR artifacts (0 deprecated)
+Number of Components: 305 in 243 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -459,6 +459,8 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 | xref:paho-component.adoc[Paho] (camel-paho) | 2.16 | Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
 
 | xref:pdf-component.adoc[PDF] (camel-pdf) | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
+
+| xref:platform-http-component.adoc[Platform HTTP] (camel-platform-http) |  | An HTTP service leveraging the given platform's (SB, Quarkus, WildFly, ...) default HTTP server
 
 | xref:pgevent-component.adoc[PostgresSQL Event] (camel-pgevent) | 2.15 | The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
 
