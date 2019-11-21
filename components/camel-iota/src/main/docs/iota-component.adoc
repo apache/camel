@@ -4,7 +4,7 @@
 *Since Camel 2.23*
 
 // HEADER START
-*Both producer and consumer is supported*
+*Only producer is supported*
 // HEADER END
 
 According to IOTA Official site: "IOTA is the first open-source distributed ledger that is being built to power the future of the Internet of Things with feeless microtransactions and data integrity for machines."
@@ -21,13 +21,6 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
-
-== URI format
-
-[source,java]
----------------------------------------------------------------------------------------------------------------
-iota:name?url=nodeurl[&moreOptions...]
----------------------------------------------------------------------------------------------------------------
 
 == Options
 
@@ -64,24 +57,21 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *depth* (common) | The depth determines how deep the tangle is analysed for getting Tips | 9 | Integer
-| *minWeightMagnitude* (common) | The minWeightMagnitude is the minimum number of zeroes that a proof-of-work output/transaction hash must end with to be considered valid by full nodes | 14 | Integer
-| *operation* (common) | Supported operations are 'sendTransfer', 'getNewAddress' |  | String
-| *securityLevel* (common) | Address security level | 1 | Integer
-| *tag* (common) | TAG |  | String
-| *url* (common) | Node url |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *depth* (producer) | The depth determines how deep the tangle is analysed for getting Tips | 9 | Integer
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *minWeightMagnitude* (producer) | The minWeightMagnitude is the minimum number of zeroes that a proof-of-work output/transaction hash must end with to be considered valid by full nodes | 14 | Integer
+| *operation* (producer) | *Required* Which operation to perform, one of: sendTransfer, getNewAddress, getTransfers |  | String
+| *tag* (producer) | TAG |  | String
+| *url* (producer) | *Required* Node url |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *securityLevel* (security) | Address security level | 1 | Integer
 |===
 // endpoint options: END
 
@@ -122,7 +112,7 @@ The following route defined in Spring XML send a message to tangle
 *Send message to tangle*
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <setMessage>
@@ -140,18 +130,17 @@ The following route defined in Spring XML send a message to tangle
   <setHeader name="CamelIOTAToAddress">
   	<constant>RECIPIENTADDRESS</constant>
   </setHeader>
-  
-  <to uri="iota:good?url=https://node.iota.org:443&operation=sendTransfer" />
+  <to uri="iota:good?url=https://node.iota.org:443&amp;operation=sendTransfer" />
   <to uri="direct:result" />
 </route>
----------------------------------------------------------------------------------------------------------------------------
+----
 
 The following route defined in Spring XML create a new address
 
 *Create a new address*
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <setHeader name="CamelIOTASeed">
@@ -160,18 +149,17 @@ The following route defined in Spring XML create a new address
   <setHeader name="CamelIOTAAddressIndex">
   	<constant>1</constant>
   </setHeader>
-  
-  <to uri="iota:good?url=https://node.iota.org:443&operation=getNewAddress" />
+  <to uri="iota:good?url=https://node.iota.org:443&amp;operation=getNewAddress" />
   <to uri="direct:result" />
 </route>
----------------------------------------------------------------------------------------------------------------------------
+----
 
 The following route defined in Spring XML retrieve transfers data
 
 *Retrieve transfers*
 
 [source,xml]
----------------------------------------------------------------------------------------------------------------------------
+----
 <route>
   <from uri="direct:start" />
   <setHeader name="CamelIOTASeed">
@@ -183,9 +171,8 @@ The following route defined in Spring XML retrieve transfers data
   <setHeader name="CamelIOTAAddressEndIndex">
   	<constant>10</constant>
   </setHeader>
-  
-  <to uri="iota:good?url=https://node.iota.org:443&operation=getTransfers" />
+  <to uri="iota:good?url=https://node.iota.org:443&amp;operation=getTransfers" />
   <to uri="direct:result" />
 </route>
----------------------------------------------------------------------------------------------------------------------------
+----
 

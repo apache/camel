@@ -47,7 +47,7 @@ public class IOTAProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:iota-new-address-response");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:iota-new-address", new String());
+        template.sendBody("direct:iota-new-address", "");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +57,7 @@ public class IOTAProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:iota-get-transfers-response");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:iota-get-transfers", new String());
+        template.sendBody("direct:iota-get-transfers", "");
 
         assertMockEndpointsSatisfied();
     }
