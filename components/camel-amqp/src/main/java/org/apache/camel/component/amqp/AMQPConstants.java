@@ -27,7 +27,7 @@ public final class AMQPConstants {
     public static final String JMS_AMQP_MA_PREFIX = "JMS_AMQP_MA_";
 
     /**
-     * AMQP message delivery prefix
+     * AMQP delivery annotation prefix
      */
     public static final String JMS_AMQP_DA_PREFIX = "JMS_AMQP_DA_";
 
