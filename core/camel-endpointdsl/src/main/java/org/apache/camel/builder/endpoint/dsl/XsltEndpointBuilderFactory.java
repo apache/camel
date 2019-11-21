@@ -406,6 +406,34 @@ public interface XsltEndpointBuilderFactory {
             return this;
         }
         /**
+         * A configuration strategy to apply on freshly created instances of
+         * TransformerFactory.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXsltEndpointBuilder transformerFactoryConfigurationStrategy(
+                Object transformerFactoryConfigurationStrategy) {
+            doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
+            return this;
+        }
+        /**
+         * A configuration strategy to apply on freshly created instances of
+         * TransformerFactory.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXsltEndpointBuilder transformerFactoryConfigurationStrategy(
+                String transformerFactoryConfigurationStrategy) {
+            doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
+            return this;
+        }
+        /**
          * To use a custom javax.xml.transform.URIResolver.
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
