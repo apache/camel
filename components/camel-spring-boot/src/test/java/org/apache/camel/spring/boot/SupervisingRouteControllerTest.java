@@ -25,7 +25,6 @@ import org.apache.camel.impl.engine.SupervisingRouteController;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.backoff.BackOff;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +54,9 @@ import static org.awaitility.Awaitility.await;
         "camel.supervising.controller.default-back-off.max-attempts = 10",
         "camel.supervising.controller.routes.bar.back-off.delay = 10s",
         "camel.supervising.controller.routes.bar.back-off.max-attempts = 3",
-        "camel.supervising.controller.routes.timer-unmanaged.supervise = false"
+        "camel.supervising.controller.routes.scheduler-unmanaged.supervise = false"
     }
 )
-@Ignore("TODO: Fix me later")
 public class SupervisingRouteControllerTest {
     @Autowired
     private CamelContext context;
@@ -93,13 +91,14 @@ public class SupervisingRouteControllerTest {
         Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("timer-no-autostartup"));
         Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("jetty"));
 
-        // Wait for the controller to start the routes also unmanaged
+        // Wait for the controller to start the routes
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("jetty"));
-//            Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("timer-unmanaged"));
         });
         Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("jetty"));
-//        Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("timer-unmanaged"));
+
+        // this one is never started as it was not managed (then its not started)
+        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("scheduler-unmanaged"));
     }
 
     // *************************************
@@ -123,9 +122,9 @@ public class SupervisingRouteControllerTest {
                         .id("bar")
                         .startupOrder(1)
                         .to("mock:bar");
-                    from("timer:unmanaged?period=5s")
-                        .id("timer-unmanaged")
-                        .to("mock:timer-unmanaged");
+                    from("scheduler:unmanaged?initialDelay=5s")
+                        .id("scheduler-unmanaged")
+                        .to("mock:scheduler-unmanaged");
                     from("timer:no-autostartup?period=5s")
                         .id("timer-no-autostartup")
                         .autoStartup(false)
