@@ -53,12 +53,6 @@ public class ActiveMQComponentConfiguration
      */
     private Boolean trustAllPackages = false;
     /**
-     * If enabled this will cause all Queues in the ActiveMQ broker to be
-     * eagerly populated into the CamelContext so that they can be easily
-     * browsed by any Camel tooling. This option is disabled by default.
-     */
-    private Boolean exposeAllQueues = false;
-    /**
      * Enables or disables whether a PooledConnectionFactory will be used so
      * that when messages are sent to ActiveMQ from outside of a message
      * consuming thread, pooling will be used rather than the default with the
@@ -688,14 +682,6 @@ public class ActiveMQComponentConfiguration
 
     public void setTrustAllPackages(Boolean trustAllPackages) {
         this.trustAllPackages = trustAllPackages;
-    }
-
-    public Boolean getExposeAllQueues() {
-        return exposeAllQueues;
-    }
-
-    public void setExposeAllQueues(Boolean exposeAllQueues) {
-        this.exposeAllQueues = exposeAllQueues;
     }
 
     public Boolean getUsePooledConnection() {
