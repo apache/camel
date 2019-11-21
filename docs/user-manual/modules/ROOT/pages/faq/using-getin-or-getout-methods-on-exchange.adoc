@@ -8,7 +8,7 @@ called Message Exchange Patterns (MEP for short).
 
 The MEP defines the messaging style used such as one-way
 (xref:event-message.adoc[InOnly]) or request-reply
-(xref:requestReply-eip.adoc[InOut]),
+(xref:request-reply.adoc[InOut]),
 which means you have IN and optionally OUT messages. This closely maps
 to other APIs such as WS, WSDL, REST, JBI and the likes.
 

@@ -1323,7 +1323,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
      * changes and respond to them.
      * 
      * Category: database,sql,postgres
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-postgres
      * 
      * Syntax: <code>debezium-postgres:name</code>

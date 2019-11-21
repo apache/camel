@@ -569,7 +569,7 @@ public interface DataSetTestEndpointBuilderFactory {
      * pull messages from another endpoint to set the expected message bodies.
      * 
      * Category: core,testing
-     * Available as of version: 1.3
+     * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
      * 
      * Syntax: <code>dataset-test:name</code>

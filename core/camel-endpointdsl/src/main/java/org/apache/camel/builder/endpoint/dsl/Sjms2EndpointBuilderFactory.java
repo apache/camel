@@ -2077,7 +2077,7 @@ public interface Sjms2EndpointBuilderFactory {
      * consumed from) a JMS Queue or Topic (uses JMS 2.x API).
      * 
      * Category: messaging
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-sjms2
      * 
      * Syntax: <code>sjms2:destinationType:destinationName</code>

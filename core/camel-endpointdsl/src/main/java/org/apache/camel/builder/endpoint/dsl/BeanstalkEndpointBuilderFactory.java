@@ -1222,7 +1222,7 @@ public interface BeanstalkEndpointBuilderFactory {
      * Beanstalk jobs.
      * 
      * Category: messaging
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-beanstalk
      * 
      * Syntax: <code>beanstalk:connectionSettings</code>

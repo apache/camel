@@ -20,16 +20,19 @@ import java.util.UUID;
 
 import org.apache.camel.component.mongodb.AbstractMongoDbTest;
 import org.bson.Document;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
 
     MongoDbIdempotentRepository repo;
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void clearDB() {
         testCollection.deleteMany(new Document());
     }
@@ -45,8 +48,8 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
         String randomUUIDString = UUID.randomUUID().toString();
 
         boolean added = repo.add(randomUUIDString);
-        assertEquals("Driver inserted document", 1, testCollection.count());
-        assertTrue("Add ui returned true", added);
+        assertEquals(1, testCollection.countDocuments(), "Driver inserted document");
+        assertTrue(added, "Add ui returned true");
     }
 
     @Test
@@ -54,10 +57,10 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
         String randomUUIDString = UUID.randomUUID().toString();
 
         repo.add(randomUUIDString);
-        assertEquals(1, testCollection.count());
+        assertEquals(1, testCollection.countDocuments());
 
         boolean found = repo.contains(randomUUIDString);
-        assertTrue("Added uid was found", found);
+        assertTrue(found, "Added uid was found");
     }
 
     @Test
@@ -65,11 +68,11 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
         String randomUUIDString = UUID.randomUUID().toString();
 
         repo.add(randomUUIDString);
-        assertEquals(1, testCollection.count());
+        assertEquals(1, testCollection.countDocuments());
 
         boolean removed = repo.remove(randomUUIDString);
-        assertTrue("Added uid was removed correctly", removed);
-        assertEquals(0, testCollection.count());
+        assertTrue(removed, "Added uid was removed correctly");
+        assertEquals(0, testCollection.countDocuments());
     }
 
     @Test
@@ -77,36 +80,36 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
         String randomUUIDString = UUID.randomUUID().toString();
 
         repo.add(randomUUIDString);
-        assertEquals(1, testCollection.count());
+        assertEquals(1, testCollection.countDocuments());
 
         boolean added = repo.add(randomUUIDString);
-        assertTrue("Duplicated entry was not added", !added);
-        assertEquals(1, testCollection.count());
+        assertTrue(!added, "Duplicated entry was not added");
+        assertEquals(1, testCollection.countDocuments());
     }
 
     @Test
     public void deleteMissingiIsFailse() throws Exception {
         String randomUUIDString = UUID.randomUUID().toString();
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         boolean removed = repo.remove(randomUUIDString);
-        assertTrue("Non exisint uid returns false", !removed);
+        assertTrue(!removed, "Non exisint uid returns false");
     }
 
     @Test
     public void containsMissingReturnsFalse() throws Exception {
         String randomUUIDString = UUID.randomUUID().toString();
         boolean found = repo.contains(randomUUIDString);
-        assertTrue("Non existing item is not found", !found);
+        assertTrue(!found, "Non existing item is not found");
     }
 
     @Test
     public void confirmAllwaysReturnsTrue() throws Exception {
         String randomUUIDString = UUID.randomUUID().toString();
         boolean found = repo.confirm(randomUUIDString);
-        assertTrue("Confirm always returns true", found);
+        assertTrue(found, "Confirm always returns true");
 
         found = repo.confirm(null);
-        assertTrue("Confirm always returns true, even with null", found);
+        assertTrue(found, "Confirm always returns true, even with null");
     }
 
 }

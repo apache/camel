@@ -201,7 +201,7 @@ public interface ServiceEndpointBuilderFactory {
      * Consul, Etcd.
      * 
      * Category: cloud
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-service
      * 
      * Syntax: <code>service:delegateUri</code>

@@ -500,6 +500,34 @@ public interface XsltSaxonEndpointBuilderFactory {
             return this;
         }
         /**
+         * A configuration strategy to apply on freshly created instances of
+         * TransformerFactory.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXsltSaxonEndpointBuilder transformerFactoryConfigurationStrategy(
+                Object transformerFactoryConfigurationStrategy) {
+            doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
+            return this;
+        }
+        /**
+         * A configuration strategy to apply on freshly created instances of
+         * TransformerFactory.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXsltSaxonEndpointBuilder transformerFactoryConfigurationStrategy(
+                String transformerFactoryConfigurationStrategy) {
+            doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
+            return this;
+        }
+        /**
          * To use a custom javax.xml.transform.URIResolver.
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
@@ -539,7 +567,7 @@ public interface XsltSaxonEndpointBuilderFactory {
      * Transforms the message using a XSLT template using Saxon.
      * 
      * Category: core,transformation
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xslt-saxon
      * 
      * Syntax: <code>xslt-saxon:resourceUri</code>

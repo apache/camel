@@ -466,7 +466,7 @@ public interface VertxEndpointBuilderFactory {
      * event bus.
      * 
      * Category: eventbus,reactive
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-vertx
      * 
      * Syntax: <code>vertx:address</code>

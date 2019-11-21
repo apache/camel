@@ -795,7 +795,7 @@ public interface GridFsEndpointBuilderFactory {
      * Component for working with MongoDB GridFS.
      * 
      * Category: database,nosql
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
      * 
      * Syntax: <code>mongodb-gridfs:connectionBean</code>

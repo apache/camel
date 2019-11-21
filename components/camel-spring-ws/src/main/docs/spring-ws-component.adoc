@@ -262,7 +262,7 @@ SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
 
 == Using SOAP headers
 
-*Available as of Camel 2.11.1*
+*Since Camel 2.11.1*
 
 You can provide the SOAP header(s) as a Camel Message header when
 sending a message to a spring-ws endpoint, for example given the

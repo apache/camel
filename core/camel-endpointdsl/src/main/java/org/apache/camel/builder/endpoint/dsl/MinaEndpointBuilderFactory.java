@@ -1900,7 +1900,7 @@ public interface MinaEndpointBuilderFactory {
      * library.
      * 
      * Category: networking,tcp,udp
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-mina
      * 
      * Syntax: <code>mina:protocol:host:port</code>

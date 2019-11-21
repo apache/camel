@@ -1258,7 +1258,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
      * consume replication controller events.
      * 
      * Category: container,cloud,paas
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 
      * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>

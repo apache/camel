@@ -466,7 +466,7 @@ public interface EventAdminEndpointBuilderFactory {
      * OSGi EventAdmin events and process them.
      * 
      * Category: eventbus
-     * Available as of version: 2.6
+     * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-eventadmin
      * 
      * Syntax: <code>eventadmin:topic</code>

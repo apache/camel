@@ -134,6 +134,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         List<HdfsInputStream> hdfsFiles = Arrays.stream(fileStatuses)
                 .filter(status -> normalFileIsDirectoryHasSuccessFile(status, info))
                 .filter(this::hasMatchingOwner)
+                .limit(endpointConfig.getMaxMessagesPerPoll())
                 .map(this::asHdfsFile)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

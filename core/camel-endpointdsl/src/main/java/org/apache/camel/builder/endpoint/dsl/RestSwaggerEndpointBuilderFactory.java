@@ -222,7 +222,7 @@ public interface RestSwaggerEndpointBuilderFactory {
      * An awesome REST endpoint backed by Swagger specifications.
      * 
      * Category: rest,swagger,http
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-rest-swagger
      * 
      * Syntax: <code>rest-swagger:specificationUri#operationId</code>

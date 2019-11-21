@@ -74,6 +74,17 @@ public class XJComponentConfiguration
      */
     private Boolean contentCache = true;
     /**
+     * A configuration strategy to apply on freshly created instances of
+     * TransformerFactory. The option is a
+     * org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy
+     * type.
+     */
+    private String transformerFactoryConfigurationStrategy;
+    /**
+     * To use a custom XSLT transformer factory, specified as a FQN class name
+     */
+    private String transformerFactoryClass;
+    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
@@ -146,6 +157,23 @@ public class XJComponentConfiguration
 
     public void setContentCache(Boolean contentCache) {
         this.contentCache = contentCache;
+    }
+
+    public String getTransformerFactoryConfigurationStrategy() {
+        return transformerFactoryConfigurationStrategy;
+    }
+
+    public void setTransformerFactoryConfigurationStrategy(
+            String transformerFactoryConfigurationStrategy) {
+        this.transformerFactoryConfigurationStrategy = transformerFactoryConfigurationStrategy;
+    }
+
+    public String getTransformerFactoryClass() {
+        return transformerFactoryClass;
+    }
+
+    public void setTransformerFactoryClass(String transformerFactoryClass) {
+        this.transformerFactoryClass = transformerFactoryClass;
     }
 
     public Boolean getBasicPropertyBinding() {

@@ -822,7 +822,7 @@ public interface ThriftEndpointBuilderFactory {
      * with Apache Thrift data format and serialization mechanism
      * 
      * Category: rpc
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-thrift
      * 
      * Syntax: <code>thrift:host:port/service</code>

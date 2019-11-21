@@ -923,7 +923,7 @@ public interface PulsarEndpointBuilderFactory {
      * Camel Apache Pulsar Component
      * 
      * Category: messaging
-     * Available as of version: 2.24
+     * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-pulsar
      * 
      * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>

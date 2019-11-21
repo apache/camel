@@ -1494,7 +1494,7 @@ public interface Jt400EndpointBuilderFactory {
      * system using data queues or program call.
      * 
      * Category: messaging
-     * Available as of version: 1.5
+     * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
      * 
      * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>

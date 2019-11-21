@@ -1,0 +1,44 @@
+[[request-reply]]
+= Request Reply
+:page-source: core/camel-core-engine/src/main/docs/eips/request-reply.adoc
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/RequestReply.html[Request
+Reply] from the EIP patterns
+by supporting the Exchange Pattern on a
+Message which can be set to *InOut* to indicate a
+request/reply. Camel Components then implement
+this pattern using the underlying transport or protocols.
+
+image::eip/RequestReply.gif[image]
+
+For example when using xref:components::jms-component.adoc[JMS] with InOut the component will
+by default perform these actions
+
+* create by default a temporary inbound queue
+* set the JMSReplyTo destination on the request message
+* set the JMSCorrelationID on the request message
+* send the request message
+* consume the response and associate the inbound message to the request
+using the JMSCorrelationID (as you may be performing many concurrent
+request/responses).
+
+TIP: *Related* See the related Event Message message
+
+[[RequestReply-ExplicitlyspecifyingInOut]]
+== Explicitly specifying InOut
+
+When consuming messages from xref:components::jms-component.adoc[JMS] a Request-Reply is
+indicated by the presence of the *JMSReplyTo* header.
+
+You can explicitly force an endpoint to be in Request Reply mode by
+setting the exchange pattern on the URI. e.g.
+
+[source,text]
+----
+jms:MyQueue?exchangePattern=InOut
+----
+
+You can specify the exchange pattern in DSL rule or Spring
+configuration.
+

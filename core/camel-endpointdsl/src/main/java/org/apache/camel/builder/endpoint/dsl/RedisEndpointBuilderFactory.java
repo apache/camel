@@ -894,7 +894,7 @@ public interface RedisEndpointBuilderFactory {
      * Redis.
      * 
      * Category: spring,nosql
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-redis
      * 
      * Syntax: <code>spring-redis:host:port</code>

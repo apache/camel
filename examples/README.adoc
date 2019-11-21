@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 == Examples
 
 // examples: START
-Number of Examples: 117 (0 deprecated)
+Number of Examples: 118 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -123,6 +123,8 @@ Number of Examples: 117 (0 deprecated)
 | link:camel-example-loan-broker-cxf/README.adoc[Loan Broker WebService] (camel-example-loan-broker-cxf) | EIP | An example that shows the EIP's loan broker demo
 
 | link:camel-example-loan-broker-jms/README.adoc[Loan Broker JMS] (camel-example-loan-broker-jms) | EIP | An example that shows the EIP's loan broker demo using JMS
+
+| link:camel-example-resilience4j/README.adoc[Resilience4j] (camel-example-resilience4j) | EIP | An example showing how to use Resilience4j EIP as circuit breaker in Camel routes
 
 | link:camel-example-route-throttling/readme.md[Route Throttling] (camel-example-route-throttling) | EIP | A client-server example using JMS transport where we on the server side can throttle the Camel
         route dynamically based on the flow of messages

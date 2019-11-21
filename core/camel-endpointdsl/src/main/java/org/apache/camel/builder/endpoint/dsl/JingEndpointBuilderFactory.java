@@ -169,7 +169,7 @@ public interface JingEndpointBuilderFactory {
      * library.
      * 
      * Category: validation
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-jing
      * 
      * Syntax: <code>jing:resourceUri</code>

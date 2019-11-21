@@ -88,7 +88,7 @@ ND
 
 == RFC5424 Syslog protocol
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 To expose a Syslog listener service we reuse the
 existing xref:mina-component.adoc[Mina Component] component

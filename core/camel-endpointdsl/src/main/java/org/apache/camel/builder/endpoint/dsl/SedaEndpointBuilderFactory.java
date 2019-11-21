@@ -874,7 +874,7 @@ public interface SedaEndpointBuilderFactory {
      * any CamelContext in the same JVM.
      * 
      * Category: core,endpoint
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-seda
      * 
      * Syntax: <code>seda:name</code>

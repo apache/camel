@@ -177,6 +177,11 @@ public class BomGeneratorMojo extends AbstractMojo {
 
             if (accept) {
                 outDependencies.add(dep);
+            } else {
+                // lets log a WARN if some Camel JARs was excluded
+                if (dep.getGroupId().startsWith("org.apache.camel")) {
+                    getLog().warn(dep + " excluded from BOM");
+                }
             }
         }
 
@@ -250,10 +255,10 @@ public class BomGeneratorMojo extends AbstractMojo {
             try (FileReader fr = new FileReader(file)) {
                 String oldContent = IOUtils.toString(fr);
                 if (!content.equals(oldContent)) {
-                    getLog().debug("Writing new file " + file.getAbsolutePath());
+                    getLog().info("File: " + file.getAbsolutePath() + " is updated");
                     fr.close();
                 } else {
-                    getLog().debug("File " + file.getAbsolutePath() + " left unchanged");
+                    getLog().info("File " + file.getAbsolutePath() + " is not changed");
                     write = false;
                 }
             }

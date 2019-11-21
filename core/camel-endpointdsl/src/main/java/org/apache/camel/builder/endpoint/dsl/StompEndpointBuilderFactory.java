@@ -689,7 +689,7 @@ public interface StompEndpointBuilderFactory {
      * message brokers.
      * 
      * Category: messaging
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-stomp
      * 
      * Syntax: <code>stomp:destination</code>

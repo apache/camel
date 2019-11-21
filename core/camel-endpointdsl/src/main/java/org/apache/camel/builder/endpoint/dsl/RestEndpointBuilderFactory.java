@@ -688,7 +688,7 @@ public interface RestEndpointBuilderFactory {
      * calling external REST services (producer).
      * 
      * Category: core,rest
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-rest
      * 
      * Syntax: <code>rest:method:path:uriTemplate</code>

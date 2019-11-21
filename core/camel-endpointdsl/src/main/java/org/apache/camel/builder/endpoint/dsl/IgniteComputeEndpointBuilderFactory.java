@@ -329,7 +329,7 @@ public interface IgniteComputeEndpointBuilderFactory {
      * them, along with their parameters if necessary.
      * 
      * Category: nosql,cache,compute
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-compute:endpointId</code>

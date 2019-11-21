@@ -43,6 +43,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -641,7 +642,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
 
-        // now configure context/hystrix/rest with additional properties
+        // now configure context/hystrix/resilience4j/rest with additional properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
 
         // load properties from ENV (override existing)
@@ -658,6 +659,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
         Map<String, Object> contextProperties = new LinkedHashMap<>();
         Map<String, Object> hystrixProperties = new LinkedHashMap<>();
+        Map<String, Object> resilience4jProperties = new LinkedHashMap<>();
         Map<String, Object> restProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
@@ -672,6 +674,12 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 String option = key.substring(14);
                 validateOptionAndValue(key, option, value);
                 hystrixProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.resilience4j.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(19);
+                validateOptionAndValue(key, option, value);
+                resilience4jProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.rest.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -686,14 +694,25 @@ public abstract class BaseMainSupport extends ServiceSupport {
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!hystrixProperties.isEmpty()) {
-            LOG.debug("Auto-configuring Hystrix EIP from loaded properties: {}", hystrixProperties.size());
+            LOG.debug("Auto-configuring Hystrix Circuit Breaker EIP from loaded properties: {}", hystrixProperties.size());
             ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
             HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
             if (hystrix == null) {
                 hystrix = new HystrixConfigurationDefinition();
                 model.setHystrixConfiguration(hystrix);
             }
-            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, null, "camel.hsytrix.",
+            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, null, "camel.hystrix.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+        }
+        if (!resilience4jProperties.isEmpty()) {
+            LOG.debug("Auto-configuring Resilience4j Circuit Breaker EIP from loaded properties: {}", resilience4jProperties.size());
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            Resilience4jConfigurationDefinition resilience4j = model.getResilience4jConfiguration(null);
+            if (resilience4j == null) {
+                resilience4j = new Resilience4jConfigurationDefinition();
+                model.setResilience4jConfiguration(resilience4j);
+            }
+            setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, null, "camel.resilience4j.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!restProperties.isEmpty()) {
@@ -719,6 +738,13 @@ public abstract class BaseMainSupport extends ServiceSupport {
             HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
             hystrixProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.hystrix.{}={} on bean: {}", k, v, hystrix);
+            });
+        }
+        if (!resilience4jProperties.isEmpty()) {
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            Resilience4jConfigurationDefinition resilience4j = model.getResilience4jConfiguration(null);
+            resilience4jProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.resilience4j.{}={} on bean: {}", k, v, resilience4j);
             });
         }
         if (!restProperties.isEmpty()) {

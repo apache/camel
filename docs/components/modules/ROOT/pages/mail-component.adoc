@@ -657,7 +657,7 @@ And then use the expression with the splitter eip.
 
 == Using custom SearchTerm
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 You can configure a `searchTerm` on the `MailEndpoint` which allows you
 to filter out unwanted mails.

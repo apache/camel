@@ -42,27 +42,23 @@ public class ActiveMQComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * Sets the broker URL to use to connect to ActiveMQ using the ActiveMQ URI
-     * format
+     * Sets the broker URL to use to connect to ActiveMQ
      */
     private String brokerURL;
     /**
-     * Define if all packages are trusted or not
+     * Define if all Java packages are trusted or not (for Java object JMS
+     * message types). Notice its not recommended practice to send Java
+     * serialized objects over network. Setting this to true can expose security
+     * risks, so use this with care.
      */
     private Boolean trustAllPackages = false;
-    /**
-     * If enabled this will cause all Queues in the ActiveMQ broker to be
-     * eagerly populated into the CamelContext so that they can be easily
-     * browsed by any Camel tooling. This option is disabled by default.
-     */
-    private Boolean exposeAllQueues = false;
     /**
      * Enables or disables whether a PooledConnectionFactory will be used so
      * that when messages are sent to ActiveMQ from outside of a message
      * consuming thread, pooling will be used rather than the default with the
      * Spring JmsTemplate which will create a new connection, session, producer
      * for each message then close them all down again. The default value is
-     * true. Note that this requires an extra dependency on commons-pool2.
+     * true.
      */
     private Boolean usePooledConnection = false;
     /**
@@ -686,14 +682,6 @@ public class ActiveMQComponentConfiguration
 
     public void setTrustAllPackages(Boolean trustAllPackages) {
         this.trustAllPackages = trustAllPackages;
-    }
-
-    public Boolean getExposeAllQueues() {
-        return exposeAllQueues;
-    }
-
-    public void setExposeAllQueues(Boolean exposeAllQueues) {
-        this.exposeAllQueues = exposeAllQueues;
     }
 
     public Boolean getUsePooledConnection() {

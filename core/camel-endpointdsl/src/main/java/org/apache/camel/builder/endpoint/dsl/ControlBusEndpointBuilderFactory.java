@@ -254,7 +254,7 @@ public interface ControlBusEndpointBuilderFactory {
      * based on the Control Bus EIP pattern.
      * 
      * Category: core,monitoring
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-controlbus
      * 
      * Syntax: <code>controlbus:command:language</code>

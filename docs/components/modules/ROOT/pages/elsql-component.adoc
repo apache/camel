@@ -273,7 +273,7 @@ assumes to have `getLicense` and `getMinimum` methods:
 
 === Using expression parameters in consumers
 
-*Available as of Camel 2.23*
+*Since Camel 2.23*
 
 When using the ElSql component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.

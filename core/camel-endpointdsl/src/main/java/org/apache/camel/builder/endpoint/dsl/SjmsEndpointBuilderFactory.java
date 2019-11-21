@@ -2021,7 +2021,7 @@ public interface SjmsEndpointBuilderFactory {
      * consumed from) a JMS Queue or Topic (uses JMS 1.x API).
      * 
      * Category: messaging
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-sjms
      * 
      * Syntax: <code>sjms:destinationType:destinationName</code>

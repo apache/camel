@@ -328,7 +328,7 @@ parts that cause separate threads to avoid this issue.
 [[TransactionalClient-Usingmultiplerouteswithdifferentpropagationbehaviors]]
 == Using multiple routes with different propagation behaviors
 
-*Available as of Camel 2.2*
+*Since Camel 2.2*
 
 Suppose you want to route a message through two routes and by which the
 2nd route should run in its own transaction. How do you do that? You use

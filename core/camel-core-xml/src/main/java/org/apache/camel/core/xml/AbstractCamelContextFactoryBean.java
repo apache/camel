@@ -63,6 +63,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
@@ -825,6 +826,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<HystrixConfigurationDefinition> getHystrixConfigurations();
 
+    public abstract Resilience4jConfigurationDefinition getDefaultResilience4jConfiguration();
+
+    public abstract List<Resilience4jConfigurationDefinition> getResilience4jConfigurations();
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -927,6 +932,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getHystrixConfigurations() != null) {
             for (HystrixConfigurationDefinition bean : getHystrixConfigurations()) {
                 context.addHystrixConfiguration(bean.getId(), bean);
+            }
+        }
+        if (getDefaultResilience4jConfiguration() != null) {
+            context.setResilience4jConfiguration(getDefaultResilience4jConfiguration());
+        }
+        if (getResilience4jConfigurations() != null) {
+            for (Resilience4jConfigurationDefinition bean : getResilience4jConfigurations()) {
+                context.addResilience4jConfiguration(bean.getId(), bean);
             }
         }
     }

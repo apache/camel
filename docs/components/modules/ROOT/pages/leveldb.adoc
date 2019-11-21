@@ -2,7 +2,7 @@
 = LevelDB
 :page-source: components/camel-leveldb/src/main/docs/leveldb.adoc
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 https://code.google.com/p/leveldb/[Leveldb] is a very lightweight and
 embedable key value database. It allows together with Camel to provide

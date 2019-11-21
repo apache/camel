@@ -9,34 +9,25 @@ Then come back here and you might want to read the following
 documentation before continuing:
 
 * Longer Getting Started Guide
-* Find out about xref:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] and how to implement them with Camel
-* Review the Architecture guide to see how to
-build Routes using the Java DSL or
-Spring based xref:xml-configuration.adoc[Xml
-Configuration]
+* Find out about xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+  and how to implement them with Camel
+* Review the Architecture guide to see how to build Routes using the xref:java-dsl.adoc[Java DSL]
+  or xref:xml-configuration.adoc[XML DSL]
 
 [[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
 == Working with CamelContexts and RouteBuilders
 
 To get started with Camel:
 
-1.  Create a CamelContext.
-2.  Optionally, xref:configuring-camel.adoc[configure components or
-endpoints].
-3.  Add whatever routing rules you wish using the DSL and
-RouteBuilder or using
-XML Configuration.
-4.  Start the context.
+1.  Create a `CamelContext`.
+2.  Optionally, xref:configuring-camel.adoc[configure components or endpoints].
+3.  Add whatever routing rules you wish using the DSL and `RouteBuilder` or using XML DSL.
+4.  Start the Camel context.
 
-When your application is closing you may wish to
-stop the context
+When your application is closing you may wish to stop the context
 
-When you are ready, why not xref:walk-through-an-example.adoc[Walk
-through an Example]? +
- And then continue the walk xref:walk-through-another-example.adoc[Walk
-through another example] +
- And after the walks head over to the tutorials.
+When you are ready, why not xref:walk-through-an-example.adoc[Walk through an Example]?
+And then continue the walk xref:walk-through-another-example.adoc[Walk through another example].
 
 [[GettingStarted-WorkingwithSpring]]
 == Working with Spring

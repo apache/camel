@@ -148,7 +148,7 @@ For example:
 
 == Using `contextScan`
 
-*Available as of Camel 2.4*
+*Since Camel 2.4*
 
 You can allow Camel to scan the container context, e.g. the Spring ApplicationContext for route builder instances. This allow you to use the Spring *<component-scan>* feature and have Camel pickup any *`RouteBuilder`* instances which was created by Spring in its scan process.
 

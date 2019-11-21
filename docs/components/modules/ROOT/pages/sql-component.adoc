@@ -342,7 +342,7 @@ message headers:
 
 == Generated keys
 
-*Available as of Camel 2.12.4, 2.13.1 and 2.14*
+*Since Camel 2.12.4, 2.13.1 and 2.14*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the SQL producer to return the
@@ -365,7 +365,7 @@ sql:select * from table where id=# order by name?dataSource=myDS
 
 == Using named parameters
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -394,7 +394,7 @@ parameters will be taken from the body.
 
 == Using expression parameters in producers
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 In the given route below, we want to get all the project from the
 database. It uses the body of the exchange for defining the license and
@@ -410,7 +410,7 @@ from("direct:projects")
 
 === Using expression parameters in consumers
 
-*Available as of Camel 2.23*
+*Since Camel 2.23*
 
 When using the SQL component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
@@ -442,7 +442,7 @@ bean methods as in this example.
 
 == Using IN queries with dynamic values
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 The SQL producer allows to use SQL queries with
 IN statements where the IN values is dynamic computed. For example from
@@ -508,7 +508,7 @@ from("direct:query")
 
 == Using the JDBC based idempotent repository
 
-*Available as of Camel 2.7*
+*Since Camel 2.7*
 
 In this section we will use the JDBC based
 idempotent repository.
@@ -586,7 +586,7 @@ the second one is the message id (`String`).
 
 == Using the JDBC based aggregation repository
 
-*Available as of Camel 2.6*
+*Since Camel 2.6*
 
 `JdbcAggregationRepository` is an `AggregationRepository` which on the
 fly persists the aggregated messages. This ensures that you will not
@@ -647,7 +647,7 @@ CREATE TABLE aggregation_completed (
 
 == Storing body and headers as text
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 You can configure the `JdbcAggregationRepository` to store message body
 and select(ed) headers as String in separate columns. For example to

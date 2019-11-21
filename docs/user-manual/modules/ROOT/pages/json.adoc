@@ -121,7 +121,7 @@ marshalling to JSON.
 [[JSON-Configuringfieldnamingpolicy]]
 == Configuring field naming policy
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 The GSON library supports specifying policies and strategies for mapping
 from json to POJO fields. A common naming convention is to map json
@@ -222,7 +222,7 @@ And use it in Camel routes by referring to its bean id as shown:
 [[JSON-IncludeExcludefieldsusingthejsonViewattributewithJacksonDataFormat]]
 == Include/Exclude fields using the `jsonView` attribute with  `JacksonDataFormat`
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 As an example of using this attribute you can instead of:
 
@@ -255,7 +255,7 @@ And the same in XML DSL:
 [[JSON-SettingserializationincludeoptionforJacksonmarshal]]
 == Setting serialization include option for Jackson marshal
 
-*Available as of Camel 2.13.3/2.14*
+*Since Camel 2.13.3/2.14*
 
 If you want to marshal a pojo to JSON, and the pojo has some fields with
 null values. And you want to skip these null values, then you need to
@@ -291,7 +291,7 @@ Or from XML DSL you configure this as
 [[JSON-UnmarshallingfromjsontoPOJOwithdynamicclassname]]
 == Unmarshalling from json to POJO with dynamic class name
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 If you use jackson to unmarshal json to POJO, then you can now specify a
 header in the message that indicate which class name to unmarshal to. +
@@ -322,7 +322,7 @@ Or from XML DSL you configure this as
 [[JSON-UnmarshallingfromjsontoListMaporListpojo]]
 == Unmarshalling from json to List<Map> or List<pojo>
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 If you are using Jackson to unmarshal json to a list of map/pojo, you
 can now specify this by setting `useList="true"` or use
@@ -361,7 +361,7 @@ And you can specify the pojo type also
 [[JSON-UsingcustomJacksonObjectMapper]]
 == Using custom Jackson ObjectMapper
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 You can use custom Jackson ObjectMapper instance, can be configured as
 shown below.
@@ -379,7 +379,7 @@ in the Registry
 [[JSON-UsingcustomJacksonmodules]]
 == Using custom Jackson modules
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 You can use custom Jackson modules by specifying the class names of
 those using the moduleClassNames option as shown below.
@@ -414,7 +414,7 @@ moduleRefs="myJacksonModule,myOtherModule"
 [[JSON-EnablingordisablefeaturesusingJackson]]
 == Enabling or disable features using Jackson
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 Jackson has a number of features you can enable or disable, which its
 ObjectMapper uses. For example to disable failing on unknown properties
@@ -472,7 +472,7 @@ Otherwise the default mapper will be used.
 [[JSON-FormattedJSONmarshalling-pretty-printing]]
 == Formatted JSON marshalling (pretty-printing)
 
-*Available as of Camel 2.16*
+*Since Camel 2.16*
 
 Using the `prettyPrint` option one can output a well formatted JSON
 while marshalling:
@@ -509,7 +509,7 @@ combination with other settings for `JsonLibrary`, `unmarshalType`,
 
 [[JSON.1]]
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 The `camel-jackson` module allows to integrate Jackson as
 a Type Converter in the Camel registry. This

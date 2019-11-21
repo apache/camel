@@ -2302,7 +2302,8 @@ public interface S3EndpointBuilderFactory {
         deleteBucket,
         listBuckets,
         downloadLink,
-        getObject;
+        getObject,
+        getObjectRange;
     }
     /**
      * AWS S3 Storage Service (camel-aws-s3)
@@ -2310,7 +2311,7 @@ public interface S3EndpointBuilderFactory {
      * Amazon S3 Storage Service.
      * 
      * Category: cloud,file
-     * Available as of version: 2.8
+     * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-s3
      * 
      * Syntax: <code>aws-s3://bucketNameOrArn</code>

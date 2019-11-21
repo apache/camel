@@ -17,6 +17,8 @@
 package org.apache.camel.component.stax;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -28,6 +30,17 @@ import org.junit.Test;
 import static org.apache.camel.component.stax.StAXBuilder.stax;
 
 public class IssueWithWrongEncodingTest extends CamelTestSupport {
+
+    private static final String XML_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<products>\n"
+            + "    <product>\n"
+            + "        <name>first product ";
+
+    private static final String XML_2 = "</name>\n"
+            + "    </product>\n"
+            + "    <product>\n"
+            + "        <name>second product</name>\n"
+            + "    </product>\n"
+            + "</products>";
 
     @Override
     public void setUp() throws Exception {
@@ -48,10 +61,19 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
     @Test
     public void testInvalidEncoding() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:result").expectedFileExists("target/encoding/error/products_with_non_utf8.xml");
+        getMockEndpoint("mock:result").expectedFileExists("target/encoding/error/invalid.xml");
 
-        File file = new File("src/test/resources/products_with_non_utf8.xml");
-        template.sendBodyAndHeader("file:target/encoding", file, Exchange.FILE_NAME, "products_with_non_utf8.xml");
+        File file = new File("target/encoding/invalid.xml");
+        FileOutputStream fos = new FileOutputStream(file, false);
+        fos.write(XML_1.getBytes(StandardCharsets.UTF_8));
+        // thai elephant is 4 bytes
+        fos.write(0xF0);
+        fos.write(0x9F);
+        fos.write(0x90);
+        // lets force an error by only have 3 bytes
+        // fos.write(0x98);
+        fos.write(XML_2.getBytes(StandardCharsets.UTF_8));
+        fos.close();
 
         assertMockEndpointsSatisfied();
     }

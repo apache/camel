@@ -1314,7 +1314,7 @@ public interface KinesisEndpointBuilderFactory {
      * Amazon Kinesis Streams.
      * 
      * Category: cloud,messaging
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-kinesis
      * 
      * Syntax: <code>aws-kinesis:streamName</code>

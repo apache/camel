@@ -1035,7 +1035,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * The google-sheets component provides access to Google Sheets.
      * 
      * Category: api,cloud,sheets
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
      * 
      * Syntax: <code>google-sheets:apiName/methodName</code>

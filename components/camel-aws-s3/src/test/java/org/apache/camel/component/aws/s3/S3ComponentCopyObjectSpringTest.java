@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 

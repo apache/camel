@@ -321,7 +321,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
      * the cache instance in the cluster.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-instance:cacheName</code>

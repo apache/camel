@@ -410,7 +410,7 @@ public interface GangliaEndpointBuilderFactory {
      * monitoring system.
      * 
      * Category: monitoring
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-ganglia
      * 
      * Syntax: <code>ganglia:host:port</code>

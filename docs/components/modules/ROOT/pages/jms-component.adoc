@@ -1253,7 +1253,7 @@ broker more frequent, and thus require more network traffic. +
 
 === Request-reply over JMS and using an exclusive fixed reply queue
 
-*Available as of Camel 2.9*
+*Since Camel 2.9*
 
 In the previous example, Camel would anticipate the fixed reply queue
 named "bar" was shared, and thus it uses a `JMSSelector` to only consume
@@ -1404,7 +1404,7 @@ messaging:
 The `transacted` property applies *only* to the InOnly message
 Exchange Pattern (MEP).
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 You can leverage the
 http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/jms/listener/AbstractPollingMessageListenerContainer.html#setSessionTransacted(boolean)[DMLC

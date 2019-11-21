@@ -541,7 +541,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * Data format, and verifying CMS Signed Data.
      * 
      * Category: security,transformation
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-crypto-cms
      * 
      * Syntax: <code>crypto-cms:cryptoOperation:name</code>

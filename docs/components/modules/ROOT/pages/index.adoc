@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 304 in 242 JAR artifacts (0 deprecated)
+Number of Components: 305 in 243 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -54,9 +54,9 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:aws-ec2-component.adoc[AWS EC2] (camel-aws-ec2) | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
 
-| xref:aws-ecs-component.adoc[AWS ECS] (camel-aws-ecs) | 3.0 | The aws-kms is used for managing Amazon ECS
+| xref:aws-ecs-component.adoc[AWS ECS] (camel-aws-ecs) | 3.0 | The aws-ecs is used for managing Amazon ECS
 
-| xref:aws-eks-component.adoc[AWS EKS] (camel-aws-eks) | 3.0 | The aws-kms is used for managing Amazon EKS
+| xref:aws-eks-component.adoc[AWS EKS] (camel-aws-eks) | 3.0 | The aws-eks is used for managing Amazon EKS
 
 | xref:aws-iam-component.adoc[AWS IAM] (camel-aws-iam) | 2.23 | The aws-iam is used for managing Amazon IAM
 
@@ -70,7 +70,7 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:aws-mq-component.adoc[AWS MQ] (camel-aws-mq) | 2.21 | The aws-mq is used for managing Amazon MQ instances.
 
-| xref:aws-msk-component.adoc[AWS MSK] (camel-aws-msk) | 3.0 | The aws-kms is used for managing Amazon KMS
+| xref:aws-msk-component.adoc[AWS MSK] (camel-aws-msk) | 3.0 | The aws-msk is used for managing Amazon MSK
 
 | xref:aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws-s3) | 2.8 | The aws-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.
 
@@ -460,6 +460,8 @@ Number of Components: 304 in 242 JAR artifacts (0 deprecated)
 
 | xref:pdf-component.adoc[PDF] (camel-pdf) | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
 
+| xref:platform-http-component.adoc[Platform HTTP] (camel-platform-http) | 3.0 | HTTP service leveraging existing runtime platform HTTP server
+
 | xref:pgevent-component.adoc[PostgresSQL Event] (camel-pgevent) | 2.15 | The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
 
 | xref:pg-replication-slot-component.adoc[PostgresSQL Replication Slot] (camel-pg-replication-slot) | 3.0 | Consumer endpoint to receive from PostgreSQL Replication Slot.
@@ -772,7 +774,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 38 in 38 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 39 in 39 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -807,6 +809,8 @@ Number of Miscellaneous Components: 38 in 38 JAR artifacts (0 deprecated)
 | xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert.x
 
 | xref:reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
+
+| xref:resilience4j.adoc[Resilience4j] (camel-resilience4j) | 3.0 | Circuit Breaker EIP using Resilience4j
 
 | xref:ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 

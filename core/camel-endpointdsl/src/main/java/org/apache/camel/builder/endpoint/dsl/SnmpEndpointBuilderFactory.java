@@ -1677,7 +1677,7 @@ public interface SnmpEndpointBuilderFactory {
      * receiving traps.
      * 
      * Category: monitoring
-     * Available as of version: 2.1
+     * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-snmp
      * 
      * Syntax: <code>snmp:host:port</code>

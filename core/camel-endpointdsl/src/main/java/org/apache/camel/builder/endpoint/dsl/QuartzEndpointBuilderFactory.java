@@ -573,7 +573,7 @@ public interface QuartzEndpointBuilderFactory {
      * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
      * 
      * Category: scheduling
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-quartz
      * 
      * Syntax: <code>quartz:groupName/triggerName</code>

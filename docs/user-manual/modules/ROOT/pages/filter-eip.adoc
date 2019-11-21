@@ -86,8 +86,6 @@ the when predicate by using the `.stop()`.
 
 == Knowing if Exchange was filtered or not
 
-*Available as of Camel 2.5*
-
 The xref:filter-eip.adoc[Message Filter] EIP will add a property on
 the xref:exchange.adoc[Exchange] that states if it was filtered or not.
 

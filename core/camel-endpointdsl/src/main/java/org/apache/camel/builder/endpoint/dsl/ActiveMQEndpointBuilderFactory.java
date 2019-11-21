@@ -5207,7 +5207,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Apache ActiveMQ. This component extends the Camel JMS component.
      * 
      * Category: messaging
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-activemq
      * 
      * Syntax: <code>activemq:destinationType:destinationName</code>

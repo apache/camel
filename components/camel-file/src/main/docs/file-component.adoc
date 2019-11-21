@@ -426,7 +426,7 @@ this number of files.
 
 == Using charset
 
-*Available as of Camel 2.9.3* +
+*Since Camel 2.9.3* +
  The charset option allows for configuring an encoding of the files on
 both the consumer and producer endpoints. For example if you read utf-8
 files, and want to convert the files to iso-8859-1, you can do:
@@ -577,7 +577,7 @@ done and ready to be consumed.
 
 == Using done files
 
-*Available as of Camel 2.6*
+*Since Camel 2.6*
 
 See also section _writing done files_ below.
 
@@ -625,7 +625,7 @@ from("file:bar?doneFileName=ready-${file:name}");
 
 == Writing done files
 
-*Available as of Camel 2.6*
+*Since Camel 2.6*
 
 After you have written a file you may want to write an additional _done_
 _file_ as a kind of marker, to indicate to others that the file is

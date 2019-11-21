@@ -2578,7 +2578,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      * 
      * Syntax: <code>imap:host:port</code>
@@ -2597,7 +2597,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      * 
      * Syntax: <code>imaps:host:port</code>
@@ -2616,7 +2616,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      * 
      * Syntax: <code>pop3:host:port</code>
@@ -2635,7 +2635,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      * 
      * Syntax: <code>pop3s:host:port</code>
@@ -2654,7 +2654,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      * 
      * Syntax: <code>smtp:host:port</code>
@@ -2673,7 +2673,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      * 
      * Syntax: <code>smtps:host:port</code>
@@ -2692,7 +2692,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      */
     default MailEndpointBuilder imap(String scheme, String path) {

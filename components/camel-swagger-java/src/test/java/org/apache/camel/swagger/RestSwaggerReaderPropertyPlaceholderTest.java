@@ -30,12 +30,20 @@ import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.swagger.producer.DummyRestProducerFactory;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("Does not run well on CI due test uses JMX mbeans")
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Does not run well on CI due test uses JMX mbeans")
 public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderPropertyPlaceholderTest.class);
 
     @BindToRegistry("dummy-rest")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
@@ -86,7 +94,7 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String json = mapper.writeValueAsString(swagger);
 
-        log.info(json);
+        LOG.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"basePath\" : \"/api\""));

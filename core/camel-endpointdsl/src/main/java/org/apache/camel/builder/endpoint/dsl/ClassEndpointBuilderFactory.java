@@ -206,7 +206,7 @@ public interface ClassEndpointBuilderFactory {
      * The class component is for invoking Java classes (Java beans) from Camel.
      * 
      * Category: core,java
-     * Available as of version: 2.4
+     * Since: 2.4
      * Maven coordinates: org.apache.camel:camel-bean
      * 
      * Syntax: <code>class:beanName</code>

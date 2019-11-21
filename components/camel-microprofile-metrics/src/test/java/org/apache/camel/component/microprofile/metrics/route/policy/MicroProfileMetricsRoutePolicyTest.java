@@ -85,6 +85,25 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
         assertRouteExchangeMetrics("bar", 1);
     }
 
+    @Test
+    public void removeRouteTest() throws Exception {
+        assertEquals(6, countRouteMetrics("foo"));
+        assertEquals(6, countRouteMetrics("bar"));
+
+        context.getRouteController().stopRoute("foo");
+        context.removeRoute("foo");
+
+        assertEquals(0, countRouteMetrics("foo"));
+        assertEquals(6, countRouteMetrics("bar"));
+    }
+
+    private long countRouteMetrics(String routeId) {
+        return metricRegistry.getMetricIDs()
+            .stream()
+            .filter(metricID -> metricID.getTags().containsValue(routeId))
+            .count();
+    }
+
     private void assertRouteExchangeMetrics(String routeId, int expectedFailuresHandled) {
         Tag[] tags = new Tag[] {
             new Tag(CAMEL_CONTEXT_TAG, context.getName()),

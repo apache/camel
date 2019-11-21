@@ -445,7 +445,7 @@ public class EndpointDslMojo extends AbstractMojo {
             desc += "\n" + model.getDescription();
             desc += "\n";
             desc += "\nCategory: " + model.getLabel();
-            desc += "\nAvailable as of version: " + model.getFirstVersionShort();
+            desc += "\nSince: " + model.getFirstVersionShort();
             desc += "\nMaven coordinates: " + project.getGroupId() + ":" + project.getArtifactId();
             method.getJavaDoc().setText(desc);
         }
@@ -486,7 +486,7 @@ public class EndpointDslMojo extends AbstractMojo {
         desc += "\n" + model.getDescription();
         desc += "\n";
         desc += "\nCategory: " + model.getLabel();
-        desc += "\nAvailable as of version: " + model.getFirstVersionShort();
+        desc += "\nSince: " + model.getFirstVersionShort();
         desc += "\nMaven coordinates: " + project.getGroupId() + ":" + project.getArtifactId();
 
         // include javadoc for all path parameters and mark which are required

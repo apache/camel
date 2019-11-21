@@ -230,7 +230,7 @@ The following will be logged:
 ----
 
 == Masking sensitive information like password
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
 Note that this option also affects Log EIP.
@@ -270,7 +270,7 @@ Note that the masking formatter must implement `org.apache.camel.spi.MaskingForm
 
 == Full customization of the logging output
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 With the options outlined in the xref:log-component.adoc[#Formatting] section, you
 can control much of the output of the logger. However, log lines will

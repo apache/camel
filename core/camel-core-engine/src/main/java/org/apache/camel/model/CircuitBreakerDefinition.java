@@ -37,6 +37,8 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
+    @XmlElement
+    private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlAttribute
     private String configurationRef;
     @XmlElementRef
@@ -123,12 +125,20 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
         this.hystrixConfiguration = hystrixConfiguration;
     }
 
+    public Resilience4jConfigurationCommon getResilience4jConfiguration() {
+        return resilience4jConfiguration;
+    }
+
+    public void setResilience4jConfiguration(Resilience4jConfigurationDefinition resilience4jConfiguration) {
+        this.resilience4jConfiguration = resilience4jConfiguration;
+    }
+
     public String getConfigurationRef() {
         return configurationRef;
     }
 
     /**
-     * Refers to a circuit breaker configuration (such as hystrix, resillient4j, or microprofile-fault-tolerance)
+     * Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance)
      * to use for configuring the circuit breaker EIP.
      */
     public void setConfigurationRef(String configurationRef) {
@@ -162,6 +172,25 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
      */
     public CircuitBreakerDefinition hystrixConfiguration(HystrixConfigurationDefinition configuration) {
         hystrixConfiguration = configuration;
+        return this;
+    }
+
+    /**
+     * Configures the circuit breaker to use Resilience4j.
+     * <p/>
+     * Use <tt>end</tt> when configuration is complete, to return back to the
+     * Circuit Breaker EIP.
+     */
+    public Resilience4jConfigurationDefinition resilience4jConfiguration() {
+        resilience4jConfiguration = resilience4jConfiguration == null ? new Resilience4jConfigurationDefinition(this) : resilience4jConfiguration;
+        return resilience4jConfiguration;
+    }
+
+    /**
+     * Configures the circuit breaker to use Resilience4j with the given configuration.
+     */
+    public CircuitBreakerDefinition resilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
+        resilience4jConfiguration = configuration;
         return this;
     }
 

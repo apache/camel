@@ -74,7 +74,7 @@ broker communication
 [[Security-ConfigurationSecurity]]
 == Configuration Security
 
-*Available as of Camel 2.5*
+*Since Camel 2.5*
 
 Camel offers the xref:components::properties-component.adoc[Properties] component to
 externalize configuration values to properties files. Those values could
@@ -83,7 +83,7 @@ values can be encrypted and automatic decrypted by Camel.
 
 * xref:components::jasypt.adoc[Jasypt]
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 Camel offers the xref:camel-configuration-utilities.adoc[JSSE Utility]
 for configuring SSL/TLS related aspects of a number of Camel components.

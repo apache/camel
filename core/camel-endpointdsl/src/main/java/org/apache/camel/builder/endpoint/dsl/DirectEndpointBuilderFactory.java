@@ -465,7 +465,7 @@ public interface DirectEndpointBuilderFactory {
      * endpoint from the same CamelContext.
      * 
      * Category: core,endpoint
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-direct
      * 
      * Syntax: <code>direct:name</code>

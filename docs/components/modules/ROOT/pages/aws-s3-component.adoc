@@ -364,6 +364,7 @@ Camel-AWS s3 component provides the following operation on the producer side:
 - downloadLink
 - listObjects
 - getObject (this will return an S3Object instance)
+- getObjectRange (this will return an S3Object instance)
 
 === Advanced AmazonS3 configuration
 
@@ -519,6 +520,25 @@ This operation will list the objects in the mycamelbucket bucket
 --------------------------------------------------------------------------------
 
 This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket.
+
+- GetObjectRange: this operation get a single object range in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
+          exchange.getIn().setHeader(S3Constants.RANGE_START, "0");
+          exchange.getIn().setHeader(S3Constants.RANGE_END, "9");
+      }
+  })
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObjectRange")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket, containing a the bytes from 0 to 9.
 
 == Bucket Autocreation
 

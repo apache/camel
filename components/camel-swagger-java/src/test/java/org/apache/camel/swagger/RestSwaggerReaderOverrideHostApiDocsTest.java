@@ -22,9 +22,17 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestSwaggerReaderOverrideHostApiDocsTest extends RestSwaggerReaderApiDocsTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderOverrideHostApiDocsTest.class);
 
     @Override
     @Test
@@ -44,7 +52,7 @@ public class RestSwaggerReaderOverrideHostApiDocsTest extends RestSwaggerReaderA
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String json = mapper.writeValueAsString(swagger);
 
-        log.info(json);
+        LOG.info(json);
 
         assertTrue(json.contains("\"host\" : \"http:mycoolserver:8888/myapi\""));
         assertTrue(json.contains("\"basePath\" : \"/api\""));

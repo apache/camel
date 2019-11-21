@@ -233,7 +233,7 @@ IN body to MyBatis:
 
 === Using InsertList StatementType
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 MyBatis allows you to insert multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -245,7 +245,7 @@ below:
 
 === Using UpdateList StatementType
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 MyBatis allows you to update multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -277,7 +277,7 @@ from("direct:start")
 
 === Using DeleteList StatementType
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 MyBatis allows you to delete multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML

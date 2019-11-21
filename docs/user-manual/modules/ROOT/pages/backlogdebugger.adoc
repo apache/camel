@@ -1,7 +1,7 @@
 [[BacklogDebugger-BacklogDebugger]]
 = BacklogDebugger
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 Camel supports a backlog debugger that is used for live debugging of
 messages that are routed in Camel. 

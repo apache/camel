@@ -4784,7 +4784,7 @@ public interface FtpEndpointBuilderFactory {
      * servers.
      * 
      * Category: file
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
      * 
      * Syntax: <code>ftp:host:port/directoryName</code>

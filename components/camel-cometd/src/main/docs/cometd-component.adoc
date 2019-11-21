@@ -178,7 +178,7 @@ cometd://localhost:8080?resourceBase=classpath:webapp
 
 == Authentication
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as

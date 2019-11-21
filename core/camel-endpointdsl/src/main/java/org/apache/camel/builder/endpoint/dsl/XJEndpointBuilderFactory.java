@@ -518,6 +518,34 @@ public interface XJEndpointBuilderFactory {
             return this;
         }
         /**
+         * A configuration strategy to apply on freshly created instances of
+         * TransformerFactory.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXJEndpointBuilder transformerFactoryConfigurationStrategy(
+                Object transformerFactoryConfigurationStrategy) {
+            doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
+            return this;
+        }
+        /**
+         * A configuration strategy to apply on freshly created instances of
+         * TransformerFactory.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedXJEndpointBuilder transformerFactoryConfigurationStrategy(
+                String transformerFactoryConfigurationStrategy) {
+            doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
+            return this;
+        }
+        /**
          * To use a custom javax.xml.transform.URIResolver.
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
@@ -566,7 +594,7 @@ public interface XJEndpointBuilderFactory {
      * Transforms json/xml message back and forth using a XSLT.
      * 
      * Category: transformation
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xj
      * 
      * Syntax: <code>xj:resourceUri</code>

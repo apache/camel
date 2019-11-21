@@ -655,7 +655,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
      * distributed multimap.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-multimap:cacheName</code>

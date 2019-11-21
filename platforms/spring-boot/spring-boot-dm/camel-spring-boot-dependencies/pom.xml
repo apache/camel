@@ -88,7 +88,7 @@
       <dependency>
         <groupId>com.github.dozermapper</groupId>
         <artifactId>dozer-core</artifactId>
-        <version>6.4.1</version>
+        <version>6.5.0</version>
       </dependency>
       <dependency>
         <groupId>com.github.jasminb</groupId>
@@ -184,7 +184,7 @@
       <dependency>
         <groupId>net.corda</groupId>
         <artifactId>corda-rpc</artifactId>
-        <version>4.1</version>
+        <version>4.3</version>
         <exclusions>
           <exclusion>
             <groupId>co.paralleluniverse</groupId>
@@ -1253,6 +1253,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-platform-http-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-printer-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1304,6 +1309,11 @@
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-ref-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-resilience4j-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1684,6 +1694,11 @@
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-xpath-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-xslt-saxon-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2955,6 +2970,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-platform-http</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-printer</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3006,6 +3026,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ref</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-resilience4j</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3500,11 +3525,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xslt-saxon-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-xstream</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3746,7 +3766,7 @@
       <dependency>
         <groupId>org.apache.mina</groupId>
         <artifactId>mina-core</artifactId>
-        <version>2.0.21</version>
+        <version>2.1.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openjpa</groupId>

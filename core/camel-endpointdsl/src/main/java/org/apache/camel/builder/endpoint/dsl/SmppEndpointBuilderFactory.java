@@ -2037,7 +2037,7 @@ public interface SmppEndpointBuilderFactory {
      * To send and receive SMS using a SMSC (Short Message Service Center).
      * 
      * Category: mobile
-     * Available as of version: 2.2
+     * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
      * 
      * Syntax: <code>smpp:host:port</code>
@@ -2058,7 +2058,7 @@ public interface SmppEndpointBuilderFactory {
      * To send and receive SMS using a SMSC (Short Message Service Center).
      * 
      * Category: mobile
-     * Available as of version: 2.2
+     * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
      * 
      * Syntax: <code>smpps:host:port</code>
@@ -2079,7 +2079,7 @@ public interface SmppEndpointBuilderFactory {
      * To send and receive SMS using a SMSC (Short Message Service Center).
      * 
      * Category: mobile
-     * Available as of version: 2.2
+     * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
      */
     default SmppEndpointBuilder smpp(String scheme, String path) {

@@ -46,6 +46,8 @@ public final class HdfsConstants {
 
     public static final String HDFS_CLOSE = "CamelHdfsClose";
 
+    public static final int DEFAULT_MAX_MESSAGES_PER_POLL = 100;
+
     private HdfsConstants() {
     }
 }

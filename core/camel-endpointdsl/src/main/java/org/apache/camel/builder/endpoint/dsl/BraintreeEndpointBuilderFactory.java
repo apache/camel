@@ -1272,7 +1272,7 @@ public interface BraintreeEndpointBuilderFactory {
      * Payment System.
      * 
      * Category: api,cloud,payment
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      * 
      * Syntax: <code>braintree:apiName/methodName</code>

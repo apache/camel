@@ -473,7 +473,7 @@ public interface MockEndpointBuilderFactory {
      * mocks.
      * 
      * Category: core,testing
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mock
      * 
      * Syntax: <code>mock:name</code>

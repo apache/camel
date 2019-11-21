@@ -1631,24 +1631,24 @@
   </feature>
   <feature name='camel-ldif' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-i18n/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-api/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-ber/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-client-api/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-codec-core/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-aci/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec-api/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-util/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-model/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-schema-data/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-util/1.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-i18n/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-api/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-ber/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-client-api/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-codec-core/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-aci/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec-api/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-util/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-model/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-schema-data/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-util/2.0.0</bundle>
     <bundle dependency='true'>mvn:org.apache.directory.server/apacheds-core-api/${apacheds-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/2.7.7_5</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-collections4/${commons-collections4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ldif/${project.version}</bundle>
   </feature>
@@ -2067,6 +2067,17 @@
     <bundle dependency='true'>wrap:mvn:io.micrometer/micrometer-core/${micrometer-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-reactor/${project.version}</bundle>
   </feature>
+  <!-- does not work in OSGi: https://github.com/resilience4j/resilience4j/issues/750
+  <feature name='camel-resilience4j' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-core/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-circuitbreaker/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-bulkhead/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-timelimiter/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.vavr/vavr/${vavr-version}</bundle>
+    <bundle dependency='true'>mvn:io.vavr/vavr-match/${vavr-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-resilience4j/${project.version}</bundle>
+  </feature> -->
   <feature name='camel-rest-swagger' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>

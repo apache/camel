@@ -1,7 +1,7 @@
 [[HTTP-SessionHandling]]
 = HTTP Session Handling
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 Several Camel components can use HTTP as the underlying transport
 protocol. In general HTTP calls are stateless in nature, however some

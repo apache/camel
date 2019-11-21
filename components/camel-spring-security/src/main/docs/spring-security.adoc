@@ -1,7 +1,7 @@
 [[SpringSecurity-SpringSecurity]]
 = Spring Security
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 The Camel Spring Security component provides role-based authorization
 for Camel routes. It leverages the authentication and user services

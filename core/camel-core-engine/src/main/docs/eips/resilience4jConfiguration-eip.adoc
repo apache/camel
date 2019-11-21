@@ -1,0 +1,6 @@
+[[resilience4jConfiguration-eip]]
+= Resilience4j Configuration EIP
+
+
+// eip options: START
+// eip options: END

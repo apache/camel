@@ -118,7 +118,7 @@ pop3://host:port?password=foo
 [[HowdoIconfigureendpoints-ReferringbeansfromEndpointURIs]]
 === Referring beans from Endpoint URIs
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 When configuring endpoints using URI syntax you can now refer to beans
 in the Registry using the `#` notation.
@@ -138,7 +138,7 @@ Registry.
 [[HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues,egsuchaspasswords]]
 === Configuring parameter values using raw values, eg such as passwords
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 When configuring endpoint options using URI syntax, then the values is
 by default URI encoded. This can be a problem if you want to configure
@@ -216,7 +216,7 @@ documentation.
 [[HowdoIconfigureendpoints-Configuringurisusingendpointwithbeanpropertystyle]]
 == Configuring URIs using endpoint with bean property style
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 Sometimes configuring endpoint URIs may have many options, and therefore
 the URI can become long. In Java DSL you can break the URIs into new
@@ -266,7 +266,7 @@ as:
 [[HowdoIconfigureendpoints-Configuringlongurisusingnewlines]]
 == Configuring long URIs using new lines
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 Sometimes configuring endpoint URIs may have many options, and therefore
 the URI can become long. In Java DSL you can break the URIs into new

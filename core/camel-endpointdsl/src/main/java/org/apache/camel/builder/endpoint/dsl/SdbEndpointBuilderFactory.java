@@ -358,7 +358,7 @@ public interface SdbEndpointBuilderFactory {
      * SDB service.
      * 
      * Category: cloud,database,nosql
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-aws-sdb
      * 
      * Syntax: <code>aws-sdb:domainName</code>

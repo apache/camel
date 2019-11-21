@@ -330,7 +330,7 @@ public interface IgniteQueueEndpointBuilderFactory {
      * you to interact with Ignite Queue data structures.
      * 
      * Category: nosql,cache
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-queue:name</code>

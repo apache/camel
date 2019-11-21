@@ -1103,7 +1103,7 @@ public interface YammerEndpointBuilderFactory {
      * social network.
      * 
      * Category: social
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-yammer
      * 
      * Syntax: <code>yammer:function</code>

@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-kms is used for managing Amazon ECS
+ * The aws-ecs is used for managing Amazon ECS
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "aws-ecs", title = "AWS ECS", syntax = "aws-ecs:label", producerOnly = true, label = "cloud,management")
 public class ECSEndpoint extends ScheduledPollEndpoint {

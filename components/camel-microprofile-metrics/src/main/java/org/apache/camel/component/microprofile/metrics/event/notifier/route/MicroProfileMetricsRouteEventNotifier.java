@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.microprofile.metrics.event.notifier.route;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.event.notifier.AbstractMicroProfileMetricsEventNotifier;
 import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.RouteEvent;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetadataBuilder;
-import org.eclipse.microprofile.metrics.Metric;
-import org.eclipse.microprofile.metrics.MetricFilter;
-import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
 
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTES_ADDED_DESCRIPTION;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTES_ADDED_DISPLAY_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTES_RUNNING_DESCRIPTION;
@@ -57,18 +58,8 @@ public class MicroProfileMetricsRouteEventNotifier extends AbstractMicroProfileM
         MetricRegistry metricRegistry = getMetricRegistry();
         Tag[] tags = namingStrategy.getTags(camelContext);
 
-        String routeAddedName = namingStrategy.getRouteAddedName();
-        String routeRunningName = namingStrategy.getRouteRunningName();
-
-        metricRegistry.removeMatching(new MetricFilter() {
-            @Override
-            public boolean matches(MetricID metricID, Metric metric) {
-                return metricID.getName().equals(routeAddedName) || metricID.getName().equals(routeRunningName);
-            }
-        });
-
         Metadata routesAddedMetadata = new MetadataBuilder()
-            .withName(routeAddedName)
+            .withName(namingStrategy.getRouteAddedName())
             .withDisplayName(ROUTES_ADDED_DISPLAY_NAME)
             .withDescription(ROUTES_ADDED_DESCRIPTION)
             .withType(MetricType.GAUGE)
@@ -77,12 +68,28 @@ public class MicroProfileMetricsRouteEventNotifier extends AbstractMicroProfileM
         metricRegistry.register(routesAddedMetadata, routesAdded, tags);
 
         Metadata routesRunningMetadata = new MetadataBuilder()
-            .withName(routeRunningName)
+            .withName(namingStrategy.getRouteRunningName())
             .withDisplayName(ROUTES_RUNNING_DISPLAY_NAME)
             .withDescription(ROUTES_RUNNING_DESCRIPTION)
             .withType(MetricType.GAUGE)
             .build();
         metricRegistry.register(routesRunningMetadata, routesRunning, tags);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        MicroProfileMetricsHelper.removeMetricsFromRegistry(getMetricRegistry(), (metricID, metric) -> {
+            String name = metricID.getName();
+            Map<String, String> tags = metricID.getTags();
+            if (name.equals(namingStrategy.getRouteRunningName()) || name.equals(namingStrategy.getRouteAddedName())) {
+                if (tags.containsKey(CAMEL_CONTEXT_TAG)) {
+                    return tags.get(CAMEL_CONTEXT_TAG).equals(getCamelContext().getName());
+                }
+            }
+            return false;
+        });
     }
 
     @Override

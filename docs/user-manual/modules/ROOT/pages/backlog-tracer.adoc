@@ -1,7 +1,7 @@
 [[BacklogTracer-BacklogTracerInterceptor]]
 = BacklogTracer Interceptor
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 Camel supports a backlog tracer interceptor that is used for capturing a
 trace message of each message as they are routed in Camel. +

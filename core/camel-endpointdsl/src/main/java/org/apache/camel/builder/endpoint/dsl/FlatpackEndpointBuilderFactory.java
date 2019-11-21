@@ -1251,7 +1251,7 @@ public interface FlatpackEndpointBuilderFactory {
      * via the FlatPack library.
      * 
      * Category: transformation
-     * Available as of version: 1.4
+     * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-flatpack
      * 
      * Syntax: <code>flatpack:type:resourceUri</code>

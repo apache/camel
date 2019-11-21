@@ -40,7 +40,7 @@ You can append query options to the URI in the following format:
 == Options
 
 // component options: START
-The XSLT component supports 6 options, which are listed below.
+The XSLT component supports 8 options, which are listed below.
 
 
 
@@ -50,6 +50,8 @@ The XSLT component supports 6 options, which are listed below.
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 | *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
+| *transformerFactory ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
+| *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -76,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,6 +97,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *transformerFactory* (advanced) | To use a custom XSLT transformer factory |  | TransformerFactory
 | *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
+| *transformerFactory ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
 | *uriResolver* (advanced) | To use a custom javax.xml.transform.URIResolver |  | URIResolver
 |===
 // endpoint options: END
@@ -115,7 +118,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -127,6 +130,8 @@ The component supports 7 options, which are listed below.
 | *camel.component.xslt.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
 | *camel.component.xslt.enabled* | Whether to enable auto configuration of the xslt component. This is enabled by default. |  | Boolean
 | *camel.component.xslt.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.component.xslt.transformer-factory-class* | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
+| *camel.component.xslt.transformer-factory-configuration-strategy* | A configuration strategy to apply on freshly created instances of TransformerFactory. The option is a org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy type. |  | String
 | *camel.component.xslt.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String
 | *camel.component.xslt.uri-resolver-factory* | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. The option is a org.apache.camel.component.xslt.XsltUriResolverFactory type. |  | String
 |===

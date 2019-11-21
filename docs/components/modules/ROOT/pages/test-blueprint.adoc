@@ -1,7 +1,7 @@
 = Blueprint Testing
 :page-source: components/camel-test-blueprint/src/main/docs/test-blueprint.adoc
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 camel-test-blueprint does only support testing _one_ CamelContext. So
 if you have two or more CamelContexts in your blueprint XML files, then

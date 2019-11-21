@@ -1588,7 +1588,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
      * respond to them.
      * 
      * Category: database,sql,mysql
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mysql
      * 
      * Syntax: <code>debezium-mysql:name</code>

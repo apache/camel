@@ -403,7 +403,7 @@ public interface ElasticsearchEndpointBuilderFactory {
      * server using REST API.
      * 
      * Category: monitoring,search
-     * Available as of version: 2.21
+     * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
      * 
      * Syntax: <code>elasticsearch-rest:clusterName</code>

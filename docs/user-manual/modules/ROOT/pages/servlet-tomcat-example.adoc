@@ -1,7 +1,7 @@
 [[ServletTomcatExample-ServletTomcatExample]]
 = Servlet Tomcat Example
 
-*Available as of Camel 2.7*
+*Since Camel 2.7*
 
 This example is located in the
 https://github.com/apache/camel/blob/master/examples/camel-example-servlet-tomcat[examples/camel-example-servlet-tomcat]

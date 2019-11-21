@@ -19,7 +19,7 @@ As you can see from the above Camel uses URIs to wire endpoints together.
 
 [[Routes-URI-String-Formatting]]
 == URI String formatting
-Available as of Camel 2.0
+Since Camel 2.0
 
 If you have endpoint URIs that accept options and you want to be able to substitute the value, e.g. build the URI by concat the strings together, then you can use the java.lang.String.format method. But in Camel 2.0 we have added two convenient methods in the Java DSL so you can do fromF and toF that uses String formatting to build the URI.
 

@@ -1038,6 +1038,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-platform-http-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-printer-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1089,6 +1094,11 @@
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-ref-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-resilience4j-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1469,6 +1479,11 @@
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-xpath-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-xslt-saxon-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2735,6 +2750,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-platform-http</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-printer</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2786,6 +2806,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ref</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-resilience4j</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3276,11 +3301,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xslt-saxon</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xslt-saxon-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

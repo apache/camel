@@ -1020,7 +1020,7 @@ public interface ServiceNowEndpointBuilderFactory {
      * services.
      * 
      * Category: api,cloud,management
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-servicenow
      * 
      * Syntax: <code>servicenow:instanceName</code>

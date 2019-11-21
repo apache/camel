@@ -126,7 +126,8 @@ The component supports 5 options, which are listed below.
 
 
 
-== [[MetricsComponent-registry]]Metric Registry
+[[MetricsComponent-registry]]
+== Metric Registry
 
 Camel Metrics component uses by default a `MetricRegistry` instance with
 a `Slf4jReporter` that has a 60 second reporting interval.
@@ -213,7 +214,8 @@ endpoint finishes processing of exchange. While processing exchange
 Metrics endpoint will catch all exceptions and write log entry using
 level `warn`.
 
-== [[MetricsComponent-counter]]Metrics type counter
+[[MetricsComponent-counter]]
+== Metrics type counter
 
 [source]
 ----
@@ -231,7 +233,7 @@ metrics:counter:metricname[?options]
 
 If neither `increment` or `decrement` is defined then counter value will
 be incremented by one. If `increment` and `decrement` are both defined
-only increment operation is called. 
+only increment operation is called.
 
 [source,java]
 ----
@@ -288,7 +290,8 @@ from("direct:in")
 
 ----
 
-== [[MetricsComponent-histogram]]Metric type histogram
+[[MetricsComponent-histogram]]
+== Metric type histogram
 
 [source]
 ----
@@ -344,7 +347,8 @@ from("direct:in")
 
 ----
 
-== [[MetricsComponent-meter]]Metric type meter
+[[MetricsComponent-meter]]
+== Metric type meter
 
 [source]
 ----
@@ -397,7 +401,8 @@ from("direct:in")
     .to("direct:out");
 ----
 
-== [[MetricsComponent-timer]]Metrics type timer
+[[MetricsComponent-timer]]
+== Metrics type timer
 
 [source]
 ----
@@ -450,7 +455,8 @@ from("direct:in")
     .to("direct:out");
 ----
 
-== [[MetricsComponent-gauge]]Metric type gauge
+[[MetricsComponent-gauge]]
+== Metric type gauge
 
 [source]
 ----
@@ -501,7 +507,7 @@ from("direct:in")
 This factory allows to add a RoutePolicy for each
 route which exposes route utilization statistics using Dropwizard metrics.
 This factory can be used in Java and XML as the examples below
-demonstrates. 
+demonstrates.
 
 NOTE: Instead of using the MetricsRoutePolicyFactory you can define a
 MetricsRoutePolicy per route you want to instrument, in case you only
@@ -558,7 +564,7 @@ value. Where `###name###` is the name of the CamelContext. `###routeId###`
 is the name of the route. And `###type###` is the value of responses.
 |=======================================================================
 
- 
+
 
 From Java code you can get hold of
 the `com.codahale.metrics.MetricRegistry` from the
@@ -576,13 +582,13 @@ if (registryService != null) {
 
 == MetricsMessageHistoryFactory
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 This factory allows to use metrics to
 capture Message History performance
 statistics while routing messages. It works by using a metrics Timer for
 each node in all the routes. This factory can be used in Java and XML as
-the examples below demonstrates. 
+the examples below demonstrates.
 
 From Java you just set the factory to the `CamelContext` as shown below:
 
@@ -652,10 +658,8 @@ with `name=MetricsMessageHistoryService`.
 
 == InstrumentedThreadPoolFactory
 
-*Available as of Camel 2.18*
+*Since Camel 2.18*
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
-
-

@@ -751,7 +751,7 @@ public interface GooglePubsubEndpointBuilderFactory {
      * Messaging client for Google Cloud Platform PubSub Service
      * 
      * Category: messaging
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-google-pubsub
      * 
      * Syntax: <code>google-pubsub:projectId:destinationName</code>

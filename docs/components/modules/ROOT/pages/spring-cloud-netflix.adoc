@@ -1,7 +1,7 @@
 = Spring Cloud Netflix
 :page-source: components/camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 The Spring Cloud Netflix component bridges Camel Cloud and Spring Cloud Netflix so you can leverage Spring Cloud Netflix service discovery and load balance features in Camel and/or you can use Camel Service Discovery implementations as ServerList source for Spring Cloud Netflix's Ribbon load balabncer.
 
@@ -32,7 +32,7 @@ camel.cloud.netflix.ribbon = true
 
 == Spring Cloud Netflix Starter
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 To use the starter, add the following to your spring boot pom.xml file:
 

@@ -129,7 +129,8 @@ The component supports 5 options, which are listed below.
 
 
 
-== [[MicrometerComponent-registry]]Meter Registry
+[[MicrometerComponent-registry]]
+== Meter Registry
 
 By default the Camel Micrometer component creates a `SimpleMeterRegistry` instance, suitable
 mainly for testing.
@@ -227,7 +228,8 @@ All Metrics specific headers are removed from the message once the Micrometer en
 Micrometer endpoint will catch all exceptions and write log entry using level `warn`.
 
 
-== [[MicrometerComponent-counter]]Counter
+[[MicrometerComponent-counter]]
+== Counter
 
 [source]
 ----
@@ -305,7 +307,8 @@ from("direct:in")
 
 ----
 
-== [[MicrometerComponent-summary]]Distribution Summary
+[[MicrometerComponent-summary]]
+== Distribution Summary
 
 [source]
 ----
@@ -373,7 +376,8 @@ from("direct:in")
 ----
 
 
-== [[MicrometerComponent-timer]]Timer
+[[MicrometerComponent-timer]]
+== Timer
 
 [source]
 ----

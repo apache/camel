@@ -255,6 +255,7 @@
         <include>org.apache.camel:camel-pdf</include>
         <include>org.apache.camel:camel-pg-replication-slot</include>
         <include>org.apache.camel:camel-pgevent</include>
+        <include>org.apache.camel:camel-platform-http</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-pubnub</include>
@@ -266,6 +267,7 @@
         <include>org.apache.camel:camel-reactive-streams</include>
         <include>org.apache.camel:camel-reactor</include>
         <include>org.apache.camel:camel-ref</include>
+        <include>org.apache.camel:camel-resilience4j</include>
         <include>org.apache.camel:camel-rest</include>
         <include>org.apache.camel:camel-rest-swagger</include>
         <include>org.apache.camel:camel-ribbon</include>
@@ -605,6 +607,7 @@
         <include>org.apache.camel.springboot:camel-pdf-starter</include>
         <include>org.apache.camel.springboot:camel-pg-replication-slot-starter</include>
         <include>org.apache.camel.springboot:camel-pgevent-starter</include>
+        <include>org.apache.camel.springboot:camel-platform-http-starter</include>
         <include>org.apache.camel.springboot:camel-printer-starter</include>
         <include>org.apache.camel.springboot:camel-protobuf-starter</include>
         <include>org.apache.camel.springboot:camel-pubnub-starter</include>
@@ -616,6 +619,7 @@
         <include>org.apache.camel.springboot:camel-reactive-streams-starter</include>
         <include>org.apache.camel.springboot:camel-reactor-starter</include>
         <include>org.apache.camel.springboot:camel-ref-starter</include>
+        <include>org.apache.camel.springboot:camel-resilience4j-starter</include>
         <include>org.apache.camel.springboot:camel-rest-starter</include>
         <include>org.apache.camel.springboot:camel-rest-swagger-starter</include>
         <include>org.apache.camel.springboot:camel-ribbon-starter</include>

@@ -230,7 +230,7 @@ In this Spring DSL we have defined to use `iso-8859-1` as the encoding:
 
 == Controlling namespace prefix mapping
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 When marshalling using xref:jaxb-dataformat.adoc[JAXB] or xref:jaxb-dataformat.adoc[SOAP] then
 the JAXB implementation will automatic assign namespace prefixes, such
@@ -268,7 +268,7 @@ with the id "myMap", which was what we defined above.
 
 == Schema validation
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 The JAXB Data Format supports validation by
 marshalling and unmarshalling from/to XML. Your can use the prefix
@@ -308,7 +308,7 @@ jaxbDataFormat.setSchemaFactory(thradSafeSchemaFactory);
 
 == Schema Location
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 The JAXB Data Format supports to specify the
 SchemaLocation when marshaling the XML. 
@@ -333,7 +333,7 @@ You can do the same using the XML DSL:
 
 == Marshal data that is already XML
 
-*Available as of Camel 2.14.1*
+*Since Camel 2.14.1*
 
 The JAXB marshaller requires that the message body is JAXB compatible,
 eg its a JAXBElement, eg a java instance that has JAXB annotations, or

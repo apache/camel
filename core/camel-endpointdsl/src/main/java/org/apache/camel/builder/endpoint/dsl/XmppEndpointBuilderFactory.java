@@ -1197,7 +1197,7 @@ public interface XmppEndpointBuilderFactory {
      * To send and receive messages from a XMPP (chat) server.
      * 
      * Category: chat,messaging
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-xmpp
      * 
      * Syntax: <code>xmpp:host:port/participant</code>

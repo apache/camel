@@ -965,7 +965,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
      * changes and respond to them.
      * 
      * Category: database,sql,sqlserver
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
      * 
      * Syntax: <code>debezium-sqlserver:name</code>
