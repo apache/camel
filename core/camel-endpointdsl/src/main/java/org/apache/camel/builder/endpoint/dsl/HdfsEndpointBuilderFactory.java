@@ -306,6 +306,42 @@ public interface HdfsEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a maximum messages to gather per poll. By default a limit
+         * of 100 is set. Can be used to set a limit of e.g. 1000 to avoid when
+         * starting up the server that there are thousands of files. Values can
+         * only be greater than 0. Notice: If this option is in use then the
+         * limit will be applied on the valid files. For example if you have
+         * 100000 files and use maxMessagesPerPoll=500, then only the first 500
+         * files will be picked up.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: filter
+         */
+        default HdfsEndpointConsumerBuilder maxMessagesPerPoll(
+                int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * To define a maximum messages to gather per poll. By default a limit
+         * of 100 is set. Can be used to set a limit of e.g. 1000 to avoid when
+         * starting up the server that there are thousands of files. Values can
+         * only be greater than 0. Notice: If this option is in use then the
+         * limit will be applied on the valid files. For example if you have
+         * 100000 files and use maxMessagesPerPoll=500, then only the first 500
+         * files will be picked up.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: filter
+         */
+        default HdfsEndpointConsumerBuilder maxMessagesPerPoll(
+                String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -2198,7 +2234,7 @@ public interface HdfsEndpointBuilderFactory {
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
      * 
      * Category: hadoop,file
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-hdfs
      * 
      * Syntax: <code>hdfs:hostName:port/path</code>
