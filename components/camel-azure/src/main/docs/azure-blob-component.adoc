@@ -154,7 +154,7 @@ The component supports 22 options, which are listed below.
 | *camel.component.azure-blob.configuration.stream-read-size* | Set the minimum read size in bytes when reading the blob content |  | Integer
 | *camel.component.azure-blob.configuration.stream-write-size* | Set the size of the buffer for writing block and page blocks |  | Integer
 | *camel.component.azure-blob.configuration.use-flat-listing* | Specify if the flat or hierarchical blob listing should be used | true | Boolean
-| *camel.component.azure-blob.enabled* | Enable azure-blob component | true | Boolean
+| *camel.component.azure-blob.enabled* | Whether to enable auto configuration of the azure-blob component. This is enabled by default. |  | Boolean
 | *camel.component.azure-blob.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

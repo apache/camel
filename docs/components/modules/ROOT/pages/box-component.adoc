@@ -175,7 +175,7 @@ The component supports 21 options, which are listed below.
 | *camel.component.box.configuration.user-id* | The user ID to use for an App User. |  | String
 | *camel.component.box.configuration.user-name* | Box user name, MUST be provided |  | String
 | *camel.component.box.configuration.user-password* | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
-| *camel.component.box.enabled* | Enable box component | true | Boolean
+| *camel.component.box.enabled* | Whether to enable auto configuration of the box component. This is enabled by default. |  | Boolean
 | *camel.component.box.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

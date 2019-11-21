@@ -244,7 +244,7 @@ The component supports 53 options, which are listed below.
 | *camel.component.rabbitmq.dead-letter-routing-key* | The routing key for the dead letter exchange |  | String
 | *camel.component.rabbitmq.declare* | If the option is true, camel declare the exchange and queue name and bind them together. If the option is false, camel won't declare the exchange and queue name on the server. | true | Boolean
 | *camel.component.rabbitmq.durable* | If we are declaring a durable exchange (the exchange will survive a server restart) | true | Boolean
-| *camel.component.rabbitmq.enabled* | Enable rabbitmq component | true | Boolean
+| *camel.component.rabbitmq.enabled* | Whether to enable auto configuration of the rabbitmq component. This is enabled by default. |  | Boolean
 | *camel.component.rabbitmq.exclusive* | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | Boolean
 | *camel.component.rabbitmq.exclusive-consumer* | Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you want a long-lived shared queue to be temporarily accessible by just one consumer. | false | Boolean
 | *camel.component.rabbitmq.guaranteed-deliveries* | When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also publisher acknowledgements - When will messages be confirmed. | false | Boolean

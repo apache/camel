@@ -64,7 +64,7 @@ The component supports 19 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.dataformat.jaxb.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.jaxb.context-path* | Package name where your JAXB classes are located. |  | String
-| *camel.dataformat.jaxb.enabled* | Enable jaxb dataformat | true | Boolean
+| *camel.dataformat.jaxb.enabled* | Whether to enable auto configuration of the jaxb data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.jaxb.encoding* | To overrule and use a specific encoding |  | String
 | *camel.dataformat.jaxb.filter-non-xml-chars* | To ignore non xml characheters and replace them with an empty space. | false | Boolean
 | *camel.dataformat.jaxb.fragment* | To turn on marshalling XML fragment trees. By default JAXB looks for XmlRootElement annotation on given class to operate on whole XML tree. This is useful but not always - sometimes generated code does not have XmlRootElement annotation, sometimes you need unmarshall only part of tree. In that case you can use partial unmarshalling. To enable this behaviours you need set property partClass. Camel will pass this class to JAXB's unmarshaler. | false | Boolean

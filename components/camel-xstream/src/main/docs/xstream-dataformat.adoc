@@ -76,7 +76,7 @@ The component supports 31 options, which are listed below.
 | *camel.dataformat.json-xstream.disable-features* | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma |  | String
 | *camel.dataformat.json-xstream.enable-features* | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma |  | String
 | *camel.dataformat.json-xstream.enable-jaxb-annotation-module* | Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson. | false | Boolean
-| *camel.dataformat.json-xstream.enabled* | Enable json-xstream dataformat | true | Boolean
+| *camel.dataformat.json-xstream.enabled* | Whether to enable auto configuration of the json-xstream data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.json-xstream.include* | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL |  | String
 | *camel.dataformat.json-xstream.json-view* | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations |  | Class
 | *camel.dataformat.json-xstream.module-class-names* | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma. |  | String
@@ -93,7 +93,7 @@ The component supports 31 options, which are listed below.
 | *camel.dataformat.xstream.converters* | List of class names for using custom XStream converters. The classes must be of type com.thoughtworks.xstream.converters.Converter |  | List
 | *camel.dataformat.xstream.driver* | To use a custom XStream driver. The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver |  | String
 | *camel.dataformat.xstream.driver-ref* | To refer to a custom XStream driver to lookup in the registry. The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver |  | String
-| *camel.dataformat.xstream.enabled* | Enable xstream dataformat | true | Boolean
+| *camel.dataformat.xstream.enabled* | Whether to enable auto configuration of the xstream data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.xstream.encoding* | Sets the encoding to use |  | String
 | *camel.dataformat.xstream.implicit-collections* | Adds a default implicit collection which is used for any unmapped XML tag. |  | Map
 | *camel.dataformat.xstream.mode* | Mode for dealing with duplicate references The possible values are: NO_REFERENCES ID_REFERENCES XPATH_RELATIVE_REFERENCES XPATH_ABSOLUTE_REFERENCES SINGLE_NODE_XPATH_RELATIVE_REFERENCES SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES |  | String

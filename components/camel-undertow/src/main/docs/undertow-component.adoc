@@ -146,7 +146,7 @@ The component supports 13 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.undertow.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.undertow.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.undertow.enabled* | Enable undertow component | true | Boolean
+| *camel.component.undertow.enabled* | Whether to enable auto configuration of the undertow component. This is enabled by default. |  | Boolean
 | *camel.component.undertow.host-options.buffer-size* | Set if the Undertow host should use http2 protocol. |  | Integer
 | *camel.component.undertow.host-options.direct-buffers* | Set if the Undertow host should use http2 protocol. |  | Boolean
 | *camel.component.undertow.host-options.http2-enabled* | Set if the Undertow host should use http2 protocol. |  | Boolean

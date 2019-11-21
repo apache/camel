@@ -321,7 +321,7 @@ The component supports 40 options, which are listed below.
 | *camel.component.smpp.configuration.transaction-timer* | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
 | *camel.component.smpp.configuration.type-of-number* | Defines the type of number (TON) to be used in the SME. The following TON values are defined: <ul> <li>0: Unknown</li> <li>1: International</li> <li>2: National</li> <li>3: Network Specific</li> <li>4: Subscriber Number</li> <li>5: Alphanumeric</li> <li>6: Abbreviated</li> </ul> |  | Byte
 | *camel.component.smpp.configuration.using-s-s-l* | Whether using SSL with the smpps protocol | false | Boolean
-| *camel.component.smpp.enabled* | Enable smpp component | true | Boolean
+| *camel.component.smpp.enabled* | Whether to enable auto configuration of the smpp component. This is enabled by default. |  | Boolean
 | *camel.component.smpp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
