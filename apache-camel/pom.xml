@@ -1173,6 +1173,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-platform-http</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-printer</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2728,6 +2733,11 @@
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-pgevent-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-platform-http-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

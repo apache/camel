@@ -255,6 +255,7 @@
         <include>org.apache.camel:camel-pdf</include>
         <include>org.apache.camel:camel-pg-replication-slot</include>
         <include>org.apache.camel:camel-pgevent</include>
+        <include>org.apache.camel:camel-platform-http</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-pubnub</include>
@@ -606,6 +607,7 @@
         <include>org.apache.camel.springboot:camel-pdf-starter</include>
         <include>org.apache.camel.springboot:camel-pg-replication-slot-starter</include>
         <include>org.apache.camel.springboot:camel-pgevent-starter</include>
+        <include>org.apache.camel.springboot:camel-platform-http-starter</include>
         <include>org.apache.camel.springboot:camel-printer-starter</include>
         <include>org.apache.camel.springboot:camel-protobuf-starter</include>
         <include>org.apache.camel.springboot:camel-pubnub-starter</include>
