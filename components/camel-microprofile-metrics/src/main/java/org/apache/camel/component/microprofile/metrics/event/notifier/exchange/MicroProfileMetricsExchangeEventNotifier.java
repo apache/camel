@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.microprofile.metrics.event.notifier.exchange;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsExchangeRecorder;
+import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.event.notifier.AbstractMicroProfileMetricsEventNotifier;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
@@ -35,6 +37,10 @@ import org.eclipse.microprofile.metrics.Timer.Context;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EVENT_TYPE_TAG;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_FAILURES_HANDLED_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_METRIC_PREFIX;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.PROCESSING_METRICS_SUFFIX;
 
 public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfileMetricsEventNotifier<ExchangeEvent> {
@@ -67,6 +73,23 @@ public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfi
         MetricRegistry metricRegistry = getMetricRegistry();
         Tag tag = new Tag(CAMEL_CONTEXT_TAG, camelContext.getName());
         exchangeRecorder = new MicroProfileMetricsExchangeRecorder(metricRegistry, CAMEL_CONTEXT_METRIC_NAME, tag);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        MicroProfileMetricsHelper.removeMetricsFromRegistry(getMetricRegistry(), (metricID, metric) -> {
+            String metricName = metricID.getName();
+            Map<String, String> tags = metricID.getTags();
+            if (tags.containsKey(CAMEL_CONTEXT_TAG) && tags.get(CAMEL_CONTEXT_TAG).equals(getCamelContext().getName())) {
+                return tags.containsKey(EVENT_TYPE_TAG)
+                       || metricName.contains(EXCHANGES_METRIC_PREFIX)
+                       || metricName.endsWith(EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME)
+                       || metricName.endsWith(EXCHANGES_FAILURES_HANDLED_METRIC_NAME);
+            }
+            return false;
+        });
     }
 
     @Override

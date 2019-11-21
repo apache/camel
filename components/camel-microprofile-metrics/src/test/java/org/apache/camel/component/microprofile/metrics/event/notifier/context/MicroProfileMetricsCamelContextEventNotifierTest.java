@@ -33,8 +33,10 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 
 public class MicroProfileMetricsCamelContextEventNotifierTest extends MicroProfileMetricsTestSupport {
 
+    private MicroProfileMetricsCamelContextEventNotifier eventNotifier;
+
     @Test
-    public void testMicroProfileMetricsEventNotifier() throws Exception {
+    public void testMicroProfileMetricsCamelContextEventNotifier() throws Exception {
         List<Tag> tags = new ArrayList<>();
         tags.add(new Tag(CAMEL_CONTEXT_TAG, context.getName()));
 
@@ -50,10 +52,18 @@ public class MicroProfileMetricsCamelContextEventNotifierTest extends MicroProfi
         assertEquals(ServiceStatus.Stopped.ordinal(), status.getValue().intValue());
     }
 
+    @Test
+    public void testMicroProfileMetricsCamelContextEventNotifierStop() throws Exception {
+        assertEquals(2, metricRegistry.getMetrics().size());
+        eventNotifier.stop();
+        assertEquals(0, metricRegistry.getMetrics().size());
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.getManagementStrategy().addEventNotifier(new MicroProfileMetricsCamelContextEventNotifier());
+        eventNotifier = new MicroProfileMetricsCamelContextEventNotifier();
+        camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
         return camelContext;
     }
 }
