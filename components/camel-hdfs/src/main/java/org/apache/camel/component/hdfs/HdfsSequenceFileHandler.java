@@ -35,12 +35,18 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, Seque
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<?> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
             Class<?> valueWritableClass = endpointConfig.getValueType().getWritableClass();
-            rout = SequenceFile.createWriter(hdfsInfo.getConfiguration(), SequenceFile.Writer.file(hdfsInfo.getPath()), SequenceFile.Writer.keyClass(keyWritableClass),
-                    SequenceFile.Writer.valueClass(valueWritableClass), SequenceFile.Writer.bufferSize(endpointConfig.getBufferSize()),
-                    SequenceFile.Writer.replication(endpointConfig.getReplication()), SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
+            rout = SequenceFile.createWriter(
+                    hdfsInfo.getConfiguration(),
+                    SequenceFile.Writer.file(hdfsInfo.getPath()),
+                    SequenceFile.Writer.keyClass(keyWritableClass),
+                    SequenceFile.Writer.valueClass(valueWritableClass),
+                    SequenceFile.Writer.bufferSize(endpointConfig.getBufferSize()),
+                    SequenceFile.Writer.replication(endpointConfig.getReplication()),
+                    SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
                     SequenceFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    SequenceFile.Writer.progressable(() -> {
-                    }), SequenceFile.Writer.metadata(new SequenceFile.Metadata()));
+                    SequenceFile.Writer.progressable(() -> {}),
+                    SequenceFile.Writer.metadata(new SequenceFile.Metadata())
+            );
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

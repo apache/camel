@@ -38,10 +38,14 @@ class HdfsMapFileHandler extends DefaultHdfsFile<MapFile.Writer, MapFile.Reader>
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
             Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
-            rout = new MapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
+            rout = new MapFile.Writer(
+                    hdfsInfo.getConfiguration(),
+                    new Path(hdfsPath),
+                    MapFile.Writer.keyClass(keyWritableClass),
+                    MapFile.Writer.valueClass(valueWritableClass),
                     MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    MapFile.Writer.progressable(() -> {
-                    }));
+                    MapFile.Writer.progressable(() -> {})
+            );
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

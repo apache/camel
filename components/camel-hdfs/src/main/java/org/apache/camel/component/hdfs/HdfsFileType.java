@@ -25,7 +25,7 @@ public enum HdfsFileType {
     NORMAL_FILE(new HdfsNormalFileHandler()),
     SEQUENCE_FILE(new HdfsSequenceFileHandler()),
     MAP_FILE(new HdfsMapFileHandler()),
-    BLOOMMAP_FILE(new HdfsBloommapFileHandler()),
+    BLOOMMAP_FILE(new HdfsBloomMapFileHandler()),
     ARRAY_FILE(new HdfsArrayFileTypeHandler());
 
     private final HdfsFile file;

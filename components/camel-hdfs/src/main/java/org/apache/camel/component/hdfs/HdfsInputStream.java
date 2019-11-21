@@ -162,7 +162,7 @@ public class HdfsInputStream implements Closeable {
         return streamDownload;
     }
 
-    private final class EntryHolder {
+    private static class EntryHolder {
 
         private long byteCount;
         private Holder<Object> key;

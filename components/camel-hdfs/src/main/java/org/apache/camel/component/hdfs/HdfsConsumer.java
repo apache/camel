@@ -138,11 +138,13 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
+        log.info("Processing [{}] valid files out of [{}] available.", hdfsFiles.size(), fileStatuses.length);
+
         for (int i = 0; i < hdfsFiles.size(); i++) {
             HdfsInputStream hdfsFile = hdfsFiles.get(i);
             try {
                 int messageCount = processHdfsInputStream(hdfsFile, totalMessageCount);
-                log.debug("Processed [{}] files out of [{}] available.", i, fileStatuses.length);
+                log.debug("Processed [{}] files out of [{}].", i, hdfsFiles.size());
                 log.debug("File [{}] was split to [{}] messages.", i, messageCount);
             } finally {
                 IOHelper.close(hdfsFile, "hdfs file", log);
