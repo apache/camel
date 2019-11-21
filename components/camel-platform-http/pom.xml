@@ -31,7 +31,7 @@
     <artifactId>camel-platform-http</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Platform HTTP</name>
-    <description>An HTTP service leveraging the given platform's (SB, Quarkus, WildFly, ...) default HTTP server</description>
+    <description>HTTP service leveraging existing runtime platform HTTP server</description>
 
     <dependencies>
         <dependency>
@@ -41,10 +41,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>spi-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
         </dependency>
     </dependencies>
 
