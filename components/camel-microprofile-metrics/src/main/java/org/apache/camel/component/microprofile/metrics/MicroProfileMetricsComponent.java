@@ -25,6 +25,8 @@ import org.apache.camel.support.DefaultComponent;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
+
 @Component("microprofile-metrics")
 public class MicroProfileMetricsComponent extends DefaultComponent {
 
@@ -52,5 +54,16 @@ public class MicroProfileMetricsComponent extends DefaultComponent {
      */
     public void setMetricRegistry(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        MicroProfileMetricsHelper.removeMetricsFromRegistry(metricRegistry, (metricID, metric) -> {
+            Map<String, String> tags = metricID.getTags();
+            if (tags.containsKey(CAMEL_CONTEXT_TAG)) {
+                return tags.get(CAMEL_CONTEXT_TAG).equals(getCamelContext().getName());
+            }
+            return false;
+        });
     }
 }

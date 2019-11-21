@@ -35,8 +35,10 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 
 public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTestSupport {
 
+    private MicroProfileMetricsMessageHistoryFactory factory;
+
     @Test
-    public void testMetricsHistory() throws Exception {
+    public void testMessageHistory() throws Exception {
         int count = 10;
 
         getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
@@ -80,6 +82,14 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
         assertTrue(json.contains("nodeId=baz"));
     }
 
+    @Test
+    public void testMicroProfileMetricsMessageHistoryFactoryStop() {
+        template.sendBody("direct:foo", null);
+        assertEquals(1, metricRegistry.getMetrics().size());
+        factory.stop();
+        assertEquals(0, metricRegistry.getMetrics().size());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -97,7 +107,7 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsMessageHistoryFactory factory = new MicroProfileMetricsMessageHistoryFactory();
+        factory = new MicroProfileMetricsMessageHistoryFactory();
         factory.setMetricRegistry(metricRegistry);
 
         CamelContext context = super.createCamelContext();

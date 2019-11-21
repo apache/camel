@@ -42,8 +42,10 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 
 public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMetricsTestSupport {
 
+    private MicroProfileMetricsExchangeEventNotifier eventNotifier;
+
     @Test
-    public void testMicroProfileMetricsEventNotifier() {
+    public void testMicroProfileMetricsExchangeEventNotifier() {
         int count = 10;
         Long delay = 50L;
 
@@ -95,9 +97,17 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
         assertEquals(5, failuresHandled.getCount());
     }
 
+    @Test
+    public void testMicroProfileMetricsExchangeEventNotifierStop() {
+        template.sendBody("direct:start", 1);
+        assertEquals(9, metricRegistry.getMetrics().size());
+        eventNotifier.stop();
+        assertEquals(0, metricRegistry.getMetrics().size());
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsExchangeEventNotifier eventNotifier = new MicroProfileMetricsExchangeEventNotifier();
+        eventNotifier = new MicroProfileMetricsExchangeEventNotifier();
         eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.getEndpointUri());
         eventNotifier.setMetricRegistry(metricRegistry);
 
