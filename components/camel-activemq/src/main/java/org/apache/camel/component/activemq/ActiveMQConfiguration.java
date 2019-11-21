@@ -30,9 +30,6 @@ import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
-/**
- *
- */
 public class ActiveMQConfiguration extends JmsConfiguration {
     private ActiveMQComponent activeMQComponent;
     private String brokerURL = ActiveMQConnectionFactory.DEFAULT_BROKER_URL;
