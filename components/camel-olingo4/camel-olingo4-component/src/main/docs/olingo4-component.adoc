@@ -169,7 +169,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.olingo4.configuration.socket-timeout* | HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer
 | *camel.component.olingo4.configuration.split-result* | For endpoints that return an array or collection, a consumer endpoint will map every element to distinct messages, unless splitResult is set to false. | true | Boolean
 | *camel.component.olingo4.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
-| *camel.component.olingo4.enabled* | Enable olingo4 component | true | Boolean
+| *camel.component.olingo4.enabled* | Whether to enable auto configuration of the olingo4 component. This is enabled by default. |  | Boolean
 | *camel.component.olingo4.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.olingo4.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===

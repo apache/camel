@@ -172,7 +172,7 @@ The component supports 92 options, which are listed below.
 | *camel.component.consul.configuration.value-as-string* | Default to transform values retrieved from Consul i.e. on KV endpoint to string. |  | Boolean
 | *camel.component.consul.configuration.write-timeout-millis* | Write timeout for OkHttpClient |  | Long
 | *camel.component.consul.datacenter* | The data center |  | String
-| *camel.component.consul.enabled* | Enable consul component | true | Boolean
+| *camel.component.consul.enabled* | Whether to enable auto configuration of the consul component. This is enabled by default. |  | Boolean
 | *camel.component.consul.health.check.repository.checks* | Define the checks to include. |  | List
 | *camel.component.consul.health.check.repository.configurations* | Health check configurations. |  | Map
 | *camel.component.consul.health.check.repository.enabled* |  |  | Boolean

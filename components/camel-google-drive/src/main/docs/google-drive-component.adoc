@@ -182,7 +182,7 @@ The component supports 13 options, which are listed below.
 | *camel.component.google-drive.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.google-drive.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
-| *camel.component.google-drive.enabled* | Enable google-drive component | true | Boolean
+| *camel.component.google-drive.enabled* | Whether to enable auto configuration of the google-drive component. This is enabled by default. |  | Boolean
 | *camel.component.google-drive.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
