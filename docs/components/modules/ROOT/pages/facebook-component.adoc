@@ -259,7 +259,7 @@ The component supports 31 options, which are listed below.
 | *camel.component.facebook.configuration.rest-base-u-r-l* | API base URL | https://graph.facebook.com/ | String
 | *camel.component.facebook.configuration.use-s-s-l* | Use SSL | true | Boolean
 | *camel.component.facebook.configuration.video-base-u-r-l* | Video API base URL | https://graph-video.facebook.com/ | String
-| *camel.component.facebook.enabled* | Enable facebook component | true | Boolean
+| *camel.component.facebook.enabled* | Whether to enable auto configuration of the facebook component. This is enabled by default. |  | Boolean
 | *camel.component.facebook.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

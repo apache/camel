@@ -122,7 +122,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.corda.configuration.query-criteria* |  |  | QueryCriteria
 | *camel.component.corda.configuration.sort* |  |  | Sort
 | *camel.component.corda.configuration.username* |  |  | String
-| *camel.component.corda.enabled* | Enable corda component | true | Boolean
+| *camel.component.corda.enabled* | Whether to enable auto configuration of the corda component. This is enabled by default. |  | Boolean
 | *camel.component.corda.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

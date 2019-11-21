@@ -156,7 +156,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.ganglia.configuration.type* | The type of value |  | GMetricType
 | *camel.component.ganglia.configuration.units* | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
 | *camel.component.ganglia.configuration.wire-format31x* | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | Boolean
-| *camel.component.ganglia.enabled* | Enable ganglia component | true | Boolean
+| *camel.component.ganglia.enabled* | Whether to enable auto configuration of the ganglia component. This is enabled by default. |  | Boolean
 | *camel.component.ganglia.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

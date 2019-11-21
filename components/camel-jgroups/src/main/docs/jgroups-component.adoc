@@ -124,7 +124,7 @@ The component supports 11 options, which are listed below.
 | *camel.component.jgroups.channel* | Channel to use. The option is a org.jgroups.JChannel type. |  | String
 | *camel.component.jgroups.channel-properties* | Specifies configuration properties of the JChannel used by the endpoint. |  | String
 | *camel.component.jgroups.enable-view-messages* | If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint. | false | Boolean
-| *camel.component.jgroups.enabled* | Enable jgroups component | true | Boolean
+| *camel.component.jgroups.enabled* | Whether to enable auto configuration of the jgroups component. This is enabled by default. |  | Boolean
 | *camel.component.jgroups.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.jgroups.lock.cluster.service.enabled* | Sets if the jgroups lock cluster service should be enabled or not, default is false. | false | Boolean
 | *camel.component.jgroups.lock.cluster.service.id* | Cluster Service ID |  | String

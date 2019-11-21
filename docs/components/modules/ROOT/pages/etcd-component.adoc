@@ -137,7 +137,7 @@ The component supports 19 options, which are listed below.
 | *camel.component.etcd.configuration.timeout* | To set the maximum time an action could take to complete. |  | Long
 | *camel.component.etcd.configuration.uris* | To set the URIs the client connects. | http://localhost:2379,http://localhost:4001 | String
 | *camel.component.etcd.configuration.user-name* | The user name to use for basic authentication. |  | String
-| *camel.component.etcd.enabled* | Enable etcd component | true | Boolean
+| *camel.component.etcd.enabled* | Whether to enable auto configuration of the etcd component. This is enabled by default. |  | Boolean
 | *camel.component.etcd.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.etcd.password* | The password to use for basic authentication. |  | String
 | *camel.component.etcd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String

@@ -154,7 +154,7 @@ The component supports 58 options, which are listed below.
 | *camel.component.zookeeper.configuration.send-empty-message-on-delete* | Upon the delete of a znode, should an empty message be send to the consumer | true | Boolean
 | *camel.component.zookeeper.configuration.servers* | The zookeeper server hosts |  | List
 | *camel.component.zookeeper.configuration.timeout* | The time interval to wait on connection before timing out. | 5000 | Integer
-| *camel.component.zookeeper.enabled* | Enable zookeeper component | true | Boolean
+| *camel.component.zookeeper.enabled* | Whether to enable auto configuration of the zookeeper component. This is enabled by default. |  | Boolean
 | *camel.component.zookeeper.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.zookeeper.service-registry.attributes* | Custom service attributes. |  | Map
 | *camel.component.zookeeper.service-registry.auth-info-list* |  |  | List

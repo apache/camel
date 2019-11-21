@@ -204,7 +204,7 @@ The component supports 59 options, which are listed below.
 | *camel.component.servicenow.configuration.time-format* | The time format used for Json serialization/deserialization | HH:mm:ss | String
 | *camel.component.servicenow.configuration.top-level-only* | Gets only those categories whose parent is a catalog. |  | Boolean
 | *camel.component.servicenow.configuration.user-name* | ServiceNow user account name, MUST be provided |  | String
-| *camel.component.servicenow.enabled* | Enable servicenow component | true | Boolean
+| *camel.component.servicenow.enabled* | Whether to enable auto configuration of the servicenow component. This is enabled by default. |  | Boolean
 | *camel.component.servicenow.instance-name* | The ServiceNow instance name |  | String
 | *camel.component.servicenow.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.servicenow.oauth-client-id* | OAuth2 ClientID |  | String
