@@ -44,7 +44,7 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, Seque
                     SequenceFile.Writer.replication(endpointConfig.getReplication()),
                     SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
                     SequenceFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    SequenceFile.Writer.progressable(() -> {}),
+                    SequenceFile.Writer.progressable(() -> { }),
                     SequenceFile.Writer.metadata(new SequenceFile.Metadata())
             );
             return rout;
