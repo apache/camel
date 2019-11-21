@@ -42,12 +42,14 @@ public class ActiveMQComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * Sets the broker URL to use to connect to ActiveMQ using the ActiveMQ URI
-     * format
+     * Sets the broker URL to use to connect to ActiveMQ
      */
     private String brokerURL;
     /**
-     * Define if all packages are trusted or not
+     * Define if all Java packages are trusted or not (for Java object JMS
+     * message types). Notice its not recommended practice to send Java
+     * serialized objects over network. Setting this to true can expose security
+     * risks, so use this with care.
      */
     private Boolean trustAllPackages = false;
     /**
@@ -62,7 +64,7 @@ public class ActiveMQComponentConfiguration
      * consuming thread, pooling will be used rather than the default with the
      * Spring JmsTemplate which will create a new connection, session, producer
      * for each message then close them all down again. The default value is
-     * true. Note that this requires an extra dependency on commons-pool2.
+     * true.
      */
     private Boolean usePooledConnection = false;
     /**

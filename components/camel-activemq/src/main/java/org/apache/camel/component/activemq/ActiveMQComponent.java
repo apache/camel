@@ -19,7 +19,6 @@ package org.apache.camel.component.activemq;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import javax.jms.Connection;
 
 import org.apache.activemq.EnhancedConnection;
@@ -29,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -45,13 +45,14 @@ import org.springframework.jms.core.JmsTemplate;
 @Component("activemq")
 public class ActiveMQComponent extends JmsComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQComponent.class);
-    private DestinationSource source;
-    private boolean exposeAllQueues;
-    private CamelEndpointLoader endpointLoader;
-    private EnhancedConnection connection;
+    private volatile DestinationSource source;
+    private volatile EnhancedConnection connection;
+    private volatile CamelEndpointLoader endpointLoader;
     private final CopyOnWriteArrayList<SingleConnectionFactory> singleConnectionFactoryList = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<Service> pooledConnectionFactoryServiceList = new CopyOnWriteArrayList<>();
-    
+    @Metadata(label = "advanced")
+    private boolean exposeAllQueues;
+
     public ActiveMQComponent() {
     }
     
@@ -92,9 +93,7 @@ public class ActiveMQComponent extends JmsComponent {
     }
 
     /**
-     * Sets the broker URL to use to connect to ActiveMQ using the
-     * <a href="http://activemq.apache.org/configuring-transports.html">ActiveMQ
-     * URI format</a>
+     * Sets the broker URL to use to connect to ActiveMQ
      */
     public void setBrokerURL(String brokerURL) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
@@ -103,7 +102,9 @@ public class ActiveMQComponent extends JmsComponent {
     }
 
     /**
-     * Define if all packages are trusted or not
+     * Define if all Java packages are trusted or not (for Java object JMS message types).
+     * Notice its not recommended practice to send Java serialized objects over network.
+     * Setting this to true can expose security risks, so use this with care.
      */
     public void setTrustAllPackages(boolean trustAllPackages) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
@@ -131,8 +132,7 @@ public class ActiveMQComponent extends JmsComponent {
      * Spring {@link JmsTemplate} which will create a new connection, session,
      * producer for each message then close them all down again.
      * <p/>
-     * The default value is true. Note that this requires an extra dependency on
-     * commons-pool2.
+     * The default value is true.
      */
     public void setUsePooledConnection(boolean usePooledConnection) {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
