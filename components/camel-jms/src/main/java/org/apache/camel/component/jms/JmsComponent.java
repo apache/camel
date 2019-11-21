@@ -17,8 +17,8 @@
 package org.apache.camel.component.jms;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
@@ -31,9 +31,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
@@ -46,15 +43,14 @@ import org.springframework.util.ErrorHandler;
 import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
- * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
+ * JMS component which uses Spring JMS.
  */
 @Component("jms")
-public class JmsComponent extends HeaderFilterStrategyComponent implements ApplicationContextAware {
+public class JmsComponent extends HeaderFilterStrategyComponent {
 
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
 
     private ExecutorService asyncStartStopExecutorService;
-    private ApplicationContext applicationContext;
 
     @Metadata(label = "advanced", description = "To use a shared JMS configuration")
     private JmsConfiguration configuration;
@@ -65,14 +61,15 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     private MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsComponent() {
+        this.configuration = createConfiguration();
     }
 
     public JmsComponent(CamelContext context) {
         super(context);
+        this.configuration = createConfiguration();
     }
 
     public JmsComponent(JmsConfiguration configuration) {
-        this();
         this.configuration = configuration;
     }
 
@@ -133,29 +130,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     // -------------------------------------------------------------------------
 
     public JmsConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = createConfiguration();
-
-            // If we are being configured with spring...
-            if (applicationContext != null) {
-
-                if (isAllowAutoWiredConnectionFactory()) {
-                    Map<String, ConnectionFactory> beansOfTypeConnectionFactory = applicationContext.getBeansOfType(ConnectionFactory.class);
-                    if (!beansOfTypeConnectionFactory.isEmpty()) {
-                        ConnectionFactory cf = beansOfTypeConnectionFactory.values().iterator().next();
-                        configuration.setConnectionFactory(cf);
-                    }
-                }
-
-                if (isAllowAutoWiredDestinationResolver()) {
-                    Map<String, DestinationResolver> beansOfTypeDestinationResolver = applicationContext.getBeansOfType(DestinationResolver.class);
-                    if (!beansOfTypeDestinationResolver.isEmpty()) {
-                        DestinationResolver destinationResolver = beansOfTypeDestinationResolver.values().iterator().next();
-                        configuration.setDestinationResolver(destinationResolver);
-                    }
-                }
-            }
-        }
         return configuration;
     }
 
@@ -1055,14 +1029,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         getConfiguration().setAllowAdditionalHeaders(allowAdditionalHeaders);
     }
 
-    /**
-     * Sets the Spring ApplicationContext to use
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
     public QueueBrowseStrategy getQueueBrowseStrategy() {
         if (queueBrowseStrategy == null) {
             queueBrowseStrategy = new DefaultQueueBrowseStrategy();
@@ -1256,8 +1222,28 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
     @Override
     protected void doStart() throws Exception {
+        if (configuration.getConnectionFactory() == null && isAllowAutoWiredConnectionFactory()) {
+            Set<ConnectionFactory> beans = getCamelContext().getRegistry().findByType(ConnectionFactory.class);
+            if (beans.size() == 1) {
+                ConnectionFactory cf = beans.iterator().next();
+                configuration.setConnectionFactory(cf);
+            } else if (beans.size() > 1) {
+                log.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+            }
+        }
+
+        if (configuration.getDestinationResolver() == null && isAllowAutoWiredDestinationResolver()) {
+            Set<DestinationResolver> beans = getCamelContext().getRegistry().findByType(DestinationResolver.class);
+            if (beans.size() == 1) {
+                DestinationResolver destinationResolver = beans.iterator().next();
+                configuration.setDestinationResolver(destinationResolver);
+            } else if (beans.size() > 1) {
+                log.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+            }
+        }
+
         if (getHeaderFilterStrategy() == null) {
-            setHeaderFilterStrategy(new JmsHeaderFilterStrategy(getConfiguration().isIncludeAllJMSXProperties()));
+            setHeaderFilterStrategy(new JmsHeaderFilterStrategy(configuration.isIncludeAllJMSXProperties()));
         }
     }
 

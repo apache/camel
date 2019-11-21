@@ -17,11 +17,9 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * Component for integrate IOTA DLT
@@ -33,512 +31,9 @@ public interface IOTAEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the IOTA component.
-     */
-    public interface IOTAEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedIOTAEndpointConsumerBuilder advanced() {
-            return (AdvancedIOTAEndpointConsumerBuilder) this;
-        }
-        /**
-         * The depth determines how deep the tangle is analysed for getting
-         * Tips.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder depth(Integer depth) {
-            doSetProperty("depth", depth);
-            return this;
-        }
-        /**
-         * The depth determines how deep the tangle is analysed for getting
-         * Tips.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder depth(String depth) {
-            doSetProperty("depth", depth);
-            return this;
-        }
-        /**
-         * The minWeightMagnitude is the minimum number of zeroes that a
-         * proof-of-work output/transaction hash must end with to be considered
-         * valid by full nodes.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder minWeightMagnitude(
-                Integer minWeightMagnitude) {
-            doSetProperty("minWeightMagnitude", minWeightMagnitude);
-            return this;
-        }
-        /**
-         * The minWeightMagnitude is the minimum number of zeroes that a
-         * proof-of-work output/transaction hash must end with to be considered
-         * valid by full nodes.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder minWeightMagnitude(
-                String minWeightMagnitude) {
-            doSetProperty("minWeightMagnitude", minWeightMagnitude);
-            return this;
-        }
-        /**
-         * Supported operations are 'sendTransfer', 'getNewAddress'.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Address security level.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder securityLevel(Integer securityLevel) {
-            doSetProperty("securityLevel", securityLevel);
-            return this;
-        }
-        /**
-         * Address security level.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder securityLevel(String securityLevel) {
-            doSetProperty("securityLevel", securityLevel);
-            return this;
-        }
-        /**
-         * TAG.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder tag(String tag) {
-            doSetProperty("tag", tag);
-            return this;
-        }
-        /**
-         * Node url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder url(String url) {
-            doSetProperty("url", url);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default IOTAEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default IOTAEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the IOTA component.
-     */
-    public interface AdvancedIOTAEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default IOTAEndpointConsumerBuilder basic() {
-            return (IOTAEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the IOTA component.
-     */
-    public interface IOTAEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedIOTAEndpointProducerBuilder advanced() {
-            return (AdvancedIOTAEndpointProducerBuilder) this;
-        }
-        /**
-         * The depth determines how deep the tangle is analysed for getting
-         * Tips.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder depth(Integer depth) {
-            doSetProperty("depth", depth);
-            return this;
-        }
-        /**
-         * The depth determines how deep the tangle is analysed for getting
-         * Tips.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder depth(String depth) {
-            doSetProperty("depth", depth);
-            return this;
-        }
-        /**
-         * The minWeightMagnitude is the minimum number of zeroes that a
-         * proof-of-work output/transaction hash must end with to be considered
-         * valid by full nodes.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder minWeightMagnitude(
-                Integer minWeightMagnitude) {
-            doSetProperty("minWeightMagnitude", minWeightMagnitude);
-            return this;
-        }
-        /**
-         * The minWeightMagnitude is the minimum number of zeroes that a
-         * proof-of-work output/transaction hash must end with to be considered
-         * valid by full nodes.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder minWeightMagnitude(
-                String minWeightMagnitude) {
-            doSetProperty("minWeightMagnitude", minWeightMagnitude);
-            return this;
-        }
-        /**
-         * Supported operations are 'sendTransfer', 'getNewAddress'.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder operation(String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Address security level.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder securityLevel(Integer securityLevel) {
-            doSetProperty("securityLevel", securityLevel);
-            return this;
-        }
-        /**
-         * Address security level.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder securityLevel(String securityLevel) {
-            doSetProperty("securityLevel", securityLevel);
-            return this;
-        }
-        /**
-         * TAG.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder tag(String tag) {
-            doSetProperty("tag", tag);
-            return this;
-        }
-        /**
-         * Node url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder url(String url) {
-            doSetProperty("url", url);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default IOTAEndpointProducerBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default IOTAEndpointProducerBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the IOTA component.
-     */
-    public interface AdvancedIOTAEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default IOTAEndpointProducerBuilder basic() {
-            return (IOTAEndpointProducerBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedIOTAEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
      * Builder for endpoint for the IOTA component.
      */
-    public interface IOTAEndpointBuilder
-            extends
-                IOTAEndpointConsumerBuilder, IOTAEndpointProducerBuilder {
+    public interface IOTAEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedIOTAEndpointBuilder advanced() {
             return (AdvancedIOTAEndpointBuilder) this;
         }
@@ -548,7 +43,7 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default IOTAEndpointBuilder depth(Integer depth) {
             doSetProperty("depth", depth);
@@ -561,10 +56,48 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Group: common
+         * Group: producer
          */
         default IOTAEndpointBuilder depth(String depth) {
             doSetProperty("depth", depth);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IOTAEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IOTAEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -574,7 +107,7 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default IOTAEndpointBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
@@ -589,21 +122,46 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Group: common
+         * Group: producer
          */
         default IOTAEndpointBuilder minWeightMagnitude(String minWeightMagnitude) {
             doSetProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
         /**
-         * Supported operations are 'sendTransfer', 'getNewAddress'.
+         * Which operation to perform, one of: sendTransfer, getNewAddress,
+         * getTransfers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Required: true
+         * Group: producer
          */
         default IOTAEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * TAG.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default IOTAEndpointBuilder tag(String tag) {
+            doSetProperty("tag", tag);
+            return this;
+        }
+        /**
+         * Node url.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
+         */
+        default IOTAEndpointBuilder url(String url) {
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -611,7 +169,7 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: common
+         * Group: security
          */
         default IOTAEndpointBuilder securityLevel(Integer securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -623,32 +181,10 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Group: common
+         * Group: security
          */
         default IOTAEndpointBuilder securityLevel(String securityLevel) {
             doSetProperty("securityLevel", securityLevel);
-            return this;
-        }
-        /**
-         * TAG.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointBuilder tag(String tag) {
-            doSetProperty("tag", tag);
-            return this;
-        }
-        /**
-         * Node url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointBuilder url(String url) {
-            doSetProperty("url", url);
             return this;
         }
     }
@@ -658,7 +194,7 @@ public interface IOTAEndpointBuilderFactory {
      */
     public interface AdvancedIOTAEndpointBuilder
             extends
-                AdvancedIOTAEndpointConsumerBuilder, AdvancedIOTAEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default IOTAEndpointBuilder basic() {
             return (IOTAEndpointBuilder) this;
         }
@@ -717,7 +253,7 @@ public interface IOTAEndpointBuilderFactory {
      * IOTA (camel-iota)
      * Component for integrate IOTA DLT
      * 
-     * Category: dlt
+     * Category: ledger
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-iota
      * 

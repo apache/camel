@@ -83,6 +83,8 @@ public class HdfsConfiguration {
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     @UriParam(defaultValue = "true")
     private boolean connectOnStartup = true;
+    @UriParam(label = "consumer,filter", defaultValue = "" + HdfsConstants.DEFAULT_MAX_MESSAGES_PER_POLL)
+    private int maxMessagesPerPoll = HdfsConstants.DEFAULT_MAX_MESSAGES_PER_POLL;
     @UriParam
     private String owner;
 
@@ -536,6 +538,21 @@ public class HdfsConfiguration {
      */
     public void setConnectOnStartup(boolean connectOnStartup) {
         this.connectOnStartup = connectOnStartup;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    /**
+     * To define a maximum messages to gather per poll.
+     * By default a limit of 100 is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files.
+     * Values can only be greater than 0.
+     * Notice: If this option is in use then the limit will be applied on the valid files.
+     * For example if you have 100000 files and use maxMessagesPerPoll=500, then only the first 500 files will be picked up.
+     */
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
     public String getOwner() {

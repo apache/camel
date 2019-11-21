@@ -63,6 +63,9 @@ public class CamelSpringBootApplicationController {
                 }
             }
         };
+        // turn off route collector on main as camel-spring-boot has already discovered the routes
+        // and here we just use the main as implementation detail (to keep the jvm running)
+        this.main.configure().setRoutesCollectorEnabled(false);
     }
 
     public CountDownLatch getLatch() {

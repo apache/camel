@@ -277,6 +277,7 @@
 * xref:pdf-component.adoc[PDF Component]
 * xref:pg-replication-slot-component.adoc[PostgresSQL Replication Slot Component]
 * xref:pgevent-component.adoc[PostgresSQL Event Component]
+* xref:platform-http.adoc[Platform HTTP]
 * xref:lpr-component.adoc[Printer Component]
 * xref:protobuf-dataformat.adoc[Protobuf DataFormat]
 * xref:pubnub-component.adoc[PubNub Component]

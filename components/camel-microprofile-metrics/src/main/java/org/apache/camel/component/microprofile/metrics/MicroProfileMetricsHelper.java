@@ -28,6 +28,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.eclipse.microprofile.metrics.Metric;
+import org.eclipse.microprofile.metrics.MetricFilter;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
@@ -111,6 +112,12 @@ public final class MicroProfileMetricsHelper {
         }
 
         return metricRegistry;
+    }
+
+    public static synchronized void removeMetricsFromRegistry(MetricRegistry metricRegistry, MetricFilter filter) {
+        if (metricRegistry != null) {
+            metricRegistry.removeMatching(filter);
+        }
     }
 
     private static boolean metricTypeMatches(Metric metric, Class<? extends Metric> metricType) {

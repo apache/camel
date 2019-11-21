@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.microprofile.metrics.event.notifier.context;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.event.notifier.AbstractMicroProfileMetricsEventNotifier;
 import org.apache.camel.component.microprofile.metrics.gauge.LambdaGauge;
 import org.apache.camel.spi.CamelEvent;
@@ -30,6 +33,7 @@ import org.eclipse.microprofile.metrics.Tag;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_STATUS_DESCRIPTION;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_STATUS_DISPLAY_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_UPTIME_DESCRIPTION;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_UPTIME_DISPLAY_NAME;
 
@@ -77,5 +81,21 @@ public class MicroProfileMetricsCamelContextEventNotifier extends AbstractMicroP
             .withType(MetricType.GAUGE)
             .build();
         metricRegistry.register(statusMetadata, new LambdaGauge(() -> camelContext.getStatus().ordinal()), tags);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        MicroProfileMetricsHelper.removeMetricsFromRegistry(getMetricRegistry(), (metricID, metric) -> {
+            String name = metricID.getName();
+            Map<String, String> tags = metricID.getTags();
+            if (name.equals(namingStrategy.getCamelContextStatusName()) || name.equals(namingStrategy.getCamelContextUptimeName())) {
+                if (tags.containsKey(CAMEL_CONTEXT_TAG)) {
+                    return tags.get(CAMEL_CONTEXT_TAG).equals(getCamelContext().getName());
+                }
+            }
+            return false;
+        });
     }
 }

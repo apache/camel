@@ -78,6 +78,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private boolean deleteOutputFile;
     @UriParam(label = "advanced")
     private EntityResolver entityResolver;
+    @UriParam(label = "advanced")
+    private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
 
     public XsltEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -288,6 +290,18 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.parameters = parameters;
     }
 
+    public TransformerFactoryConfigurationStrategy getTransformerFactoryConfigurationStrategy() {
+        return transformerFactoryConfigurationStrategy;
+    }
+
+    /**
+     * A configuration strategy to apply on freshly created instances of TransformerFactory.
+     */
+    public void setTransformerFactoryConfigurationStrategy(
+            TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
+        this.transformerFactoryConfigurationStrategy = transformerFactoryConfigurationStrategy;
+    }
+
     /**
      * Loads the resource.
      *
@@ -326,11 +340,23 @@ public class XsltEndpoint extends ProcessorEndpoint {
         final XsltBuilder xslt = injector.newInstance(XsltBuilder.class);
 
         TransformerFactory factory = transformerFactory;
-        if (factory == null && transformerFactoryClass != null) {
-            // provide the class loader of this component to work in OSGi environments
-            Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(transformerFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
-            log.debug("Using TransformerFactoryClass {}", factoryClass);
-            factory = injector.newInstance(factoryClass);
+        if (factory == null) {
+            final String trFactoryClass = transformerFactoryClass != null
+                    ? transformerFactoryClass
+                    : ((XsltComponent) getComponent()).getTransformerFactoryClass();
+            if (trFactoryClass != null) {
+                // provide the class loader of this component to work in OSGi environments
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(trFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
+                log.debug("Using TransformerFactoryClass {}", factoryClass);
+                factory = injector.newInstance(factoryClass);
+
+                final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
+                        ? transformerFactoryConfigurationStrategy
+                        : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
+                if (tfConfigStrategy != null) {
+                    tfConfigStrategy.configure(factory, this);
+                }
+            }
         }
 
         if (factory != null) {

@@ -53,7 +53,7 @@ import static org.awaitility.Awaitility.await;
         "camel.supervising.controller.default-back-off.max-attempts = 10",
         "camel.supervising.controller.routes.bar.back-off.delay = 10s",
         "camel.supervising.controller.routes.bar.back-off.max-attempts = 3",
-        "camel.supervising.controller.routes.timer-unmanaged.supervise = false"
+        "camel.supervising.controller.routes.scheduler-unmanaged.supervise = false"
     }
 )
 public class SupervisingRouteControllerRestartTest {
@@ -75,6 +75,8 @@ public class SupervisingRouteControllerRestartTest {
             Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
             Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("dummy"));
         });
+
+        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("scheduler-unmanaged"));
 
         // restart the dummy route which should fail on first attempt
         controller.stopRoute("dummy");
@@ -98,6 +100,8 @@ public class SupervisingRouteControllerRestartTest {
             Assert.assertNotNull(context.getRoute("dummy").getRouteContext().getRouteController());
             Assert.assertFalse(controller.getBackOffContext("dummy").isPresent());
         });
+
+        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("scheduler-unmanaged"));
     }
 
     // *************************************
@@ -122,9 +126,9 @@ public class SupervisingRouteControllerRestartTest {
                         .id("bar")
                         .startupOrder(1)
                         .to("mock:bar");
-                    from("timer:unmanaged?period=5s")
-                        .id("timer-unmanaged")
-                        .to("mock:timer-unmanaged");
+                    from("scheduler:unmanaged?initialDelay=5s")
+                        .id("scheduler-unmanaged")
+                        .to("mock:scheduler-unmanaged");
                     from("timer:no-autostartup?period=5s")
                         .id("timer-no-autostartup")
                         .autoStartup(false)
