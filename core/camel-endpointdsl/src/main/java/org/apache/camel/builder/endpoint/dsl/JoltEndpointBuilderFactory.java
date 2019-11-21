@@ -265,7 +265,7 @@ public interface JoltEndpointBuilderFactory {
      * specification (such as JSON-JSON transformation).
      * 
      * Category: transformation
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
      * 
      * Syntax: <code>jolt:resourceUri</code>

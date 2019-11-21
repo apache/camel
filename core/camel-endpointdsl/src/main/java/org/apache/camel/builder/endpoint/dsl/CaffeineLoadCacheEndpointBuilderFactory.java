@@ -843,7 +843,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
      * Load Cache.
      * 
      * Category: cache,datagrid,clustering
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
      * 
      * Syntax: <code>caffeine-loadcache:cacheName</code>

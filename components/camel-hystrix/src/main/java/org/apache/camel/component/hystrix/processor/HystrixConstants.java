@@ -19,11 +19,4 @@ package org.apache.camel.component.hystrix.processor;
 public interface HystrixConstants {
     String DEFAULT_HYSTRIX_CONFIGURATION_ID = "hystrix-configuration";
 
-    // Hystrix EIP response properties
-    String HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION = "CamelHystrixSuccessfulExecution";
-    String HYSTRIX_RESPONSE_FROM_FALLBACK = "CamelHystrixResponseFromFallback";
-    String HYSTRIX_RESPONSE_SHORT_CIRCUITED = "CamelHystrixResponseShortCircuited";
-    String HYSTRIX_RESPONSE_TIMED_OUT = "CamelHystrixResponseTimedOut";
-    String HYSTRIX_RESPONSE_REJECTED = "CamelHystrixResponseRejected";
-
 }

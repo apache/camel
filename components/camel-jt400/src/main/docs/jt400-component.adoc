@@ -166,7 +166,7 @@ the data queue as either raw bytes or text.
 
 == Connection pool
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 You can explicit configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.

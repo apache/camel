@@ -4255,7 +4255,7 @@ public interface NettyHttpEndpointBuilderFactory {
      * Netty HTTP server and client using the Netty 4.x library.
      * 
      * Category: http
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
      * 
      * Syntax: <code>netty-http:protocol:host:port/path</code>

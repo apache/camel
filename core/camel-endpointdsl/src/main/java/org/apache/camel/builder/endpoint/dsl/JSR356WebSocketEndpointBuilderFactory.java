@@ -469,7 +469,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      * Camel WebSocket using JSR356 (javax)
      * 
      * Category: jsr356
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-websocket-jsr356
      * 
      * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>

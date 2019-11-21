@@ -42,7 +42,7 @@ public class S3ComponentContentLengthFileTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock client = new AmazonS3ClientMock();
-    
+
     @EndpointInject("direct:startKeep")
     ProducerTemplate templateKeep;
 
@@ -99,7 +99,7 @@ public class S3ComponentContentLengthFileTest extends CamelTestSupport {
 
         assertFileExists(testFile.getAbsolutePath());
     }
-    
+
     @Test
     public void sendFileWithContentLength() throws Exception {
         result.expectedMessageCount(1);

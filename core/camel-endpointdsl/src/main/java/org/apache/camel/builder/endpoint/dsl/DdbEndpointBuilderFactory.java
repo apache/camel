@@ -407,7 +407,7 @@ public interface DdbEndpointBuilderFactory {
      * Amazon's DynamoDB service.
      * 
      * Category: cloud,database,nosql
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-aws-ddb
      * 
      * Syntax: <code>aws-ddb:tableName</code>

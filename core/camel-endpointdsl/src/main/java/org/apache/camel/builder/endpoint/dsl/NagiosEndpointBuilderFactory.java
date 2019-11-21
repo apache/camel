@@ -302,7 +302,7 @@ public interface NagiosEndpointBuilderFactory {
      * To send passive checks to Nagios using JSendNSCA.
      * 
      * Category: monitoring
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-nagios
      * 
      * Syntax: <code>nagios:host:port</code>

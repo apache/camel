@@ -15,9 +15,6 @@ DSL in OSGi Blueprint XML files
 REST style in either Java or XML.
 * xref:bean-integration.adoc[Annotation DSL] - Use annotations in Java
 beans.
-* https://github.com/koolio/kool/tree/master/kool-camel[Kotlin DSL] -
-*Work in progress* - Currently developed outside ASF, but will we
-included later in Camel when Kotlin and the DSL is ready.
 
 The main entry points for the DSL are
 

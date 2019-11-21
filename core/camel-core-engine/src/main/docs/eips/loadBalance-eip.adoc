@@ -18,7 +18,6 @@ Camel provides the following policies out-of-the-box:
 | Weighted Round-Robin |The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to the others. In addition to the weight, endpoint selection is then further refined using *round-robin* distribution based on weight.
 | Weighted Random |The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others.In addition to the weight, endpoint selection is then further refined using *random* distribution based on weight.
 | Custom |The preferred way of using a custom Load Balancer is to use this policy, as the ref attribute is not supported anymore.
-| Circuit Breaker |Implements the Circuit Breaker pattern as described in "Release it!" book.
 |=======================================================================
 
 == Options
@@ -163,8 +162,6 @@ By also enabling `roundRobin` mode, then it will keep retrying until it success.
 
 == Weighted Round-Robin and Random Load Balancing
 
-*Available as of Camel 2.5*
-
 In many enterprise environments where server nodes of unequal processing power & performance characteristics are utilized to host services and processing endpoints, it is frequently necessary to distribute processing load based on their individual server capabilities so that some endpoints are not unfairly burdened with requests. Obviously simple round-robin or random load balancing do not alleviate problems of this nature. A Weighted Round-Robin and/or Weighted Random load balancer can be used to address this problem.
 The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others. You can specify this as a positive processing weight for each server. A larger number indicates that the server can handle a larger load. The weight is utilized to determine the payload distribution ratio to different processing endpoints with respect to others.
 
@@ -179,8 +176,6 @@ The parameters that can be used are
 |=======================================================================
 
 == Using Weighted round-robin & random load balancing
-
-*Available as of Camel 2.5*
 
 An example using Java DSL:
 [source,java]

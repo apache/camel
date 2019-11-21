@@ -824,7 +824,7 @@ public interface CMISEndpointBuilderFactory {
      * add/read nodes to/from a CMIS compliant content repositories.
      * 
      * Category: cms,database
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-cmis
      * 
      * Syntax: <code>cmis:cmsUrl</code>

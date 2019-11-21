@@ -16,9 +16,12 @@
  */
 package org.apache.camel.dataformat.protobuf;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.google.protobuf.Descriptors;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.EnumValueDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
@@ -28,20 +31,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class ProtobufConverter {
 
-    private final Message defaultInstance;
-
-    private ProtobufConverter(final Message defaultInstance) {
-        this.defaultInstance = defaultInstance;
+    private ProtobufConverter() {
     }
 
-    public static ProtobufConverter create(final Message defaultInstance) {
-        ObjectHelper.notNull(defaultInstance, "defaultInstance");
-
-        return new ProtobufConverter(defaultInstance);
-    }
-
-    public Message toProto(final Map<?, ?> inputData) {
+    public static Message toProto(final Map<?, ?> inputData, final Message defaultInstance) {
         ObjectHelper.notNull(inputData, "inputData");
+        ObjectHelper.notNull(defaultInstance, "defaultInstance");
 
         final Descriptor descriptor = defaultInstance.getDescriptorForType();
         final Builder target = defaultInstance.newBuilderForType();
@@ -49,7 +44,7 @@ public final class ProtobufConverter {
         return convertMapToMessage(descriptor, target, inputData);
     }
 
-    private Message convertMapToMessage(final Descriptor descriptor, final Builder builder, final Map<?, ?> inputData) {
+    private static Message convertMapToMessage(final Descriptor descriptor, final Builder builder, final Map<?, ?> inputData) {
         ObjectHelper.notNull(descriptor, "descriptor");
         ObjectHelper.notNull(builder, "builder");
         ObjectHelper.notNull(inputData, "inputData");
@@ -70,7 +65,7 @@ public final class ProtobufConverter {
         return builder.build();
     }
 
-    private Object getSuitableFieldValue(final FieldDescriptor fieldDescriptor, final Builder builder, final Object inputValue) {
+    private static Object getSuitableFieldValue(final FieldDescriptor fieldDescriptor, final Builder builder, final Object inputValue) {
         ObjectHelper.notNull(fieldDescriptor, "fieldDescriptor");
         ObjectHelper.notNull(builder, "builder");
         ObjectHelper.notNull(inputValue, "inputValue");
@@ -89,7 +84,7 @@ public final class ProtobufConverter {
         }
     }
 
-    private EnumValueDescriptor getEnumValue(final FieldDescriptor fieldDescriptor, final Object value) {
+    private static EnumValueDescriptor getEnumValue(final FieldDescriptor fieldDescriptor, final Object value) {
         final EnumValueDescriptor enumValueDescriptor = getSuitableEnumValue(fieldDescriptor, value);
 
         if (enumValueDescriptor == null) {
@@ -100,7 +95,7 @@ public final class ProtobufConverter {
         return enumValueDescriptor;
     }
 
-    private EnumValueDescriptor getSuitableEnumValue(final FieldDescriptor fieldDescriptor, final Object value) {
+    private static EnumValueDescriptor getSuitableEnumValue(final FieldDescriptor fieldDescriptor, final Object value) {
         // we check if value is string, we find index by name, otherwise by integer
         if (value instanceof String) {
             return fieldDescriptor.getEnumType().findValueByName((String) value);
@@ -108,6 +103,53 @@ public final class ProtobufConverter {
             final int index = castValue(value, Integer.class, String.format("Not able to cast value to integer, make sure you have an integer index for the enum field '%s'", fieldDescriptor.getName()));
             return fieldDescriptor.getEnumType().findValueByNumber(index);
         }
+    }
+
+    public static Map<String, Object> toMap(final Message inputProto) {
+        return convertProtoMessageToMap(inputProto);
+    }
+
+    private static Map<String, Object> convertProtoMessageToMap(final Message inputData) {
+        ObjectHelper.notNull(inputData, "inputData");
+
+        final Map<Descriptors.FieldDescriptor, Object> allFields = inputData.getAllFields();
+
+        final Map<String, Object> mapResult = new LinkedHashMap<>();
+
+        // we set our values from descriptors to map
+        allFields.forEach((fieldDescriptor, value) -> {
+            final String fieldName = fieldDescriptor.getName();
+            if (fieldDescriptor.isRepeated()) {
+                final List<?> repeatedValues = castValue(value, List.class, String.format("Not able to cast value to list, make sure you have a list for the repeated field '%s'", fieldName));
+                mapResult.put(fieldName, repeatedValues.stream().map(singleValue -> convertValueToSuitableFieldType(singleValue, fieldDescriptor)).collect(Collectors.toList()));
+            } else {
+                mapResult.put(fieldName, convertValueToSuitableFieldType(value, fieldDescriptor));
+            }
+        });
+
+        return mapResult;
+    }
+
+    private static Object convertValueToSuitableFieldType(final Object value, final Descriptors.FieldDescriptor fieldDescriptor) {
+        ObjectHelper.notNull(fieldDescriptor, "fieldDescriptor");
+        ObjectHelper.notNull(value, "value");
+
+        Object result;
+
+        switch (fieldDescriptor.getJavaType()) {
+        case ENUM:
+        case BYTE_STRING:
+            result = value.toString();
+            break;
+        case MESSAGE:
+            result = convertProtoMessageToMap((Message)value);
+            break;
+        default:
+            result = value;
+            break;
+        }
+
+        return result;
     }
 
     private static <T> T castValue(final Object value, final Class<T> type, final String errorMessage) {

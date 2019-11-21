@@ -1,7 +1,7 @@
 [[Debugger-Debugger]]
 = Debugger
 
-*Available as of Camel 2.6*
+*Since Camel 2.6*
 
 Camel Debugger is much related to
 Tracer, in fact they are sisters. Debugger is a

@@ -114,7 +114,6 @@ from("jms:queue:foo")
 Notice this is *only* possible in the `batch` mode of the Resequencer.
 
 == Ignore invalid exchanges
-*Available as of Camel 2.9*
 
 The Resequencer EIP throws a `CamelExchangeException` if the incoming Exchange is not valid for the resequencer - ie. the expression cannot be evaluated, such as a missing header.
 You can use the option `ignoreInvalidExchanges` to ignore these exceptions which means the Resequencer will then skip the invalid Exchange.
@@ -131,7 +130,6 @@ from("direct:start")
 This option is available for both batch and stream resequencer.
 
 == Reject Old Exchanges
-*Available as of Camel 2.11*
 
 This option can be used to prevent out of order messages from being sent regardless of the event that delivered messages downstream (capacity, timeout, etc). If enabled using `rejectOld()`, the Resequencer will throw a `MessageRejectedException` when an incoming Exchange is "older" (based on the Comparator) than the last delivered message. This provides an extra level of control with regards to delayed message ordering.
 

@@ -23,7 +23,12 @@ import java.util.Map;
 import com.mongodb.client.MongoIterable;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 
 public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
 
@@ -31,7 +36,7 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
     @Test
     public void testAggregate() throws Exception {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         // result sorted by _id
@@ -40,46 +45,46 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
                          "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}},"
                          + "{ $group: { _id: \"$scientist\", count: { $sum: 1 }} },{ $sort : { _id : 1}} ]");
         
-        assertTrue("Result is not of type List", result instanceof List);
+        assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
         List<Document> resultList = (List<Document>) result;
         assertListSize("Result does not contain 2 elements", resultList, 2);
 
-        assertEquals("First result Document._id should be Darwin", "Darwin", resultList.get(0).get("_id"));
-        assertEquals("First result Document.count should be 100", 100, resultList.get(0).get("count"));
-        assertEquals("Second result Document._id should be Einstein", "Einstein", resultList.get(1).get("_id"));
-        assertEquals("Second result Document.count should be 100", 100, resultList.get(1).get("count"));
+        assertEquals("Darwin", resultList.get(0).get("_id"), "First result Document._id should be Darwin");
+        assertEquals(100, resultList.get(0).get("count"), "First result Document.count should be 100");
+        assertEquals("Einstein", resultList.get(1).get("_id"), "Second result Document._id should be Einstein");
+        assertEquals(100, resultList.get(1).get("count"), "Second result Document.count should be 100");
     }
     
     @Test
     public void testAggregateDBCursor() {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         Object result = template
                 .requestBody("direct:aggregateDBCursor",
                         "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]");
         
-        assertTrue("Result is not of type DBCursor", result instanceof MongoIterable);
+        assertTrue(result instanceof MongoIterable, "Result is not of type DBCursor");
 
         MongoIterable<Document> resultCursor = (MongoIterable<Document>) result;
         // Ensure that all returned documents contain all fields
         int count = 0;
         for (Document document : resultCursor) {
-            assertNotNull("Document in returned list should contain all fields", document.get("_id"));
-            assertNotNull("Document in returned list should contain all fields", document.get("scientist"));
-            assertNotNull("Document in returned list should contain all fields", document.get("fixedField"));
+            assertNotNull(document.get("_id"), "Document in returned list should contain all fields");
+            assertNotNull(document.get("scientist"), "Document in returned list should contain all fields");
+            assertNotNull(document.get("fixedField"), "Document in returned list should contain all fields");
             count++;
         }
-        assertEquals("Result does not contain 200 elements", 200, count);
+        assertEquals(200, count, "Result does not contain 200 elements");
     }
 
     @Test
     public void testAggregateWithOptions() {
         // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.count());
+        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         Map<String, Object> options = new HashMap<>();
@@ -90,19 +95,19 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
                 .requestBodyAndHeaders("direct:aggregateDBCursor",
                         "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]", options);
 
-        assertTrue("Result is not of type DBCursor", result instanceof MongoIterable);
+        assertTrue(result instanceof MongoIterable, "Result is not of type DBCursor");
 
         MongoIterable<Document> resultCursor = (MongoIterable<Document>) result;
 
         // Ensure that all returned documents contain all fields
         int count = 0;
         for (Document document : resultCursor) {
-            assertNotNull("Document in returned list should contain all fields", document.get("_id"));
-            assertNotNull("Document in returned list should contain all fields", document.get("scientist"));
-            assertNotNull("Document in returned list should contain all fields", document.get("fixedField"));
+            assertNotNull(document.get("_id"), "Document in returned list should contain all fields");
+            assertNotNull(document.get("scientist"), "Document in returned list should contain all fields");
+            assertNotNull(document.get("fixedField"), "Document in returned list should contain all fields");
             count++;
         }
-        assertEquals("Result does not contain 200 elements", 200, count);
+        assertEquals(200, count, "Result does not contain 200 elements");
     }
 
 

@@ -120,8 +120,6 @@ The sample below demonstrates the delay in Spring DSL:
 
 == Asynchronous delaying
 
-*Available as of Camel 2.4*
-
 You can let the Delayer use non blocking asynchronous delaying, which means Camel will use a scheduler to schedule a task to be executed in the future. The task will then continue routing. This allows the caller thread to not block and be able to service other messages etc.
 
 === From Java DSL

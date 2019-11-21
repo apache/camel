@@ -124,7 +124,7 @@ most settings apply here as well
 
 === Using SOAP 1.2
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ And in the Camel route
 
 == Multi-part Messages
 
-*Available as of Camel 2.8.1*
+*Since Camel 2.8.1*
 
 Multi-part SOAP messages are supported by the ServiceInterfaceStrategy.
 The ServiceInterfaceStrategy must be initialized with a service

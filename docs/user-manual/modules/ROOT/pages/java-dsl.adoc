@@ -87,7 +87,7 @@ endpoints together.
 [[JavaDSL-URIStringformatting]]
 == URI String formatting
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 If you have endpoint URIs that accept options and you want to be able to
 substitute the value, e.g. build the URI by concat the strings together,

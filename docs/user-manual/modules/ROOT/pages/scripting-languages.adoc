@@ -73,7 +73,7 @@ languages with explicit DSL support.
 [[ScriptingLanguages-AdditionalargumentstoScriptingEngine]]
 == Additional arguments to ScriptingEngine
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 You can provide additional arguments to the `ScriptingEngine` using a
 header on the Camel message with the key `CamelScriptArguments`. 
@@ -82,7 +82,7 @@ See this example:
 [[ScriptingLanguages-Usingpropertiesfunction]]
 == Using properties function
 
-*Available as of Camel 2.9*
+*Since Camel 2.9*
 
 If you need to use the xref:components::properties-component.adoc[Properties] component from a
 script to lookup property placeholders, then its a bit cumbersome to do
@@ -105,7 +105,7 @@ same example is simpler:
 [[ScriptingLanguages-Loadingscriptfromexternalresource]]
 == Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -120,7 +120,7 @@ eg to refer to a file on the classpath you can do:
 [[ScriptingLanguages-Howtogettheresultfrommultiplestatementsscript]]
 == How to get the result from multiple statements script
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 As the scripteengine evale method just return a Null if it runs a
 multiple statments script. Camel now look up the value of script result

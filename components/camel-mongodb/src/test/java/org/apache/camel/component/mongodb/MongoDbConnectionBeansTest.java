@@ -18,7 +18,12 @@ package org.apache.camel.component.mongodb;
 
 import com.mongodb.MongoClient;
 import org.apache.camel.Endpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
 
@@ -50,11 +55,12 @@ public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
         assertEquals(myDbS, testEndpoint.getMongoConnection());
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void checkMissingConnection() {
-        MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb:anythingNotRelated?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
-                MongoDbEndpoint.class);
+        assertThrows(Exception.class, () -> {
+            MongoDbEndpoint testEndpoint = context
+                .getEndpoint("mongodb:anythingNotRelated?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true", MongoDbEndpoint.class);
+        });
     }
 
     @Test

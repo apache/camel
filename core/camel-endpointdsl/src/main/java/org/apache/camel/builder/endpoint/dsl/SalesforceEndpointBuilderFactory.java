@@ -2677,7 +2677,7 @@ public interface SalesforceEndpointBuilderFactory {
      * Salesforce API.
      * 
      * Category: api,cloud,crm
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
      * 
      * Syntax: <code>salesforce:operationName:topicName</code>

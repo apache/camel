@@ -297,7 +297,7 @@ public interface PrinterEndpointBuilderFactory {
      * jobs.
      * 
      * Category: printing
-     * Available as of version: 2.1
+     * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-printer
      * 
      * Syntax: <code>lpr:hostname:port/printername</code>

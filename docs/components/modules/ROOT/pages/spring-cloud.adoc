@@ -2,7 +2,7 @@
 = Spring Cloud
 :page-source: components/camel-spring-cloud/src/main/docs/spring-cloud.adoc
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 Spring Cloud component
 
@@ -25,7 +25,7 @@ automatically auto-configure Camel for you.
 [[SpringCloud-CamelSpringCloudStarter]]
 == Camel Spring Cloud Starter
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 To use the starter, add the following to your spring boot pom.xml file:
 

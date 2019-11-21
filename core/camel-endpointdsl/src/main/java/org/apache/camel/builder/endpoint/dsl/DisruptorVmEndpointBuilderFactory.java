@@ -722,7 +722,7 @@ public interface DisruptorVmEndpointBuilderFactory {
      * Disruptor.
      * 
      * Category: endpoint
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
      * 
      * Syntax: <code>disruptor-vm:name</code>

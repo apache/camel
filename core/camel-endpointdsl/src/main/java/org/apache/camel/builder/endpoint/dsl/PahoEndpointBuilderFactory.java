@@ -2648,7 +2648,7 @@ public interface PahoEndpointBuilderFactory {
      * MQTT Client.
      * 
      * Category: messaging,iot
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-paho
      * 
      * Syntax: <code>paho:topic</code>

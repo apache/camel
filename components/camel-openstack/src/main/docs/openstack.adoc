@@ -1,7 +1,7 @@
 [[Openstack-OpenstackComponent]]
 = Openstack Component
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 The Openstack component is a component for managing your
 https://www.openstack.org//[OpenStack] applications. 

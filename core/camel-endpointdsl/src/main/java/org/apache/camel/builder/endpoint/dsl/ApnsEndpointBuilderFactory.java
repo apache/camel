@@ -844,7 +844,7 @@ public interface ApnsEndpointBuilderFactory {
      * For sending notifications to Apple iOS devices.
      * 
      * Category: eventbus,mobile
-     * Available as of version: 2.8
+     * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-apns
      * 
      * Syntax: <code>apns:name</code>

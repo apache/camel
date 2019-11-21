@@ -635,7 +635,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
      * allows you to send and consume messages from an Ignite topic.
      * 
      * Category: nosql,cache,messaging
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-messaging:topic</code>

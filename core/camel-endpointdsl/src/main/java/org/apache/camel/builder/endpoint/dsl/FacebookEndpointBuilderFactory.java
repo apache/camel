@@ -5299,7 +5299,7 @@ public interface FacebookEndpointBuilderFactory {
      * accessible using Facebook4J.
      * 
      * Category: social
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-facebook
      * 
      * Syntax: <code>facebook:methodName</code>

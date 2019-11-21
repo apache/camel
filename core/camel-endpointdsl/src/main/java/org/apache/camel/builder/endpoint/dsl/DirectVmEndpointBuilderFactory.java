@@ -574,7 +574,7 @@ public interface DirectVmEndpointBuilderFactory {
      * endpoint from any CamelContext in the same JVM.
      * 
      * Category: core,endpoint
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-directvm
      * 
      * Syntax: <code>direct-vm:name</code>

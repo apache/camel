@@ -1,7 +1,7 @@
 [[Zipkin-ZipkinComponent]]
 = Zipkin Component
 
-*Available as of Camel 2.18*
+*Since Camel 2.18*
 
 The Camel Zipkin component is used for tracing and timing incoming and outgoing Camel messages using http://zipkin.io/[zipkin].
 

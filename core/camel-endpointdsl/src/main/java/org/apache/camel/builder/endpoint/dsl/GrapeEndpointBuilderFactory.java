@@ -144,7 +144,7 @@ public interface GrapeEndpointBuilderFactory {
      * when CamelContext is running.
      * 
      * Category: management,deployment
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-grape
      * 
      * Syntax: <code>grape:defaultCoordinates</code>

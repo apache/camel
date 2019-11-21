@@ -1221,7 +1221,7 @@ public interface EtcdEndpointBuilderFactory {
      * reliable key-value store.
      * 
      * Category: clustering,database
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-etcd
      * 
      * Syntax: <code>etcd:namespace/path</code>

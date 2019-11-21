@@ -601,7 +601,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
      * and Google Guava EventBus.
      * 
      * Category: eventbus
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-guava-eventbus
      * 
      * Syntax: <code>guava-eventbus:eventBusRef</code>

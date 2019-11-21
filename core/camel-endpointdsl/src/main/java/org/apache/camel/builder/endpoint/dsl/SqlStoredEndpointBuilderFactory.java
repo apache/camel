@@ -281,7 +281,7 @@ public interface SqlStoredEndpointBuilderFactory {
      * Procedure queries.
      * 
      * Category: database,sql
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-sql
      * 
      * Syntax: <code>sql-stored:template</code>

@@ -19,7 +19,11 @@ package org.apache.camel.component.mongodb;
 import com.mongodb.ReadPreference;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MongoDbReadPreferenceOptionTest extends AbstractMongoDbTest {
 
@@ -31,7 +35,7 @@ public class MongoDbReadPreferenceOptionTest extends AbstractMongoDbTest {
             createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=foo");
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException refe) {
-            assertTrue(refe.getMessage(), refe.getMessage().endsWith("Unknown parameters=[{readPreference=foo}]"));
+            assertTrue(refe.getMessage().endsWith("Unknown parameters=[{readPreference=foo}]"), refe.getMessage());
         }
     }
 

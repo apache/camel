@@ -1,7 +1,7 @@
 [[UsingOSGiblueprintwithCamel-UsingOSGiblueprintwithCamel]]
 = Using OSGi blueprint with Camel
 
-*Available as of Camel 2.4*
+*Since Camel 2.4*
 
 A custom XML namespace for Blueprint has been created to let you
 leverage the nice XML dialect. Given Blueprint custom namespaces are not

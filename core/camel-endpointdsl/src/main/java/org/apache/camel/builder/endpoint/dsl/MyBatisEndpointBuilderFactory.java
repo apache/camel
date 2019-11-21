@@ -1070,7 +1070,7 @@ public interface MyBatisEndpointBuilderFactory {
      * using MyBatis.
      * 
      * Category: database,sql
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-mybatis
      * 
      * Syntax: <code>mybatis:statement</code>

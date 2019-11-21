@@ -651,7 +651,7 @@ public interface HazelcastMapEndpointBuilderFactory {
      * The hazelcast-map component is used to access Hazelcast distributed map.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-map:cacheName</code>

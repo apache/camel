@@ -1476,7 +1476,7 @@ public interface TwitterSearchEndpointBuilderFactory {
      * The Twitter Search component consumes search results.
      * 
      * Category: api,social
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      * 
      * Syntax: <code>twitter-search:keywords</code>

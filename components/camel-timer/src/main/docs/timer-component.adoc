@@ -172,7 +172,7 @@ And the route in Spring DSL:
 
 == Firing as soon as possible
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 You may want to fire messages in a Camel route as soon as possible you
 can use a negative delay:
@@ -196,7 +196,7 @@ messages until the route will be stopped.
 
 == Firing only once
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 You may want to fire a message in a Camel route only once, such as when
 starting the route. To do that you use the repeatCount option as shown:

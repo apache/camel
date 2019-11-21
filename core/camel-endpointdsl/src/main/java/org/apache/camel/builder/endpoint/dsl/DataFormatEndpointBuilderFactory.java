@@ -149,7 +149,7 @@ public interface DataFormatEndpointBuilderFactory {
      * was a regular Component supporting Endpoints and URIs.
      * 
      * Category: core,transformation
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-dataformat
      * 
      * Syntax: <code>dataformat:name:operation</code>

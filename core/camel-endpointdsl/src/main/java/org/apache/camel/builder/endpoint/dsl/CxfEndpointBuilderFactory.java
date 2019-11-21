@@ -2146,7 +2146,7 @@ public interface CxfEndpointBuilderFactory {
      * The cxf component is used for SOAP WebServices using Apache CXF.
      * 
      * Category: soap,webservice
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-cxf
      * 
      * Syntax: <code>cxf:beanId:address</code>

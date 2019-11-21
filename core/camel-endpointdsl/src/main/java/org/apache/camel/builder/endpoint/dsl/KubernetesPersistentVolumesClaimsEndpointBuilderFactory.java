@@ -422,7 +422,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
      * execute kubernetes persistent volume claim operations.
      * 
      * Category: container,cloud,paas
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 
      * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>

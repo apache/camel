@@ -215,7 +215,7 @@ public interface StringTemplateEndpointBuilderFactory {
      * Transforms the message using a String template.
      * 
      * Category: transformation
-     * Available as of version: 1.2
+     * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
      * 
      * Syntax: <code>string-template:resourceUri</code>

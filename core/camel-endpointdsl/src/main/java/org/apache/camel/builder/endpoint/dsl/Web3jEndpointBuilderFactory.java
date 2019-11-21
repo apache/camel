@@ -1484,7 +1484,7 @@ public interface Web3jEndpointBuilderFactory {
      * nodes to/from a web3j compliant content repositories.
      * 
      * Category: bitcoin,blockchain
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
      * 
      * Syntax: <code>web3j:nodeAddress</code>

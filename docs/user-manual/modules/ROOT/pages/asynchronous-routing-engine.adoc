@@ -1,7 +1,7 @@
 [[AsynchronousRoutingEngine-AsynchronousRoutingEngine]]
 = Asynchronous Routing Engine
 
-*Available as of Camel 2.4*
+*Since Camel 2.4*
 
 As of Camel 2.4 the asynchronous routing engine is back and kicking. +
 All the xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] 

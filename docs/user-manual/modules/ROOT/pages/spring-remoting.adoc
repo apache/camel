@@ -112,7 +112,7 @@ serviceInterface.
 == Working with InOnly method calls
 
 As of 1.5 Camel supports the @InOnly and @Pattern annotations to let you
-specify which methods are not InOut (xref:requestReply-eip.adoc[Request
+specify which methods are not InOut (xref:request-reply.adoc[Request
 Reply]) but are InOnly (oneway or fire and forget
 xref:event-message.adoc[Event Message]).
 
@@ -342,7 +342,7 @@ public class Bar {
 [[SpringRemoting-Parameterbindingusingmethodoption]]
 === Parameter binding using method option
 
-*Available as of Camel 2.9*
+*Since Camel 2.9*
 
 Camel uses the following rules to determine if it's a parameter value in
 the method option
@@ -463,7 +463,7 @@ use `.to` instead as shown:
 [[SpringRemoting-Usingtypequalifierstoselectamongoverloadedmethods]]
 === Using type qualifiers to select among overloaded methods
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 If you have a xref:bean-eip.adoc[Bean] with overloaded methods, you can now
 specify parameter types in the method name so Camel can match the method

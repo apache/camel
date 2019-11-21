@@ -1,7 +1,7 @@
 [[ServicePool-ServicePool]]
 = Service Pool
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 Camel supports pluggable pools for services. At this time of write we
 have pools for:

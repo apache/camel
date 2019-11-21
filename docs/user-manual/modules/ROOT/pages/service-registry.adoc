@@ -1,7 +1,7 @@
 [[ServiceRegistry-ServiceRegistry]]
 = Service Registry
 
-*Available as of Camel 2.22*
+*Since Camel 2.22*
 
 [WARNING]
 ====

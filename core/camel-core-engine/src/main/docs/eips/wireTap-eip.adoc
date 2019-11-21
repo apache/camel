@@ -141,8 +141,6 @@ xref:exchange.adoc[Exchange]
 
 == Using Dynamic URIs
 
-*Available as of Camel 2.16:*
-
 For example to wire tap to a dynamic URI, then it supports the same
 dynamic URIs as documented in xref:message-endpoint.adoc[Message
 Endpoint]. For example to wire tap to a JMS queue where the header ID is
@@ -155,8 +153,6 @@ part of the queue name:
 ----
 
 == Sending a New exchange and Set Headers in DSL
-
-*Available as of Camel 2.8*
 
 If you send a new message using xref:wireTap-eip.adoc[Wire Tap], then you
 could only set the message body using an
@@ -203,8 +199,6 @@ The following example sends a new message which has
 ----
 
 == Using `onPrepare` to Execute Custom Logic when Preparing Messages
-
-*Available as of Camel 2.8*
 
 See details at xref:multicast-eip.adoc[Multicast]
 

@@ -87,6 +87,10 @@ from("direct:marshal")
 This dataformat supports marshaling input data either as protobuf `Message` type or `Map` data type. In case of input data as `Map` type, first it will try to retrieve the data as `Map` using built-in type converters, if it fails to
 do so, it will fall back to retrieve it as proto `Message`.
 
+== Output data type
+As mentioned above, you can define the content type format to choose from JSON or native to serialize/deserialize data from/to. In addition, you can also obtain the data as `Map` and let this component to do the heavy lifting to parse the
+data from proto `Message` to `Map`, you will just need to set the `contentTypeFormat` to *native* and explicitly define the data type `Map` when you obtain body of the exchange, e.g: `exchange.getMessage().getBody(Map.class)`.
+
 == Protobuf overview
 
 This quick overview of how to use Protobuf. For more detail see the

@@ -718,7 +718,7 @@ public interface IOTAEndpointBuilderFactory {
      * Component for integrate IOTA DLT
      * 
      * Category: dlt
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-iota
      * 
      * Syntax: <code>iota:name</code>

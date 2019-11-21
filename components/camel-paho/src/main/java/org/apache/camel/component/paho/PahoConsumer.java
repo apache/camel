@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -29,7 +28,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class PahoConsumer extends DefaultConsumer implements SuspendableService {
+public class PahoConsumer extends DefaultConsumer {
 
     private volatile MqttClient client;
     private volatile String clientId;
@@ -114,31 +113,16 @@ public class PahoConsumer extends DefaultConsumer implements SuspendableService 
 
         if (stopClient && client != null && client.isConnected()) {
             String topic = getEndpoint().getTopic();
-            log.debug("Un-unsubscribing client: {} from topic: {}", clientId, topic);
-            client.unsubscribe(topic);
-            log.debug("Connecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            // only unsubscribe if we are not durable
+            if (getEndpoint().getConfiguration().isCleanSession()) {
+                log.debug("Unsubscribing client: {} from topic: {}", clientId, topic);
+                client.unsubscribe(topic);
+            } else {
+                log.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
+            }
+            log.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
             client = null;
-        }
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        super.doSuspend();
-        if (client != null) {
-            String topic = getEndpoint().getTopic();
-            log.debug("Un-unsubscribing client: {} from topic: {}", clientId, topic);
-            client.unsubscribe(topic);
-        }
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        super.doResume();
-        if (client != null) {
-            String topic = getEndpoint().getTopic();
-            log.debug("Subscribing client: {} to topic: {}", clientId, topic);
-            client.subscribe(topic, getEndpoint().getConfiguration().getQos());
         }
     }
 

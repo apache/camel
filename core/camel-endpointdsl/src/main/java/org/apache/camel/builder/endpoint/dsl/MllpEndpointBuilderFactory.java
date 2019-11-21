@@ -1613,7 +1613,7 @@ public interface MllpEndpointBuilderFactory {
      * with other systems using the MLLP protocol.
      * 
      * Category: mllp
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
      * 
      * Syntax: <code>mllp:hostname:port</code>

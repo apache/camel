@@ -874,7 +874,7 @@ public interface StubEndpointBuilderFactory {
      * endpoints while in development or testing.
      * 
      * Category: core,testing
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-stub
      * 
      * Syntax: <code>stub:name</code>

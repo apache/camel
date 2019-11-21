@@ -193,7 +193,7 @@ public interface MicrometerEndpointBuilderFactory {
      * Micrometer library.
      * 
      * Category: monitoring
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-micrometer
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>

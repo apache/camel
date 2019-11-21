@@ -288,6 +288,7 @@
 * xref:reactive-streams-component.adoc[Reactive Streams Component]
 * xref:reactor.adoc[Reactor Component]
 * xref:ref-component.adoc[Ref Component]
+* xref:resilience4j.adoc[Resilience4j Component]
 * xref:rest-swagger-component.adoc[REST Swagger Component]
 * xref:rest-api-component.adoc[REST API Component]
 * xref:rest-component.adoc[REST Component]

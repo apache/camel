@@ -1,7 +1,7 @@
 [[ThreadingModel-ThreadingModel]]
 = Threading Model
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 The threading model in Camel is based on leveraging the JDK concurrency
 API which provides thread pools, named `ExecutorService`.
@@ -102,7 +102,7 @@ them in JConsole under the `threadpools` category.
 [[ThreadingModel-ExecutorServiceStrategy]]
 == ExecutorServiceStrategy
 
-*Available as of Camel 2.3 to 2.8.x* +
+*Since Camel 2.3 to 2.8.x* +
  Camel provides a pluggable strategy to hook in your own thread pool
 provider, for example from a WorkManager in a J2EE server etc. +
  See the `org.apache.camel.spi.ExecutorServiceStrategy` interface which
@@ -118,7 +118,7 @@ getter/setter.
 [[ThreadingModel-ExecutorServiceManager]]
 == ExecutorServiceManager
 
-*Available as of Camel 2.9*
+*Since Camel 2.9*
 
 In camel 2.9.0 the `ExecutorServiceManager` replaces the
 `ExecutorServiceStrategy`. It is renamed to manager as is not only

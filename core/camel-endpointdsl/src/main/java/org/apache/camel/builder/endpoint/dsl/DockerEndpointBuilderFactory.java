@@ -1264,7 +1264,7 @@ public interface DockerEndpointBuilderFactory {
      * The docker component is used for managing Docker containers.
      * 
      * Category: container,cloud,paas
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
      * 
      * Syntax: <code>docker:operation</code>

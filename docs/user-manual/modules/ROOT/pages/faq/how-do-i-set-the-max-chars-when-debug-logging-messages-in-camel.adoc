@@ -1,7 +1,7 @@
 [[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-HowdoIsetthemaxcharswhendebugloggingmessagesinCamel]]
 = How do I set the max chars when debug logging messages in Camel?
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 When you run Camel with logging, it will log the messages and its
 content from time to time.

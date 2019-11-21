@@ -92,7 +92,7 @@ public final class InfinispanUtil {
 
     public static <K, V> BasicCache<K, V> ignoreReturnValuesCache(BasicCache<K, V> cache) {
         if (isEmbedded(cache)) {
-            return ((Cache<K, V>) cache).getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES);
+            return ((Cache<K, V>) cache).getAdvancedCache().withFlags(new Flag[]{Flag.IGNORE_RETURN_VALUES});
         } else {
             return cache;
         }

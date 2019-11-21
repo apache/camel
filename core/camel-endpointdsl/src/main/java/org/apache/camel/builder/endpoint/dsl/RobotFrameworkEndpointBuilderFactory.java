@@ -3041,7 +3041,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
      * Represents a RobotFramework endpoint.
      * 
      * Category: testing
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-robotframework
      * 
      * Syntax: <code>robotframework:resourceUri</code>

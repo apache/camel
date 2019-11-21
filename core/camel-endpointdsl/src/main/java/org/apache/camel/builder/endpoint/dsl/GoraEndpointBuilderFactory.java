@@ -859,7 +859,7 @@ public interface GoraEndpointBuilderFactory {
      * Apache Gora framework.
      * 
      * Category: database,hadoop,nosql
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-gora
      * 
      * Syntax: <code>gora:name</code>

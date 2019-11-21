@@ -194,7 +194,7 @@ And in XML you do:
 [[Streamcaching-UsingStreamCachingStrategy]]
 == Using StreamCachingStrategy
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 Stream caching is from Camel 2.12 onwards intended to be configured using `org.apache.camel.spi.StreamCachingStrategy`.
 The old kind of configuration using properties on the xref:camelcontext.adoc[CamelContext] has been marked as deprecated.

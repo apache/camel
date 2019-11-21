@@ -271,7 +271,7 @@ public interface XChangeEndpointBuilderFactory {
      * exchanges for trading and accessing market data.
      * 
      * Category: bitcoin,blockchain
-     * Available as of version: 2.21
+     * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-xchange
      * 
      * Syntax: <code>xchange:name</code>

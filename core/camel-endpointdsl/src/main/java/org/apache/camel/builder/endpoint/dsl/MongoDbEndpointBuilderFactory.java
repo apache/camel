@@ -1492,7 +1492,7 @@ public interface MongoDbEndpointBuilderFactory {
      * Component for working with documents stored in MongoDB database.
      * 
      * Category: database,nosql
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-mongodb
      * 
      * Syntax: <code>mongodb:connectionBean</code>

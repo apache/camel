@@ -484,7 +484,7 @@ public interface AhcEndpointBuilderFactory {
      * To call external HTTP services using Async Http Client.
      * 
      * Category: http
-     * Available as of version: 2.8
+     * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-ahc
      * 
      * Syntax: <code>ahc:httpUri</code>

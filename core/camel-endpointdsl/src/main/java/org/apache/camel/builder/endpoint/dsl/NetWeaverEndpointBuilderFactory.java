@@ -240,7 +240,7 @@ public interface NetWeaverEndpointBuilderFactory {
      * using HTTP transports.
      * 
      * Category: sap
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
      * 
      * Syntax: <code>sap-netweaver:url</code>

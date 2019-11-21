@@ -24,8 +24,10 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.bson.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static com.mongodb.client.model.Filters.eq;
 
 public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
@@ -45,7 +47,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
 
     @Test
     public void testNoRecords() throws Exception {
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
         MockEndpoint mock = getMockEndpoint("mock:test");
         mock.expectedMessageCount(0);
         // DocumentBuilder.start().add("capped", true).add("size",
@@ -54,7 +56,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         CreateCollectionOptions collectionOptions = new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000);
         db.createCollection(cappedTestCollectionName, collectionOptions);
         cappedTestCollection = db.getCollection(cappedTestCollectionName, Document.class);
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
 
         addTestRoutes();
         context.getRouteController().startRoute("tailableCursorConsumer1");
@@ -66,7 +68,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
 
     @Test
     public void testMultipleBursts() throws Exception {
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
         MockEndpoint mock = getMockEndpoint("mock:test");
         mock.expectedMessageCount(5000);
         // DocumentBuilder.start().add("capped", true).add("size",
@@ -109,7 +111,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
 
     @Test
     public void testHundredThousandRecords() throws Exception {
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
         final MockEndpoint mock = getMockEndpoint("mock:test");
         mock.expectedMessageCount(1000);
 
@@ -153,7 +155,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
 
     @Test
     public void testPersistentTailTrack() throws Exception {
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
         final MockEndpoint mock = getMockEndpoint("mock:test");
 
         // drop the tracking collection
@@ -226,7 +228,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
 
     @Test
     public void testPersistentTailTrackIncreasingDateField() throws Exception {
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
         final MockEndpoint mock = getMockEndpoint("mock:test");
         final Calendar startTimestamp = Calendar.getInstance();
 
@@ -302,7 +304,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
 
     @Test
     public void testCustomTailTrackLocation() throws Exception {
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
         final MockEndpoint mock = getMockEndpoint("mock:test");
 
         // get the custom tracking collection and drop it
@@ -378,7 +380,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
     }
 
     private void testThousandRecordsWithRouteId(String routeId) throws Exception {
-        assertEquals(0, cappedTestCollection.count());
+        assertEquals(0, cappedTestCollection.countDocuments());
         MockEndpoint mock = getMockEndpoint("mock:test");
         mock.expectedMessageCount(1000);
 
@@ -390,7 +392,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         for (int i = 0; i < 1000; i++) {
             cappedTestCollection.insertOne(new Document("increasing", i).append("string", "value" + i));
         }
-        assertEquals(1000, cappedTestCollection.count());
+        assertEquals(1000, cappedTestCollection.countDocuments());
 
         addTestRoutes();
         context.getRouteController().startRoute(routeId);

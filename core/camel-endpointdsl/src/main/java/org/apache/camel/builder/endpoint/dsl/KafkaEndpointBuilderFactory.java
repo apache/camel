@@ -3340,7 +3340,7 @@ public interface KafkaEndpointBuilderFactory {
      * Apache Kafka brokers.
      * 
      * Category: messaging
-     * Available as of version: 2.13
+     * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-kafka
      * 
      * Syntax: <code>kafka:topic</code>

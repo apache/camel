@@ -689,7 +689,7 @@ public interface AtmosEndpointBuilderFactory {
      * The atmos component is used for integrating with EMC's Atomos Storage.
      * 
      * Category: file,cloud
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-atmos
      * 
      * Syntax: <code>atmos:name/operation</code>

@@ -102,6 +102,7 @@
         <module>camel-example-rabbitmq</module>
         <module>camel-example-reactive-executor-vertx</module>
         <module>camel-example-reactive-streams</module>
+        <module>camel-example-resilience4j</module>
         <module>camel-example-rest-producer</module>
         <module>camel-example-rest-swagger</module>
         <module>camel-example-route-throttling</module>

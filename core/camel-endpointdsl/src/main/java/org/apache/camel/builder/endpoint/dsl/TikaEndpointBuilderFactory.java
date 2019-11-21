@@ -236,7 +236,7 @@ public interface TikaEndpointBuilderFactory {
      * metadata from thousands of file types.
      * 
      * Category: document,transformation
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-tika
      * 
      * Syntax: <code>tika:operation</code>

@@ -409,7 +409,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
      * kubernetes secret operations.
      * 
      * Category: container,cloud,paas
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 
      * Syntax: <code>kubernetes-secrets:masterUrl</code>

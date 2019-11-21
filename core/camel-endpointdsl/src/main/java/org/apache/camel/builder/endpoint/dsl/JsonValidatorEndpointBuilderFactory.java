@@ -287,7 +287,7 @@ public interface JsonValidatorEndpointBuilderFactory {
      * Validates the payload of a message using NetworkNT JSON Schema library.
      * 
      * Category: validation
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-json-validator
      * 
      * Syntax: <code>json-validator:resourceUri</code>

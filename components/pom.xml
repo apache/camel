@@ -283,6 +283,7 @@
         <module>camel-reactive-executor-vertx</module>
         <module>camel-reactive-streams</module>
         <module>camel-reactor</module>
+        <module>camel-resilience4j</module>
         <module>camel-rest-swagger</module>
         <module>camel-robotframework</module>
         <module>camel-rss</module>

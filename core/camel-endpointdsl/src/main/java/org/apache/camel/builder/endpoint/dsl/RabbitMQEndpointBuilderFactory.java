@@ -3083,7 +3083,7 @@ public interface RabbitMQEndpointBuilderFactory {
      * RabbitMQ instances.
      * 
      * Category: messaging
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-rabbitmq
      * 
      * Syntax: <code>rabbitmq:exchangeName</code>

@@ -1026,7 +1026,7 @@ public interface GoogleMailEndpointBuilderFactory {
      * The google-mail component provides access to Google Mail.
      * 
      * Category: api,cloud,mail
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 
      * Syntax: <code>google-mail:apiName/methodName</code>

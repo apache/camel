@@ -1,7 +1,7 @@
 [[UsingPropertyPlaceholder-UsingPropertyPlaceholder]]
 = Using `PropertyPlaceholder`
 
-*Available as of Camel 2.3*
+*Since Camel 2.3*
 
 Camel now provides a new `PropertiesComponent` in `camel-core` which
 allows you to use property placeholders when defining Camel
@@ -116,7 +116,7 @@ pc.setLocations("com/mycompany/override.properties;optional=true,com/mycompany/d
 [[UsingPropertyPlaceholder-UsingSystemandEnvironmentVariablesinLocations]]
 == Using System and Environment Variables in Locations
 
-*Available as of Camel 2.7*
+*Since Camel 2.7*
 
 The location now supports using placeholders for JVM system properties
 and OS environments variables.
@@ -202,7 +202,7 @@ option both inside the Spring as well as the Blueprint XML.
 [[UsingPropertyPlaceholder-UsingaPropertiesfromthe]]
 == Using a Properties from the xref:registry.adoc[Registry]
 
-*Available as of Camel 2.4*
+*Since Camel 2.4*
 
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
@@ -370,7 +370,7 @@ Example using property placeholders in the attributes of `<camelContext>`:
 [[UsingPropertyPlaceholder-UsingPropertyPlaceholdersforAnyKindofAttributeintheXMLDSL]]
 == Using Property Placeholders for Any Kind of Attribute in the XML DSL
 
-*Available as of Camel 2.7*
+*Since Camel 2.7*
 
 If you use OSGi Blueprint then this only works from *2.11.1* or *2.10.5*
 on.
@@ -424,7 +424,7 @@ stop=true
 [[UsingPropertyPlaceholder-UsingPropertyPlaceholderintheJavaDSL]]
 == Using Property Placeholder in the Java DSL
 
-*Available as of Camel 2.7*
+*Since Camel 2.7*
 
 Likewise we have added support for defining placeholders in the Java DSL
 using the new `placeholder` DSL as shown in the following equivalent
@@ -446,7 +446,7 @@ from("direct:start")
 [[UsingPropertyPlaceholder-UsingBlueprintPropertyPlaceholderwithCamelRoutes]]
 == Using Blueprint Property Placeholder with Camel Routes
 
-*Available as of Camel 2.7*
+*Since Camel 2.7*
 
 Camel supports xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
 which also offers a property placeholder service. Camel supports
@@ -539,7 +539,7 @@ Each location is separated by comma.
 [[UsingPropertyPlaceholder-OverridingBlueprintPropertyPlaceholdersOutsideCamelContext]]
 == Overriding Blueprint Property Placeholders Outside CamelContext
 
-*Available as of Camel 2.10.4*
+*Since Camel 2.10.4*
 
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties directly in the XML file as shown below:
@@ -597,7 +597,7 @@ XML file.
 [[UsingPropertyPlaceholder-Usinga.cfgor.propertiesFileForBlueprintPropertyPlaceholders]]
 == Using a `.cfg` or `.properties` File For Blueprint Property Placeholders
 
-*Available as of Camel 2.10.4*
+*Since Camel 2.10.4*
 
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties in a .properties or `.cfg` file. If you use
@@ -770,7 +770,7 @@ destination=mock:result
 [[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders-1]]
 == Bridging Spring and Camel Property Placeholders
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 The Spring Framework does not allow third-party frameworks such as
 Apache Camel to seamless hook into the Spring property placeholder
@@ -855,7 +855,7 @@ with `ignoreUnresolvablePlaceholders` option to `true`.
 [[UsingPropertyPlaceholder-OverridingPropertiesfromCamelTestKit]]
 == Overriding Properties from Camel Test Kit
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 When xref:testing.adoc[Testing] with Camel and using the
 xref:components::properties-component.adoc[Properties] component, you may want to be able to
@@ -894,7 +894,7 @@ access to the location of the properties.
 [[UsingPropertyPlaceholder-UsingPropertyInject]]
 == Using `@PropertyInject`
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 Camel allows to inject property placeholders in POJOs using
 the `@PropertyInject` annotation which can be set on fields and setter
@@ -944,7 +944,7 @@ private int timeout;
 [[UsingPropertyPlaceholder-UsingOutoftheBoxFunctions]]
 == Using Out of the Box Functions
 
-*Available as of Camel 2.14.1*
+*Since Camel 2.14.1*
 
 The xref:components::properties-component.adoc[Properties] component includes the following
 functions out of the box
@@ -1036,7 +1036,7 @@ example to call a service on localhost, maybe for unit testing etc:
 [[UsingPropertyPlaceholder-UsingCustomFunctions]]
 == Using Custom Functions (advanced)
 
-*Available as of Camel 2.14.1*
+*Since Camel 2.14.1*
 
 The xref:components::properties-component.adoc[Properties] component allow to plugin 3rd party
 functions which can be used during parsing of the property placeholders.

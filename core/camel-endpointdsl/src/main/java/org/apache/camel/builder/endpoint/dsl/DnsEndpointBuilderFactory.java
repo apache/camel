@@ -142,7 +142,7 @@ public interface DnsEndpointBuilderFactory {
      * To lookup domain information and run DNS queries using DNSJava.
      * 
      * Category: networking
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-dns
      * 
      * Syntax: <code>dns:dnsType</code>

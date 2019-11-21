@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentListObjectsSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("direct:listBuckets")
     private ProducerTemplate template;
 

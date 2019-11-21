@@ -181,7 +181,7 @@ public interface FopEndpointBuilderFactory {
      * formats using Apache FOP.
      * 
      * Category: transformation
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-fop
      * 
      * Syntax: <code>fop:outputType</code>

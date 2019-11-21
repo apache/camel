@@ -17,6 +17,7 @@
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
@@ -27,7 +28,7 @@ public class InterceptSendToEndpointWithParametersTest extends ContextTestSuppor
     @Test
     public void testInterceptSendToEndpoint() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new RouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("log*").to("mock:http").skipSendToOriginalEndpoint();

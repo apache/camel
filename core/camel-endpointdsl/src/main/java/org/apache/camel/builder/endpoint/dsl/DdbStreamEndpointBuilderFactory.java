@@ -839,7 +839,7 @@ public interface DdbStreamEndpointBuilderFactory {
      * Streams.
      * 
      * Category: cloud,messaging,streams
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-ddb
      * 
      * Syntax: <code>aws-ddbstream:tableName</code>

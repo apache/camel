@@ -1226,7 +1226,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
      * pod operations and a consumer to consume pod events.
      * 
      * Category: container,cloud,paas
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 
      * Syntax: <code>kubernetes-pods:masterUrl</code>

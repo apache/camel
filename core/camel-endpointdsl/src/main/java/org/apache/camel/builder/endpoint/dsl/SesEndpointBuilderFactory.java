@@ -346,7 +346,7 @@ public interface SesEndpointBuilderFactory {
      * service.
      * 
      * Category: cloud,mail
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-aws-ses
      * 
      * Syntax: <code>aws-ses:from</code>

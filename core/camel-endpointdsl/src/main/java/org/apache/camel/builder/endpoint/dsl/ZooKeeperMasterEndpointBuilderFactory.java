@@ -205,7 +205,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
      * master lock
      * 
      * Category: clustering
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zookeeper-master
      * 
      * Syntax: <code>zookeeper-master:groupName:consumerEndpointUri</code>
