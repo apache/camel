@@ -83,8 +83,8 @@ public class HdfsConfiguration {
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     @UriParam(defaultValue = "true")
     private boolean connectOnStartup = true;
-    @UriParam(label = "consumer,filter")
-    private int maxMessagesPerPoll;
+    @UriParam(label = "consumer,filter", defaultValue = "" + HdfsConstants.DEFAULT_MAX_MESSAGES_PER_POLL)
+    private int maxMessagesPerPoll = HdfsConstants.DEFAULT_MAX_MESSAGES_PER_POLL;
     @UriParam
     private String owner;
 
