@@ -21,7 +21,7 @@ public final class Holder<T> {
     /**
      * The value contained in the holder.
      **/
-    public T value;
+    private T value;
 
     /**
      * Creates a new holder with a <code>null</code> value.
@@ -35,6 +35,14 @@ public final class Holder<T> {
      * @param value The value to be stored in the holder.
      **/
     public Holder(T value) {
+        this.value = value;
+    }
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
         this.value = value;
     }
 }

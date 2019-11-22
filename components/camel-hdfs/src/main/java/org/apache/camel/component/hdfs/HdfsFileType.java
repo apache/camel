@@ -25,7 +25,7 @@ public enum HdfsFileType {
     NORMAL_FILE(new HdfsNormalFileHandler()),
     SEQUENCE_FILE(new HdfsSequenceFileHandler()),
     MAP_FILE(new HdfsMapFileHandler()),
-    BLOOMMAP_FILE(new HdfsBloommapFileHandler()),
+    BLOOMMAP_FILE(new HdfsBloomMapFileHandler()),
     ARRAY_FILE(new HdfsArrayFileTypeHandler());
 
     private final HdfsFile file;
@@ -46,7 +46,7 @@ public enum HdfsFileType {
         return this.file.createInputStream(hdfsPath, hdfsInfoFactory);
     }
 
-    public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
+    public long next(HdfsInputStream hdfsInputStream, final Holder<Object> key, final Holder<Object> value) {
         return this.file.next(hdfsInputStream, key, value);
     }
 
