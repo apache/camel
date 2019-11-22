@@ -751,8 +751,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // generate inner class for non-primitive options
             type = getSimpleJavaType(type);
             JavaClass javaClassSource = readJavaType(type);
-            boolean isNestedProperty = isValidNestedProperty(model, option) &&
-                    (isNestedProperty(nestedTypes, javaClassSource) || "org.apache.camel.converter.jaxp.XmlConverter".equals(type));
+            boolean isNestedProperty = isValidNestedProperty(model, option)
+                    && (isNestedProperty(nestedTypes, javaClassSource) || "org.apache.camel.converter.jaxp.XmlConverter".equals(type));
             if (isNestedProperty) {
                 type = packageName + "." + name + "$" + option.getShortJavaType() + INNER_TYPE_SUFFIX;
             }
