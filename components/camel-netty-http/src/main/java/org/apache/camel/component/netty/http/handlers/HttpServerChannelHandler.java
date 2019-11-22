@@ -20,6 +20,7 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Locale;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -52,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
