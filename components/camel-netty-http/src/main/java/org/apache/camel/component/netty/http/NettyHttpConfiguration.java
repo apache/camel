@@ -55,6 +55,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean muteException;
     @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
+    private boolean logWarnOnBadRequest;
     @UriParam
     private boolean bridgeEndpoint;
     @UriParam(label = "advanced")
@@ -226,6 +228,17 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      */
     public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
         this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
+    public boolean isLogWarnOnBadRequest() {
+        return logWarnOnBadRequest;
+    }
+
+    /**
+     * Whether Netty HTTP server should log a WARN if decoding the HTTP request failed and a HTTP Status 400 (bad request) is returned.
+     */
+    public void setLogWarnOnBadRequest(boolean logWarnOnBadRequest) {
+        this.logWarnOnBadRequest = logWarnOnBadRequest;
     }
 
     public boolean isBridgeEndpoint() {

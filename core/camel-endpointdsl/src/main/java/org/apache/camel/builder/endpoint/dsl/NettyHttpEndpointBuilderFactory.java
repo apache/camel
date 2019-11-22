@@ -916,6 +916,32 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether Netty HTTP server should log a WARN if decoding the HTTP
+         * request failed and a HTTP Status 400 (bad request) is returned.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedNettyHttpEndpointConsumerBuilder logWarnOnBadRequest(
+                boolean logWarnOnBadRequest) {
+            doSetProperty("logWarnOnBadRequest", logWarnOnBadRequest);
+            return this;
+        }
+        /**
+         * Whether Netty HTTP server should log a WARN if decoding the HTTP
+         * request failed and a HTTP Status 400 (bad request) is returned.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedNettyHttpEndpointConsumerBuilder logWarnOnBadRequest(
+                String logWarnOnBadRequest) {
+            doSetProperty("logWarnOnBadRequest", logWarnOnBadRequest);
+            return this;
+        }
+        /**
          * If this option is enabled, then during binding from Netty to Camel
          * Message then the headers will be mapped as well (eg added as header
          * to the Camel Message as well). You can turn off this option to

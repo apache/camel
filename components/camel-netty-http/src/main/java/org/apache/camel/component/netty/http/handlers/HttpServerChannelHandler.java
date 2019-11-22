@@ -20,7 +20,6 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Locale;
-
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -53,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
@@ -89,9 +89,19 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         LOG.debug("Message received: {}", request);
 
         DecoderResult decoderResult = request.decoderResult();
-
-        if(decoderResult != null  && decoderResult.cause() != null) {
-            LOG.error("Netty Request Decoder Failure: {}", decoderResult.cause().getMessage());
+        if (decoderResult != null && decoderResult.cause() != null) {
+            if (getConsumer().getConfiguration().isLogWarnOnBadRequest()) {
+                LOG.warn("Netty request decoder failure due: {} returning HTTP Status 400 to client", decoderResult.cause().getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Netty request decoder failure (stacktrace)", decoderResult.cause());
+                }
+            }
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
+            ctx.writeAndFlush(response);
+            ctx.channel().close();
+            return;
         }
 
         if (consumer.isSuspended()) {
