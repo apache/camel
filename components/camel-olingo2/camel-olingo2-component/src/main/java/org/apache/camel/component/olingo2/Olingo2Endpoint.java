@@ -166,9 +166,10 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     public void interceptProperties(Map<String, Object> properties) {
+        Map<String, String> endpointHttpHeaders = (Map<String, String>) properties.get(ENDPOINT_HTTP_HEADERS_PROPERTY);
 
         // read Edm if not set yet
-        properties.put(EDM_PROPERTY, apiProxy.getEdm());
+        properties.put(EDM_PROPERTY, apiProxy.getEdm(endpointHttpHeaders));
 
         // handle filterAlreadySeen property
         properties.put(FILTER_ALREADY_SEEN, configuration.isFilterAlreadySeen());
