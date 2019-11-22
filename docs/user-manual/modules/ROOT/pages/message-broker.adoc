@@ -1,0 +1,20 @@
+[[Message-Broker]]
+= Message Broker
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBroker.html[Message Broker]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+How can you decouple the destination of a message from the sender and maintain central control over the flow of messages?
+
+image::eip/MessageBroker.gif[image]
+
+Use a central Message Broker that can receive messages from multiple destinations,
+determine the correct destination and route the message to the correct channel.
+
+Camel supports integration with existing message broker systems such as Apache ActiveMQ,
+Apache Kafka, RabbitMQ, and cloud queue systems such as AWS SQS, and others.
+
+These Camel components allows to both send and receive data from message brokers.
+
+

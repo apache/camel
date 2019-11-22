@@ -168,6 +168,11 @@ a|image::eip/ProcessManagerIcon.gif[image]
 through multiple processing steps when the required steps may not be known
 at design-time and may not be sequential?
 
+a|image::eip/MessageBrokerIcon.gif[image]
+|xref:message-broker.adoc[Message Broker] |How can you decouple the
+destination of a message from the sender and maintain central control
+over the flow of messages?
+
 |
 |xref:throttle-eip.adoc[Throttler] |How can I throttle messages to ensure
 that a specific endpoint does not get overloaded, or we don't exceed an
