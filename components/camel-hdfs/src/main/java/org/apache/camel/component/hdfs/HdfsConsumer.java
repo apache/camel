@@ -18,13 +18,11 @@ package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 
 import javax.security.auth.login.Configuration;
 
@@ -129,68 +127,54 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private int processFileStatuses(HdfsInfo info, FileStatus[] fileStatuses) {
-        final AtomicInteger totalMessageCount = new AtomicInteger(0);
+        final AtomicInteger messageCount = new AtomicInteger(0);
 
-        List<HdfsInputStream> hdfsFiles = Arrays.stream(fileStatuses)
+        Arrays.stream(fileStatuses)
                 .filter(status -> normalFileIsDirectoryHasSuccessFile(status, info))
                 .filter(this::hasMatchingOwner)
                 .limit(endpointConfig.getMaxMessagesPerPoll())
-                .map(this::asHdfsFile)
+                .map(this::createInputStream)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        log.info("Processing [{}] valid files out of [{}] available.", hdfsFiles.size(), fileStatuses.length);
-
-        for (int i = 0; i < hdfsFiles.size(); i++) {
-            HdfsInputStream hdfsFile = hdfsFiles.get(i);
-            try {
-                int messageCount = processHdfsInputStream(hdfsFile, totalMessageCount);
-                log.debug("Processed [{}] files out of [{}].", i, hdfsFiles.size());
-                log.debug("File [{}] was split to [{}] messages.", i, messageCount);
-            } finally {
-                IOHelper.close(hdfsFile, "hdfs file", log);
-            }
-        }
-
-        return totalMessageCount.get();
-    }
-
-    private int processHdfsInputStream(HdfsInputStream hdfsFile, AtomicInteger totalMessageCount) {
-        final AtomicInteger messageCount = new AtomicInteger(0);
-        Holder<Object> currentKey = new Holder<>();
-        Holder<Object> currentValue = new Holder<>();
-
-        while (hdfsFile.next(currentKey, currentValue) >= 0) {
-            processHdfsInputStream(hdfsFile, currentKey, currentValue, messageCount, totalMessageCount);
-            messageCount.incrementAndGet();
-        }
+                .forEach(hdfsInputStream -> {
+                    try {
+                        processHdfsInputStream(hdfsInputStream, messageCount, fileStatuses.length);
+                    } finally {
+                        IOHelper.close(hdfsInputStream, "input stream", log);
+                    }
+                });
 
         return messageCount.get();
     }
 
-    private void processHdfsInputStream(HdfsInputStream hdfsFile, Holder<Object> key, Holder<Object> value, AtomicInteger messageCount, AtomicInteger totalMessageCount) {
+    private void processHdfsInputStream(HdfsInputStream inputStream, AtomicInteger messageCount, int totalFiles) {
+        Holder<Object> key = new Holder<>();
+        Holder<Object> value = new Holder<>();
+
+        while (inputStream.next(key, value) >= 0) {
+            processHdfsInputStream(inputStream, key, value, messageCount, totalFiles);
+        }
+    }
+
+    private void processHdfsInputStream(HdfsInputStream inputStream, Holder<Object> key, Holder<Object> value, AtomicInteger messageCount, int totalFiles) {
         Exchange exchange = this.getEndpoint().createExchange();
         Message message = exchange.getIn();
-        String fileName = StringUtils.substringAfterLast(hdfsFile.getActualPath(), "/");
+        String fileName = StringUtils.substringAfterLast(inputStream.getActualPath(), "/");
         message.setHeader(Exchange.FILE_NAME, fileName);
         message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
-        message.setHeader("CamelFileAbsolutePath", hdfsFile.getActualPath());
-        if (key.getValue() != null) {
-            message.setHeader(HdfsHeader.KEY.name(), key.getValue());
+        message.setHeader("CamelFileAbsolutePath", inputStream.getActualPath());
+        if (key.value != null) {
+            message.setHeader(HdfsHeader.KEY.name(), key.value);
         }
 
-        if (hdfsFile.getNumOfReadBytes() >= 0) {
-            message.setHeader(Exchange.FILE_LENGTH, hdfsFile.getNumOfReadBytes());
+        if (inputStream.getNumOfReadBytes() >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, inputStream.getNumOfReadBytes());
         }
 
-        message.setBody(value.getValue());
+        message.setBody(value.value);
 
-        updateNewExchange(exchange, messageCount.get(), hdfsFile);
-
-        log.debug("Processing file [{}]", fileName);
+        log.debug("Processing file {}", fileName);
         try {
             processor.process(exchange);
-            totalMessageCount.incrementAndGet();
         } catch (Exception e) {
             exchange.setException(e);
         }
@@ -199,6 +183,9 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         if (exchange.getException() != null) {
             getExceptionHandler().handleException(exchange.getException());
         }
+
+        int count = messageCount.incrementAndGet();
+        log.debug("Processed [{}] files out of [{}]", count, totalFiles);
     }
 
     private boolean normalFileIsDirectoryHasSuccessFile(FileStatus fileStatus, HdfsInfo info) {
@@ -225,27 +212,12 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         return true;
     }
 
-    private HdfsInputStream asHdfsFile(FileStatus fileStatus) {
+    private HdfsInputStream createInputStream(FileStatus fileStatus) {
         try {
             this.rwLock.writeLock().lock();
             return HdfsInputStream.createInputStream(fileStatus.getPath().toString(), hdfsInfoFactory);
         } finally {
             this.rwLock.writeLock().unlock();
-        }
-    }
-
-    protected void updateNewExchange(Exchange exchange, int index, HdfsInputStream hdfsFile) {
-        // do not share unit of work
-        exchange.setUnitOfWork(null);
-
-        exchange.setProperty(Exchange.SPLIT_INDEX, index);
-
-        if (hdfsFile.hasNext()) {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
-        } else {
-            exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);
-            // streaming mode, so set total size when we are complete based on the index
-            exchange.setProperty(Exchange.SPLIT_SIZE, index + 1);
         }
     }
 

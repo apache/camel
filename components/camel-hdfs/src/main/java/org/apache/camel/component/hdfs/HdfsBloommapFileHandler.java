@@ -28,7 +28,7 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, BloomMapFile.Reader> {
+class HdfsBloommapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, BloomMapFile.Reader> {
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -39,14 +39,11 @@ class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
             Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
-            rout = new BloomMapFile.Writer(
-                    hdfsInfo.getConfiguration(),
-                    new Path(hdfsPath),
-                    MapFile.Writer.keyClass(keyWritableClass),
+            rout = new BloomMapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass),
                     MapFile.Writer.valueClass(valueWritableClass),
                     MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    MapFile.Writer.progressable(() -> { })
-            );
+                    MapFile.Writer.progressable(() -> {
+                    }));
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
@@ -61,7 +58,7 @@ class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = getWritable(value, exchange, valueSize);
             ((BloomMapFile.Writer) hdfsOutputStream.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
-            return Long.sum(keySize.getValue(), valueSize.getValue());
+            return Long.sum(keySize.value, valueSize.value);
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
         }
@@ -88,9 +85,9 @@ class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
             if (reader.next(keyWritable, valueWritable)) {
-                key.setValue(getObject(keyWritable, keySize));
-                value.setValue(getObject(valueWritable, valueSize));
-                return Long.sum(keySize.getValue(), valueSize.getValue());
+                key.value = getObject(keyWritable, keySize);
+                value.value = getObject(valueWritable, valueSize);
+                return Long.sum(keySize.value, valueSize.value);
             } else {
                 return 0;
             }
