@@ -29,5 +29,5 @@ public interface TransformerFactoryConfigurationStrategy {
      * @param factory the {@link TransformerFactory} to configure
      * @param endpoint the {@link XsltEndpoint} owning the given {@code factory}
      */
-    public void configure(TransformerFactory factory, XsltEndpoint endpoint);
+    void configure(TransformerFactory factory, XsltEndpoint endpoint);
 }
