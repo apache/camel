@@ -26,6 +26,7 @@ import javax.security.auth.login.LoginException;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.base64.Base64;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -86,6 +87,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         LOG.debug("Message received: {}", request);
+
+        DecoderResult decoderResult = request.decoderResult();
+
+        if(decoderResult != null  && decoderResult.cause() != null) {
+            LOG.error("Netty Request Decoder Failure: {}", decoderResult.cause().getMessage());
+        }
 
         if (consumer.isSuspended()) {
             // are we suspended?
