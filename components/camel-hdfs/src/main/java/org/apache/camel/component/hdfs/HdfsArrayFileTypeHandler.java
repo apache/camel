@@ -36,8 +36,14 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFi
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
-            rout = new ArrayFile.Writer(hdfsInfo.getConfiguration(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
-                    endpointConfig.getCompressionType(), () -> { });
+            rout = new ArrayFile.Writer(
+                    hdfsInfo.getConfiguration(),
+                    hdfsInfo.getFileSystem(),
+                    hdfsPath,
+                    valueWritableClass,
+                    endpointConfig.getCompressionType(),
+            () -> { }
+            );
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
@@ -50,7 +56,7 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFi
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = getWritable(value, exchange, valueSize);
             ((ArrayFile.Writer) hdfsOutputStream.getOut()).append(valueWritable);
-            return valueSize.value;
+            return valueSize.getValue();
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
         }
@@ -75,8 +81,8 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFi
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
             if (reader.next(valueWritable) != null) {
-                value.value = getObject(valueWritable, valueSize);
-                return valueSize.value;
+                value.setValue(getObject(valueWritable, valueSize));
+                return valueSize.getValue();
             } else {
                 return 0;
             }

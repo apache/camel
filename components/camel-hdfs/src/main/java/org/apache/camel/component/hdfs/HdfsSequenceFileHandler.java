@@ -35,12 +35,18 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, Seque
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<?> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
             Class<?> valueWritableClass = endpointConfig.getValueType().getWritableClass();
-            rout = SequenceFile.createWriter(hdfsInfo.getConfiguration(), SequenceFile.Writer.file(hdfsInfo.getPath()), SequenceFile.Writer.keyClass(keyWritableClass),
-                    SequenceFile.Writer.valueClass(valueWritableClass), SequenceFile.Writer.bufferSize(endpointConfig.getBufferSize()),
-                    SequenceFile.Writer.replication(endpointConfig.getReplication()), SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
+            rout = SequenceFile.createWriter(
+                    hdfsInfo.getConfiguration(),
+                    SequenceFile.Writer.file(hdfsInfo.getPath()),
+                    SequenceFile.Writer.keyClass(keyWritableClass),
+                    SequenceFile.Writer.valueClass(valueWritableClass),
+                    SequenceFile.Writer.bufferSize(endpointConfig.getBufferSize()),
+                    SequenceFile.Writer.replication(endpointConfig.getReplication()),
+                    SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
                     SequenceFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    SequenceFile.Writer.progressable(() -> {
-                    }), SequenceFile.Writer.metadata(new SequenceFile.Metadata()));
+                    SequenceFile.Writer.progressable(() -> { }),
+                    SequenceFile.Writer.metadata(new SequenceFile.Metadata())
+            );
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
@@ -57,7 +63,7 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, Seque
             SequenceFile.Writer writer = (SequenceFile.Writer) hdfsOutputStream.getOut();
             writer.append(keyWritable, valueWritable);
             writer.sync();
-            return Long.sum(keySize.value, valueSize.value);
+            return Long.sum(keySize.getValue(), valueSize.getValue());
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
         }
@@ -84,9 +90,9 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, Seque
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
             if (reader.next(keyWritable, valueWritable)) {
-                key.value = getObject(keyWritable, keySize);
-                value.value = getObject(valueWritable, valueSize);
-                return Long.sum(keySize.value, valueSize.value);
+                key.setValue(getObject(keyWritable, keySize));
+                value.setValue(getObject(valueWritable, valueSize));
+                return Long.sum(keySize.getValue(), valueSize.getValue());
             } else {
                 return 0;
             }
