@@ -266,6 +266,11 @@ public class NettyHttpComponentConfiguration
          */
         private Boolean matchOnUriPrefix = false;
         /**
+         * Whether Netty HTTP server should log a WARN if decoding the HTTP
+         * request failed and a HTTP Status 400 (bad request) is returned.
+         */
+        private Boolean logWarnOnBadRequest = true;
+        /**
          * If the option is true, the producer will ignore the Exchange.HTTP_URI
          * header, and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the producer send all the
@@ -406,6 +411,14 @@ public class NettyHttpComponentConfiguration
 
         public void setMatchOnUriPrefix(Boolean matchOnUriPrefix) {
             this.matchOnUriPrefix = matchOnUriPrefix;
+        }
+
+        public Boolean getLogWarnOnBadRequest() {
+            return logWarnOnBadRequest;
+        }
+
+        public void setLogWarnOnBadRequest(Boolean logWarnOnBadRequest) {
+            this.logWarnOnBadRequest = logWarnOnBadRequest;
         }
 
         public Boolean getBridgeEndpoint() {
