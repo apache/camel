@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
@@ -56,7 +55,6 @@ public class HdfsInputStreamTest {
         fileSystem = mock(FileSystem.class);
         configuration = mock(Configuration.class);
         Path path = mock(Path.class);
-        FileStatus fileStatus = mock(FileStatus.class);
 
         when(hdfsInfoFactory.newHdfsInfo(anyString())).thenReturn(hdfsInfo);
         when(hdfsInfoFactory.newHdfsInfoWithoutAuth(anyString())).thenReturn(hdfsInfo);
@@ -65,11 +63,6 @@ public class HdfsInputStreamTest {
         when(hdfsInfo.getFileSystem()).thenReturn(fileSystem);
         when(hdfsInfo.getConfiguration()).thenReturn(configuration);
         when(hdfsInfo.getPath()).thenReturn(path);
-
-        when(path.getFileSystem(configuration)).thenReturn(fileSystem);
-
-        when(fileSystem.getFileStatus(path)).thenReturn(fileStatus);
-        when(fileStatus.getLen()).thenReturn(1000L);
     }
 
     @Test
