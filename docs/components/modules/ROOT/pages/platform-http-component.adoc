@@ -1,7 +1,13 @@
-= Platform HTTP
-:page-source: components/camel-platform-http/src/main/docs/platform-http.adoc
+= Platform HTTP Component
+:page-source: components/camel-platform-http/src/main/docs/platform-http-component.adoc
 
 *Since Camel 3.0*
+
+// HEADER START
+*Only consumer is supported*
+// HEADER END
+*Since Camel 3.0*
+
 
 The Platform HTTP is used to allow Camel to use the existing HTTP server from the rumtime.
 For example when running Camel on Spring Boot, Quarkus, or other runtimes.
