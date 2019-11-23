@@ -530,6 +530,11 @@ public abstract class BaseMainSupport extends ServiceSupport {
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
         }
 
+        // tracing may be enabled by some other property (i.e. camel.context.tracer.exchange-formatter.show-headers)
+        if (camelContext.isTracing() && !mainConfigurationProperties.isTracing()) {
+            camelContext.setTracing(Boolean.FALSE);
+        }
+
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary:");
