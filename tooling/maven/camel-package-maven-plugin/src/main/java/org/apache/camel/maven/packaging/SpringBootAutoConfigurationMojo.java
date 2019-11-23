@@ -601,14 +601,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                                                           // equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
 
-                // resolvePropertyPlaceholders is an option which only make
-                // sense to use if the component has other options
-                // boolean hasOptions =
-                // model.getComponentOptions().stream().anyMatch(o ->
-                // !o.getName().equals("resolvePropertyPlaceholders"));
-
-                // use springboot as sub package name so the code is not in
-                // normal
+                // use springboot as sub package name so the code is not in normal
                 // package so the Spring Boot JARs can be optional at runtime
                 int pos = model.getJavaType().lastIndexOf(".");
                 String pkg = model.getJavaType().substring(0, pos) + ".springboot";
@@ -758,7 +751,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // generate inner class for non-primitive options
             type = getSimpleJavaType(type);
             JavaClass javaClassSource = readJavaType(type);
-            boolean isNestedProperty = isNestedProperty(nestedTypes, javaClassSource) || "org.apache.camel.converter.jaxp.XmlConverter".equals(type);
+            boolean isNestedProperty = isValidNestedProperty(model, option)
+                    && (isNestedProperty(nestedTypes, javaClassSource) || "org.apache.camel.converter.jaxp.XmlConverter".equals(type));
             if (isNestedProperty) {
                 type = packageName + "." + name + "$" + option.getShortJavaType() + INNER_TYPE_SUFFIX;
             }
@@ -1142,6 +1136,15 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
         }
         return type != null;
+    }
+
+    private boolean isValidNestedProperty(ComponentModel model, ComponentOptionModel option) {
+        if ("camel-jms".equals(model.getArtifactId()) && "configuration".equals(option.getName())) {
+            // skip camel-jms JmsConfiguration as all these options has already
+            // been set on component level direction, as otherwise we have duplicates
+            return false;
+        }
+        return true;
     }
 
     // read java type from project, returns null if not found

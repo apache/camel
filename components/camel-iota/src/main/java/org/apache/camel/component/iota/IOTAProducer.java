@@ -19,15 +19,15 @@ package org.apache.camel.component.iota;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.commons.lang3.StringUtils;
 import org.iota.jota.builder.AddressRequest;
 import org.iota.jota.dto.response.GetNewAddressResponse;
 import org.iota.jota.dto.response.GetTransferResponse;
 import org.iota.jota.dto.response.SendTransferResponse;
 import org.iota.jota.model.Transfer;
 import org.iota.jota.utils.TrytesConverter;
-import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultProducer;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,19 +52,15 @@ public class IOTAProducer extends DefaultProducer {
         }
 
         if (endpoint.getOperation().equals(IOTAConstants.SEND_TRANSFER_OPERATION)) {
-
             String address = exchange.getIn().getHeader(IOTAConstants.TO_ADDRESS_HEADER, String.class);
             Integer value = exchange.getIn().getHeader(IOTAConstants.VALUE_HEADER, Integer.class);
             value = value != null ? value : 0;
 
             String tag = StringUtils.rightPad(endpoint.getTag(), IOTAConstants.TAG_LENGTH, '9');
-
             String message = TrytesConverter.asciiToTrytes(exchange.getIn().getBody(String.class));
 
             if (LOG.isDebugEnabled()) {
-                // LOG.debug("seed {}", seed);
-                LOG.debug("endpoint: security level {} depth {} minWeightMagnitude {} tag {} ", endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(),
-                          tag);
+                LOG.debug("endpoint: security level {} depth {} minWeightMagnitude {} tag {} ", endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(), tag);
                 LOG.debug("Sending value {} with message {} to address {}", value, message, address);
             }
 
@@ -75,7 +71,6 @@ public class IOTAProducer extends DefaultProducer {
 
             exchange.getIn().setBody(response.getTransactions());
         } else if (endpoint.getOperation().equals(IOTAConstants.GET_NEW_ADDRESS_OPERATION)) {
-
             Integer index = exchange.getIn().getHeader(IOTAConstants.ADDRESS_INDEX_HEADER, Integer.class);
 
             AddressRequest addressRequest = new AddressRequest.Builder(seed, endpoint.getSecurityLevel())
@@ -83,6 +78,7 @@ public class IOTAProducer extends DefaultProducer {
                 .checksum(true)
                 .amount(1)
                 .build();
+
             GetNewAddressResponse response = endpoint.getApiClient().generateNewAddresses(addressRequest);
             exchange.getIn().setBody(response.getAddresses());
         } else if (endpoint.getOperation().equals(IOTAConstants.GET_TRANSFERS_OPERATION)) {
@@ -90,6 +86,7 @@ public class IOTAProducer extends DefaultProducer {
             Integer endIdx = exchange.getIn().getHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, Integer.class);
 
             GetTransferResponse response = endpoint.getApiClient().getTransfers(seed, endpoint.getSecurityLevel(), startIdx, endIdx, true);
+
             exchange.getIn().setBody(response.getTransfers());
         }
     }

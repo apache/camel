@@ -26,6 +26,7 @@ import javax.security.auth.login.LoginException;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.base64.Base64;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -86,6 +87,22 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         LOG.debug("Message received: {}", request);
+
+        DecoderResult decoderResult = request.decoderResult();
+        if (decoderResult != null && decoderResult.cause() != null) {
+            if (getConsumer().getConfiguration().isLogWarnOnBadRequest()) {
+                LOG.warn("Netty request decoder failure due: {} returning HTTP Status 400 to client", decoderResult.cause().getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Netty request decoder failure (stacktrace)", decoderResult.cause());
+                }
+            }
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
+            ctx.writeAndFlush(response);
+            ctx.channel().close();
+            return;
+        }
 
         if (consumer.isSuspended()) {
             // are we suspended?

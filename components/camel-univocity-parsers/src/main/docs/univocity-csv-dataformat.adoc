@@ -98,7 +98,7 @@ The component supports 19 options, which are listed below.
 | *camel.dataformat.univocity-csv.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.univocity-csv.delimiter* | The delimiter of values | , | String
 | *camel.dataformat.univocity-csv.empty-value* | The String representation of an empty value |  | String
-| *camel.dataformat.univocity-csv.enabled* | Enable univocity-csv dataformat | true | Boolean
+| *camel.dataformat.univocity-csv.enabled* | Whether to enable auto configuration of the univocity-csv data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.univocity-csv.header-extraction-enabled* | Whether or not the header must be read in the first line of the test document The default value is false | false | Boolean
 | *camel.dataformat.univocity-csv.headers-disabled* | Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header. The default value is false | false | Boolean
 | *camel.dataformat.univocity-csv.ignore-leading-whitespaces* | Whether or not the leading white spaces must be ignored. The default value is true | true | Boolean

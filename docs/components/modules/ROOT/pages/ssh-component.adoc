@@ -172,7 +172,7 @@ The component supports 33 options, which are listed below.
 | *camel.component.ssh.configuration.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. | 100 | Long
 | *camel.component.ssh.configuration.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. | 30000 | Long
 | *camel.component.ssh.configuration.username* | Sets the username to use in logging into the remote SSH server. |  | String
-| *camel.component.ssh.enabled* | Enable ssh component | true | Boolean
+| *camel.component.ssh.enabled* | Whether to enable auto configuration of the ssh component. This is enabled by default. |  | Boolean
 | *camel.component.ssh.host* | Sets the hostname of the remote SSH server. |  | String
 | *camel.component.ssh.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. The option is a org.apache.sshd.common.keyprovider.KeyPairProvider type. |  | String
 | *camel.component.ssh.key-type* | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. |  | String

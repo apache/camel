@@ -144,7 +144,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (79 parameters):
+=== Query Parameters (80 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -167,6 +167,7 @@ with the following path and query parameters:
 | *compression* (consumer) | Allow using gzip/deflate for compression on the Netty HTTP server if the client supports it from the HTTP headers. | false | boolean
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
 | *httpMethodRestrict* (consumer) | To disable HTTP methods on the Netty HTTP consumer. You can specify multiple separated by comma. |  | String
+| *logWarnOnBadRequest* (consumer) | Whether Netty HTTP server should log a WARN if decoding the HTTP request failed and a HTTP Status 400 (bad request) is returned. | true | boolean
 | *mapHeaders* (consumer) | If this option is enabled, then during binding from Netty to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.netty.http.NettyHttpMessage message with the method getHttpRequest() that returns the Netty HTTP request io.netty.handler.codec.http.HttpRequest instance. | true | boolean
 | *maxHeaderSize* (consumer) | The maximum length of all headers. If the sum of the length of each header exceeds this value, a io.netty.handler.codec.TooLongFrameException will be raised. | 8192 | int
 | *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrapFactory

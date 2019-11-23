@@ -135,7 +135,7 @@ The component supports 9 options, which are listed below.
 | *camel.component.reactive-streams.backpressure-strategy* | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreamsBackpressureStrategy
 | *camel.component.reactive-streams.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.reactive-streams.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.reactive-streams.enabled* | Enable reactive-streams component | true | Boolean
+| *camel.component.reactive-streams.enabled* | Whether to enable auto configuration of the reactive-streams component. This is enabled by default. |  | Boolean
 | *camel.component.reactive-streams.internal-engine-configuration.thread-pool-max-size* | The maximum number of threads used by the reactive streams internal engine. |  | Integer
 | *camel.component.reactive-streams.internal-engine-configuration.thread-pool-min-size* | The minimum number of threads used by the reactive streams internal engine. |  | Integer
 | *camel.component.reactive-streams.internal-engine-configuration.thread-pool-name* | The name of the thread pool used by the reactive streams internal engine. |  | String

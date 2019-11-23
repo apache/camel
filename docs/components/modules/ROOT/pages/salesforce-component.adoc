@@ -833,7 +833,7 @@ The component supports 88 options, which are listed below.
 | *camel.component.salesforce.config.s-object-query* | Salesforce SOQL query string |  | String
 | *camel.component.salesforce.config.s-object-search* | Salesforce SOSL search string |  | String
 | *camel.component.salesforce.config.update-topic* | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | Boolean
-| *camel.component.salesforce.enabled* | Enable salesforce component | true | Boolean
+| *camel.component.salesforce.enabled* | Whether to enable auto configuration of the salesforce component. This is enabled by default. |  | Boolean
 | *camel.component.salesforce.http-client-connection-timeout* | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | Long
 | *camel.component.salesforce.http-client-idle-timeout* | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | Long
 | *camel.component.salesforce.http-client-properties* | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map

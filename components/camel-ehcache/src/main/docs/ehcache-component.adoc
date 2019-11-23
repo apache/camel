@@ -156,7 +156,7 @@ The component supports 27 options, which are listed below.
 | *camel.component.ehcache.customizer.cache-configuration.mode* | Configure if the cache configurations have be added or they have to replace those already configured on the component. |  | CacheConfigurationCustomizerConfiguration$Mode
 | *camel.component.ehcache.customizer.cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
 | *camel.component.ehcache.customizer.cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
-| *camel.component.ehcache.enabled* | Enable ehcache component | true | Boolean
+| *camel.component.ehcache.enabled* | Whether to enable auto configuration of the ehcache component. This is enabled by default. |  | Boolean
 | *camel.component.ehcache.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.ehcache.configuration.config-uri* | *Deprecated* URI pointing to the Ehcache XML configuration file's location |  | String
 |===

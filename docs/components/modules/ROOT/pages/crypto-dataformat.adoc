@@ -79,14 +79,14 @@ The component supports 35 options, which are listed below.
 | *camel.component.crypto.configuration.secure-random* | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
 | *camel.component.crypto.configuration.secure-random-name* | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.signature-header-name* | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
-| *camel.component.crypto.enabled* | Enable crypto component | true | Boolean
+| *camel.component.crypto.enabled* | Whether to enable auto configuration of the crypto component. This is enabled by default. |  | Boolean
 | *camel.component.crypto.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. |  | String
 | *camel.dataformat.crypto.algorithm-parameter-ref* | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type. |  | String
 | *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | Integer
 | *camel.dataformat.crypto.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.crypto.crypto-provider* | The name of the JCE Security Provider that should be used. |  | String
-| *camel.dataformat.crypto.enabled* | Enable crypto dataformat | true | Boolean
+| *camel.dataformat.crypto.enabled* | Whether to enable auto configuration of the crypto data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.crypto.init-vector-ref* | Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher. |  | String
 | *camel.dataformat.crypto.inline* | Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false. | false | Boolean
 | *camel.dataformat.crypto.key-ref* | Refers to the secret key to lookup from the register to use. |  | String

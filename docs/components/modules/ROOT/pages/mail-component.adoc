@@ -270,13 +270,13 @@ The component supports 50 options, which are listed below.
 | *camel.component.mail.configuration.use-inline-attachments* | Whether to use disposition inline or attachment. | false | Boolean
 | *camel.component.mail.configuration.username* | The username for login |  | String
 | *camel.component.mail.content-type-resolver* | Resolver to determine Content-Type for file attachments. The option is a org.apache.camel.component.mail.ContentTypeResolver type. |  | String
-| *camel.component.mail.enabled* | Enable mail component | true | Boolean
+| *camel.component.mail.enabled* | Whether to enable auto configuration of the mail component. This is enabled by default. |  | Boolean
 | *camel.component.mail.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.mail.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.mail.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.dataformat.mime-multipart.binary-content* | Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false. | false | Boolean
 | *camel.dataformat.mime-multipart.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.mime-multipart.enabled* | Enable mime-multipart dataformat | true | Boolean
+| *camel.dataformat.mime-multipart.enabled* | Whether to enable auto configuration of the mime-multipart data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.mime-multipart.headers-inline* | Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default is false. | false | Boolean
 | *camel.dataformat.mime-multipart.include-headers* | A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work if headersInline is set to true. Default is to include no headers |  | String
 | *camel.dataformat.mime-multipart.multipart-sub-type* | Specify the subtype of the MIME Multipart. Default is mixed. | mixed | String
