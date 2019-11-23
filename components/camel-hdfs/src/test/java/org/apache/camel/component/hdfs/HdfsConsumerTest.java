@@ -30,6 +30,7 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -102,7 +103,6 @@ public class HdfsConsumerTest {
 
         // then
         verify(hdfsInfoFactory, times(0)).newHdfsInfo(anyString());
-
     }
 
     @Test
@@ -123,10 +123,10 @@ public class HdfsConsumerTest {
 
         // then
         verify(hdfsInfoFactory, times(1)).newHdfsInfo(hdfsPath);
-
     }
 
     @Test
+    @Ignore("TODO: https://issues.apache.org/jira/browse/CAMEL-14211")
     public void doPollFromExistingLocalFile() throws Exception {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
@@ -173,10 +173,10 @@ public class HdfsConsumerTest {
         ByteArrayOutputStream body = exchange.getIn().getBody(ByteArrayOutputStream.class);
         assertThat(body, notNullValue());
         assertThat(body.toString(), startsWith("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget fermentum arcu, vel dignissim ipsum."));
-
     }
 
     @Test
+    @Ignore("TODO: https://issues.apache.org/jira/browse/CAMEL-14211")
     public void doPollFromExistingLocalFileWithStreamDownload() throws Exception {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
@@ -223,8 +223,6 @@ public class HdfsConsumerTest {
 
         InputStream body = (InputStream) exchange.getIn().getBody();
         assertThat(body, notNullValue());
-
-
     }
 
 }
