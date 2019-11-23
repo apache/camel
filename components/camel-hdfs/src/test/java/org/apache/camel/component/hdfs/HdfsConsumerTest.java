@@ -126,7 +126,6 @@ public class HdfsConsumerTest {
     }
 
     @Test
-    @Ignore("TODO: https://issues.apache.org/jira/browse/CAMEL-14211")
     public void doPollFromExistingLocalFile() throws Exception {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
@@ -137,6 +136,7 @@ public class HdfsConsumerTest {
         when(endpointConfig.isConnectOnStartup()).thenReturn(true);
         when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
         when(endpointConfig.getChunkSize()).thenReturn(100 * 1000);
+        when(endpointConfig.getMaxMessagesPerPoll()).thenReturn(10);
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.createExchange()).thenReturn(new DefaultExchange(context));
         when(endpoint.getEndpointUri()).thenReturn(hdfsPath);
@@ -176,7 +176,6 @@ public class HdfsConsumerTest {
     }
 
     @Test
-    @Ignore("TODO: https://issues.apache.org/jira/browse/CAMEL-14211")
     public void doPollFromExistingLocalFileWithStreamDownload() throws Exception {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
@@ -188,6 +187,7 @@ public class HdfsConsumerTest {
         when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
         when(endpointConfig.getChunkSize()).thenReturn(100 * 1000);
         when(endpointConfig.isStreamDownload()).thenReturn(true);
+        when(endpointConfig.getMaxMessagesPerPoll()).thenReturn(10);
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.createExchange()).thenReturn(new DefaultExchange(context));
         when(endpoint.getEndpointUri()).thenReturn(hdfsPath);
