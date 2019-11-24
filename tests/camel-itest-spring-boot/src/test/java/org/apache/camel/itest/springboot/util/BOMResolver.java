@@ -117,13 +117,13 @@ public final class BOMResolver {
         Artifact camelParent = new DefaultArtifact("org.apache.camel:camel-parent:pom:"
                 + camelVersion).setFile(camelRoot("parent/pom.xml"));
         neededArtifacts.add(camelParent);
-        neededArtifacts.add(new DefaultArtifact("org.apache.camel:spring-boot:pom:"
+        neededArtifacts.add(new DefaultArtifact("org.apache.camel.springboot:spring-boot:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/pom.xml")));
-        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dm:pom:"
+        neededArtifacts.add(new DefaultArtifact("org.apache.camel.springboot:camel-spring-boot-dm:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/pom.xml")));
-        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dependencies:pom:"
+        neededArtifacts.add(new DefaultArtifact("org.apache.camel.springboot:camel-spring-boot-dependencies:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/camel-spring-boot-dependencies/pom.xml")));
-        Artifact camelStarterParent = new DefaultArtifact("org.apache.camel:camel-starter-parent:pom:"
+        Artifact camelStarterParent = new DefaultArtifact("org.apache.camel.springboot:camel-starter-parent:pom:"
             + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/camel-starter-parent/pom.xml"));
         neededArtifacts.add(camelStarterParent);
 
