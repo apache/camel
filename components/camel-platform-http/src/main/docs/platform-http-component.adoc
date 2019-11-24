@@ -1,3 +1,4 @@
+[[platform-http-component]]
 = Platform HTTP Component
 
 *Since Camel 3.0*
