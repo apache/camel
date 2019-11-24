@@ -104,6 +104,18 @@ public class MainTest extends Assert {
         main.stop();
     }
 
+    @Test
+    public void testDisableTracing() throws Exception {
+        Main main = new Main();
+        main.addRoutesBuilder(new MyRouteBuilder());
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertFalse("Tracing should be disabled", camelContext.isTracing());
+
+        main.stop();
+    }
+
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {
