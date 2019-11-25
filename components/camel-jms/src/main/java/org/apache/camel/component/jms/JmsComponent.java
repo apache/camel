@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
@@ -60,6 +59,12 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced", description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
             + " of javax.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
+    @Metadata(label = "advanced", description = "Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured."
+            + " If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.")
+    private boolean allowAutoWiredConnectionFactory = true;
+    @Metadata(label = "advanced", description = "Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured."
+            + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.")
+    private boolean allowAutoWiredDestinationResolver = true;
 
     public JmsComponent() {
         this.configuration = createConfiguration();
@@ -135,25 +140,27 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Subclasses can override to prevent the jms configuration from being
-     * setup to use an auto-wired the connection factory that's found in the spring
-     * application context.
-     *
-     * @return true by default
+     * Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured.
+     * If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.
      */
     public boolean isAllowAutoWiredConnectionFactory() {
-        return true;
+        return allowAutoWiredConnectionFactory;
+    }
+
+    public void setAllowAutoWiredConnectionFactory(boolean allowAutoWiredConnectionFactory) {
+        this.allowAutoWiredConnectionFactory = allowAutoWiredConnectionFactory;
     }
 
     /**
-     * Subclasses can override to prevent the jms configuration from being
-     * setup to use an auto-wired the destination resolved that's found in the spring
-     * application context.
-     *
-     * @return true by default
+     * Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured.
+     * If only one instance of DestinationResolver is found then it will be used. This is enabled by default.
      */
     public boolean isAllowAutoWiredDestinationResolver() {
-        return true;
+        return allowAutoWiredDestinationResolver;
+    }
+
+    public void setAllowAutoWiredDestinationResolver(boolean allowAutoWiredDestinationResolver) {
+        this.allowAutoWiredDestinationResolver = allowAutoWiredDestinationResolver;
     }
 
     /**
@@ -1223,7 +1230,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected void doStart() throws Exception {
-        if (configuration.getConnectionFactory() == null && isAllowAutoWiredConnectionFactory()) {
+        // only attempt to set connection factory if there is no transaction manager
+        if (configuration.getConnectionFactory() == null && configuration.getTransactionManager() == null && isAllowAutoWiredConnectionFactory()) {
             Set<ConnectionFactory> beans = getCamelContext().getRegistry().findByType(ConnectionFactory.class);
             if (beans.size() == 1) {
                 ConnectionFactory cf = beans.iterator().next();
