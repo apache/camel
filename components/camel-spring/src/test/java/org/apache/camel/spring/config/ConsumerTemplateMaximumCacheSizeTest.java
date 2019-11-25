@@ -43,8 +43,8 @@ public class ConsumerTemplateMaximumCacheSizeTest extends SpringRunWithTestSuppo
         assertEquals(50, template.getMaximumCacheSize());
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
 
-        // test that we cache at most 50 producers to avoid it eating too much memory
-        for (int i = 0; i < 53; i++) {
+        // test that we cache around 50 producers to avoid it eating too much memory
+        for (int i = 0; i <= 55; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             template.receiveNoWait(e);
         }
@@ -54,7 +54,7 @@ public class ConsumerTemplateMaximumCacheSizeTest extends SpringRunWithTestSuppo
 
         // eviction may still run a bit
         int currentCacheSize = template.getCurrentCacheSize();
-        assertTrue("Size should be around 50, but was " + currentCacheSize, currentCacheSize <= 51);
+        assertTrue("Size should be around 50, but was " + currentCacheSize, currentCacheSize <= 53);
         template.stop();
 
         // should be 0
