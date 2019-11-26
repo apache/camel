@@ -22,16 +22,16 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 public class JsonPathSourceTest extends CamelTestSupport {
     private static final String MESSAGE1 = "Joseph und seine Br\u00fcder";
     private static final String MESSAGE2 = "G\u00f6tzend\u00e4mmerung";
     private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();   
 
-    @AfterClass
+    @AfterAll
     public static void setDefaultCharsetBack() {
         switchToDefaultCharset(DEFAULT_CHARSET.displayName());
     }
