@@ -302,7 +302,7 @@
         <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.9</jasminb-jsonapi-version>
-        <jandex-version>2.1.1.Final</jandex-version>
+        <jandex-version>2.1.2.Final</jandex-version>
         <jasn1-version>1.11.2</jasn1-version>
         <jasypt-bundle-version>1.9.3_1</jasypt-bundle-version>
         <jasypt-version>1.9.3</jasypt-version>
