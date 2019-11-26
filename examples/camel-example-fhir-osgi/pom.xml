@@ -123,7 +123,7 @@
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-aether</artifactId>
-            <version>2.4.5</version>
+            <version>2.6.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
