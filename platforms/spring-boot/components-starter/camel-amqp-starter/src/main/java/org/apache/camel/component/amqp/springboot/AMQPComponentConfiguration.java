@@ -48,6 +48,20 @@ public class AMQPComponentConfiguration
      */
     private Boolean includeAmqpAnnotations = false;
     /**
+     * Whether to auto-discover ConnectionFactory from the registry, if no
+     * connection factory has been configured. If only one instance of
+     * ConnectionFactory is found then it will be used. This is enabled by
+     * default.
+     */
+    private Boolean allowAutoWiredConnectionFactory = false;
+    /**
+     * Whether to auto-discover DestinationResolver from the registry, if no
+     * destination resolver has been configured. If only one instance of
+     * DestinationResolver is found then it will be used. This is enabled by
+     * default.
+     */
+    private Boolean allowAutoWiredDestinationResolver = false;
+    /**
      * To use a shared JMS configuration. The option is a
      * org.apache.camel.component.jms.JmsConfiguration type.
      */
@@ -651,6 +665,24 @@ public class AMQPComponentConfiguration
 
     public void setIncludeAmqpAnnotations(Boolean includeAmqpAnnotations) {
         this.includeAmqpAnnotations = includeAmqpAnnotations;
+    }
+
+    public Boolean getAllowAutoWiredConnectionFactory() {
+        return allowAutoWiredConnectionFactory;
+    }
+
+    public void setAllowAutoWiredConnectionFactory(
+            Boolean allowAutoWiredConnectionFactory) {
+        this.allowAutoWiredConnectionFactory = allowAutoWiredConnectionFactory;
+    }
+
+    public Boolean getAllowAutoWiredDestinationResolver() {
+        return allowAutoWiredDestinationResolver;
+    }
+
+    public void setAllowAutoWiredDestinationResolver(
+            Boolean allowAutoWiredDestinationResolver) {
+        this.allowAutoWiredDestinationResolver = allowAutoWiredDestinationResolver;
     }
 
     public String getConfiguration() {

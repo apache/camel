@@ -49,7 +49,7 @@ activemq:foo
 == Component options
 
 // component options: START
-The ActiveMQ component supports 86 options, which are listed below.
+The ActiveMQ component supports 88 options, which are listed below.
 
 
 
@@ -61,6 +61,8 @@ The ActiveMQ component supports 86 options, which are listed below.
 | *usePooledConnection* (common) | Enables or disables whether a PooledConnectionFactory will be used so that when messages are sent to ActiveMQ from outside of a message consuming thread, pooling will be used rather than the default with the Spring JmsTemplate which will create a new connection, session, producer for each message then close them all down again. The default value is true. | false | boolean
 | *useSingleConnection* (common) | Enables or disables whether a Spring SingleConnectionFactory will be used so that when messages are sent to ActiveMQ from outside of a message consuming thread, pooling will be used rather than the default with the Spring JmsTemplate which will create a new connection, session, producer for each message then close them all down again. The default value is false and a pooled connection is used by default. | false | boolean
 | *configuration* (common) | Configuration of ActiveMQ |  | JmsConfiguration
+| *allowAutoWired ConnectionFactory* (advanced) | Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured. If only one instance of ConnectionFactory is found then it will be used. This is enabled by default. | false | boolean
+| *allowAutoWired DestinationResolver* (advanced) | Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured. If only one instance of DestinationResolver is found then it will be used. This is enabled by default. | false | boolean
 | *acceptMessagesWhile Stopping* (consumer) | Specifies whether the consumer accept messages while it is stopping. You may consider enabling this option, if you start and stop JMS routes at runtime, while there are still messages enqueued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected, and the JMS broker would have to attempt redeliveries, which yet again may be rejected, and eventually the message may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option. | false | boolean
 | *allowReplyManagerQuick Stop* (consumer) | Whether the DefaultMessageListenerContainer used in the reply managers for request-reply messaging allow the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by default in the regular JMS consumers but to enable for reply managers you must enable this flag. | false | boolean
 | *acknowledgementMode* (consumer) | The JMS acknowledgement mode defined as an Integer. Allows you to set vendor-specific extensions to the acknowledgment mode. For the regular modes, it is preferable to use the acknowledgementModeName instead. |  | int
@@ -286,7 +288,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 87 options, which are listed below.
+The component supports 89 options, which are listed below.
 
 
 
@@ -297,6 +299,8 @@ The component supports 87 options, which are listed below.
 | *camel.component.activemq.acknowledgement-mode* | The JMS acknowledgement mode defined as an Integer. Allows you to set vendor-specific extensions to the acknowledgment mode. For the regular modes, it is preferable to use the acknowledgementModeName instead. |  | Integer
 | *camel.component.activemq.acknowledgement-mode-name* | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ACKNOWLEDGE | String
 | *camel.component.activemq.allow-additional-headers* | This option is used to allow additional headers which may have values that are invalid according to JMS specification. For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types. You can specify multiple header names separated by comma, and use as suffix for wildcard matching. |  | String
+| *camel.component.activemq.allow-auto-wired-connection-factory* | Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured. If only one instance of ConnectionFactory is found then it will be used. This is enabled by default. | false | Boolean
+| *camel.component.activemq.allow-auto-wired-destination-resolver* | Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured. If only one instance of DestinationResolver is found then it will be used. This is enabled by default. | false | Boolean
 | *camel.component.activemq.allow-null-body* | Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown. | true | Boolean
 | *camel.component.activemq.allow-reply-manager-quick-stop* | Whether the DefaultMessageListenerContainer used in the reply managers for request-reply messaging allow the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by default in the regular JMS consumers but to enable for reply managers you must enable this flag. | false | Boolean
 | *camel.component.activemq.always-copy-message* | If true, Camel will always make a JMS message copy of the message when it is passed to the producer for sending. Copying the message is needed in some situations, such as when a replyToDestinationSelectorName is set (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set). | false | Boolean
