@@ -430,7 +430,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 83 options, which are listed below.
+The component supports 85 options, which are listed below.
 
 
 
@@ -441,6 +441,8 @@ The component supports 83 options, which are listed below.
 | *camel.component.jms.acknowledgement-mode* | The JMS acknowledgement mode defined as an Integer. Allows you to set vendor-specific extensions to the acknowledgment mode. For the regular modes, it is preferable to use the acknowledgementModeName instead. |  | Integer
 | *camel.component.jms.acknowledgement-mode-name* | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ACKNOWLEDGE | String
 | *camel.component.jms.allow-additional-headers* | This option is used to allow additional headers which may have values that are invalid according to JMS specification. For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types. You can specify multiple header names separated by comma, and use as suffix for wildcard matching. |  | String
+| *camel.component.jms.allow-auto-wired-connection-factory* | Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured. If only one instance of ConnectionFactory is found then it will be used. This is enabled by default. | false | Boolean
+| *camel.component.jms.allow-auto-wired-destination-resolver* | Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured. If only one instance of DestinationResolver is found then it will be used. This is enabled by default. | false | Boolean
 | *camel.component.jms.allow-null-body* | Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown. | true | Boolean
 | *camel.component.jms.allow-reply-manager-quick-stop* | Whether the DefaultMessageListenerContainer used in the reply managers for request-reply messaging allow the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by default in the regular JMS consumers but to enable for reply managers you must enable this flag. | false | Boolean
 | *camel.component.jms.always-copy-message* | If true, Camel will always make a JMS message copy of the message when it is passed to the producer for sending. Copying the message is needed in some situations, such as when a replyToDestinationSelectorName is set (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set). | false | Boolean
