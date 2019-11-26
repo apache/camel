@@ -139,7 +139,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
             return (Subscriber<T>) streamSubscriber(name);
         }
 
-        return new ConvertingSubscriber<>(streamSubscriber(name), context);
+        return new ConvertingSubscriber<>(streamSubscriber(name), context, type);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public <T> Subscriber<T> subscriber(String uri, Class<T> type) {
-        return new ConvertingSubscriber<>(subscriber(uri), context);
+        return new ConvertingSubscriber<>(subscriber(uri), context, type);
     }
 
     @Override
