@@ -115,7 +115,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
             return Subscriber.class.cast(subscriber);
         }
 
-        return new ConvertingSubscriber<>(subscriber, context);
+        return new ConvertingSubscriber<>(subscriber, context, type);
     }
 
     @Override
@@ -185,7 +185,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
 
     @Override
     public <T> Subscriber<T> subscriber(String uri, Class<T> type) {
-        return new ConvertingSubscriber<>(subscriber(uri), context);
+        return new ConvertingSubscriber<>(subscriber(uri), context, type);
     }
 
     @Override
