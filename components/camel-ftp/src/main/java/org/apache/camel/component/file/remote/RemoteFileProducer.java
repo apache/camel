@@ -103,7 +103,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
-    public void preWriteCheck() throws Exception {
+    public void preWriteCheck(Exchange exchange) throws Exception {
         // before writing send a noop to see if the connection is alive and works
         boolean noop = false;
         if (loggedIn) {
@@ -127,7 +127,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         // if not alive then reconnect
         if (!noop) {
             try {
-                connectIfNecessary();
+                connectIfNecessary(exchange);
             } catch (Exception e) {
                 loggedIn = false;
 
@@ -173,11 +173,11 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         super.doStop();
     }
 
-    protected void connectIfNecessary() throws GenericFileOperationFailedException {
+    protected void connectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
         if (!loggedIn || !getOperations().isConnected()) {
             log.debug("Not already connected/logged in. Connecting to: {}", getEndpoint());
             RemoteFileConfiguration config = getEndpoint().getConfiguration();
-            loggedIn = getOperations().connect(config);
+            loggedIn = getOperations().connect(config, exchange);
             if (!loggedIn) {
                 return;
             }

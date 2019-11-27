@@ -78,18 +78,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         this.clientActivityListener = clientActivityListener;
     }
 
-    public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         client.setCopyStreamListener(clientActivityListener);
 
         try {
-            return doConnect(configuration);
+            return doConnect(configuration, exchange);
         } catch (GenericFileOperationFailedException e) {
             clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
             throw e;
         }
     }
 
-    protected boolean doConnect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
+    protected boolean doConnect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         log.trace("Connecting using FTPClient: {}", client);
 
         String host = configuration.getHost();
@@ -162,6 +162,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                         throw new GenericFileOperationFailedException("Interrupted during sleeping", ie);
                     }
                 }
+            } finally {
+                if (exchange != null) {
+                    // store client reply information after the operation
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+                }
             }
         }
 
@@ -222,6 +228,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             client.setFileType(configuration.isBinary() ? FTP.BINARY_FILE_TYPE : FTP.ASCII_FILE_TYPE);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }  finally {
+            if (exchange != null) {
+                // store client reply information after the operation
+                exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+                exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+            }
         }
 
         // site commands
