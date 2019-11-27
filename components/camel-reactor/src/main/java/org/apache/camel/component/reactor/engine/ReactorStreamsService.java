@@ -115,7 +115,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
             return Subscriber.class.cast(subscriber);
         }
 
-        return new ConvertingSubscriber<>(subscriber, context);
+        return new ConvertingSubscriber<>(subscriber, context, type);
     }
 
     @Override
@@ -190,7 +190,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
 
     @Override
     public <T> Subscriber<T> subscriber(String uri, Class<T> type) {
-        return new ConvertingSubscriber<>(subscriber(uri), context);
+        return new ConvertingSubscriber<>(subscriber(uri), context, type);
     }
 
     @Override
