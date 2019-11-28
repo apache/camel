@@ -18,12 +18,14 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,6 +72,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 public class EndpointDslMojo extends AbstractMojo {
 
     private static final Map<String, Class<?>> PRIMITIVEMAP;
+
+    private static final String SUFFIX = "EndpointBuilderFactory";
 
     static {
         PRIMITIVEMAP = new HashMap<>();
@@ -188,6 +192,8 @@ public class EndpointDslMojo extends AbstractMojo {
                 }
 
                 createEndpointDsl(packageName, model, compModels, overrideComponentName);
+
+                synchronizeEndpointBuilderFactoryInterface();
             }
         }
     }
@@ -452,6 +458,54 @@ public class EndpointDslMojo extends AbstractMojo {
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + builderName + "Factory.java";
         writeSourceIfChanged(javaClass, fileName, false);
+    }
+
+    private void synchronizeEndpointBuilderFactoryInterface() throws MojoExecutionException {
+        // load components with indent
+        final List<String> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsString()
+                .stream()
+                .map(file -> "\t\t" + file)
+                .collect(Collectors.toList());
+
+
+        // load EndpointBuilderFactory interface
+        final String interfaceFactoryPath = packageName.replaceAll("\\.", "\\/").replace("dsl", "") + "EndpointBuilderFactory.java";
+
+        final File interfaceFactoryPathFile = new File(outputDir, interfaceFactoryPath);
+
+        final String markerStart = "// FACTORY INTERFACE UPDATE START";
+        final String markerEnd = "// FACTORY INTERFACE UPDATE END";
+
+        try(final InputStream stream = new FileInputStream(interfaceFactoryPathFile)) {
+            final String loadedText = loadText(stream);
+
+            final String before = StringHelper.before(loadedText, markerStart);
+            final String after = StringHelper.after(loadedText, markerEnd);
+
+            // we make sure these markers exists
+            if (before == null || after == null) {
+                throw new MojoExecutionException(String.format("Markers '%s' and '%s' don't exist, make sure they exist.", markerStart, markerEnd));
+            }
+
+            // we build our new updated class
+            final String updatedInterfaceAsText = before + markerStart + "\n" + String.join(",\n", allComponentsDslEndpointFactories) + "\n" + markerEnd + after;
+
+            // write our file back
+            updateResource(null, interfaceFactoryPathFile.toPath(), updatedInterfaceAsText);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading file " + interfaceFactoryPathFile + " Reason: " + e, e);
+        }
+    }
+
+    private List<String> loadAllComponentsDslEndpointFactoriesAsString() {
+        final File allComponentsDslEndpointFactory = new File(outputDir, packageName.replaceAll("\\.", "\\/"));
+
+        // load components
+        return Arrays.asList(allComponentsDslEndpointFactory.listFiles()).stream()
+                .filter(file -> file.isFile() && file.getName().contains(SUFFIX) && file.exists())
+                .map(file -> file.getName().replace(".java" , ""))
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     private static String camelCaseLower(String s) {
