@@ -62,12 +62,6 @@ public class FtpsOperations extends FtpOperations {
                     log.debug("FTPClient initializing with execProt={}", execProt);
                     getFtpClient().execPROT(execProt);
                 }
-
-                if (exchange != null) {
-                    // store client reply information after the operation
-                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
-                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
-                }
             } catch (SSLException e) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(),
                         client.getReplyString(), e.getMessage(), e);
