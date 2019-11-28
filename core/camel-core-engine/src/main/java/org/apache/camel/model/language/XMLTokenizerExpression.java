@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -41,7 +42,8 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @XmlAttribute
     private String mode;
     @XmlAttribute
-    private Integer group;
+    @Metadata(javaType = "java.lang.Integer")
+    private String group;
 
     public XMLTokenizerExpression() {
     }
@@ -84,14 +86,14 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         this.mode = mode;
     }
 
-    public Integer getGroup() {
+    public String getGroup() {
         return group;
     }
 
     /**
      * To group N parts together
      */
-    public void setGroup(Integer group) {
+    public void setGroup(String group) {
         this.group = group;
     }
 

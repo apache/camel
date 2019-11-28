@@ -106,10 +106,11 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
+public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier {
 
     private static final Map<Class<?>, Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
     static {
@@ -366,7 +367,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             // however if share unit of work is enabled, we need to wrap an
             // error handler on the multicast parent
             MulticastDefinition def = (MulticastDefinition)definition;
-            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && def.getShareUnitOfWork();
+            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && parseBoolean(routeContext, def.getShareUnitOfWork());
             if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrap = true;
@@ -604,4 +605,5 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     protected String getId(OptionalIdentifiedDefinition<?> def, RouteContext routeContext) {
         return def.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
     }
+
 }

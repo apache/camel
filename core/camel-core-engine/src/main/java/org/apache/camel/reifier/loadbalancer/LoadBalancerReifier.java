@@ -29,10 +29,11 @@ import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.StringHelper;
 
-public class LoadBalancerReifier<T extends LoadBalancerDefinition> {
+public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends AbstractReifier {
 
     private static final Map<Class<?>, Function<LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS;
     static {

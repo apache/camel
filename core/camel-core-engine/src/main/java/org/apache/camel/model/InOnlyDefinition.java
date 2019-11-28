@@ -59,7 +59,7 @@ public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
     }
 
     @Override
-    public ExchangePattern getPattern() {
-        return ExchangePattern.InOnly;
+    public String getPattern() {
+        return ExchangePattern.InOnly.name();
     }
 }

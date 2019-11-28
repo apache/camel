@@ -329,8 +329,8 @@ public class XmlParseTest extends XmlTestSupport {
         ResequenceDefinition resequencer = assertOneProcessorInstanceOf(ResequenceDefinition.class, route);
         assertNull(resequencer.getStreamConfig());
         assertNotNull(resequencer.getBatchConfig());
-        assertEquals(500, resequencer.getBatchConfig().getBatchSize());
-        assertEquals(2000L, resequencer.getBatchConfig().getBatchTimeout());
+        assertEquals(Integer.toString(500), resequencer.getBatchConfig().getBatchSize());
+        assertEquals(Long.toString(2000L), resequencer.getBatchConfig().getBatchTimeout());
     }
 
     @Test
@@ -339,8 +339,8 @@ public class XmlParseTest extends XmlTestSupport {
         ResequenceDefinition resequencer = assertOneProcessorInstanceOf(ResequenceDefinition.class, route);
         assertNotNull(resequencer.getStreamConfig());
         assertNull(resequencer.getBatchConfig());
-        assertEquals(1000, resequencer.getStreamConfig().getCapacity());
-        assertEquals(2000L, resequencer.getStreamConfig().getTimeout());
+        assertEquals(Integer.toString(1000), resequencer.getStreamConfig().getCapacity());
+        assertEquals(Long.toString(2000L), resequencer.getStreamConfig().getTimeout());
     }
 
     @Test

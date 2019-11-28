@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
@@ -41,17 +42,17 @@ public class JsonPathExpression extends ExpressionDefinition {
     @XmlTransient
     private Class<?> resultType;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean suppressExceptions;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String suppressExceptions;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean allowSimple;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String allowSimple;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean allowEasyPredicate;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String allowEasyPredicate;
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean writeAsString;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String writeAsString;
     @XmlAttribute
     private String headerName;
 
@@ -84,40 +85,40 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.resultType = resultType;
     }
 
-    public Boolean getSuppressExceptions() {
+    public String getSuppressExceptions() {
         return suppressExceptions;
     }
 
-    public Boolean getAllowSimple() {
+    public String getAllowSimple() {
         return allowSimple;
     }
 
     /**
      * Whether to allow in inlined simple exceptions in the JsonPath expression
      */
-    public void setAllowSimple(Boolean allowSimple) {
+    public void setAllowSimple(String allowSimple) {
         this.allowSimple = allowSimple;
     }
 
-    public Boolean getAllowEasyPredicate() {
+    public String getAllowEasyPredicate() {
         return allowEasyPredicate;
     }
 
     /**
      * Whether to allow using the easy predicate parser to pre-parse predicates.
      */
-    public void setAllowEasyPredicate(Boolean allowEasyPredicate) {
+    public void setAllowEasyPredicate(String allowEasyPredicate) {
         this.allowEasyPredicate = allowEasyPredicate;
     }
 
     /**
      * Whether to suppress exceptions such as PathNotFoundException.
      */
-    public void setSuppressExceptions(Boolean suppressExceptions) {
+    public void setSuppressExceptions(String suppressExceptions) {
         this.suppressExceptions = suppressExceptions;
     }
 
-    public Boolean getWriteAsString() {
+    public String getWriteAsString() {
         return writeAsString;
     }
 
@@ -125,7 +126,7 @@ public class JsonPathExpression extends ExpressionDefinition {
      * Whether to write the output of each row/element as a JSON String value
      * instead of a Map/POJO value.
      */
-    public void setWriteAsString(Boolean writeAsString) {
+    public void setWriteAsString(String writeAsString) {
         this.writeAsString = writeAsString;
     }
 

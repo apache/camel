@@ -47,18 +47,22 @@ public class PGPDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String signatureKeyRing;
     @XmlAttribute
-    private Boolean armored;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String armored;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean integrity;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String integrity;
     @XmlAttribute
     private String provider;
     @XmlAttribute
-    private Integer algorithm;
+    @Metadata(javaType = "java.lang.Integer")
+    private String algorithm;
     @XmlAttribute
-    private Integer compressionAlgorithm;
+    @Metadata(javaType = "java.lang.Integer")
+    private String compressionAlgorithm;
     @XmlAttribute
-    private Integer hashAlgorithm;
+    @Metadata(javaType = "java.lang.Integer")
+    private String hashAlgorithm;
     @XmlAttribute
     private String signatureVerificationOption;
 
@@ -123,7 +127,7 @@ public class PGPDataFormat extends DataFormatDefinition {
         this.signatureKeyRing = signatureKeyRing;
     }
 
-    public Integer getHashAlgorithm() {
+    public String getHashAlgorithm() {
         return hashAlgorithm;
     }
 
@@ -133,11 +137,11 @@ public class PGPDataFormat extends DataFormatDefinition {
      * SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for
      * signing.
      */
-    public void setHashAlgorithm(Integer hashAlgorithm) {
+    public void setHashAlgorithm(String hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }
 
-    public Boolean getArmored() {
+    public String getArmored() {
         return armored;
     }
 
@@ -145,11 +149,11 @@ public class PGPDataFormat extends DataFormatDefinition {
      * This option will cause PGP to base64 encode the encrypted text, making it
      * available for copy/paste, etc.
      */
-    public void setArmored(Boolean armored) {
+    public void setArmored(String armored) {
         this.armored = armored;
     }
 
-    public Boolean getIntegrity() {
+    public String getIntegrity() {
         return integrity;
     }
 
@@ -158,7 +162,7 @@ public class PGPDataFormat extends DataFormatDefinition {
      * <p/>
      * The default value is true.
      */
-    public void setIntegrity(Boolean integrity) {
+    public void setIntegrity(String integrity) {
         this.integrity = integrity;
     }
 
@@ -193,7 +197,7 @@ public class PGPDataFormat extends DataFormatDefinition {
         return password;
     }
 
-    public Integer getAlgorithm() {
+    public String getAlgorithm() {
         return algorithm;
     }
 
@@ -203,11 +207,11 @@ public class PGPDataFormat extends DataFormatDefinition {
      * DES), 3 (= CAST5), 4 (= BLOWFISH), 6 (= DES), 7 (= AES_128). Only
      * relevant for encrypting.
      */
-    public void setAlgorithm(Integer algorithm) {
+    public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
 
-    public Integer getCompressionAlgorithm() {
+    public String getCompressionAlgorithm() {
         return compressionAlgorithm;
     }
 
@@ -217,7 +221,7 @@ public class PGPDataFormat extends DataFormatDefinition {
      * UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for
      * encrypting.
      */
-    public void setCompressionAlgorithm(Integer compressionAlgorithm) {
+    public void setCompressionAlgorithm(String compressionAlgorithm) {
         this.compressionAlgorithm = compressionAlgorithm;
     }
 

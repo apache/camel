@@ -43,10 +43,10 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     private String executorServiceRef;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean asyncDelayed;
+    private String asyncDelayed;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean callerRunsWhenRejected;
+    private String callerRunsWhenRejected;
 
     public DelayDefinition() {
     }
@@ -94,7 +94,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      * @return the builder
      */
     public DelayDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
-        setCallerRunsWhenRejected(callerRunsWhenRejected);
+        setCallerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
         return this;
     }
 
@@ -103,7 +103,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      * while delaying.
      */
     public DelayDefinition asyncDelayed() {
-        setAsyncDelayed(true);
+        setAsyncDelayed(Boolean.toString(true));
         return this;
     }
 
@@ -112,7 +112,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
      * while delaying.
      */
     public DelayDefinition syncDelayed() {
-        setAsyncDelayed(false);
+        setAsyncDelayed(Boolean.toString(false));
         return this;
     }
 
@@ -146,19 +146,19 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         super.setExpression(expression);
     }
 
-    public Boolean getAsyncDelayed() {
+    public String getAsyncDelayed() {
         return asyncDelayed;
     }
 
-    public void setAsyncDelayed(Boolean asyncDelayed) {
+    public void setAsyncDelayed(String asyncDelayed) {
         this.asyncDelayed = asyncDelayed;
     }
 
-    public Boolean getCallerRunsWhenRejected() {
+    public String getCallerRunsWhenRejected() {
         return callerRunsWhenRejected;
     }
 
-    public void setCallerRunsWhenRejected(Boolean callerRunsWhenRejected) {
+    public void setCallerRunsWhenRejected(String callerRunsWhenRejected) {
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 

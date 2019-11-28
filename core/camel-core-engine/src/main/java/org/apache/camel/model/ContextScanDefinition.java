@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {
     @XmlAttribute
-    private Boolean includeNonSingletons;
+    private String includeNonSingletons;
     @XmlElement(name = "excludes")
     private List<String> excludes = new ArrayList<>();
     @XmlElement(name = "includes")
@@ -45,7 +45,7 @@ public class ContextScanDefinition {
     public ContextScanDefinition() {
     }
 
-    public Boolean getIncludeNonSingletons() {
+    public String getIncludeNonSingletons() {
         return includeNonSingletons;
     }
 
@@ -54,7 +54,7 @@ public class ContextScanDefinition {
      * <p/>
      * By default only singleton beans is included in the context scan
      */
-    public void setIncludeNonSingletons(Boolean includeNonSingletons) {
+    public void setIncludeNonSingletons(String includeNonSingletons) {
         this.includeNonSingletons = includeNonSingletons;
     }
 

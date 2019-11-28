@@ -41,15 +41,15 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     private String messageIdRepositoryRef;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean eager;
+    private String eager;
     @XmlAttribute
-    private Boolean completionEager;
-    @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean skipDuplicate;
+    private String completionEager;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean removeOnFailure;
+    private String skipDuplicate;
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
+    private String removeOnFailure;
     @XmlTransient
     private IdempotentRepository idempotentRepository;
 
@@ -121,7 +121,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
      * @return builder
      */
     public IdempotentConsumerDefinition eager(boolean eager) {
-        setEager(eager);
+        setEager(Boolean.toString(eager));
         return this;
     }
 
@@ -147,7 +147,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
      * @return builder
      */
     public IdempotentConsumerDefinition completionEager(boolean completionEager) {
-        setCompletionEager(completionEager);
+        setCompletionEager(Boolean.toString(completionEager));
         return this;
     }
 
@@ -161,7 +161,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
      * @return builder
      */
     public IdempotentConsumerDefinition removeOnFailure(boolean removeOnFailure) {
-        setRemoveOnFailure(removeOnFailure);
+        setRemoveOnFailure(Boolean.toString(removeOnFailure));
         return this;
     }
 
@@ -180,7 +180,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
      * @return builder
      */
     public IdempotentConsumerDefinition skipDuplicate(boolean skipDuplicate) {
-        setSkipDuplicate(skipDuplicate);
+        setSkipDuplicate(Boolean.toString(skipDuplicate));
         return this;
     }
 
@@ -211,35 +211,35 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
         this.idempotentRepository = idempotentRepository;
     }
 
-    public Boolean getEager() {
+    public String getEager() {
         return eager;
     }
 
-    public void setEager(Boolean eager) {
+    public void setEager(String eager) {
         this.eager = eager;
     }
 
-    public Boolean getSkipDuplicate() {
+    public String getSkipDuplicate() {
         return skipDuplicate;
     }
 
-    public void setSkipDuplicate(Boolean skipDuplicate) {
+    public void setSkipDuplicate(String skipDuplicate) {
         this.skipDuplicate = skipDuplicate;
     }
 
-    public Boolean getRemoveOnFailure() {
+    public String getRemoveOnFailure() {
         return removeOnFailure;
     }
 
-    public void setRemoveOnFailure(Boolean removeOnFailure) {
+    public void setRemoveOnFailure(String removeOnFailure) {
         this.removeOnFailure = removeOnFailure;
     }
 
-    public Boolean getCompletionEager() {
+    public String getCompletionEager() {
         return completionEager;
     }
 
-    public void setCompletionEager(Boolean completionEager) {
+    public void setCompletionEager(String completionEager) {
         this.completionEager = completionEager;
     }
 

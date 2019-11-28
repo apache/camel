@@ -31,9 +31,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
     @XmlAttribute
-    private Boolean markRollbackOnly;
+    private String markRollbackOnly;
     @XmlAttribute
-    private Boolean markRollbackOnlyLast;
+    private String markRollbackOnlyLast;
     @XmlAttribute
     private String message;
 
@@ -74,18 +74,18 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         this.message = message;
     }
 
-    public Boolean getMarkRollbackOnly() {
+    public String getMarkRollbackOnly() {
         return markRollbackOnly;
     }
 
     /**
      * Mark the transaction for rollback only (cannot be overruled to commit)
      */
-    public void setMarkRollbackOnly(Boolean markRollbackOnly) {
+    public void setMarkRollbackOnly(String markRollbackOnly) {
         this.markRollbackOnly = markRollbackOnly;
     }
 
-    public Boolean getMarkRollbackOnlyLast() {
+    public String getMarkRollbackOnlyLast() {
         return markRollbackOnlyLast;
     }
 
@@ -94,7 +94,7 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
      * <p/>
      * When using sub transactions (if the transaction manager support this)
      */
-    public void setMarkRollbackOnlyLast(Boolean markRollbackOnlyLast) {
+    public void setMarkRollbackOnlyLast(String markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
     }
 

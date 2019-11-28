@@ -393,6 +393,9 @@ public class CoreEipAnnotationProcessorHelper {
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
         TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
+        if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
+            fieldTypeName = metadata.javaType();
+        }
 
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);

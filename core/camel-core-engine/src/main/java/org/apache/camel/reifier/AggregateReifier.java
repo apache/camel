@@ -35,6 +35,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
@@ -58,7 +59,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         Expression correlation = definition.getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        boolean parallel = definition.getParallelProcessing() != null && definition.getParallelProcessing();
+        boolean parallel = parseBoolean(routeContext, definition.getParallelProcessing());
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, parallel);
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
@@ -102,15 +103,15 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         answer.setTimeoutCheckerExecutorService(timeoutThreadPool);
         answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
-        if (definition.getCompletionFromBatchConsumer() != null && definition.getCompletionFromBatchConsumer() && definition.getDiscardOnAggregationFailure() != null
-            && definition.getDiscardOnAggregationFailure()) {
+        if (parseBoolean(routeContext, definition.getCompletionFromBatchConsumer())
+                && parseBoolean(routeContext, definition.getDiscardOnAggregationFailure())) {
             throw new IllegalArgumentException("Cannot use both completionFromBatchConsumer and discardOnAggregationFailure on: " + definition);
         }
 
         // set other options
         answer.setParallelProcessing(parallel);
         if (definition.getOptimisticLocking() != null) {
-            answer.setOptimisticLocking(definition.getOptimisticLocking());
+            answer.setOptimisticLocking(parseBoolean(routeContext, definition.getOptimisticLocking()));
         }
         if (definition.getCompletionPredicate() != null) {
             Predicate predicate = definition.getCompletionPredicate().createPredicate(routeContext);
@@ -126,48 +127,48 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             answer.setCompletionTimeoutExpression(expression);
         }
         if (definition.getCompletionTimeout() != null) {
-            answer.setCompletionTimeout(definition.getCompletionTimeout());
+            answer.setCompletionTimeout(parseLong(routeContext, definition.getCompletionTimeout()));
         }
         if (definition.getCompletionInterval() != null) {
-            answer.setCompletionInterval(definition.getCompletionInterval());
+            answer.setCompletionInterval(parseLong(routeContext, definition.getCompletionInterval()));
         }
         if (definition.getCompletionSizeExpression() != null) {
             Expression expression = definition.getCompletionSizeExpression().createExpression(routeContext);
             answer.setCompletionSizeExpression(expression);
         }
         if (definition.getCompletionSize() != null) {
-            answer.setCompletionSize(definition.getCompletionSize());
+            answer.setCompletionSize(parseInt(routeContext, definition.getCompletionSize()));
         }
         if (definition.getCompletionFromBatchConsumer() != null) {
-            answer.setCompletionFromBatchConsumer(definition.getCompletionFromBatchConsumer());
+            answer.setCompletionFromBatchConsumer(parseBoolean(routeContext, definition.getCompletionFromBatchConsumer()));
         }
         if (definition.getCompletionOnNewCorrelationGroup() != null) {
-            answer.setCompletionOnNewCorrelationGroup(definition.getCompletionOnNewCorrelationGroup());
+            answer.setCompletionOnNewCorrelationGroup(parseBoolean(routeContext, definition.getCompletionOnNewCorrelationGroup()));
         }
         if (definition.getEagerCheckCompletion() != null) {
-            answer.setEagerCheckCompletion(definition.getEagerCheckCompletion());
+            answer.setEagerCheckCompletion(parseBoolean(routeContext, definition.getEagerCheckCompletion()));
         }
         if (definition.getIgnoreInvalidCorrelationKeys() != null) {
-            answer.setIgnoreInvalidCorrelationKeys(definition.getIgnoreInvalidCorrelationKeys());
+            answer.setIgnoreInvalidCorrelationKeys(parseBoolean(routeContext, definition.getIgnoreInvalidCorrelationKeys()));
         }
         if (definition.getCloseCorrelationKeyOnCompletion() != null) {
-            answer.setCloseCorrelationKeyOnCompletion(definition.getCloseCorrelationKeyOnCompletion());
+            answer.setCloseCorrelationKeyOnCompletion(parseInt(routeContext, definition.getCloseCorrelationKeyOnCompletion()));
         }
         if (definition.getDiscardOnCompletionTimeout() != null) {
-            answer.setDiscardOnCompletionTimeout(definition.getDiscardOnCompletionTimeout());
+            answer.setDiscardOnCompletionTimeout(parseBoolean(routeContext, definition.getDiscardOnCompletionTimeout()));
         }
         if (definition.getDiscardOnAggregationFailure() != null) {
-            answer.setDiscardOnAggregationFailure(definition.getDiscardOnAggregationFailure());
+            answer.setDiscardOnAggregationFailure(parseBoolean(routeContext, definition.getDiscardOnAggregationFailure()));
         }
         if (definition.getForceCompletionOnStop() != null) {
-            answer.setForceCompletionOnStop(definition.getForceCompletionOnStop());
+            answer.setForceCompletionOnStop(parseBoolean(routeContext, definition.getForceCompletionOnStop()));
         }
         if (definition.getCompleteAllOnStop() != null) {
-            answer.setCompleteAllOnStop(definition.getCompleteAllOnStop());
+            answer.setCompleteAllOnStop(parseBoolean(routeContext, definition.getCompleteAllOnStop()));
         }
         if (definition.getOptimisticLockRetryPolicy() == null) {
             if (definition.getOptimisticLockRetryPolicyDefinition() != null) {
-                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicyDefinition()));
+                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(routeContext, definition.getOptimisticLockRetryPolicyDefinition()));
             }
         } else {
             answer.setOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicy());
@@ -176,27 +177,27 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             answer.setAggregateController(definition.getAggregateController());
         }
         if (definition.getCompletionTimeoutCheckerInterval() != null) {
-            answer.setCompletionTimeoutCheckerInterval(definition.getCompletionTimeoutCheckerInterval());
+            answer.setCompletionTimeoutCheckerInterval(parseLong(routeContext, definition.getCompletionTimeoutCheckerInterval()));
         }
         return answer;
     }
 
-    public static OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(OptimisticLockRetryPolicyDefinition definition) {
+    public static OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(RouteContext routeContext, OptimisticLockRetryPolicyDefinition definition) {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         if (definition.getMaximumRetries() != null) {
-            policy.setMaximumRetries(definition.getMaximumRetries());
+            policy.setMaximumRetries(parseInt(routeContext, definition.getMaximumRetries()));
         }
         if (definition.getRetryDelay() != null) {
-            policy.setRetryDelay(definition.getRetryDelay());
+            policy.setRetryDelay(parseLong(routeContext, definition.getRetryDelay()));
         }
         if (definition.getMaximumRetryDelay() != null) {
-            policy.setMaximumRetryDelay(definition.getMaximumRetryDelay());
+            policy.setMaximumRetryDelay(parseLong(routeContext, definition.getMaximumRetryDelay()));
         }
         if (definition.getExponentialBackOff() != null) {
-            policy.setExponentialBackOff(definition.getExponentialBackOff());
+            policy.setExponentialBackOff(parseBoolean(routeContext, definition.getExponentialBackOff()));
         }
         if (definition.getRandomBackOff() != null) {
-            policy.setRandomBackOff(definition.getRandomBackOff());
+            policy.setRandomBackOff(parseBoolean(routeContext, definition.getRandomBackOff()));
         }
         return policy;
     }
@@ -210,8 +211,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(definition.getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(definition.getStrategyMethodAllowNull());
+                    adapter.setAllowNullNewExchange(Boolean.parseBoolean(definition.getStrategyMethodAllowNull()));
+                    adapter.setAllowNullOldExchange(Boolean.parseBoolean(definition.getStrategyMethodAllowNull()));
                 }
                 strategy = adapter;
             } else {

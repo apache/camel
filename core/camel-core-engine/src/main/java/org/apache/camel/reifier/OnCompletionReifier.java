@@ -50,10 +50,10 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
             routeScoped = definition.getParent() != null;
         }
 
-        boolean isOnCompleteOnly = definition.getOnCompleteOnly() != null && definition.getOnCompleteOnly();
-        boolean isOnFailureOnly = definition.getOnFailureOnly() != null && definition.getOnFailureOnly();
-        boolean isParallelProcessing = definition.getParallelProcessing() != null && definition.getParallelProcessing();
-        boolean original = definition.getUseOriginalMessagePolicy() != null && definition.getUseOriginalMessagePolicy();
+        boolean isOnCompleteOnly = definition.getOnCompleteOnly() != null && parseBoolean(routeContext, definition.getOnCompleteOnly());
+        boolean isOnFailureOnly = definition.getOnFailureOnly() != null && parseBoolean(routeContext, definition.getOnFailureOnly());
+        boolean isParallelProcessing = definition.getParallelProcessing() != null && parseBoolean(routeContext, definition.getParallelProcessing());
+        boolean original = definition.getUseOriginalMessage() != null && parseBoolean(routeContext, definition.getUseOriginalMessage());
 
         if (isOnCompleteOnly && isOnFailureOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);

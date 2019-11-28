@@ -33,8 +33,8 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor output = this.createChildProcessor(routeContext, true);
-        boolean isCopy = definition.getCopy() != null && definition.getCopy();
-        boolean isWhile = definition.getDoWhile() != null && definition.getDoWhile();
+        boolean isCopy = definition.getCopy() != null && parseBoolean(routeContext, definition.getCopy());
+        boolean isWhile = definition.getDoWhile() != null && parseBoolean(routeContext, definition.getDoWhile());
 
         Predicate predicate = null;
         Expression expression = null;

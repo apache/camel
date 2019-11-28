@@ -36,7 +36,7 @@ public class ZooKeeperServiceCallServiceDiscoveryConfiguration extends ServiceCa
     @XmlAttribute
     private String reconnectMaxSleepTime;
     @XmlAttribute
-    private Integer reconnectMaxRetries;
+    private String reconnectMaxRetries;
     @XmlAttribute
     private String sessionTimeout;
     @XmlAttribute
@@ -102,14 +102,14 @@ public class ZooKeeperServiceCallServiceDiscoveryConfiguration extends ServiceCa
         this.reconnectMaxSleepTime = reconnectMaxSleepTime;
     }
 
-    public Integer getReconnectMaxRetries() {
+    public String getReconnectMaxRetries() {
         return reconnectMaxRetries;
     }
 
     /**
      * Max number of times to retry
      */
-    public void setReconnectMaxRetries(Integer reconnectMaxRetries) {
+    public void setReconnectMaxRetries(String reconnectMaxRetries) {
         this.reconnectMaxRetries = reconnectMaxRetries;
     }
 
@@ -171,7 +171,7 @@ public class ZooKeeperServiceCallServiceDiscoveryConfiguration extends ServiceCa
     }
 
     public ZooKeeperServiceCallServiceDiscoveryConfiguration reconnectMaxRetries(int reconnectMaxRetries) {
-        setReconnectMaxRetries(reconnectMaxRetries);
+        setReconnectMaxRetries(Integer.toString(reconnectMaxRetries));
         return this;
     }
 

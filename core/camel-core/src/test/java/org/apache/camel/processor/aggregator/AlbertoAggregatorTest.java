@@ -162,8 +162,8 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                 // Join all brothers lists and remove surname and type headers
                 AggregateDefinition agg = from("direct:joinBrothers").aggregate(header(TYPE_HEADER), brothersAggregator);
 
-                agg.setCompletionTimeout(100L);
-                agg.setCompletionTimeoutCheckerInterval(10L);
+                agg.completionTimeout(100L);
+                agg.completionTimeoutCheckerInterval(10L);
                 agg.removeHeader(SURNAME_HEADER).removeHeader(TYPE_HEADER).to("mock:result");
             }
         };

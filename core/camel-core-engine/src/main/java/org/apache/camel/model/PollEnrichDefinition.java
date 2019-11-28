@@ -39,28 +39,28 @@ import org.apache.camel.spi.Metadata;
 public class PollEnrichDefinition extends ExpressionNode {
     @XmlAttribute
     @Metadata(defaultValue = "-1")
-    private Long timeout;
+    private String timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
     @XmlAttribute(name = "strategyMethodName")
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
-    private Boolean aggregationStrategyMethodAllowNull;
+    private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
-    private Boolean aggregateOnException;
+    private String aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
-    private Integer cacheSize;
+    private String cacheSize;
     @XmlAttribute
-    private Boolean ignoreInvalidEndpoint;
+    private String ignoreInvalidEndpoint;
 
     public PollEnrichDefinition() {
     }
 
     public PollEnrichDefinition(AggregationStrategy aggregationStrategy, long timeout) {
         this.aggregationStrategy = aggregationStrategy;
-        this.timeout = timeout;
+        this.timeout = Long.toString(timeout);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * indefinitely, and therefore its recommended to use a timeout value
      */
     public PollEnrichDefinition timeout(long timeout) {
-        setTimeout(timeout);
+        setTimeout(Long.toString(timeout));
         return this;
     }
 
@@ -151,7 +151,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * AggregationStrategy.
      */
     public PollEnrichDefinition aggregationStrategyMethodAllowNull(boolean aggregationStrategyMethodAllowNull) {
-        setAggregationStrategyMethodAllowNull(aggregationStrategyMethodAllowNull);
+        setAggregationStrategyMethodAllowNull(Boolean.toString(aggregationStrategyMethodAllowNull));
         return this;
     }
 
@@ -163,7 +163,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * to suppress the exception or set a custom message body etc.
      */
     public PollEnrichDefinition aggregateOnException(boolean aggregateOnException) {
-        setAggregateOnException(aggregateOnException);
+        setAggregateOnException(Boolean.toString(aggregateOnException));
         return this;
     }
 
@@ -177,7 +177,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * @return the builder
      */
     public PollEnrichDefinition cacheSize(int cacheSize) {
-        setCacheSize(cacheSize);
+        setCacheSize(Integer.toString(cacheSize));
         return this;
     }
 
@@ -188,7 +188,7 @@ public class PollEnrichDefinition extends ExpressionNode {
      * @return the builder
      */
     public PollEnrichDefinition ignoreInvalidEndpoint() {
-        setIgnoreInvalidEndpoint(true);
+        setIgnoreInvalidEndpoint(Boolean.toString(true));
         return this;
     }
 
@@ -205,11 +205,11 @@ public class PollEnrichDefinition extends ExpressionNode {
         super.setExpression(expression);
     }
 
-    public Long getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(Long timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -229,11 +229,11 @@ public class PollEnrichDefinition extends ExpressionNode {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
 
-    public Boolean getAggregationStrategyMethodAllowNull() {
+    public String getAggregationStrategyMethodAllowNull() {
         return aggregationStrategyMethodAllowNull;
     }
 
-    public void setAggregationStrategyMethodAllowNull(Boolean aggregationStrategyMethodAllowNull) {
+    public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
@@ -245,27 +245,27 @@ public class PollEnrichDefinition extends ExpressionNode {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public Boolean getAggregateOnException() {
+    public String getAggregateOnException() {
         return aggregateOnException;
     }
 
-    public void setAggregateOnException(Boolean aggregateOnException) {
+    public void setAggregateOnException(String aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
     }
 
-    public Integer getCacheSize() {
+    public String getCacheSize() {
         return cacheSize;
     }
 
-    public void setCacheSize(Integer cacheSize) {
+    public void setCacheSize(String cacheSize) {
         this.cacheSize = cacheSize;
     }
 
-    public Boolean getIgnoreInvalidEndpoint() {
+    public String getIgnoreInvalidEndpoint() {
         return ignoreInvalidEndpoint;
     }
 
-    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+    public void setIgnoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 }

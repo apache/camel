@@ -30,8 +30,8 @@ public class RollbackReifier extends ProcessorReifier<RollbackDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        boolean isMarkRollbackOnly = definition.getMarkRollbackOnly() != null && definition.getMarkRollbackOnly();
-        boolean isMarkRollbackOnlyLast = definition.getMarkRollbackOnlyLast() != null && definition.getMarkRollbackOnlyLast();
+        boolean isMarkRollbackOnly = definition.getMarkRollbackOnly() != null && parseBoolean(routeContext, definition.getMarkRollbackOnly());
+        boolean isMarkRollbackOnlyLast = definition.getMarkRollbackOnlyLast() != null && parseBoolean(routeContext, definition.getMarkRollbackOnlyLast());
 
         // validate that only either mark rollbacks is chosen and not both
         if (isMarkRollbackOnly && isMarkRollbackOnlyLast) {

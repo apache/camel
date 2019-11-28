@@ -45,7 +45,7 @@ public class ValidatorDtdAccessOnTest extends ValidatorDtdAccessAbstractTest {
 
     /**
      * Tests that external DTD call is executed for StreamSourceby expecting an
-     * UnkonwHostException.
+     * UnknownHostException.
      */
     @Test
     public void testInvalidMessageWithExternalDTDStreamSource() throws Exception {

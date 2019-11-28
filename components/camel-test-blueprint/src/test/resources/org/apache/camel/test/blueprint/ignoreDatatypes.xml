@@ -36,7 +36,7 @@
     <camel:route>
       <camel:from uri="direct:start"/>
       <!-- use some syntactically constrained datatype such as int, boolean, enum, etc -->
-      <camel:log message="test" loggingLevel="${level}"/>
+      <camel:log message="test" loggingLevel="{{level}}"/>
       <camel:transform>
         <camel:simple>Hello ${body}</camel:simple>
       </camel:transform>

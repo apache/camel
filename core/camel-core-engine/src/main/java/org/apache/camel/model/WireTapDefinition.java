@@ -56,10 +56,10 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     private String executorServiceRef;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean copy;
+    private String copy;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean dynamicUri;
+    private String dynamicUri;
     @XmlAttribute
     private String onPrepareRef;
     @XmlTransient
@@ -68,14 +68,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     public WireTapDefinition() {
     }
 
-    public boolean isDynamic() {
-        // its dynamic by default
-        return dynamicUri == null || dynamicUri;
-    }
-
     @Override
-    public ExchangePattern getPattern() {
-        return ExchangePattern.InOnly;
+    public String getPattern() {
+        return ExchangePattern.InOnly.name();
     }
 
     @Override
@@ -142,7 +137,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @return the builder
      */
     public WireTapDefinition<Type> copy() {
-        setCopy(true);
+        setCopy(Boolean.toString(true));
         return this;
     }
 
@@ -154,7 +149,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @return the builder
      */
     public WireTapDefinition<Type> copy(boolean copy) {
-        setCopy(copy);
+        setCopy(Boolean.toString(copy));
         return this;
     }
 
@@ -169,7 +164,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @return the builder
      */
     public WireTapDefinition<Type> dynamicUri(boolean dynamicUri) {
-        setDynamicUri(dynamicUri);
+        setDynamicUri(Boolean.toString(dynamicUri));
         return this;
     }
 
@@ -297,7 +292,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     @Override
     public WireTapDefinition<Type> cacheSize(int cacheSize) {
-        setCacheSize(cacheSize);
+        setCacheSize(Integer.toString(cacheSize));
         return this;
     }
 
@@ -309,7 +304,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     @Override
     public WireTapDefinition<Type> ignoreInvalidEndpoint() {
-        setIgnoreInvalidEndpoint(true);
+        setIgnoreInvalidEndpoint(Boolean.toString(true));
         return this;
     }
 
@@ -387,19 +382,19 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Boolean getCopy() {
+    public String getCopy() {
         return copy;
     }
 
-    public void setCopy(Boolean copy) {
+    public void setCopy(String copy) {
         this.copy = copy;
     }
 
-    public Boolean getDynamicUri() {
+    public String getDynamicUri() {
         return dynamicUri;
     }
 
-    public void setDynamicUri(Boolean dynamicUri) {
+    public void setDynamicUri(String dynamicUri) {
         this.dynamicUri = dynamicUri;
     }
 

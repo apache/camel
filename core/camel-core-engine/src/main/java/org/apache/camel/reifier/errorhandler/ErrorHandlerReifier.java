@@ -23,6 +23,7 @@ import java.util.function.Function;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -41,11 +42,12 @@ import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
-public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> {
+public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> extends AbstractReifier {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
     private static final Map<Class<?>, Function<ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
@@ -88,9 +90,12 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     public static ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def, RouteContext routeContext) {
-        return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def), def.getUseOriginalMessagePolicy() != null && def.getUseOriginalMessagePolicy(),
-                                   def.getUseOriginalBodyPolicy() != null && def.getUseOriginalBodyPolicy(), ObjectHelper.isNotEmpty(def.getOutputs()), def.getHandledPolicy(),
-                                   def.getContinuedPolicy(), def.getRetryWhilePolicy(), def.getOnRedelivery(), def.getOnExceptionOccurred(), def.getRedeliveryPolicyRef(),
+        return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def),
+                                   def.getUseOriginalMessage() != null && parseBoolean(routeContext, def.getUseOriginalMessage()),
+                                   def.getUseOriginalBody() != null && parseBoolean(routeContext, def.getUseOriginalBody()),
+                                   ObjectHelper.isNotEmpty(def.getOutputs()), def.getHandledPolicy(),
+                                   def.getContinuedPolicy(), def.getRetryWhilePolicy(), def.getOnRedelivery(),
+                                   def.getOnExceptionOccurred(), def.getRedeliveryPolicyRef(),
                                    getRedeliveryPolicy(def.getRedeliveryPolicyType()), def.getExceptions());
     }
 
@@ -283,10 +288,10 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
             }
             if (definition.getRetriesExhaustedLogLevel() != null) {
-                answer.setRetriesExhaustedLogLevel(definition.getRetriesExhaustedLogLevel());
+                answer.setRetriesExhaustedLogLevel(LoggingLevel.valueOf(definition.getRetriesExhaustedLogLevel()));
             }
             if (definition.getRetryAttemptedLogLevel() != null) {
-                answer.setRetryAttemptedLogLevel(definition.getRetryAttemptedLogLevel());
+                answer.setRetryAttemptedLogLevel(LoggingLevel.valueOf(definition.getRetryAttemptedLogLevel()));
             }
             if (definition.getRetryAttemptedLogInterval() != null) {
                 answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, definition.getRetryAttemptedLogInterval()));

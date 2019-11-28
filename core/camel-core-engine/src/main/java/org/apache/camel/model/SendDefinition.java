@@ -98,7 +98,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         this.endpointProducerBuilder = endpointProducerBuilder;
     }
 
-    public ExchangePattern getPattern() {
+    public String getPattern() {
         return null;
     }
 

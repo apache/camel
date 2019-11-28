@@ -49,14 +49,14 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @Metadata(required = true)
     private String uri;
     @XmlAttribute
-    private ExchangePattern pattern;
+    private String pattern;
     @XmlAttribute
-    private Integer cacheSize;
+    private String cacheSize;
     @XmlAttribute
-    private Boolean ignoreInvalidEndpoint;
+    private String ignoreInvalidEndpoint;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean allowOptimisedComponents;
+    private String allowOptimisedComponents;
 
     public ToDynamicDefinition() {
     }
@@ -87,7 +87,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
     public ToDynamicDefinition pattern(ExchangePattern pattern) {
-        setPattern(pattern);
+        setPattern(pattern.name());
         return this;
     }
 
@@ -101,7 +101,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      * @return the builder
      */
     public ToDynamicDefinition cacheSize(int cacheSize) {
-        setCacheSize(cacheSize);
+        setCacheSize(Integer.toString(cacheSize));
         return this;
     }
 
@@ -112,7 +112,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      * @return the builder
      */
     public ToDynamicDefinition ignoreInvalidEndpoint() {
-        setIgnoreInvalidEndpoint(true);
+        setIgnoreInvalidEndpoint(Boolean.toString(true));
         return this;
     }
 
@@ -123,7 +123,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      * @return the builder
      */
     public ToDynamicDefinition allowOptimisedComponents(boolean allowOptimisedComponents) {
-        setAllowOptimisedComponents(allowOptimisedComponents);
+        setAllowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
         return this;
     }
 
@@ -150,35 +150,35 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         this.endpointProducerBuilder = endpointProducerBuilder;
     }
 
-    public ExchangePattern getPattern() {
+    public String getPattern() {
         return pattern;
     }
 
-    public void setPattern(ExchangePattern pattern) {
+    public void setPattern(String pattern) {
         this.pattern = pattern;
     }
 
-    public Integer getCacheSize() {
+    public String getCacheSize() {
         return cacheSize;
     }
 
-    public void setCacheSize(Integer cacheSize) {
+    public void setCacheSize(String cacheSize) {
         this.cacheSize = cacheSize;
     }
 
-    public Boolean getIgnoreInvalidEndpoint() {
+    public String getIgnoreInvalidEndpoint() {
         return ignoreInvalidEndpoint;
     }
 
-    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+    public void setIgnoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
-    public Boolean getAllowOptimisedComponents() {
+    public String getAllowOptimisedComponents() {
         return allowOptimisedComponents;
     }
 
-    public void setAllowOptimisedComponents(Boolean allowOptimisedComponents) {
+    public void setAllowOptimisedComponents(String allowOptimisedComponents) {
         this.allowOptimisedComponents = allowOptimisedComponents;
     }
 

@@ -34,9 +34,9 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
 
     protected String payloud = getPayloudPart("Hello world!");
 
-    protected String ssrfPayloud = "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notexisting/test\">\n" + payloud;
+    protected String ssrfPayloud = "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notex.isting/test\">\n" + payloud;
 
-    protected String xxePayloud = "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notexistinghost/test\">]>\n" + getPayloudPart("&file;");
+    protected String xxePayloud = "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notex.istinghost/test\">]>\n" + getPayloudPart("&file;");
 
     private final boolean accessExternalDTD;
 

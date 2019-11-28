@@ -34,7 +34,7 @@ public class UniVocityHeader {
     @XmlValue
     private String name;
     @XmlAttribute
-    private Integer length;
+    private String length;
 
     public String getName() {
         return name;
@@ -47,14 +47,14 @@ public class UniVocityHeader {
         this.name = name;
     }
 
-    public Integer getLength() {
+    public String getLength() {
         return length;
     }
 
     /**
      * Header length
      */
-    public void setLength(Integer length) {
+    public void setLength(String length) {
         this.length = length;
     }
 }

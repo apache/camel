@@ -41,12 +41,12 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
         Expression expression = definition.getExpression().createExpression(routeContext);
 
         // these boolean should be true by default
-        boolean eager = definition.getEager() == null || definition.getEager();
-        boolean duplicate = definition.getSkipDuplicate() == null || definition.getSkipDuplicate();
-        boolean remove = definition.getRemoveOnFailure() == null || definition.getRemoveOnFailure();
+        boolean eager = definition.getEager() == null || Boolean.parseBoolean(definition.getEager());
+        boolean duplicate = definition.getSkipDuplicate() == null || Boolean.parseBoolean(definition.getSkipDuplicate());
+        boolean remove = definition.getRemoveOnFailure() == null || Boolean.parseBoolean(definition.getRemoveOnFailure());
 
         // these boolean should be false by default
-        boolean completionEager = definition.getCompletionEager() != null && definition.getCompletionEager();
+        boolean completionEager = definition.getCompletionEager() != null && Boolean.parseBoolean(definition.getCompletionEager());
 
         return new IdempotentConsumer(expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
     }

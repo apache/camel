@@ -42,9 +42,9 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
-    private Boolean ignoreInvalidEndpoints;
+    private String ignoreInvalidEndpoints;
     @XmlAttribute
-    private Integer cacheSize;
+    private String cacheSize;
 
     public RoutingSlipDefinition() {
         this((String)null, DEFAULT_DELIMITER);
@@ -108,19 +108,19 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         return uriDelimiter;
     }
 
-    public void setIgnoreInvalidEndpoints(Boolean ignoreInvalidEndpoints) {
+    public void setIgnoreInvalidEndpoints(String ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
-    public Boolean getIgnoreInvalidEndpoints() {
+    public String getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
 
-    public Integer getCacheSize() {
+    public String getCacheSize() {
         return cacheSize;
     }
 
-    public void setCacheSize(Integer cacheSize) {
+    public void setCacheSize(String cacheSize) {
         this.cacheSize = cacheSize;
     }
 
@@ -141,7 +141,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
      * @return the builder
      */
     public RoutingSlipDefinition<Type> ignoreInvalidEndpoints() {
-        setIgnoreInvalidEndpoints(true);
+        setIgnoreInvalidEndpoints(Boolean.toString(true));
         return this;
     }
 
@@ -166,7 +166,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
      * @return the builder
      */
     public RoutingSlipDefinition<Type> cacheSize(int cacheSize) {
-        setCacheSize(cacheSize);
+        setCacheSize(Integer.toString(cacheSize));
         return this;
     }
 

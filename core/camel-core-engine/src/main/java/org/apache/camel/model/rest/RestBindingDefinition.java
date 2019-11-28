@@ -58,7 +58,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     @XmlAttribute
     @Metadata(defaultValue = "off")
-    private RestBindingMode bindingMode;
+    private String bindingMode;
 
     @XmlAttribute
     private String type;
@@ -67,13 +67,13 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     private String outType;
 
     @XmlAttribute
-    private Boolean skipBindingOnErrorCode;
+    private String skipBindingOnErrorCode;
 
     @XmlAttribute
-    private Boolean clientRequestValidation;
+    private String clientRequestValidation;
 
     @XmlAttribute
-    private Boolean enableCORS;
+    private String enableCORS;
 
     @XmlAttribute
     private String component;
@@ -181,7 +181,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         this.produces = produces;
     }
 
-    public RestBindingMode getBindingMode() {
+    public String getBindingMode() {
         return bindingMode;
     }
 
@@ -190,7 +190,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      * <p/>
      * The default value is off
      */
-    public void setBindingMode(RestBindingMode bindingMode) {
+    public void setBindingMode(String bindingMode) {
         this.bindingMode = bindingMode;
     }
 
@@ -224,7 +224,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         this.outType = outType;
     }
 
-    public Boolean getSkipBindingOnErrorCode() {
+    public String getSkipBindingOnErrorCode() {
         return skipBindingOnErrorCode;
     }
 
@@ -233,11 +233,11 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      * header. This allows to build custom error messages that do not bind to
      * json / xml etc, as success messages otherwise will do.
      */
-    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+    public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
-    public Boolean getClientRequestValidation() {
+    public String getClientRequestValidation() {
         return clientRequestValidation;
     }
 
@@ -251,11 +251,11 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      * <p/>
      * The default value is false.
      */
-    public void setClientRequestValidation(Boolean clientRequestValidation) {
+    public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public Boolean getEnableCORS() {
+    public String getEnableCORS() {
         return enableCORS;
     }
 
@@ -264,7 +264,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      * <p/>
      * The default value is false.
      */
-    public void setEnableCORS(Boolean enableCORS) {
+    public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
     }
 

@@ -60,7 +60,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         // must validate configuration before creating processor
         definition.validateConfiguration();
 
-        if (definition.getUseOriginalMessagePolicy() != null && definition.getUseOriginalMessagePolicy()) {
+        if (definition.getUseOriginalMessage() != null && parseBoolean(routeContext, definition.getUseOriginalMessage())) {
             // ensure allow original is turned on
             routeContext.setAllowUseOriginalMessage(true);
         }
@@ -88,7 +88,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             classes = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
         }
 
-        if (definition.getUseOriginalMessagePolicy() != null && definition.getUseOriginalMessagePolicy()) {
+        if (definition.getUseOriginalMessage() != null && parseBoolean(routeContext, definition.getUseOriginalMessage())) {
             // ensure allow original is turned on
             routeContext.setAllowUseOriginalMessage(true);
         }

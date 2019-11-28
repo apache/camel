@@ -39,6 +39,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         assertEquals(when1, choice.getOutputs().get(0));
         assertEquals(when2, choice.getOutputs().get(1));
         assertEquals(other, choice.getOutputs().get(2));
+        assertEquals("choice[when[{simple{${body}} contains Camel}],when[{simple{${body}} contains Donkey}],otherwise[]]", choice.getLabel());
     }
 
     @Test
