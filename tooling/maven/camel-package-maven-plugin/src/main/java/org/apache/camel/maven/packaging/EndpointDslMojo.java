@@ -464,7 +464,7 @@ public class EndpointDslMojo extends AbstractMojo {
         // load components with indent
         final List<String> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsString()
                 .stream()
-                .map(file -> "\t\t" + file)
+                .map(file -> "\t" + file)
                 .collect(Collectors.toList());
 
 
@@ -476,7 +476,7 @@ public class EndpointDslMojo extends AbstractMojo {
         final String markerStart = "// FACTORY INTERFACE UPDATE START";
         final String markerEnd = "// FACTORY INTERFACE UPDATE END";
 
-        try(final InputStream stream = new FileInputStream(interfaceFactoryPathFile)) {
+        try (final InputStream stream = new FileInputStream(interfaceFactoryPathFile)) {
             final String loadedText = loadText(stream);
 
             final String before = StringHelper.before(loadedText, markerStart);
@@ -503,7 +503,7 @@ public class EndpointDslMojo extends AbstractMojo {
         // load components
         return Arrays.asList(allComponentsDslEndpointFactory.listFiles()).stream()
                 .filter(file -> file.isFile() && file.getName().contains(SUFFIX) && file.exists())
-                .map(file -> file.getName().replace(".java" , ""))
+                .map(file -> file.getName().replace(".java", ""))
                 .sorted()
                 .collect(Collectors.toList());
     }
