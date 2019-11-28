@@ -73,8 +73,6 @@ public class EndpointDslMojo extends AbstractMojo {
 
     private static final Map<String, Class<?>> PRIMITIVEMAP;
 
-    private static final String SUFFIX = "EndpointBuilderFactory";
-
     static {
         PRIMITIVEMAP = new HashMap<>();
         PRIMITIVEMAP.put("boolean", java.lang.Boolean.class);
@@ -514,7 +512,7 @@ public class EndpointDslMojo extends AbstractMojo {
 
         // load components
         return Arrays.asList(allComponentsDslEndpointFactory.listFiles()).stream()
-                .filter(file -> file.isFile() && file.getName().contains(SUFFIX) && file.exists())
+                .filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists())
                 .map(file -> file.getName().replace(".java", ""))
                 .sorted()
                 .collect(Collectors.toList());

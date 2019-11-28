@@ -174,6 +174,7 @@ public interface EndpointBuilderFactory extends
         JcloudsEndpointBuilderFactory,
         JcrEndpointBuilderFactory,
         JdbcEndpointBuilderFactory,
+        JettyHttpEndpointBuilder9Factory,
         JingEndpointBuilderFactory,
         JiraEndpointBuilderFactory,
         JmsEndpointBuilderFactory,
