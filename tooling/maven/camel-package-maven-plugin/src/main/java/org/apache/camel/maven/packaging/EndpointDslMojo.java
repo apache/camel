@@ -134,7 +134,12 @@ public class EndpointDslMojo extends AbstractMojo {
 
         Map<File, Supplier<String>> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json")).stream()
             .collect(Collectors.toMap(Function.identity(), s -> cache(() -> loadJson(s))));
+
+        // generate component endpoint DSL files and write them
         executeComponent(files);
+
+        // make sure EndpointBuilderFactory is synced
+        synchronizeEndpointBuilderFactoryInterface();
     }
 
     private static String loadJson(File file) {
@@ -192,8 +197,6 @@ public class EndpointDslMojo extends AbstractMojo {
                 }
 
                 createEndpointDsl(packageName, model, compModels, overrideComponentName);
-
-                synchronizeEndpointBuilderFactoryInterface();
             }
         }
     }
@@ -464,7 +467,7 @@ public class EndpointDslMojo extends AbstractMojo {
         // load components with indent
         final List<String> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsString()
                 .stream()
-                .map(file -> "\t" + file)
+                .map(file -> "        " + file)
                 .collect(Collectors.toList());
 
 
@@ -479,12 +482,21 @@ public class EndpointDslMojo extends AbstractMojo {
         try (final InputStream stream = new FileInputStream(interfaceFactoryPathFile)) {
             final String loadedText = loadText(stream);
 
+            final String existingExtendList = StringHelper.between(loadedText, markerStart, markerEnd);
+            final String updatedExtendList = String.join(",\n", allComponentsDslEndpointFactories);
+
+
+            if (existingExtendList != null && existingExtendList.trim().equals(updatedExtendList.trim())) {
+                // we test if the content did not change, we just skip updating
+                return;
+            }
+
             final String before = StringHelper.before(loadedText, markerStart);
             final String after = StringHelper.after(loadedText, markerEnd);
 
             // we make sure these markers exists
             if (before == null || after == null) {
-                throw new MojoExecutionException(String.format("Markers '%s' and '%s' don't exist, make sure they exist.", markerStart, markerEnd));
+                throw new MojoExecutionException(String.format("Markers '%s' and '%s' don't exist in EndpointBuilderFactory.java, make sure they exist.", markerStart, markerEnd));
             }
 
             // we build our new updated class
