@@ -115,7 +115,7 @@ available cipher suites.  The exclude patterns have precedence over the
 include patterns.  If no cipherSuites and no cipherSuitesFilter are
 present, the default patterns applied are: +
 Includes .\*; +
-Excludes .*_NULL_.*, .\*_anon_.*, .\*DES.*, .\*EXPORT.* *Camel 2.15.4*., .*MD5, .\*RC4.* *Camel 3.0.1*
+Excludes .*_NULL_.*, .\*_anon_.*, .\*DES.*, .\*EXPORT.* *Camel 2.15.4*., .\*MD5, .*RC4.* *Camel 3.0.1*
 secureSocketProtocols::
 This optional property represents a collection of explicitly named
 secure socket protocols, such as SSLv3/TLS/etc., to enable on both the
