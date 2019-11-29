@@ -35,6 +35,8 @@ public class StompConfiguration implements Cloneable {
     private String host;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam
+    private String version;
 
     /**
      * Returns a copy of this configuration
@@ -101,6 +103,17 @@ public class StompConfiguration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * The STOMP Version
+     */
+    public void setVersion(String version) {
+	this.version = version;
     }
 
 }
