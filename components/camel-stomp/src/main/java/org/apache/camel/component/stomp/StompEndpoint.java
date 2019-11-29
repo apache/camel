@@ -98,6 +98,9 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         if (configuration.getSslContextParameters() != null) {
             stomp.setSslContext(configuration.getSslContextParameters().createSSLContext(getCamelContext()));
         }
+	if (configuration.getVersion() != null && !configuration.getVersion().isEmpty()) {
+	    stomp.setVersion(configuration.getVersion());
+	}
         stomp.connectCallback(promise);
         if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
             stomp.setHost(configuration.getHost());
