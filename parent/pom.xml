@@ -410,8 +410,8 @@
         <leveldb-api-version>0.10</leveldb-api-version>
         <leveldb-version>0.10</leveldb-version>
         <leveldb-guava-version>21.0</leveldb-guava-version>
-        <libphonenumber-version>8.10.21</libphonenumber-version>
-        <libphonenumber-bundle-version>8.10.21_1</libphonenumber-bundle-version>
+        <libphonenumber-version>8.10.23</libphonenumber-version>
+        <libphonenumber-bundle-version>8.10.23_1</libphonenumber-bundle-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <lettuce-version>5.1.0.RELEASE</lettuce-version>
