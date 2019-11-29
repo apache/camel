@@ -201,8 +201,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
-     * When netty works on nio mode, it uses default workerCount parameter from Netty, which is cpu_core_threads x 2.
-     * User can use this operation to override the default workerCount from Netty.
+     * When netty works on nio mode, it uses default workerCount parameter from Netty (which is cpu_core_threads x 2).
+     * User can use this option to override the default workerCount from Netty.
      */
     public void setWorkerCount(int workerCount) {
         this.workerCount = workerCount;
@@ -214,7 +214,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
 
     /**
      * When netty works on nio mode, it uses default bossCount parameter from Netty, which is 1.
-     * User can use this operation to override the default bossCount from Netty
+     * User can use this option to override the default bossCount from Netty
      */
     public void setBossCount(int bossCount) {
         this.bossCount = bossCount;
