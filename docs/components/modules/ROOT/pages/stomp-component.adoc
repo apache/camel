@@ -86,7 +86,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,6 +94,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *brokerURL* (common) | *Required* The URI of the Stomp broker to connect to | tcp://localhost:61613 | String
 | *host* (common) | The virtual host name |  | String
+| *version* (common) | The STOMP Version |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -122,7 +123,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 15 options, which are listed below.
+The component supports 16 options, which are listed below.
 
 
 
@@ -137,6 +138,7 @@ The component supports 15 options, which are listed below.
 | *camel.component.stomp.configuration.login* | The username |  | String
 | *camel.component.stomp.configuration.passcode* | The password |  | String
 | *camel.component.stomp.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
+| *camel.component.stomp.configuration.version* | The STOMP Version |  | String
 | *camel.component.stomp.enabled* | Whether to enable auto configuration of the stomp component. This is enabled by default. |  | Boolean
 | *camel.component.stomp.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.stomp.host* | The virtual host |  | String
