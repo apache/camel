@@ -60,7 +60,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         Collections.unmodifiableList(Arrays.asList(".*"));
     
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE =
-        Collections.unmodifiableList(Arrays.asList(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*"));
+        Collections.unmodifiableList(Arrays.asList(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*MD5", ".*RC4.*"));
     
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE =
         Collections.unmodifiableList(Arrays.asList(".*"));
