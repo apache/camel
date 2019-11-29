@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class NettyHelper {
 
-    public static final int DEFAULT_IO_THREADS = Runtime.getRuntime().availableProcessors() * 2;
     private static final Logger LOG = LoggerFactory.getLogger(NettyHelper.class);
 
     private NettyHelper() {
