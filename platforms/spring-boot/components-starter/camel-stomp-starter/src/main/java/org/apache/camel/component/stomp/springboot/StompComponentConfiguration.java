@@ -198,6 +198,10 @@ public class StompComponentConfiguration
          * To configure security using SSLContextParameters
          */
         private SSLContextParameters sslContextParameters;
+        /**
+         * The STOMP Version
+         */
+        private String version;
 
         public String getHost() {
             return host;
@@ -238,6 +242,14 @@ public class StompComponentConfiguration
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
         }
     }
 }

@@ -67,6 +67,17 @@ public interface StompEndpointBuilderFactory {
             return this;
         }
         /**
+         * The STOMP Version.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default StompEndpointConsumerBuilder version(String version) {
+            doSetProperty("version", version);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -333,6 +344,17 @@ public interface StompEndpointBuilderFactory {
             return this;
         }
         /**
+         * The STOMP Version.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default StompEndpointProducerBuilder version(String version) {
+            doSetProperty("version", version);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -543,6 +565,17 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointBuilder host(String host) {
             doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * The STOMP Version.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default StompEndpointBuilder version(String version) {
+            doSetProperty("version", version);
             return this;
         }
         /**
