@@ -18,12 +18,14 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -130,7 +132,12 @@ public class EndpointDslMojo extends AbstractMojo {
 
         Map<File, Supplier<String>> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json")).stream()
             .collect(Collectors.toMap(Function.identity(), s -> cache(() -> loadJson(s))));
+
+        // generate component endpoint DSL files and write them
         executeComponent(files);
+
+        // make sure EndpointBuilderFactory is synced
+        synchronizeEndpointBuilderFactoryInterface();
     }
 
     private static String loadJson(File file) {
@@ -452,6 +459,63 @@ public class EndpointDslMojo extends AbstractMojo {
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + builderName + "Factory.java";
         writeSourceIfChanged(javaClass, fileName, false);
+    }
+
+    private void synchronizeEndpointBuilderFactoryInterface() throws MojoExecutionException {
+        // load components with indent
+        final List<String> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsString()
+                .stream()
+                .map(file -> "        " + file)
+                .collect(Collectors.toList());
+
+
+        // load EndpointBuilderFactory interface
+        final String interfaceFactoryPath = packageName.replaceAll("\\.", "\\/").replace("dsl", "") + "EndpointBuilderFactory.java";
+
+        final File interfaceFactoryPathFile = new File(outputDir, interfaceFactoryPath);
+
+        final String markerStart = "// FACTORY INTERFACE UPDATE START";
+        final String markerEnd = "// FACTORY INTERFACE UPDATE END";
+
+        try (final InputStream stream = new FileInputStream(interfaceFactoryPathFile)) {
+            final String loadedText = loadText(stream);
+
+            final String existingExtendList = StringHelper.between(loadedText, markerStart, markerEnd);
+            final String updatedExtendList = String.join(",\n", allComponentsDslEndpointFactories);
+
+
+            if (existingExtendList != null && existingExtendList.trim().equals(updatedExtendList.trim())) {
+                // we test if the content did not change, we just skip updating
+                return;
+            }
+
+            final String before = StringHelper.before(loadedText, markerStart);
+            final String after = StringHelper.after(loadedText, markerEnd);
+
+            // we make sure these markers exists
+            if (before == null || after == null) {
+                throw new MojoExecutionException(String.format("Markers '%s' and '%s' don't exist in EndpointBuilderFactory.java, make sure they exist.", markerStart, markerEnd));
+            }
+
+            // we build our new updated class
+            final String updatedInterfaceAsText = before + markerStart + "\n" + String.join(",\n", allComponentsDslEndpointFactories) + "\n" + markerEnd + after;
+
+            // write our file back
+            updateResource(null, interfaceFactoryPathFile.toPath(), updatedInterfaceAsText);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading file " + interfaceFactoryPathFile + " Reason: " + e, e);
+        }
+    }
+
+    private List<String> loadAllComponentsDslEndpointFactoriesAsString() {
+        final File allComponentsDslEndpointFactory = new File(outputDir, packageName.replaceAll("\\.", "\\/"));
+
+        // load components
+        return Arrays.asList(allComponentsDslEndpointFactory.listFiles()).stream()
+                .filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists())
+                .map(file -> file.getName().replace(".java", ""))
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     private static String camelCaseLower(String s) {
