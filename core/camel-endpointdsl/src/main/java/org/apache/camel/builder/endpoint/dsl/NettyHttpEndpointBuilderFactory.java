@@ -772,7 +772,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default bossCount parameter
-         * from Netty, which is 1. User can use this operation to override the
+         * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.
          * 
          * The option is a: <code>int</code> type.
@@ -785,7 +785,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default bossCount parameter
-         * from Netty, which is 1. User can use this operation to override the
+         * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -1676,8 +1676,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1690,8 +1690,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -3153,8 +3153,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -3167,8 +3167,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4172,8 +4172,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4185,8 +4185,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
