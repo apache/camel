@@ -20,7 +20,10 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpProducerWithCharsetTest extends SftpServerTestSupport {
 
@@ -37,7 +40,7 @@ public class SftpProducerWithCharsetTest extends SftpServerTestSupport {
         template.sendBodyAndHeader(getSftpUri(), SAMPLE_FILE_PAYLOAD, Exchange.FILE_NAME, SAMPLE_FILE_NAME);
 
         File file = new File(FTP_ROOT_DIR + "/" + SAMPLE_FILE_NAME);
-        assertTrue("The uploaded file should exist", file.exists());
+        assertTrue(file.exists(), "The uploaded file should exist");
 
         String storedPayload = FileUtils.readFileToString(file, SAMPLE_FILE_CHARSET);
         assertEquals(SAMPLE_FILE_PAYLOAD, storedPayload);

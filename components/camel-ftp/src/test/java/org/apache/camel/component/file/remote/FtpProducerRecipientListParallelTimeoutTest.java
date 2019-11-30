@@ -20,13 +20,13 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
  */
-@Ignore("Run this test manually")
+@Disabled("Run this test manually")
 public class FtpProducerRecipientListParallelTimeoutTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {

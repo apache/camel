@@ -34,12 +34,18 @@ import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.scp.ScpCommandFactory;
 import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class SftpServerTestSupport extends BaseServerTestSupport {
 
     protected static final String FTP_ROOT_DIR = "target/res/home";
+    private static final Logger LOG = LoggerFactory.getLogger(SftpServerTestSupport.class);
     private static final String KNOWN_HOSTS = "[localhost]:%d ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDdfIWeSV4o68dRrKS"
             + "zFd/Bk51E65UTmmSrmW0O1ohtzi6HzsDPjXgCtlTt3FqTcfFfI92IlTr4JWqC9UK1QT1ZTeng0MkPQmv68hDANHbt5CpETZHjW5q4OOgWhV"
             + "vj5IyOC2NZHtKlJBkdsMAa15ouOOJLzBvAvbqOR/yUROsEiQ==";
@@ -51,7 +57,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     private String simulatedUserSsh = "./target/user-home/.ssh";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
 
@@ -92,7 +98,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
 
                 String name = System.getProperty("os.name");
                 String message = nsae.getMessage();
-                log.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
+                LOG.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
             } else {
                 // some other error then throw it so the test can fail
                 throw e;
@@ -105,7 +111,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (oldUserHome != null) {
             System.setProperty("user.home", oldUserHome);

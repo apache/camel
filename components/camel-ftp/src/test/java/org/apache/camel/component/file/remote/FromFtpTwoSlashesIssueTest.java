@@ -23,8 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Issue with using 2 slashes
@@ -36,7 +38,7 @@ public class FromFtpTwoSlashesIssueTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -64,7 +66,7 @@ public class FromFtpTwoSlashesIssueTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
-        assertTrue("The file should exists", file.exists());
+        assertTrue(file.exists(), "The file should exists");
     }
 
     @Override

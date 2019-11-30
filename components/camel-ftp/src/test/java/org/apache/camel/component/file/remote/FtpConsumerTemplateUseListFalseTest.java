@@ -19,8 +19,11 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to poll a fixed file from the FTP server without using the list command.
@@ -33,7 +36,7 @@ public class FtpConsumerTemplateUseListFalseTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -46,11 +49,11 @@ public class FtpConsumerTemplateUseListFalseTest extends FtpServerTestSupport {
 
         // try a 2nd time and the file is deleted
         data = consumer.receiveBody(getFtpUrl() + "&fileName=report.txt", 1000, String.class);
-        assertNull("The file should no longer exist", data);
+        assertNull(data, "The file should no longer exist");
 
         // and try a non existing file name
         data = consumer.receiveBody(getFtpUrl() + "&fileName=report2.txt", 1000, String.class);
-        assertNull("The file should no longer exist", data);
+        assertNull(data, "The file should no longer exist");
     }
     
     private void prepareFtpServer() throws Exception {

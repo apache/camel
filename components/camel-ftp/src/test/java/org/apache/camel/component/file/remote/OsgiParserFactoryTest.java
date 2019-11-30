@@ -27,24 +27,25 @@ import org.apache.commons.net.ftp.parser.OS2FTPEntryParser;
 import org.apache.commons.net.ftp.parser.OS400FTPEntryParser;
 import org.apache.commons.net.ftp.parser.UnixFTPEntryParser;
 import org.apache.commons.net.ftp.parser.VMSVersioningFTPEntryParser;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class OsgiParserFactoryTest {
 
     private static final OsgiParserFactory OSGI_PARSER_FACTORY = new OsgiParserFactory(null);
+
     @Mock
     private FTPClientConfig ftpClientConfig;
 
-    @Before
+    @BeforeEach
     public void setup() {
         when(ftpClientConfig.getDefaultDateFormatStr()).thenReturn("yyyy-MM-dd");
     }

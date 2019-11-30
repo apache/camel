@@ -20,7 +20,10 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.FileUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpProduceTempFileTest extends SftpServerTestSupport {
 
@@ -34,7 +37,7 @@ public class SftpProduceTempFileTest extends SftpServerTestSupport {
                 + "?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
-        assertTrue("File should exist: " + file, file.exists());
+        assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
 
@@ -48,7 +51,7 @@ public class SftpProduceTempFileTest extends SftpServerTestSupport {
                 + "/?username=admin&password=admin&tempFileName=temp-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("hello.txt");
-        assertTrue("File should exist: " + file, file.exists());
+        assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 
         // delete file when we are done testing

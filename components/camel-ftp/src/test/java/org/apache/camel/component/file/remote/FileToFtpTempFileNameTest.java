@@ -21,7 +21,9 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -37,7 +39,7 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
         assertTrue(notify.matchesMockWaitTime());
 
         File file = new File(FTP_ROOT_DIR + "/out/sub/hello.txt");
-        assertTrue("File should exists " + file, file.exists());
+        assertTrue(file.exists(), "File should exists " + file);
     }
 
     @Override

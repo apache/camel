@@ -22,8 +22,11 @@ import java.io.InputStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpStreamingMoveTest extends FtpServerTestSupport {
 
@@ -32,7 +35,7 @@ public class FtpStreamingMoveTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/mymove");
@@ -60,7 +63,7 @@ public class FtpStreamingMoveTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         File file = new File(FTP_ROOT_DIR + "/mymove/done/hello.txt");
-        assertTrue("File should have been renamed", file.exists());
+        assertTrue(file.exists(), "File should have been renamed");
     }
 
     @Override

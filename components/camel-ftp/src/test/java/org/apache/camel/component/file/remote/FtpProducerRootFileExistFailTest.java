@@ -19,8 +19,13 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
 
@@ -29,7 +34,7 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // create existing file on ftp server
@@ -43,7 +48,7 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals("File already exist: hello.txt. Cannot write new file.", cause.getMessage());
+            assertEquals(cause.getMessage(), "File already exist: hello.txt. Cannot write new file.");
         }
 
         // root file should still exist

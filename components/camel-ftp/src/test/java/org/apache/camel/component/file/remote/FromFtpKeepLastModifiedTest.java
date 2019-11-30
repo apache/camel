@@ -21,8 +21,11 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  * Unit test to test keepLastModified option.
@@ -34,7 +37,7 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", "CamelFileName", "hello.txt");
@@ -61,7 +64,7 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/keep/out/hello.txt").lastModified();
 
-        assertEquals("Timestamp should have been kept", t1, t2);
+        assertEquals(t1, t2, "Timestamp should have been kept");
     }
 
     @Test
@@ -85,7 +88,7 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/keep/out/hello.txt").lastModified();
 
-        assertNotSame("Timestamp should NOT have been kept", t1, t2);
+        assertNotSame(t1, t2, "Timestamp should NOT have been kept");
     }
 
     @Test
@@ -109,6 +112,6 @@ public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = new File("target/keep/out/hello.txt").lastModified();
 
-        assertNotSame("Timestamp should NOT have been kept", t1, t2);
+        assertNotSame(t1, t2, "Timestamp should NOT have been kept");
     }
 }

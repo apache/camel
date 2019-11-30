@@ -21,8 +21,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.camel.BindToRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Unit test for FTP using expression (file language)
@@ -37,7 +40,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/filelanguage");

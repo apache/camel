@@ -24,10 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+@Disabled
 public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
     private static final String SAMPLE_FILE_NAME_1 = String.format("sample-1-%s.txt", SftpConsumerDisconnectTest.class.getSimpleName());
     private static final String SAMPLE_FILE_NAME_2 = String.format("sample-2-%s.txt", SftpConsumerDisconnectTest.class.getSimpleName());
@@ -57,7 +59,7 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
 
         // File is deleted
         File deletedFile = new File(FTP_ROOT_DIR + "/" + SAMPLE_FILE_NAME_1);
-        assertFalse("File should have been deleted: " + deletedFile, deletedFile.exists());
+        assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile);
     }
 
     @Test

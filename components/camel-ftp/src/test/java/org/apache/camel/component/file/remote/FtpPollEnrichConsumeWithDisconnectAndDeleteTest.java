@@ -22,9 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FtpPollEnrichConsumeWithDisconnectAndDeleteTest.class);
 
     @Test
     public void testFtpSimpleConsume() throws Exception {
@@ -54,12 +60,12 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
             fileExists = file.exists();
 
             if (fileExists) {
-                log.info("Will check that file has been deleted again in 200ms");
+                LOG.info("Will check that file has been deleted again in 200ms");
                 Thread.sleep(200);
             }
         }
 
-        assertFalse("The file should have been deleted", fileExists);
+        assertFalse(fileExists, "The file should have been deleted");
     }
 
     @Override

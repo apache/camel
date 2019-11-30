@@ -18,7 +18,10 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Unit test to verify polling a server with no files to poll.

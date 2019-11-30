@@ -19,7 +19,10 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.converter.IOConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for password parameter using RAW value
@@ -39,7 +42,7 @@ public class FtpProducerRawPasswordTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello World", "camel.txt");
 
         File file = new File(FTP_ROOT_DIR + "/upload/camel.txt");
-        assertTrue("The uploaded file should exists", file.exists());
+        assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }
 }

@@ -28,7 +28,10 @@ import javax.net.SocketFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
 
@@ -56,8 +59,8 @@ public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
         stopCamelContext();
 
         for (Map.Entry<Integer, boolean[]> socketStats : socketAudits.entrySet()) {
-            assertTrue("Socket should be connected", socketStats.getValue()[0]);
-            assertEquals("Socket should be closed", socketStats.getValue()[0], socketStats.getValue()[1]);
+            assertTrue(socketStats.getValue()[0], "Socket should be connected");
+            assertEquals(socketStats.getValue()[0], socketStats.getValue()[1], "Socket should be closed");
         }
 
         mock.assertIsSatisfied();

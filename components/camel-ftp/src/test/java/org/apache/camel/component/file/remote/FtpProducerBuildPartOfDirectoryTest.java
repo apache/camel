@@ -19,7 +19,10 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.converter.IOConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
@@ -35,7 +38,7 @@ public class FtpProducerBuildPartOfDirectoryTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Bye World", "claus.txt");
 
         File file = new File(FTP_ROOT_DIR + "/upload/user/claus/claus.txt");
-        assertTrue("The uploaded file should exists", file.exists());
-        assertEquals("Bye World", IOConverter.toString(file, null));
+        assertTrue(file.exists(), "The uploaded file should exists");
+        assertEquals(IOConverter.toString(file, null), "Bye World");
     }
 }
