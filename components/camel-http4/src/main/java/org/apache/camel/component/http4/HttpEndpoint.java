@@ -101,6 +101,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "producer", description = "Whether the HTTP DELETE should include the message body or not."
         + " By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body.")
     private boolean deleteWithBody;
+    @UriParam(label = "producer", description = "Whether the HTTP GET should include the message body or not."
+        + " By default HTTP GET does not include any HTTP message. However in some rare cases users may need to be able to include the message body.")
+    private boolean getWithBody;
 
     @UriParam(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
     private int maxTotalConnections;
@@ -296,6 +299,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public boolean isDeleteWithBody() {
         return deleteWithBody;
     }
+    public boolean isGetWithBody() {
+        return getWithBody;
+    }
 
     /**
      * Whether the HTTP DELETE should include the message body or not.
@@ -305,6 +311,15 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setDeleteWithBody(boolean deleteWithBody) {
         this.deleteWithBody = deleteWithBody;
+    }
+    /**
+     * Whether the HTTP GET should include the message body or not.
+     * <p/>
+     * By default HTTP GET does not include any HTTP message. However in some rare cases users may need to be able to include the
+     * message body.
+     */
+    public void setGetWithBody(boolean getWithBody) {
+        this.getWithBody = getWithBody;
     }
 
     public CookieStore getCookieStore() {

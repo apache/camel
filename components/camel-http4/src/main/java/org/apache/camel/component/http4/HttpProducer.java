@@ -460,6 +460,10 @@ public class HttpProducer extends DefaultProducer {
         if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())) {
             method = new HttpDeleteWithBodyMethod(url, requestEntity);
         }
+        // special for HTTP GET if the message body should be included
+        if (getEndpoint().isGetWithBody() && "GET".equals(method.getMethod())) {
+            method = new HttpGetWithBodyMethod(url, requestEntity);
+        }
 
         LOG.trace("Using URL: {} with method: {}", url, method);
 
