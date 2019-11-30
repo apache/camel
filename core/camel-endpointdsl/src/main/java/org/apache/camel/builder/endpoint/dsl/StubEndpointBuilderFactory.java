@@ -493,6 +493,38 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default StubEndpointProducerBuilder discardWhenFull(
+                boolean discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default StubEndpointProducerBuilder discardWhenFull(
+                String discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
+            return this;
+        }
+        /**
          * Whether the producer should fail by throwing an exception, when
          * sending to a queue with no active consumers. Only one of the options
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
