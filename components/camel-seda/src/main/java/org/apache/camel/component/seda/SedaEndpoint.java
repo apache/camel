@@ -87,6 +87,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @UriParam(label = "producer")
     private boolean blockWhenFull;
     @UriParam(label = "producer")
+    private boolean discardWhenFull;
+    @UriParam(label = "producer")
     private boolean failIfNoConsumers;
     @UriParam(label = "producer")
     private boolean discardIfNoConsumers;
@@ -128,7 +130,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @Override
     public Producer createProducer() throws Exception {
-        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), getOfferTimeout());
+        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(),
+                isBlockWhenFull(), isDiscardWhenFull(), getOfferTimeout());
     }
 
     @Override
@@ -282,6 +285,21 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @ManagedAttribute(description = "Whether the caller will block sending to a full queue")
     public boolean isBlockWhenFull() {
         return blockWhenFull;
+    }
+
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will be discarded.
+     * By default, an exception will be thrown stating that the queue is full.
+     * By enabling this option, the calling thread will give up sending and continue,
+     * meaning that the message was not sent to the SEDA queue.
+     */
+    public void setDiscardWhenFull(boolean discardWhenFull) {
+        this.discardWhenFull = discardWhenFull;
+    }
+
+    @ManagedAttribute(description = "Whether the caller will discard sending to a full queue")
+    public boolean isDiscardWhenFull() {
+        return discardWhenFull;
     }
 
     /**
@@ -484,6 +502,11 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        if (discardWhenFull && blockWhenFull) {
+            throw new IllegalArgumentException("Cannot enable both discardWhenFull=true and blockWhenFull=true."
+                    + " You can only either discard or block when full.");
+        }
 
         // force creating queue when starting
         if (queue == null) {
