@@ -23,7 +23,11 @@ import java.util.Set;
 
 import org.apache.camel.Route;
 
+/**
+ * A {@link SupervisingRouteController.Filter} which blacklists routes.
+ */
 public final class SupervisingRouteControllerFilters {
+
     private SupervisingRouteControllerFilters() {
     }
 
