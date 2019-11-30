@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
@@ -32,7 +33,7 @@ public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
-        return new SendProcessor(endpoint, definition.getPattern());
+        return new SendProcessor(endpoint, parse(routeContext, ExchangePattern.class, definition.getPattern()));
     }
 
     public Endpoint resolveEndpoint(RouteContext context) {

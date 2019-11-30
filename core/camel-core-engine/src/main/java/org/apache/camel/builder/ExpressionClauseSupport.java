@@ -269,7 +269,7 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpath(String text, boolean suppressExceptions) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(suppressExceptions);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         return expression(expression);
     }
 
@@ -286,8 +286,8 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(suppressExceptions);
-        expression.setAllowSimple(allowSimple);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
         return expression(expression);
     }
 
@@ -318,7 +318,7 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpath(String text, boolean suppressExceptions, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(suppressExceptions);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         expression.setResultType(resultType);
         setExpressionType(expression);
         return result;
@@ -338,8 +338,8 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple, Class<?> resultType) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(suppressExceptions);
-        expression.setAllowSimple(allowSimple);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
         expression.setResultType(resultType);
         setExpressionType(expression);
         return result;
@@ -360,8 +360,8 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple, Class<?> resultType, String headerName) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setSuppressExceptions(suppressExceptions);
-        expression.setAllowSimple(allowSimple);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
         expression.setResultType(resultType);
         expression.setHeaderName(headerName);
         setExpressionType(expression);
@@ -390,8 +390,8 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(true);
-        expression.setSuppressExceptions(suppressExceptions);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         return expression(expression);
     }
 
@@ -408,9 +408,9 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions, boolean allowSimple) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(true);
-        expression.setSuppressExceptions(suppressExceptions);
-        expression.setAllowSimple(allowSimple);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
         return expression(expression);
     }
 
@@ -428,9 +428,9 @@ public class ExpressionClauseSupport<T> {
      */
     public T jsonpathWriteAsString(String text, boolean suppressExceptions, boolean allowSimple, String headerName) {
         JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setWriteAsString(true);
-        expression.setSuppressExceptions(suppressExceptions);
-        expression.setAllowSimple(allowSimple);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
         expression.setHeaderName(headerName);
         return expression(expression);
     }
@@ -595,7 +595,7 @@ public class ExpressionClauseSupport<T> {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
         expression.setHeaderName(headerName);
-        expression.setRegex(regex);
+        expression.setRegex(Boolean.toString(regex));
         setExpressionType(expression);
         return result;
     }
@@ -626,8 +626,8 @@ public class ExpressionClauseSupport<T> {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
         expression.setHeaderName(headerName);
-        expression.setRegex(regex);
-        expression.setSkipFirst(skipFirst);
+        expression.setRegex(Boolean.toString(regex));
+        expression.setSkipFirst(Boolean.toString(skipFirst));
         setExpressionType(expression);
         return result;
     }
@@ -675,10 +675,10 @@ public class ExpressionClauseSupport<T> {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
         expression.setHeaderName(headerName);
-        expression.setRegex(regex);
+        expression.setRegex(Boolean.toString(regex));
         expression.setGroup(group);
         expression.setGroupDelimiter(groupDelimiter);
-        expression.setSkipFirst(skipFirst);
+        expression.setSkipFirst(Boolean.toString(skipFirst));
         setExpressionType(expression);
         return result;
     }
@@ -695,7 +695,7 @@ public class ExpressionClauseSupport<T> {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(startToken);
         expression.setEndToken(endToken);
-        expression.setIncludeTokens(includeTokens);
+        expression.setIncludeTokens(Boolean.toString(includeTokens));
         setExpressionType(expression);
         return result;
     }
@@ -726,7 +726,7 @@ public class ExpressionClauseSupport<T> {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(tagName);
         expression.setInheritNamespaceTagName(inheritNamespaceTagName);
-        expression.setXml(true);
+        expression.setXml(Boolean.toString(true));
         expression.setGroup(group);
         setExpressionType(expression);
         return result;
@@ -750,7 +750,7 @@ public class ExpressionClauseSupport<T> {
         expression.setNamespaces(namespaces.getNamespaces());
 
         if (group > 0) {
-            expression.setGroup(group);
+            expression.setGroup(Integer.toString(group));
         }
         setExpressionType(expression);
         return result;

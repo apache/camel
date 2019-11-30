@@ -40,8 +40,9 @@ import org.apache.camel.spi.Metadata;
 public class Any23DataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "RDF4JMODEL")
-    private Any23Type outputFormat;
+    @Metadata(defaultValue = "RDF4JMODEL", enums = "NTRIPLES,TURTLE,NQUADS,RDFXML,JSONLD,RDFJSON,RDF4JMODEL",
+              javaType="org.apache.camel.model.dataformat.Any23Type")
+    private String outputFormat;
     @XmlJavaTypeAdapter(PropertyDescriptionsAdapter.class)
     private Map<String, String> configuration = new HashMap<>();
     @XmlElement
@@ -60,23 +61,23 @@ public class Any23DataFormat extends DataFormatDefinition {
 
     public Any23DataFormat(String baseuri, Any23Type outputFormat) {
         this(baseuri);
-        this.outputFormat = outputFormat;
+        this.outputFormat = outputFormat.name();
     }
 
     public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations) {
         this(baseuri, outputFormat);
-        this.outputFormat = outputFormat;
+        this.outputFormat = outputFormat.name();
         this.configuration = configurations;
     }
 
     public Any23DataFormat(String baseuri, Any23Type outputFormat, Map<String, String> configurations, List<String> extractors) {
         this(baseuri, outputFormat, configurations);
-        this.outputFormat = outputFormat;
+        this.outputFormat = outputFormat.name();
         this.configuration = configurations;
         this.extractors = extractors;
     }
 
-    public Any23Type getOutputFormat() {
+    public String getOutputFormat() {
         return outputFormat;
     }
 
@@ -84,7 +85,7 @@ public class Any23DataFormat extends DataFormatDefinition {
      * What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS,
      * RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL.
      */
-    public void setOutputFormat(Any23Type outputFormat) {
+    public void setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
     }
 

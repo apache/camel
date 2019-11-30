@@ -48,9 +48,9 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private String maximumRedeliveryDelay;
     @XmlAttribute
-    private LoggingLevel retriesExhaustedLogLevel;
+    private String retriesExhaustedLogLevel;
     @XmlAttribute
-    private LoggingLevel retryAttemptedLogLevel;
+    private String retryAttemptedLogLevel;
     @XmlAttribute
     private String retryAttemptedLogInterval;
     @XmlAttribute
@@ -206,6 +206,16 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        return retriesExhaustedLogLevel(retriesExhaustedLogLevel.name());
+    }
+
+    /**
+     * Sets the logging level to use when retries has exhausted
+     *
+     * @param retriesExhaustedLogLevel the logging level
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition retriesExhaustedLogLevel(String retriesExhaustedLogLevel) {
         setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
         return this;
     }
@@ -217,6 +227,16 @@ public class RedeliveryPolicyDefinition {
      * @return the builder
      */
     public RedeliveryPolicyDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        return retryAttemptedLogLevel(retryAttemptedLogLevel.name());
+    }
+
+    /**
+     * Sets the logging level to use for logging retry attempts
+     *
+     * @param retryAttemptedLogLevel the logging level
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition retryAttemptedLogLevel(String retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
     }
@@ -623,19 +643,19 @@ public class RedeliveryPolicyDefinition {
         this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
 
-    public LoggingLevel getRetriesExhaustedLogLevel() {
+    public String getRetriesExhaustedLogLevel() {
         return retriesExhaustedLogLevel;
     }
 
-    public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+    public void setRetriesExhaustedLogLevel(String retriesExhaustedLogLevel) {
         this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;
     }
 
-    public LoggingLevel getRetryAttemptedLogLevel() {
+    public String getRetryAttemptedLogLevel() {
         return retryAttemptedLogLevel;
     }
 
-    public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+    public void setRetryAttemptedLogLevel(String retryAttemptedLogLevel) {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
     }
 

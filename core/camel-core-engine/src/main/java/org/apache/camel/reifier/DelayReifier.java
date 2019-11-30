@@ -38,20 +38,14 @@ public class DelayReifier extends ExpressionReifier<DelayDefinition> {
         Processor childProcessor = this.createChildProcessor(routeContext, false);
         Expression delay = createAbsoluteTimeDelayExpression(routeContext);
 
-        boolean async = definition.getAsyncDelayed() == null || definition.getAsyncDelayed();
+        boolean async = definition.getAsyncDelayed() == null || Boolean.parseBoolean(definition.getAsyncDelayed());
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, async);
         ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", definition, async);
 
         Delayer answer = new Delayer(routeContext.getCamelContext(), childProcessor, delay, threadPool, shutdownThreadPool);
-        if (definition.getAsyncDelayed() != null) {
-            answer.setAsyncDelayed(definition.getAsyncDelayed());
-        }
-        if (definition.getCallerRunsWhenRejected() == null) {
-            // should be default true
-            answer.setCallerRunsWhenRejected(true);
-        } else {
-            answer.setCallerRunsWhenRejected(definition.getCallerRunsWhenRejected());
-        }
+        answer.setAsyncDelayed(async);
+        answer.setCallerRunsWhenRejected(definition.getCallerRunsWhenRejected() == null
+                || Boolean.parseBoolean(definition.getCallerRunsWhenRejected()));
         return answer;
     }
 

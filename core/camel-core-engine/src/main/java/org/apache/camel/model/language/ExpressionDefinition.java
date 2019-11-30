@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
@@ -64,8 +65,8 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     @Metadata(required = true)
     private String expression;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean trim;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String trim;
     @XmlTransient
     private Predicate predicate;
     @XmlTransient
@@ -171,7 +172,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 }
                 String exp = getExpression();
                 // should be true by default
-                boolean isTrim = getTrim() == null || getTrim();
+                boolean isTrim = getTrim() == null || Boolean.parseBoolean(getTrim());
                 // trim if configured to trim
                 if (exp != null && isTrim) {
                     exp = exp.trim();
@@ -208,7 +209,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 }
                 String exp = getExpression();
                 // should be true by default
-                boolean isTrim = getTrim() == null || getTrim();
+                boolean isTrim = getTrim() == null || Boolean.parseBoolean(getTrim());
                 // trim if configured to trim
                 if (exp != null && isTrim) {
                     exp = exp.trim();
@@ -266,7 +267,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         return expressionType;
     }
 
-    public Boolean getTrim() {
+    public String getTrim() {
         return trim;
     }
 
@@ -274,7 +275,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */
-    public void setTrim(Boolean trim) {
+    public void setTrim(String trim) {
         this.trim = trim;
     }
 

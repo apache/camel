@@ -41,10 +41,10 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
 
         RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, delimiter);
         if (definition.getIgnoreInvalidEndpoints() != null) {
-            routingSlip.setIgnoreInvalidEndpoints(definition.getIgnoreInvalidEndpoints());
+            routingSlip.setIgnoreInvalidEndpoints(parseBoolean(routeContext, definition.getIgnoreInvalidEndpoints()));
         }
         if (definition.getCacheSize() != null) {
-            routingSlip.setCacheSize(definition.getCacheSize());
+            routingSlip.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
         }
 
         // and wrap this in an error handler

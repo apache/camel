@@ -45,9 +45,24 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
     private String urn;
     @XmlAttribute
     @Metadata(defaultValue = "false")
-    private Boolean validate = false;
+    private String validate = "false";
 
     public OutputTypeDefinition() {
+    }
+
+    public OutputTypeDefinition urn(String urn) {
+        setUrn(urn);
+        return this;
+    }
+
+    public OutputTypeDefinition javaClass(Class<?> clazz) {
+        setJavaClass(clazz);
+        return this;
+    }
+
+    public OutputTypeDefinition validate(boolean validate) {
+        setValidate(Boolean.toString(validate));
+        return this;
     }
 
     /**
@@ -83,7 +98,7 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
      * 
      * @return true if validate
      */
-    public boolean isValidate() {
+    public String getValidate() {
         return this.validate;
     }
 
@@ -92,7 +107,7 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
      * 
      * @param validate true if validate
      */
-    public void setValidate(boolean validate) {
+    public void setValidate(String validate) {
         this.validate = validate;
     }
 

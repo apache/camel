@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Route to be executed when Hystrix EIP executes fallback
@@ -36,17 +36,19 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
 
     @XmlAttribute
     @Metadata(label = "command", defaultValue = "false")
-    private Boolean fallbackViaNetwork;
+    private String fallbackViaNetwork;
 
     public OnFallbackDefinition() {
     }
 
     @Override
     public String toString() {
-        if (fallbackViaNetwork != null && fallbackViaNetwork) {
+        if (Boolean.toString(true).equals(fallbackViaNetwork)) {
             return "OnFallbackViaNetwork[" + getOutputs() + "]";
+        } else if (fallbackViaNetwork == null || Boolean.toString(false).equals(fallbackViaNetwork)) {
+            return "OnFallback["  + getOutputs() + "]";
         } else {
-            return "OnFallback[" + getOutputs() + "]";
+            return "OnFallback[viaNetwork=" + fallbackViaNetwork + "," + getOutputs() + "]";
         }
     }
 
@@ -57,18 +59,19 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
 
     @Override
     public String getLabel() {
-        String name = fallbackViaNetwork != null && fallbackViaNetwork ? "onFallbackViaNetwork" : "onFallback";
-        CollectionStringBuffer buffer = new CollectionStringBuffer(name);
-        buffer.append("[");
-        List<ProcessorDefinition<?>> list = getOutputs();
-        for (ProcessorDefinition<?> type : list) {
-            buffer.append(type.getLabel());
+        String name;
+        if (Boolean.toString(true).equals(fallbackViaNetwork)) {
+            name = "OnFallbackViaNetwork";
+        } else if (fallbackViaNetwork == null || Boolean.toString(false).equals(fallbackViaNetwork)) {
+            name = "onFallback";
+        } else {
+            name = "onFallback(viaNetwork=" + fallbackViaNetwork + ")";
         }
-        buffer.append("]");
-        return buffer.toString();
+        return getOutputs().stream().map(ProcessorDefinition::getLabel)
+                .collect(Collectors.joining(",", name + "[", "]"));
     }
 
-    public Boolean getFallbackViaNetwork() {
+    public String getFallbackViaNetwork() {
         return fallbackViaNetwork;
     }
 
@@ -82,13 +85,8 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
      * thread-pool this would prevent the fallback from running if the two
      * commands share the same pool.
      */
-    public void setFallbackViaNetwork(Boolean fallbackViaNetwork) {
+    public void setFallbackViaNetwork(String fallbackViaNetwork) {
         this.fallbackViaNetwork = fallbackViaNetwork;
-    }
-
-    public boolean isFallbackViaNetwork() {
-        // is default false
-        return fallbackViaNetwork != null && fallbackViaNetwork;
     }
 
 }

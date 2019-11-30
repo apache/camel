@@ -42,9 +42,9 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
-    private Boolean ignoreInvalidEndpoints;
+    private String ignoreInvalidEndpoints;
     @XmlAttribute
-    private Integer cacheSize;
+    private String cacheSize;
 
     public DynamicRouterDefinition() {
     }
@@ -95,22 +95,22 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         return uriDelimiter;
     }
 
-    public void setIgnoreInvalidEndpoints(Boolean ignoreInvalidEndpoints) {
+    public void setIgnoreInvalidEndpoints(String ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
-    public Boolean getIgnoreInvalidEndpoints() {
+    public String getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
 
-    public Integer getCacheSize() {
+    public String getCacheSize() {
         return cacheSize;
     }
 
-    public void setCacheSize(Integer cacheSize) {
+    public void setCacheSize(String cacheSize) {
         this.cacheSize = cacheSize;
     }
 
@@ -128,7 +128,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public DynamicRouterDefinition<Type> ignoreInvalidEndpoints() {
-        setIgnoreInvalidEndpoints(true);
+        setIgnoreInvalidEndpoints(Boolean.toString(true));
         return this;
     }
 
@@ -153,7 +153,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public DynamicRouterDefinition<Type> cacheSize(int cacheSize) {
-        setCacheSize(cacheSize);
+        setCacheSize(Integer.toString(cacheSize));
         return this;
     }
 

@@ -50,7 +50,7 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
 
         CachingServiceCallServiceDiscoveryConfiguration cachingConf = new CachingServiceCallServiceDiscoveryConfiguration();
         cachingConf.setServiceDiscoveryConfiguration(staticConf);
-        cachingConf.setTimeout(50);
+        cachingConf.timeout(50);
         cachingConf.setUnits(TimeUnit.MILLISECONDS);
 
         CachingServiceDiscovery caching = (CachingServiceDiscovery)cachingConf.newInstance(context);

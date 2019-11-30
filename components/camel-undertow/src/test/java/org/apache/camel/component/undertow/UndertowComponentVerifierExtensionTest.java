@@ -78,7 +78,7 @@ public class UndertowComponentVerifierExtensionTest extends BaseUndertowTest {
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("httpURI", "http://no-host:" + getPort());
+        parameters.put("httpURI", "http://no.host:" + getPort());
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 

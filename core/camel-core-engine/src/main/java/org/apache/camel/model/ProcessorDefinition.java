@@ -297,7 +297,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type toD(@AsEndpointUri String uri, int cacheSize) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
-        answer.setCacheSize(cacheSize);
+        answer.setCacheSize(Integer.toString(cacheSize));
         addOutput(answer);
         return asType();
     }
@@ -315,7 +315,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, int cacheSize) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
-        answer.setCacheSize(cacheSize);
+        answer.setCacheSize(Integer.toString(cacheSize));
         addOutput(answer);
         return asType();
     }
@@ -332,7 +332,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type toD(@AsEndpointUri String uri, boolean ignoreInvalidEndpoint) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
-        answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
+        answer.setIgnoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
         addOutput(answer);
         return asType();
     }
@@ -349,7 +349,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type toD(@AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, boolean ignoreInvalidEndpoint) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
-        answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
+        answer.setIgnoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
         addOutput(answer);
         return asType();
     }
@@ -891,7 +891,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         MulticastDefinition answer = new MulticastDefinition();
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
-        answer.setParallelProcessing(parallelProcessing);
+        answer.setParallelProcessing(Boolean.toString(parallelProcessing));
         return answer;
     }
 
@@ -1025,7 +1025,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ThreadsDefinition threads(int poolSize) {
         ThreadsDefinition answer = new ThreadsDefinition();
-        answer.setPoolSize(poolSize);
+        answer.setPoolSize(Integer.toString(poolSize));
         addOutput(answer);
         return answer;
     }
@@ -1040,8 +1040,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ThreadsDefinition threads(int poolSize, int maxPoolSize) {
         ThreadsDefinition answer = new ThreadsDefinition();
-        answer.setPoolSize(poolSize);
-        answer.setMaxPoolSize(maxPoolSize);
+        answer.setPoolSize(Integer.toString(poolSize));
+        answer.setMaxPoolSize(Integer.toString(maxPoolSize));
         addOutput(answer);
         return answer;
     }
@@ -1057,8 +1057,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ThreadsDefinition threads(int poolSize, int maxPoolSize, String threadName) {
         ThreadsDefinition answer = new ThreadsDefinition();
-        answer.setPoolSize(poolSize);
-        answer.setMaxPoolSize(maxPoolSize);
+        answer.setPoolSize(Integer.toString(poolSize));
+        answer.setMaxPoolSize(Integer.toString(maxPoolSize));
         answer.setThreadName(threadName);
         addOutput(answer);
         return answer;
@@ -1413,7 +1413,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type log(LoggingLevel loggingLevel, String message) {
         LogDefinition answer = new LogDefinition(message);
-        answer.setLoggingLevel(loggingLevel);
+        answer.setLoggingLevel(loggingLevel.name());
         addOutput(answer);
         return asType();
     }
@@ -1430,7 +1430,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type log(LoggingLevel loggingLevel, String logName, String message) {
         LogDefinition answer = new LogDefinition(message);
-        answer.setLoggingLevel(loggingLevel);
+        answer.setLoggingLevel(loggingLevel.name());
         answer.setLogName(logName);
         addOutput(answer);
         return asType();
@@ -1449,7 +1449,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type log(LoggingLevel loggingLevel, Logger logger, String message) {
         LogDefinition answer = new LogDefinition(message);
-        answer.setLoggingLevel(loggingLevel);
+        answer.setLoggingLevel(loggingLevel.name());
         answer.setLogger(logger);
         addOutput(answer);
         return asType();
@@ -1468,7 +1468,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type log(LoggingLevel loggingLevel, String logName, String marker, String message) {
         LogDefinition answer = new LogDefinition(message);
-        answer.setLoggingLevel(loggingLevel);
+        answer.setLoggingLevel(loggingLevel.name());
         answer.setLogName(logName);
         answer.setMarker(marker);
         addOutput(answer);
@@ -1489,7 +1489,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type log(LoggingLevel loggingLevel, Logger logger, String marker, String message) {
         LogDefinition answer = new LogDefinition(message);
-        answer.setLoggingLevel(loggingLevel);
+        answer.setLoggingLevel(loggingLevel.name());
         answer.setLogger(logger);
         answer.setMarker(marker);
         addOutput(answer);
@@ -2083,7 +2083,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<LoopDefinition> loopDoWhile() {
         LoopDefinition loop = new LoopDefinition();
-        loop.setDoWhile(true);
+        loop.setDoWhile(Boolean.toString(true));
         addOutput(loop);
         return createAndSetExpression(loop);
     }
@@ -2144,7 +2144,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type markRollbackOnly() {
         RollbackDefinition answer = new RollbackDefinition();
-        answer.setMarkRollbackOnly(true);
+        answer.setMarkRollbackOnly(Boolean.toString(true));
         addOutput(answer);
         return asType();
     }
@@ -2167,7 +2167,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type markRollbackOnlyLast() {
         RollbackDefinition answer = new RollbackDefinition();
-        answer.setMarkRollbackOnlyLast(true);
+        answer.setMarkRollbackOnlyLast(Boolean.toString(true));
         addOutput(answer);
         return asType();
     }
@@ -2540,7 +2540,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         } else {
             answer.setBean(bean);
         }
-        answer.setCache(cache);
+        answer.setCache(Boolean.toString(cache));
         addOutput(answer);
         return asType();
     }
@@ -2567,7 +2567,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             answer.setBean(bean);
         }
         answer.setMethod(method);
-        answer.setCache(cache);
+        answer.setCache(Boolean.toString(cache));
         addOutput(answer);
         return asType();
     }
@@ -2625,7 +2625,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
         answer.setMethod(method);
-        answer.setCache(cache);
+        answer.setCache(Boolean.toString(cache));
         addOutput(answer);
         return asType();
     }
@@ -2975,7 +2975,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type claimCheck(ClaimCheckOperation operation) {
         ClaimCheckDefinition answer = new ClaimCheckDefinition();
-        answer.setOperation(operation);
+        answer.setOperation(operation.name());
         addOutput(answer);
         return asType();
     }
@@ -3008,7 +3008,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type claimCheck(ClaimCheckOperation operation, String key, String filter) {
         ClaimCheckDefinition answer = new ClaimCheckDefinition();
-        answer.setOperation(operation);
+        answer.setOperation(operation.name());
         answer.setKey(key);
         answer.setFilter(filter);
         addOutput(answer);
@@ -3222,8 +3222,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(new ConstantExpression(resourceUri));
         answer.setAggregationStrategy(aggregationStrategy);
-        answer.setAggregateOnException(aggregateOnException);
-        answer.setShareUnitOfWork(shareUnitOfWork);
+        answer.setAggregateOnException(Boolean.toString(aggregateOnException));
+        answer.setShareUnitOfWork(Boolean.toString(shareUnitOfWork));
         addOutput(answer);
         return asType();
     }
@@ -3267,8 +3267,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(resourceUri.expr());
         answer.setAggregationStrategy(aggregationStrategy);
-        answer.setAggregateOnException(aggregateOnException);
-        answer.setShareUnitOfWork(shareUnitOfWork);
+        answer.setAggregateOnException(Boolean.toString(aggregateOnException));
+        answer.setShareUnitOfWork(Boolean.toString(shareUnitOfWork));
         addOutput(answer);
         return asType();
     }
@@ -3777,9 +3777,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type pollEnrich(@AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
-        pollEnrich.setTimeout(timeout);
+        pollEnrich.setTimeout(Long.toString(timeout));
         pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
-        pollEnrich.setAggregateOnException(aggregateOnException);
+        pollEnrich.setAggregateOnException(Boolean.toString(aggregateOnException));
         addOutput(pollEnrich);
         return asType();
     }
@@ -3814,9 +3814,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type pollEnrich(@AsEndpointUri Expression expression, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
-        pollEnrich.setTimeout(timeout);
+        pollEnrich.setTimeout(Long.toString(timeout));
         pollEnrich.setAggregationStrategy(aggregationStrategy);
-        pollEnrich.setAggregateOnException(aggregateOnException);
+        pollEnrich.setAggregateOnException(Boolean.toString(aggregateOnException));
         addOutput(pollEnrich);
         return asType();
     }

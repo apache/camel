@@ -69,9 +69,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlAttribute(name = "onExceptionOccurredRef")
     private String onExceptionOccurredRef;
     @XmlAttribute(name = "useOriginalMessage")
-    private Boolean useOriginalMessagePolicy;
+    private String useOriginalMessage;
     @XmlAttribute(name = "useOriginalBody")
-    private Boolean useOriginalBodyPolicy;
+    private String useOriginalBody;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
@@ -155,7 +155,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         }
 
         // you cannot turn on both of them
-        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy && useOriginalBodyPolicy != null && useOriginalBodyPolicy) {
+        if (Boolean.toString(true).equals(useOriginalMessage)
+                && Boolean.toString(true).equals(useOriginalBody)) {
             throw new IllegalArgumentException("Cannot set both useOriginalMessage and useOriginalBody on: " + this);
         }
 
@@ -163,7 +164,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         // onException(Exception.class);
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
-            ObjectHelper.firstNotNull(handledPolicy, continuedPolicy, retryWhilePolicy, redeliveryPolicyType, useOriginalMessagePolicy, useOriginalBodyPolicy, onRedeliveryRef,
+            ObjectHelper.firstNotNull(handledPolicy, continuedPolicy, retryWhilePolicy, redeliveryPolicyType, useOriginalMessage, useOriginalBody, onRedeliveryRef,
                                       onRedelivery, onExceptionOccurred)
                 .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
         }
@@ -695,7 +696,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @see #useOriginalBody()
      */
     public OnExceptionDefinition useOriginalMessage() {
-        setUseOriginalMessagePolicy(Boolean.TRUE);
+        setUseOriginalMessage(Boolean.toString(true));
         return this;
     }
 
@@ -744,7 +745,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @see #useOriginalMessage()
      */
     public OnExceptionDefinition useOriginalBody() {
-        setUseOriginalBodyPolicy(Boolean.TRUE);
+        setUseOriginalBody(Boolean.toString(true));
         return this;
     }
 
@@ -929,20 +930,20 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.onExceptionOccurredRef = onExceptionOccurredRef;
     }
 
-    public Boolean getUseOriginalMessagePolicy() {
-        return useOriginalMessagePolicy;
+    public String getUseOriginalMessage() {
+        return useOriginalMessage;
     }
 
-    public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
-        this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+    public void setUseOriginalMessage(String useOriginalMessage) {
+        this.useOriginalMessage = useOriginalMessage;
     }
 
-    public Boolean getUseOriginalBodyPolicy() {
-        return useOriginalBodyPolicy;
+    public String getUseOriginalBody() {
+        return useOriginalBody;
     }
 
-    public void setUseOriginalBodyPolicy(Boolean useOriginalBodyPolicy) {
-        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
+    public void setUseOriginalBody(String useOriginalBody) {
+        this.useOriginalBody = useOriginalBody;
     }
 
     // Implementation methods

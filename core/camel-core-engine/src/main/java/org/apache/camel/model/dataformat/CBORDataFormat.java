@@ -36,8 +36,8 @@ public class CBORDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String objectMapper;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean useDefaultObjectMapper;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String useDefaultObjectMapper;
     @XmlAttribute
     private String unmarshalTypeName;
     @XmlTransient
@@ -47,13 +47,17 @@ public class CBORDataFormat extends DataFormatDefinition {
     @XmlTransient
     private Class<?> collectionType;
     @XmlAttribute
-    private Boolean useList;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String useList;
     @XmlAttribute
-    private Boolean allowUnmarshallType;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String allowUnmarshallType;
     @XmlAttribute
-    private Boolean prettyPrint;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String prettyPrint;
     @XmlAttribute
-    private Boolean allowJmsType;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String allowJmsType;
     @XmlAttribute
     private String enableFeatures;
     @XmlAttribute
@@ -75,7 +79,7 @@ public class CBORDataFormat extends DataFormatDefinition {
         this.objectMapper = objectMapper;
     }
 
-    public Boolean getUseDefaultObjectMapper() {
+    public String getUseDefaultObjectMapper() {
         return useDefaultObjectMapper;
     }
 
@@ -83,7 +87,7 @@ public class CBORDataFormat extends DataFormatDefinition {
      * Whether to lookup and use default Jackson CBOR ObjectMapper from the
      * registry.
      */
-    public void setUseDefaultObjectMapper(Boolean useDefaultObjectMapper) {
+    public void setUseDefaultObjectMapper(String useDefaultObjectMapper) {
         this.useDefaultObjectMapper = useDefaultObjectMapper;
     }
 
@@ -102,7 +106,7 @@ public class CBORDataFormat extends DataFormatDefinition {
         return unmarshalType;
     }
 
-    public Boolean getPrettyPrint() {
+    public String getPrettyPrint() {
         return prettyPrint;
     }
 
@@ -111,11 +115,11 @@ public class CBORDataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default false.
      */
-    public void setPrettyPrint(Boolean prettyPrint) {
+    public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
 
-    public Boolean getAllowJmsType() {
+    public String getAllowJmsType() {
         return allowJmsType;
     }
 
@@ -123,7 +127,7 @@ public class CBORDataFormat extends DataFormatDefinition {
      * Used for JMS users to allow the JMSType header from the JMS spec to
      * specify a FQN classname to use to unmarshal to.
      */
-    public void setAllowJmsType(Boolean allowJmsType) {
+    public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
 
@@ -155,18 +159,18 @@ public class CBORDataFormat extends DataFormatDefinition {
         this.collectionType = collectionType;
     }
 
-    public Boolean getUseList() {
+    public String getUseList() {
         return useList;
     }
 
     /**
      * To unarmshal to a List of Map or a List of Pojo.
      */
-    public void setUseList(Boolean useList) {
+    public void setUseList(String useList) {
         this.useList = useList;
     }
 
-    public Boolean getAllowUnmarshallType() {
+    public String getAllowUnmarshallType() {
         return allowUnmarshallType;
     }
 
@@ -176,7 +180,7 @@ public class CBORDataFormat extends DataFormatDefinition {
      * <p/>
      * This should only be enabled when desired to be used.
      */
-    public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
+    public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
 

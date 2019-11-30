@@ -44,7 +44,7 @@ public class ManagedWeightedLoadBalancer extends ManagedProcessor implements Man
     }
 
     @Override
-    public Boolean isRoundRobin() {
+    public String getRoundRobin() {
         WeightedLoadBalancerDefinition weighted = (WeightedLoadBalancerDefinition) getDefinition().getLoadBalancerType();
         if (weighted != null) {
             return weighted.getRoundRobin();

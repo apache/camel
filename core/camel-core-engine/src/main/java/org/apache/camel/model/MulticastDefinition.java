@@ -39,24 +39,24 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MulticastDefinition extends OutputDefinition<MulticastDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
     @XmlAttribute
-    private Boolean parallelProcessing;
+    private String parallelProcessing;
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
-    private Boolean strategyMethodAllowNull;
+    private String strategyMethodAllowNull;
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    private Boolean streaming;
+    private String streaming;
     @XmlAttribute
-    private Boolean stopOnException;
+    private String stopOnException;
     @XmlAttribute
     @Metadata(defaultValue = "0")
-    private Long timeout;
+    private String timeout;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
@@ -64,11 +64,11 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
-    private Boolean shareUnitOfWork;
+    private String shareUnitOfWork;
     @XmlAttribute
-    private Boolean parallelAggregate;
+    private String parallelAggregate;
     @XmlAttribute
-    private Boolean stopOnAggregateException;
+    private String stopOnAggregateException;
 
     public MulticastDefinition() {
     }
@@ -166,7 +166,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition aggregationStrategyMethodAllowNull() {
-        setStrategyMethodAllowNull(true);
+        setStrategyMethodAllowNull(Boolean.toString(true));
         return this;
     }
 
@@ -179,7 +179,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition parallelProcessing() {
-        setParallelProcessing(true);
+        setParallelProcessing(Boolean.toString(true));
         return this;
     }
 
@@ -192,7 +192,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition parallelProcessing(boolean parallelProcessing) {
-        setParallelProcessing(parallelProcessing);
+        setParallelProcessing(Boolean.toString(parallelProcessing));
         return this;
     }
 
@@ -207,7 +207,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition parallelAggregate() {
-        setParallelAggregate(true);
+        setParallelAggregate(Boolean.toString(true));
         return this;
     }
 
@@ -222,7 +222,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition stopOnAggregateException() {
-        setStopOnAggregateException(true);
+        setStopOnAggregateException(Boolean.toString(true));
         return this;
     }
 
@@ -234,7 +234,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition streaming() {
-        setStreaming(true);
+        setStreaming(Boolean.toString(true));
         return this;
     }
 
@@ -255,7 +255,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition stopOnException() {
-        setStopOnException(true);
+        setStopOnException(Boolean.toString(true));
         return this;
     }
 
@@ -349,7 +349,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition timeout(long timeout) {
-        setTimeout(timeout);
+        setTimeout(Long.toString(timeout));
         return this;
     }
 
@@ -362,7 +362,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder.
      */
     public MulticastDefinition shareUnitOfWork() {
-        setShareUnitOfWork(true);
+        setShareUnitOfWork(Boolean.toString(true));
         return this;
     }
 
@@ -375,27 +375,27 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return this;
     }
 
-    public Boolean getParallelProcessing() {
+    public String getParallelProcessing() {
         return parallelProcessing;
     }
 
-    public void setParallelProcessing(Boolean parallelProcessing) {
+    public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 
-    public Boolean getStreaming() {
+    public String getStreaming() {
         return streaming;
     }
 
-    public void setStreaming(Boolean streaming) {
+    public void setStreaming(String streaming) {
         this.streaming = streaming;
     }
 
-    public Boolean getStopOnException() {
+    public String getStopOnException() {
         return stopOnException;
     }
 
-    public void setStopOnException(Boolean stopOnException) {
+    public void setStopOnException(String stopOnException) {
         this.stopOnException = stopOnException;
     }
 
@@ -435,7 +435,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.strategyMethodName = strategyMethodName;
     }
 
-    public Boolean getStrategyMethodAllowNull() {
+    public String getStrategyMethodAllowNull() {
         return strategyMethodAllowNull;
     }
 
@@ -445,7 +445,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * the oldExchange (when no data to enrich), when using POJOs as the
      * AggregationStrategy
      */
-    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
@@ -464,11 +464,11 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Long getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(Long timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -488,27 +488,27 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         this.onPrepare = onPrepare;
     }
 
-    public Boolean getShareUnitOfWork() {
+    public String getShareUnitOfWork() {
         return shareUnitOfWork;
     }
 
-    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+    public void setShareUnitOfWork(String shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public Boolean getParallelAggregate() {
+    public String getParallelAggregate() {
         return parallelAggregate;
     }
 
-    public void setParallelAggregate(Boolean parallelAggregate) {
+    public void setParallelAggregate(String parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }
 
-    public Boolean getStopOnAggregateException() {
+    public String getStopOnAggregateException() {
         return stopOnAggregateException;
     }
 
-    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+    public void setStopOnAggregateException(String stopOnAggregateException) {
         this.stopOnAggregateException = stopOnAggregateException;
     }
 

@@ -39,8 +39,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     @XmlAttribute
     private String beanType;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean cache;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String cache;
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
@@ -146,14 +146,14 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         this.beanClass = beanType;
     }
 
-    public Boolean getCache() {
+    public String getCache() {
         return cache;
     }
 
     /**
      * Caches the bean lookup, to avoid lookup up bean on every usage.
      */
-    public void setCache(Boolean cache) {
+    public void setCache(String cache) {
         this.cache = cache;
     }
 

@@ -58,13 +58,13 @@ public class FailoverLoadBalancerReifier extends LoadBalancerReifier<FailoverLoa
         }
 
         if (definition.getMaximumFailoverAttempts() != null) {
-            answer.setMaximumFailoverAttempts(definition.getMaximumFailoverAttempts());
+            answer.setMaximumFailoverAttempts(parseInt(routeContext, definition.getMaximumFailoverAttempts()));
         }
         if (definition.getRoundRobin() != null) {
-            answer.setRoundRobin(definition.getRoundRobin());
+            answer.setRoundRobin(parseBoolean(routeContext, definition.getRoundRobin()));
         }
         if (definition.getSticky() != null) {
-            answer.setSticky(definition.getSticky());
+            answer.setSticky(parseBoolean(routeContext, definition.getSticky()));
         }
 
         return answer;

@@ -51,7 +51,7 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     @XmlAttribute
     private String allowCoreThreadTimeOut;
     @XmlAttribute
-    private ThreadPoolRejectedPolicy rejectedPolicy;
+    private String rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
     }
@@ -67,7 +67,7 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     public ThreadPoolProfileDefinition poolSize(int poolSize) {
-        return poolSize("" + poolSize);
+        return poolSize(Integer.toString(poolSize));
     }
 
     public ThreadPoolProfileDefinition poolSize(String poolSize) {
@@ -76,20 +76,20 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     public ThreadPoolProfileDefinition maxPoolSize(int maxPoolSize) {
-        return maxPoolSize("" + maxQueueSize);
+        return maxPoolSize(Integer.toString(maxPoolSize));
     }
 
     public ThreadPoolProfileDefinition maxPoolSize(String maxPoolSize) {
-        setMaxPoolSize("" + maxPoolSize);
+        setMaxPoolSize(maxPoolSize);
         return this;
     }
 
     public ThreadPoolProfileDefinition keepAliveTime(long keepAliveTime) {
-        return keepAliveTime("" + keepAliveTime);
+        return keepAliveTime(Long.toString(keepAliveTime));
     }
 
     public ThreadPoolProfileDefinition keepAliveTime(String keepAliveTime) {
-        setKeepAliveTime("" + keepAliveTime);
+        setKeepAliveTime(keepAliveTime);
         return this;
     }
 
@@ -99,15 +99,20 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     public ThreadPoolProfileDefinition maxQueueSize(int maxQueueSize) {
-        return maxQueueSize("" + maxQueueSize);
+        return maxQueueSize(Integer.toString(maxQueueSize));
     }
 
     public ThreadPoolProfileDefinition maxQueueSize(String maxQueueSize) {
-        setMaxQueueSize("" + maxQueueSize);
+        setMaxQueueSize(maxQueueSize);
         return this;
     }
 
     public ThreadPoolProfileDefinition rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        setRejectedPolicy(rejectedPolicy.name());
+        return this;
+    }
+
+    public ThreadPoolProfileDefinition rejectedPolicy(String rejectedPolicy) {
         setRejectedPolicy(rejectedPolicy);
         return this;
     }
@@ -203,21 +208,14 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         this.timeUnit = timeUnit;
     }
 
-    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+    public String getRejectedPolicy() {
         return rejectedPolicy;
-    }
-
-    public RejectedExecutionHandler getRejectedExecutionHandler() {
-        if (rejectedPolicy != null) {
-            return rejectedPolicy.asRejectedExecutionHandler();
-        }
-        return null;
     }
 
     /**
      * Sets the handler for tasks which cannot be executed by the thread pool.
      */
-    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+    public void setRejectedPolicy(String rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }
 

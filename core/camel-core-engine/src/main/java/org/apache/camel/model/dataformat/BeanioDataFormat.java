@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
@@ -38,19 +39,22 @@ public class BeanioDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private String streamName;
     @XmlAttribute
-    private Boolean ignoreUnidentifiedRecords;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreUnidentifiedRecords;
     @XmlAttribute
-    private Boolean ignoreUnexpectedRecords;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreUnexpectedRecords;
     @XmlAttribute
-    private Boolean ignoreInvalidRecords;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreInvalidRecords;
     @XmlAttribute
     private String encoding;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String beanReaderErrorHandlerType;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean unmarshalSingleObject;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String unmarshalSingleObject;
 
     public BeanioDataFormat() {
         super("beanio");
@@ -80,36 +84,36 @@ public class BeanioDataFormat extends DataFormatDefinition {
         this.streamName = streamName;
     }
 
-    public Boolean getIgnoreUnidentifiedRecords() {
+    public String getIgnoreUnidentifiedRecords() {
         return ignoreUnidentifiedRecords;
     }
 
     /**
      * Whether to ignore unidentified records.
      */
-    public void setIgnoreUnidentifiedRecords(Boolean ignoreUnidentifiedRecords) {
+    public void setIgnoreUnidentifiedRecords(String ignoreUnidentifiedRecords) {
         this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
     }
 
-    public Boolean getIgnoreUnexpectedRecords() {
+    public String getIgnoreUnexpectedRecords() {
         return ignoreUnexpectedRecords;
     }
 
     /**
      * Whether to ignore unexpected records.
      */
-    public void setIgnoreUnexpectedRecords(Boolean ignoreUnexpectedRecords) {
+    public void setIgnoreUnexpectedRecords(String ignoreUnexpectedRecords) {
         this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
     }
 
-    public Boolean getIgnoreInvalidRecords() {
+    public String getIgnoreInvalidRecords() {
         return ignoreInvalidRecords;
     }
 
     /**
      * Whether to ignore invalid records.
      */
-    public void setIgnoreInvalidRecords(Boolean ignoreInvalidRecords) {
+    public void setIgnoreInvalidRecords(String ignoreInvalidRecords) {
         this.ignoreInvalidRecords = ignoreInvalidRecords;
     }
 
@@ -141,7 +145,7 @@ public class BeanioDataFormat extends DataFormatDefinition {
         this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
     }
 
-    public Boolean getUnmarshalSingleObject() {
+    public String getUnmarshalSingleObject() {
         return unmarshalSingleObject;
     }
 
@@ -151,7 +155,7 @@ public class BeanioDataFormat extends DataFormatDefinition {
      * only intended in special use-cases where beanio maps the Camel message to
      * a single POJO bean.
      */
-    public void setUnmarshalSingleObject(Boolean unmarshalSingleObject) {
+    public void setUnmarshalSingleObject(String unmarshalSingleObject) {
         this.unmarshalSingleObject = unmarshalSingleObject;
     }
 }

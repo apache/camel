@@ -44,7 +44,8 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     @XmlAnyAttribute
     private Map<QName, Object> otherAttributes;
     @XmlAttribute
-    private Boolean contentTypeHeader;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String contentTypeHeader;
 
     public DataFormatDefinition() {
     }
@@ -86,7 +87,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
         this.otherAttributes = otherAttributes;
     }
 
-    public Boolean getContentTypeHeader() {
+    public String getContentTypeHeader() {
         return contentTypeHeader;
     }
 
@@ -97,7 +98,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
      * For example <tt>application/xml</tt> for data formats marshalling to XML,
      * or <tt>application/json</tt> for data formats marshalling to JSon etc.
      */
-    public void setContentTypeHeader(Boolean contentTypeHeader) {
+    public void setContentTypeHeader(String contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
     }
 
