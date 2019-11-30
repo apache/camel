@@ -23,8 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to test delete option.
@@ -36,7 +39,7 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -54,7 +57,7 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
         // assert the file is deleted
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        assertFalse("The file should have been deleted", file.exists());
+        assertFalse(file.exists(), "The file should have been deleted");
     }
 
     private void prepareFtpServer() throws Exception {
@@ -71,7 +74,7 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        assertTrue("The file should exists", file.exists());
+        assertTrue(file.exists(), "The file should exists");
     }
 
     @Override

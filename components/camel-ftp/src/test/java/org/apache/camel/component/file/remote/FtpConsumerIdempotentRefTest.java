@@ -20,7 +20,10 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the idempotentRepository # option.
@@ -61,7 +64,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         Thread.sleep(2000);
         assertMockEndpointsSatisfied();
 
-        assertTrue("MyIdempotentRepository should have been invoked", invoked);
+        assertTrue(invoked, "MyIdempotentRepository should have been invoked");
     }
     
     @Override

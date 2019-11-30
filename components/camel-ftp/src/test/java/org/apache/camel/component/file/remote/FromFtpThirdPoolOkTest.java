@@ -21,8 +21,13 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
 
@@ -34,7 +39,7 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/thirdpool");
         super.setUp();
@@ -57,7 +62,7 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
 
         // assert the file is deleted
         File file = new File(FTP_ROOT_DIR + "/thirdpool/hello.txt");
-        assertFalse("The file should have been deleted", file.exists());
+        assertFalse(file.exists(), "The file should have been deleted");
     }
 
     @Override
@@ -76,7 +81,7 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
                         if (counter < 3) {
                             // file should exists
                             File file = new File(FTP_ROOT_DIR + "/thirdpool/hello.txt");
-                            assertTrue("The file should NOT have been deleted", file.exists());
+                            assertTrue(file.exists(), "The file should NOT have been deleted");
                             throw new IllegalArgumentException("Forced by unittest");
                         }
                     }

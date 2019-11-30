@@ -21,7 +21,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Simulate network issues by using a custom poll strategy to force exceptions
@@ -51,7 +54,7 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
 
         Thread.sleep(2000);
 
-        assertTrue("Should have tried at least 3 times was " + counter, counter >= 3);
+        assertTrue(counter >= 3, "Should have tried at least 3 times was " + counter);
         assertEquals(2, rollback);
     }
 

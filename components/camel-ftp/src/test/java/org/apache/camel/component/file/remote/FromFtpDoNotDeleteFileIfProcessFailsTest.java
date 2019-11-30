@@ -24,8 +24,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSupport {
 
@@ -34,7 +36,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -53,7 +55,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
 
         // assert the file is deleted
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        assertTrue("The file should NOT have been deleted", file.exists());
+        assertTrue(file.exists(), "The file should NOT have been deleted");
     }
 
     private void prepareFtpServer() throws Exception {
@@ -70,7 +72,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        assertTrue("The file should exists", file.exists());
+        assertTrue(file.exists(), "The file should exists");
     }
 
     @Override

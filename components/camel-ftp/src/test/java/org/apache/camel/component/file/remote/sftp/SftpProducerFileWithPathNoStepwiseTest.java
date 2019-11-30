@@ -20,7 +20,10 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpProducerFileWithPathNoStepwiseTest extends SftpServerTestSupport {
 
@@ -37,7 +40,7 @@ public class SftpProducerFileWithPathNoStepwiseTest extends SftpServerTestSuppor
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME,  "hello/claus.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello/claus.txt");
-        assertTrue("The uploaded file should exists", file.exists());
+        assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }
 

@@ -24,7 +24,9 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  *
@@ -54,10 +56,10 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         File hello = new File(FTP_ROOT_DIR + "/async/hello.txt");
-        assertFalse("File should not exist " + hello, hello.exists());
+        assertFalse(hello.exists(), "File should not exist " + hello);
 
         File bye = new File(FTP_ROOT_DIR + "/async/bye.txt");
-        assertFalse("File should not exist " + bye, bye.exists());
+        assertFalse(bye.exists(), "File should not exist " + bye);
     }
 
     @Override

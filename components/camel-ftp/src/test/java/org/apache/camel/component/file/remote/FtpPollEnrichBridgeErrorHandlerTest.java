@@ -20,9 +20,10 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
 
@@ -47,7 +48,7 @@ public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
         assertNotNull(out);
 
         Exception caught = out.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-        assertNotNull("Should store caught exception", caught);
+        assertNotNull(caught, "Should store caught exception");
     }
 
     @Override

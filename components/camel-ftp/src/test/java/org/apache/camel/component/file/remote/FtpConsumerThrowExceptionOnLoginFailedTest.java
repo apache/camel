@@ -26,7 +26,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 /**
  * Unit test for login failure due bad password and no re connect attempts allowed
@@ -55,7 +59,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
         Thread.sleep(1000);
 
         Consumer consumer = context.getRoute("foo").getConsumer();
-        assertTrue("Consumer should be stopped", ((ServiceSupport)consumer).isStopped());
+        assertTrue(((ServiceSupport)consumer).isStopped(), "Consumer should be stopped");
     }
 
     @Override

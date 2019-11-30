@@ -21,8 +21,12 @@ import java.io.File;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFtpConsumerTemplateTest extends FtpServerTestSupport {
 
@@ -31,7 +35,7 @@ public class FromFtpConsumerTemplateTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -44,7 +48,7 @@ public class FromFtpConsumerTemplateTest extends FtpServerTestSupport {
 
         // assert the file is deleted
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        assertFalse("The file should have been deleted", file.exists());
+        assertFalse(file.exists(), "The file should have been deleted");
     }
 
     private void prepareFtpServer() throws Exception {
@@ -61,7 +65,7 @@ public class FromFtpConsumerTemplateTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
-        assertTrue("The file should exists", file.exists());
+        assertTrue(file.exists(), "The file should exists");
     }
 
 }

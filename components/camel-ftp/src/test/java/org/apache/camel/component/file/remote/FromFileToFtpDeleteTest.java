@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
 
@@ -44,11 +47,11 @@ public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
 
         // file should be deleted
         File file = new File("target/delete/hello.txt");
-        assertFalse("File should be deleted", file.exists());
+        assertFalse(file.exists(), "File should be deleted");
 
         // file should exists on ftp server
         file = new File(FTP_ROOT_DIR + "/hello.txt");
-        assertTrue("File should exist on ftp server", file.exists());
+        assertTrue(file.exists(), "File should exist on ftp server");
     }
 
     @Override

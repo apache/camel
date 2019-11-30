@@ -23,8 +23,14 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
@@ -34,7 +40,7 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/lwd");
         deleteDirectory("target/out");
@@ -73,16 +79,16 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");
-        assertTrue("file should exists", out.exists());
+        assertTrue(out.exists(), "file should exists");
         assertEquals("Hello\nWorld\nI was here", IOConverter.toString(out, null));
 
         // now the lwd file should be deleted
         File local = new File("target/lwd/hello.txt");
-        assertFalse("Local work file should have been deleted", local.exists());
+        assertFalse(local.exists(), "Local work file should have been deleted");
 
         // and so the in progress
         File temp = new File("target/lwd/hello.txt.inprogress");
-        assertFalse("Local work file should have been deleted", temp.exists());
+        assertFalse(temp.exists(), "Local work file should have been deleted");
     }
 
     @Override

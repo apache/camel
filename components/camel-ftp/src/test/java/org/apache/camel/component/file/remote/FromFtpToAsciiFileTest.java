@@ -23,8 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify that we can pool an ASCII file from the FTP Server and store it on a local file path
@@ -36,7 +38,7 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -52,8 +54,8 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
 
         // assert the file
         File file = new File("target/ftptest/deleteme.txt");
-        assertTrue("The ASCII file should exists", file.exists());
-        assertTrue("File size wrong", file.length() > 10);
+        assertTrue(file.exists(), "The ASCII file should exists");
+        assertTrue(file.length() > 10, "File size wrong");
     }
 
     private void prepareFtpServer() throws Exception {

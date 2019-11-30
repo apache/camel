@@ -22,8 +22,10 @@ import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test to test delete option.
@@ -37,7 +39,7 @@ public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         createSampleFile();
@@ -55,7 +57,7 @@ public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
 
         // assert the file is deleted
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
-        assertFalse("The file should have been deleted", file.exists());
+        assertFalse(file.exists(), "The file should have been deleted");
     }
 
     private void createSampleFile() throws IOException {

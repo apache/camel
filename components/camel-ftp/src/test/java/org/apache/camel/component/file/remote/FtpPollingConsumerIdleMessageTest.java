@@ -20,8 +20,10 @@ import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
@@ -39,7 +41,7 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
     
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         new File(FTP_ROOT_DIR + "/polling").mkdirs();
     }

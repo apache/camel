@@ -20,7 +20,9 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
 
@@ -53,7 +55,7 @@ public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
 
         // done file should be deleted now
         File file = new File(FTP_ROOT_DIR + "done/fin.dat");
-        assertFalse("Done file should be deleted: " + file, file.exists());
+        assertFalse(file.exists(), "Done file should be deleted: " + file);
     }
 
     @Override
