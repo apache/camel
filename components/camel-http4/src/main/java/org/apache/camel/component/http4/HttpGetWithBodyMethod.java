@@ -23,7 +23,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 public class HttpGetWithBodyMethod extends HttpEntityEnclosingRequestBase {
 
-    public static final String METHOD_NAME = "DELETE";
+    public static final String METHOD_NAME = "GET";
 
     public HttpGetWithBodyMethod(String uri, HttpEntity entity) {
         setURI(URI.create(uri));
