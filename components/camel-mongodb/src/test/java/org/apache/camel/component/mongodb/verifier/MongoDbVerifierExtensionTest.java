@@ -70,7 +70,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionKO() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", "notReachableHost");
+        parameters.put("host", "notReachable.host");
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         //Given

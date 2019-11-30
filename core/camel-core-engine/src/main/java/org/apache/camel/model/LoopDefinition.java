@@ -35,9 +35,9 @@ import org.apache.camel.spi.Metadata;
 public class LoopDefinition extends OutputExpressionNode {
 
     @XmlAttribute
-    private Boolean copy;
+    private String copy;
     @XmlAttribute
-    private Boolean doWhile;
+    private String doWhile;
 
     public LoopDefinition() {
     }
@@ -48,7 +48,7 @@ public class LoopDefinition extends OutputExpressionNode {
 
     public LoopDefinition(Predicate predicate) {
         super(predicate);
-        setDoWhile(true);
+        setDoWhile(Boolean.toString(true));
     }
 
     public LoopDefinition(ExpressionDefinition expression) {
@@ -62,15 +62,15 @@ public class LoopDefinition extends OutputExpressionNode {
      * @return the builder
      */
     public LoopDefinition copy() {
-        setCopy(true);
+        setCopy(Boolean.toString(true));
         return this;
     }
 
-    public Boolean getCopy() {
+    public String getCopy() {
         return copy;
     }
 
-    public Boolean getDoWhile() {
+    public String getDoWhile() {
         return doWhile;
     }
 
@@ -78,7 +78,7 @@ public class LoopDefinition extends OutputExpressionNode {
      * Enables the while loop that loops until the predicate evaluates to false
      * or null.
      */
-    public void setDoWhile(Boolean doWhile) {
+    public void setDoWhile(String doWhile) {
         this.doWhile = doWhile;
     }
 
@@ -90,7 +90,7 @@ public class LoopDefinition extends OutputExpressionNode {
      * By default loop will loop the same exchange all over, so each iteration
      * may have different message content.
      */
-    public void setCopy(Boolean copy) {
+    public void setCopy(String copy) {
         this.copy = copy;
     }
 

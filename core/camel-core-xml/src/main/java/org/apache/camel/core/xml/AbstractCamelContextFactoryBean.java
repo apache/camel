@@ -117,6 +117,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -998,7 +999,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         answer.setKeepAliveTime(CamelContextHelper.parseLong(context, definition.getKeepAliveTime()));
         answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, definition.getMaxQueueSize()));
         answer.setAllowCoreThreadTimeOut(CamelContextHelper.parseBoolean(context, definition.getAllowCoreThreadTimeOut()));
-        answer.setRejectedPolicy(definition.getRejectedPolicy());
+        answer.setRejectedPolicy(CamelContextHelper.parse(context, ThreadPoolRejectedPolicy.class, definition.getRejectedPolicy()));
         answer.setTimeUnit(definition.getTimeUnit());
         return answer;
     }
@@ -1077,7 +1078,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 filter.addExcludePattern(exclude);
             }
             // lets be false by default, to skip prototype beans
-            boolean includeNonSingletons = contextScanDef.getIncludeNonSingletons() != null ? contextScanDef.getIncludeNonSingletons() : false;
+            boolean includeNonSingletons = contextScanDef.getIncludeNonSingletons() != null && Boolean.parseBoolean(contextScanDef.getIncludeNonSingletons());
             findRouteBuildersByContextScan(filter, includeNonSingletons, builders);
         }
     }

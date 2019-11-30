@@ -399,12 +399,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getInputType() != null || definition.getOutputType() != null) {
             Contract contract = new Contract();
             if (definition.getInputType() != null) {
-                contract.setInputType(definition.getInputType().getUrn());
-                contract.setValidateInput(definition.getInputType().isValidate());
+                contract.setInputType(parseString(routeContext, definition.getInputType().getUrn()));
+                contract.setValidateInput(parseBoolean(routeContext, definition.getInputType().getValidate()));
             }
             if (definition.getOutputType() != null) {
-                contract.setOutputType(definition.getOutputType().getUrn());
-                contract.setValidateOutput(definition.getOutputType().isValidate());
+                contract.setOutputType(parseString(routeContext, definition.getOutputType().getUrn()));
+                contract.setValidateOutput(parseBoolean(routeContext, definition.getOutputType().getValidate()));
             }
             routeContext.addAdvice(new ContractAdvice(contract));
             // make sure to enable data type as its in use when using

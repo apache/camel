@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
@@ -33,9 +34,11 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BarcodeDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Integer width;
+    @Metadata(javaType = "java.lang.Integer")
+    private String width;
     @XmlAttribute
-    private Integer height;
+    @Metadata(javaType = "java.lang.Integer")
+    private String height;
     @XmlAttribute
     private String imageType;
     @XmlAttribute
@@ -45,25 +48,25 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         super("barcode");
     }
 
-    public Integer getWidth() {
+    public String getWidth() {
         return width;
     }
 
     /**
      * Width of the barcode
      */
-    public void setWidth(Integer width) {
+    public void setWidth(String width) {
         this.width = width;
     }
 
-    public Integer getHeight() {
+    public String getHeight() {
         return height;
     }
 
     /**
      * Height of the barcode
      */
-    public void setHeight(Integer height) {
+    public void setHeight(String height) {
         this.height = height;
     }
 

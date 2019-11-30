@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,7 +38,6 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Balances message processing among a number of nodes
@@ -167,9 +167,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     public LoadBalanceDefinition failover(int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, boolean sticky, Class<?>... exceptions) {
         FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
         def.setExceptionTypes(Arrays.asList(exceptions));
-        def.setMaximumFailoverAttempts(maximumFailoverAttempts);
-        def.setRoundRobin(roundRobin);
-        def.setSticky(sticky);
+        def.setMaximumFailoverAttempts(Integer.toString(maximumFailoverAttempts));
+        def.setRoundRobin(Boolean.toString(roundRobin));
+        def.setSticky(Boolean.toString(sticky));
         setLoadBalancerType(def);
         this.setInheritErrorHandler(inheritErrorHandler);
         return this;
@@ -199,7 +199,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      */
     public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
         WeightedLoadBalancerDefinition def = new WeightedLoadBalancerDefinition();
-        def.setRoundRobin(roundRobin);
+        def.setRoundRobin(Boolean.toString(roundRobin));
         def.setDistributionRatio(distributionRatio);
         def.setDistributionRatioDelimiter(distributionRatioDelimiter);
         setLoadBalancerType(def);
@@ -270,13 +270,8 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer("loadBalance[");
-        List<ProcessorDefinition<?>> list = getOutputs();
-        for (ProcessorDefinition<?> processorType : list) {
-            buffer.append(processorType.getLabel());
-        }
-        buffer.append("]");
-        return buffer.toString();
+        return getOutputs().stream().map(ProcessorDefinition::getLabel)
+                .collect(Collectors.joining(",", getShortName() + "[", "]"));
     }
 
     @Override

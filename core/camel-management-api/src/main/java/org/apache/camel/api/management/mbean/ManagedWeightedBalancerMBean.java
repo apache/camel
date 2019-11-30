@@ -24,7 +24,7 @@ public interface ManagedWeightedBalancerMBean extends ManagedProcessorMBean {
     Integer getSize();
 
     @ManagedAttribute(description = "Whether round robin mode is enabled")
-    Boolean isRoundRobin();
+    String getRoundRobin();
 
     @ManagedAttribute(description = "The distribution ratio of integer weights separated by delimiters for example '2,3,5'")
     String getDistributionRatio();

@@ -58,7 +58,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (definition.getOnFallback() != null) {
             fallback = ProcessorReifier.reifier(definition.getOnFallback()).createProcessor(routeContext);
         }
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && definition.getOnFallback().isFallbackViaNetwork();
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(routeContext, definition.getOnFallback().getFallbackViaNetwork());
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-resilience4j does not support onFallbackViaNetwork");
         }

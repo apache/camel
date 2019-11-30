@@ -75,9 +75,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlTransient
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
     @XmlAttribute
-    private Boolean parallelProcessing;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String parallelProcessing;
     @XmlAttribute
-    private Boolean optimisticLocking;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String optimisticLocking;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
@@ -89,34 +91,47 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
-    private Boolean strategyMethodAllowNull;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String strategyMethodAllowNull;
     @XmlAttribute
-    private Integer completionSize;
+    @Metadata(javaType = "java.lang.Integer")
+    private String completionSize;
     @XmlAttribute
-    private Long completionInterval;
+    @Metadata(javaType = "java.lang.Long")
+    private String completionInterval;
     @XmlAttribute
-    private Long completionTimeout;
+    @Metadata(javaType = "java.lang.Long")
+    private String completionTimeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1000")
-    private Long completionTimeoutCheckerInterval = 1000L;
+    @Metadata(defaultValue = "1000", javaType = "java.lang.Long")
+    private String completionTimeoutCheckerInterval = Long.toString(1000L);
     @XmlAttribute
-    private Boolean completionFromBatchConsumer;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String completionFromBatchConsumer;
     @XmlAttribute
-    private Boolean completionOnNewCorrelationGroup;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String completionOnNewCorrelationGroup;
     @XmlAttribute
-    private Boolean eagerCheckCompletion;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String eagerCheckCompletion;
     @XmlAttribute
-    private Boolean ignoreInvalidCorrelationKeys;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreInvalidCorrelationKeys;
     @XmlAttribute
-    private Integer closeCorrelationKeyOnCompletion;
+    @Metadata(javaType = "java.lang.Integer")
+    private String closeCorrelationKeyOnCompletion;
     @XmlAttribute
-    private Boolean discardOnCompletionTimeout;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String discardOnCompletionTimeout;
     @XmlAttribute
-    private Boolean discardOnAggregationFailure;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String discardOnAggregationFailure;
     @XmlAttribute
-    private Boolean forceCompletionOnStop;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String forceCompletionOnStop;
     @XmlAttribute
-    private Boolean completeAllOnStop;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String completeAllOnStop;
     @XmlTransient
     private AggregateController aggregateController;
     @XmlAttribute
@@ -257,7 +272,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.strategyMethodName = strategyMethodName;
     }
 
-    public Boolean getStrategyMethodAllowNull() {
+    public String getStrategyMethodAllowNull() {
         return strategyMethodAllowNull;
     }
 
@@ -279,7 +294,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * as the oldExchange (at the very first aggregation), when using POJOs as
      * the AggregationStrategy.
      */
-    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
@@ -298,11 +313,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return correlationExpression;
     }
 
-    public Integer getCompletionSize() {
+    public String getCompletionSize() {
         return completionSize;
     }
 
-    public void setCompletionSize(Integer completionSize) {
+    public void setCompletionSize(String completionSize) {
         this.completionSize = completionSize;
     }
 
@@ -322,27 +337,27 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.optimisticLockRetryPolicy = optimisticLockRetryPolicy;
     }
 
-    public Long getCompletionInterval() {
+    public String getCompletionInterval() {
         return completionInterval;
     }
 
-    public void setCompletionInterval(Long completionInterval) {
+    public void setCompletionInterval(String completionInterval) {
         this.completionInterval = completionInterval;
     }
 
-    public Long getCompletionTimeout() {
+    public String getCompletionTimeout() {
         return completionTimeout;
     }
 
-    public void setCompletionTimeout(Long completionTimeout) {
+    public void setCompletionTimeout(String completionTimeout) {
         this.completionTimeout = completionTimeout;
     }
 
-    public Long getCompletionTimeoutCheckerInterval() {
+    public String getCompletionTimeoutCheckerInterval() {
         return completionTimeoutCheckerInterval;
     }
 
-    public void setCompletionTimeoutCheckerInterval(Long completionTimeoutCheckerInterval) {
+    public void setCompletionTimeoutCheckerInterval(String completionTimeoutCheckerInterval) {
         this.completionTimeoutCheckerInterval = completionTimeoutCheckerInterval;
     }
 
@@ -399,19 +414,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.completionSizeExpression = completionSizeExpression;
     }
 
-    public Boolean getCompletionFromBatchConsumer() {
+    public String getCompletionFromBatchConsumer() {
         return completionFromBatchConsumer;
     }
 
-    public void setCompletionFromBatchConsumer(Boolean completionFromBatchConsumer) {
+    public void setCompletionFromBatchConsumer(String completionFromBatchConsumer) {
         this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
-    public Boolean getCompletionOnNewCorrelationGroup() {
+    public String getCompletionOnNewCorrelationGroup() {
         return completionOnNewCorrelationGroup;
     }
 
-    public void setCompletionOnNewCorrelationGroup(Boolean completionOnNewCorrelationGroup) {
+    public void setCompletionOnNewCorrelationGroup(String completionOnNewCorrelationGroup) {
         this.completionOnNewCorrelationGroup = completionOnNewCorrelationGroup;
     }
 
@@ -425,19 +440,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.executorService = executorService;
     }
 
-    public Boolean getOptimisticLocking() {
+    public String getOptimisticLocking() {
         return optimisticLocking;
     }
 
-    public void setOptimisticLocking(boolean optimisticLocking) {
+    public void setOptimisticLocking(String optimisticLocking) {
         this.optimisticLocking = optimisticLocking;
     }
 
-    public Boolean getParallelProcessing() {
+    public String getParallelProcessing() {
         return parallelProcessing;
     }
 
-    public void setParallelProcessing(boolean parallelProcessing) {
+    public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 
@@ -451,27 +466,27 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Boolean getEagerCheckCompletion() {
+    public String getEagerCheckCompletion() {
         return eagerCheckCompletion;
     }
 
-    public void setEagerCheckCompletion(Boolean eagerCheckCompletion) {
+    public void setEagerCheckCompletion(String eagerCheckCompletion) {
         this.eagerCheckCompletion = eagerCheckCompletion;
     }
 
-    public Boolean getIgnoreInvalidCorrelationKeys() {
+    public String getIgnoreInvalidCorrelationKeys() {
         return ignoreInvalidCorrelationKeys;
     }
 
-    public void setIgnoreInvalidCorrelationKeys(Boolean ignoreInvalidCorrelationKeys) {
+    public void setIgnoreInvalidCorrelationKeys(String ignoreInvalidCorrelationKeys) {
         this.ignoreInvalidCorrelationKeys = ignoreInvalidCorrelationKeys;
     }
 
-    public Integer getCloseCorrelationKeyOnCompletion() {
+    public String getCloseCorrelationKeyOnCompletion() {
         return closeCorrelationKeyOnCompletion;
     }
 
-    public void setCloseCorrelationKeyOnCompletion(Integer closeCorrelationKeyOnCompletion) {
+    public void setCloseCorrelationKeyOnCompletion(String closeCorrelationKeyOnCompletion) {
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
@@ -491,19 +506,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.aggregationRepositoryRef = aggregationRepositoryRef;
     }
 
-    public Boolean getDiscardOnCompletionTimeout() {
+    public String getDiscardOnCompletionTimeout() {
         return discardOnCompletionTimeout;
     }
 
-    public void setDiscardOnCompletionTimeout(Boolean discardOnCompletionTimeout) {
+    public void setDiscardOnCompletionTimeout(String discardOnCompletionTimeout) {
         this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
 
-    public Boolean getDiscardOnAggregationFailure() {
+    public String getDiscardOnAggregationFailure() {
         return discardOnAggregationFailure;
     }
 
-    public void setDiscardOnAggregationFailure(Boolean discardOnAggregationFailure) {
+    public void setDiscardOnAggregationFailure(String discardOnAggregationFailure) {
         this.discardOnAggregationFailure = discardOnAggregationFailure;
     }
 
@@ -523,19 +538,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return timeoutCheckerExecutorServiceRef;
     }
 
-    public Boolean getForceCompletionOnStop() {
+    public String getForceCompletionOnStop() {
         return forceCompletionOnStop;
     }
 
-    public void setForceCompletionOnStop(Boolean forceCompletionOnStop) {
+    public void setForceCompletionOnStop(String forceCompletionOnStop) {
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
 
-    public Boolean getCompleteAllOnStop() {
+    public String getCompleteAllOnStop() {
         return completeAllOnStop;
     }
 
-    public void setCompleteAllOnStop(Boolean completeAllOnStop) {
+    public void setCompleteAllOnStop(String completeAllOnStop) {
         this.completeAllOnStop = completeAllOnStop;
     }
 
@@ -570,7 +585,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition eagerCheckCompletion() {
-        setEagerCheckCompletion(true);
+        setEagerCheckCompletion(Boolean.toString(true));
         return this;
     }
 
@@ -581,7 +596,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition ignoreInvalidCorrelationKeys() {
-        setIgnoreInvalidCorrelationKeys(true);
+        setIgnoreInvalidCorrelationKeys(Boolean.toString(true));
         return this;
     }
 
@@ -595,7 +610,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition closeCorrelationKeyOnCompletion(int capacity) {
-        setCloseCorrelationKeyOnCompletion(capacity);
+        setCloseCorrelationKeyOnCompletion(Integer.toString(capacity));
         return this;
     }
 
@@ -608,7 +623,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition discardOnCompletionTimeout() {
-        setDiscardOnCompletionTimeout(true);
+        setDiscardOnCompletionTimeout(Boolean.toString(true));
         return this;
     }
 
@@ -622,7 +637,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition discardOnAggregationFailure() {
-        setDiscardOnAggregationFailure(true);
+        setDiscardOnAggregationFailure(Boolean.toString(true));
         return this;
     }
 
@@ -638,7 +653,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition completionFromBatchConsumer() {
-        setCompletionFromBatchConsumer(true);
+        setCompletionFromBatchConsumer(Boolean.toString(true));
         return this;
     }
 
@@ -652,7 +667,22 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition completionOnNewCorrelationGroup() {
-        setCompletionOnNewCorrelationGroup(true);
+        setCompletionOnNewCorrelationGroup(Boolean.toString(true));
+        return this;
+    }
+
+    /**
+     * Number of messages aggregated before the aggregation is complete. This
+     * option can be set as either a fixed value or using an Expression which
+     * allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the
+     * Expression result was null or 0.
+     *
+     * @param completionSize the completion size, must be a an expression evaluating to positive number
+     * @return builder
+     */
+    public AggregateDefinition completionSize(String completionSize) {
+        setCompletionSize(completionSize);
         return this;
     }
 
@@ -667,7 +697,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return builder
      */
     public AggregateDefinition completionSize(int completionSize) {
-        setCompletionSize(completionSize);
+        setCompletionSize(Integer.toString(completionSize));
         return this;
     }
 
@@ -699,7 +729,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return the builder
      */
     public AggregateDefinition completionInterval(long completionInterval) {
-        setCompletionInterval(completionInterval);
+        setCompletionInterval(Long.toString(completionInterval));
         return this;
     }
 
@@ -722,7 +752,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return the builder
      */
     public AggregateDefinition completionTimeout(long completionTimeout) {
-        setCompletionTimeout(completionTimeout);
+        setCompletionTimeout(Long.toString(completionTimeout));
         return this;
     }
 
@@ -764,7 +794,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return the builder
      */
     public AggregateDefinition completionTimeoutCheckerInterval(long completionTimeoutCheckerInterval) {
-        setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
+        setCompletionTimeoutCheckerInterval(Long.toString(completionTimeoutCheckerInterval));
         return this;
     }
 
@@ -851,7 +881,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * @return the builder
      */
     public AggregateDefinition aggregationStrategyMethodAllowNull() {
-        setStrategyMethodAllowNull(true);
+        setStrategyMethodAllowNull(Boolean.toString(true));
         return this;
     }
 
@@ -945,7 +975,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * is stopped
      */
     public AggregateDefinition forceCompletionOnStop() {
-        setForceCompletionOnStop(true);
+        setForceCompletionOnStop(Boolean.toString(true));
         return this;
     }
 
@@ -964,7 +994,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * route using it.
      */
     public AggregateDefinition completeAllOnStop() {
-        setCompleteAllOnStop(true);
+        setCompleteAllOnStop(Boolean.toString(true));
         return this;
     }
 
@@ -975,7 +1005,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * specified then Camel creates a default pool with 10 concurrent threads.
      */
     public AggregateDefinition parallelProcessing() {
-        setParallelProcessing(true);
+        setParallelProcessing(Boolean.toString(true));
         return this;
     }
 
@@ -986,7 +1016,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * specified then Camel creates a default pool with 10 concurrent threads.
      */
     public AggregateDefinition parallelProcessing(boolean parallelProcessing) {
-        setParallelProcessing(parallelProcessing);
+        setParallelProcessing(Boolean.toString(parallelProcessing));
         return this;
     }
 
@@ -996,7 +1026,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * {@link org.apache.camel.spi.OptimisticLockingAggregationRepository}.
      */
     public AggregateDefinition optimisticLocking() {
-        setOptimisticLocking(true);
+        setOptimisticLocking(Boolean.toString(true));
         return this;
     }
 

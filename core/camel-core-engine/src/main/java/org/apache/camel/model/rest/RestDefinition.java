@@ -72,19 +72,19 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlAttribute
     @Metadata(defaultValue = "auto")
-    private RestBindingMode bindingMode;
+    private String bindingMode;
 
     @XmlAttribute
-    private Boolean skipBindingOnErrorCode;
+    private String skipBindingOnErrorCode;
 
     @XmlAttribute
-    private Boolean clientRequestValidation;
+    private String clientRequestValidation;
 
     @XmlAttribute
-    private Boolean enableCORS;
+    private String enableCORS;
 
     @XmlAttribute
-    private Boolean apiDocs;
+    private String apiDocs;
 
     @XmlElement(name = "securityDefinitions") // use the name swagger uses
     private RestSecuritiesDefinition securityDefinitions;
@@ -151,7 +151,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.produces = produces;
     }
 
-    public RestBindingMode getBindingMode() {
+    public String getBindingMode() {
         return bindingMode;
     }
 
@@ -161,7 +161,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * <p/>
      * The default value is auto
      */
-    public void setBindingMode(RestBindingMode bindingMode) {
+    public void setBindingMode(String bindingMode) {
         this.bindingMode = bindingMode;
     }
 
@@ -187,7 +187,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.verbs = verbs;
     }
 
-    public Boolean getSkipBindingOnErrorCode() {
+    public String getSkipBindingOnErrorCode() {
         return skipBindingOnErrorCode;
     }
 
@@ -197,11 +197,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * json / xml etc, as success messages otherwise will do. This option will
      * override what may be configured on a parent level
      */
-    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+    public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
-    public Boolean getClientRequestValidation() {
+    public String getClientRequestValidation() {
         return clientRequestValidation;
     }
 
@@ -215,11 +215,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * <p/>
      * The default value is false.
      */
-    public void setClientRequestValidation(Boolean clientRequestValidation) {
+    public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public Boolean getEnableCORS() {
+    public String getEnableCORS() {
         return enableCORS;
     }
 
@@ -229,11 +229,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * <p/>
      * The default value is false.
      */
-    public void setEnableCORS(Boolean enableCORS) {
+    public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
     }
 
-    public Boolean getApiDocs() {
+    public String getApiDocs() {
         return apiDocs;
     }
 
@@ -243,7 +243,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * <p/>
      * The default value is true.
      */
-    public void setApiDocs(Boolean apiDocs) {
+    public void setApiDocs(String apiDocs) {
         this.apiDocs = apiDocs;
     }
 
@@ -479,27 +479,27 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition bindingMode(RestBindingMode mode) {
         if (getVerbs().isEmpty()) {
-            this.bindingMode = mode;
+            this.bindingMode = mode.name();
         } else {
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setBindingMode(mode);
+            verb.setBindingMode(mode.name());
         }
 
         return this;
     }
 
     public RestDefinition bindingMode(String mode) {
-        return bindingMode(RestBindingMode.valueOf(mode.toLowerCase()));
+        return bindingMode(mode.toLowerCase());
     }
 
     public RestDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
         if (getVerbs().isEmpty()) {
-            this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+            this.skipBindingOnErrorCode = Boolean.toString(skipBindingOnErrorCode);
         } else {
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+            verb.setSkipBindingOnErrorCode(Boolean.toString(skipBindingOnErrorCode));
         }
 
         return this;
@@ -507,11 +507,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition clientRequestValidation(boolean clientRequestValidation) {
         if (getVerbs().isEmpty()) {
-            this.clientRequestValidation = clientRequestValidation;
+            this.clientRequestValidation = Boolean.toString(clientRequestValidation);
         } else {
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setClientRequestValidation(clientRequestValidation);
+            verb.setClientRequestValidation(Boolean.toString(clientRequestValidation));
         }
 
         return this;
@@ -519,11 +519,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     public RestDefinition enableCORS(boolean enableCORS) {
         if (getVerbs().isEmpty()) {
-            this.enableCORS = enableCORS;
+            this.enableCORS = Boolean.toString(enableCORS);
         } else {
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setEnableCORS(enableCORS);
+            verb.setEnableCORS(Boolean.toString(enableCORS));
         }
 
         return this;
@@ -536,11 +536,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public RestDefinition apiDocs(Boolean apiDocs) {
         if (getVerbs().isEmpty()) {
-            this.apiDocs = apiDocs;
+            this.apiDocs = apiDocs != null ? apiDocs.toString() : null;
         } else {
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setApiDocs(apiDocs);
+            verb.setApiDocs(apiDocs != null ? apiDocs.toString() : null);
         }
 
         return this;

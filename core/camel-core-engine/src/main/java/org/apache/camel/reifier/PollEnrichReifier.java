@@ -36,8 +36,8 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
 
         // if no timeout then we should block, and there use a negative timeout
-        long time = definition.getTimeout() != null ? definition.getTimeout() : -1;
-        boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && definition.getIgnoreInvalidEndpoint();
+        long time = definition.getTimeout() != null ? parseLong(routeContext, definition.getTimeout()) : -1;
+        boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && parseBoolean(routeContext, definition.getIgnoreInvalidEndpoint());
         Expression exp = definition.getExpression().createExpression(routeContext);
 
         PollEnricher enricher = new PollEnricher(exp, time);
@@ -49,10 +49,10 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
             enricher.setAggregationStrategy(strategy);
         }
         if (definition.getAggregateOnException() != null) {
-            enricher.setAggregateOnException(definition.getAggregateOnException());
+            enricher.setAggregateOnException(parseBoolean(routeContext, definition.getAggregateOnException()));
         }
         if (definition.getCacheSize() != null) {
-            enricher.setCacheSize(definition.getCacheSize());
+            enricher.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
         }
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
 
@@ -68,8 +68,8 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(definition.getAggregationStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(definition.getAggregationStrategyMethodAllowNull());
+                    adapter.setAllowNullNewExchange(parseBoolean(routeContext, definition.getAggregationStrategyMethodAllowNull()));
+                    adapter.setAllowNullOldExchange(parseBoolean(routeContext, definition.getAggregationStrategyMethodAllowNull()));
                 }
                 strategy = adapter;
             } else {

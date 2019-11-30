@@ -48,7 +48,7 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
     }
 
     private boolean isCacheBean() {
-        return definition.getCache() == null || definition.getCache();
+        return definition.getCache() == null || Boolean.parseBoolean(definition.getCache());
     }
 
 }

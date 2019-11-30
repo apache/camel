@@ -25,12 +25,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.processor.RestBindingAdvice;
+import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.PropertyBindingSupport;
 
-public class RestBindingReifier {
+public class RestBindingReifier extends AbstractReifier {
 
     private final RestBindingDefinition definition;
 
@@ -46,19 +47,19 @@ public class RestBindingReifier {
         // these options can be overridden per rest verb
         String mode = config.getBindingMode().name();
         if (definition.getBindingMode() != null) {
-            mode = definition.getBindingMode().name();
+            mode = definition.getBindingMode();
         }
         boolean cors = config.isEnableCORS();
         if (definition.getEnableCORS() != null) {
-            cors = definition.getEnableCORS();
+            cors = parseBoolean(routeContext, definition.getEnableCORS());
         }
         boolean skip = config.isSkipBindingOnErrorCode();
         if (definition.getSkipBindingOnErrorCode() != null) {
-            skip = definition.getSkipBindingOnErrorCode();
+            skip = parseBoolean(routeContext, definition.getSkipBindingOnErrorCode());
         }
         boolean validation = config.isClientRequestValidation();
         if (definition.getClientRequestValidation() != null) {
-            validation = definition.getClientRequestValidation();
+            validation = parseBoolean(routeContext, definition.getClientRequestValidation());
         }
 
         // cors headers

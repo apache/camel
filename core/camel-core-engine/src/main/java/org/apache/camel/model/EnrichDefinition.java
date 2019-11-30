@@ -42,17 +42,17 @@ public class EnrichDefinition extends ExpressionNode {
     @XmlAttribute(name = "strategyMethodName")
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
-    private Boolean aggregationStrategyMethodAllowNull;
+    private String aggregationStrategyMethodAllowNull;
     @XmlAttribute
-    private Boolean aggregateOnException;
+    private String aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute
-    private Boolean shareUnitOfWork;
+    private String shareUnitOfWork;
     @XmlAttribute
-    private Integer cacheSize;
+    private String cacheSize;
     @XmlAttribute
-    private Boolean ignoreInvalidEndpoint;
+    private String ignoreInvalidEndpoint;
 
     public EnrichDefinition() {
         this(null);
@@ -126,7 +126,7 @@ public class EnrichDefinition extends ExpressionNode {
      * AggregationStrategy.
      */
     public EnrichDefinition aggregationStrategyMethodAllowNull(boolean aggregationStrategyMethodAllowNull) {
-        setAggregationStrategyMethodAllowNull(aggregationStrategyMethodAllowNull);
+        setAggregationStrategyMethodAllowNull(Boolean.toString(aggregationStrategyMethodAllowNull));
         return this;
     }
 
@@ -138,7 +138,7 @@ public class EnrichDefinition extends ExpressionNode {
      * to suppress the exception or set a custom message body etc.
      */
     public EnrichDefinition aggregateOnException(boolean aggregateOnException) {
-        setAggregateOnException(aggregateOnException);
+        setAggregateOnException(Boolean.toString(aggregateOnException));
         return this;
     }
 
@@ -149,7 +149,7 @@ public class EnrichDefinition extends ExpressionNode {
      * resource exchange has its own individual unit of work.
      */
     public EnrichDefinition shareUnitOfWork() {
-        setShareUnitOfWork(true);
+        setShareUnitOfWork(Boolean.toString(true));
         return this;
     }
 
@@ -163,7 +163,7 @@ public class EnrichDefinition extends ExpressionNode {
      * @return the builder
      */
     public EnrichDefinition cacheSize(int cacheSize) {
-        setCacheSize(cacheSize);
+        setCacheSize(Integer.toString(cacheSize));
         return this;
     }
 
@@ -174,7 +174,7 @@ public class EnrichDefinition extends ExpressionNode {
      * @return the builder
      */
     public EnrichDefinition ignoreInvalidEndpoint() {
-        setIgnoreInvalidEndpoint(true);
+        setIgnoreInvalidEndpoint(Boolean.toString(true));
         return this;
     }
 
@@ -207,11 +207,11 @@ public class EnrichDefinition extends ExpressionNode {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
 
-    public Boolean getAggregationStrategyMethodAllowNull() {
+    public String getAggregationStrategyMethodAllowNull() {
         return aggregationStrategyMethodAllowNull;
     }
 
-    public void setAggregationStrategyMethodAllowNull(Boolean aggregationStrategyMethodAllowNull) {
+    public void setAggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
         this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
@@ -223,35 +223,35 @@ public class EnrichDefinition extends ExpressionNode {
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public Boolean getAggregateOnException() {
+    public String getAggregateOnException() {
         return aggregateOnException;
     }
 
-    public void setAggregateOnException(Boolean aggregateOnException) {
+    public void setAggregateOnException(String aggregateOnException) {
         this.aggregateOnException = aggregateOnException;
     }
 
-    public Boolean getShareUnitOfWork() {
+    public String getShareUnitOfWork() {
         return shareUnitOfWork;
     }
 
-    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+    public void setShareUnitOfWork(String shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public Integer getCacheSize() {
+    public String getCacheSize() {
         return cacheSize;
     }
 
-    public void setCacheSize(Integer cacheSize) {
+    public void setCacheSize(String cacheSize) {
         this.cacheSize = cacheSize;
     }
 
-    public Boolean getIgnoreInvalidEndpoint() {
+    public String getIgnoreInvalidEndpoint() {
         return ignoreInvalidEndpoint;
     }
 
-    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+    public void setIgnoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 }

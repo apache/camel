@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -28,6 +29,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -356,9 +358,9 @@ public final class CamelContextHelper {
      * @param camelContext the camel context
      * @param text  the text
      * @return the parsed text, or <tt>null</tt> if the text was <tt>null</tt>
-     * @throws Exception is thrown if illegal argument
+     * @throws IllegalStateException is thrown if illegal argument
      */
-    public static String parseText(CamelContext camelContext, String text) throws Exception {
+    public static String parseText(CamelContext camelContext, String text) {
         // ensure we support property placeholders
         return camelContext.resolvePropertyPlaceholders(text);
     }
@@ -369,23 +371,10 @@ public final class CamelContextHelper {
      * @param camelContext the camel context
      * @param text  the text
      * @return the integer vale, or <tt>null</tt> if the text was <tt>null</tt>
-     * @throws Exception is thrown if illegal argument or type conversion not possible
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
-    public static Integer parseInteger(CamelContext camelContext, String text) throws Exception {
-        // ensure we support property placeholders
-        String s = camelContext.resolvePropertyPlaceholders(text);
-        if (s != null) {
-            try {
-                return camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, s);
-            } catch (NumberFormatException e) {
-                if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as an Integer.", e);
-                } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as an Integer.", e);
-                }
-            }
-        }
-        return null;
+    public static Integer parseInteger(CamelContext camelContext, String text) {
+        return parse(camelContext, Integer.class, text);
     }
 
     /**
@@ -394,23 +383,10 @@ public final class CamelContextHelper {
      * @param camelContext the camel context
      * @param text  the text
      * @return the long vale, or <tt>null</tt> if the text was <tt>null</tt>
-     * @throws Exception is thrown if illegal argument or type conversion not possible
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
-    public static Long parseLong(CamelContext camelContext, String text) throws Exception {
-        // ensure we support property placeholders
-        String s = camelContext.resolvePropertyPlaceholders(text);
-        if (s != null) {
-            try {
-                return camelContext.getTypeConverter().mandatoryConvertTo(Long.class, s);
-            } catch (NumberFormatException e) {
-                if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Long.", e);
-                } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Long.", e);
-                }
-            }
-        }
-        return null;
+    public static Long parseLong(CamelContext camelContext, String text) {
+        return parse(camelContext, Long.class, text);
     }
 
     /**
@@ -419,23 +395,10 @@ public final class CamelContextHelper {
      * @param camelContext the camel context
      * @param text  the text
      * @return the double vale, or <tt>null</tt> if the text was <tt>null</tt>
-     * @throws Exception is thrown if illegal argument or type conversion not possible
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
-    public static Double parseDouble(CamelContext camelContext, String text) throws Exception {
-        // ensure we support property placeholders
-        String s = camelContext.resolvePropertyPlaceholders(text);
-        if (s != null) {
-            try {
-                return camelContext.getTypeConverter().mandatoryConvertTo(Double.class, s);
-            } catch (NumberFormatException e) {
-                if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as an Integer.", e);
-                } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as an Integer.", e);
-                }
-            }
-        }
-        return null;
+    public static Double parseDouble(CamelContext camelContext, String text) {
+        return parse(camelContext, Double.class, text);
     }
 
     /**
@@ -447,17 +410,29 @@ public final class CamelContextHelper {
      * @throws IllegalArgumentException is thrown if illegal argument or type conversion not possible
      */
     public static Boolean parseBoolean(CamelContext camelContext, String text) {
+        return parse(camelContext, Boolean.class, text);
+    }
+
+    /**
+     * Parses the given text and converts it to the specified class and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param clazz the class to convert the value to
+     * @param text  the text
+     * @return the boolean vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalArgumentException is thrown if illegal argument or type conversion not possible
+     */
+    public static <T> T parse(CamelContext camelContext, Class<T> clazz, String text) {
         // ensure we support property placeholders
         String s = camelContext.resolvePropertyPlaceholders(text);
         if (s != null) {
-            s = s.trim().toLowerCase(Locale.ENGLISH);
-            if (s.equals("true") || s.equals("false")) {
-                return "true".equals(s) ? Boolean.TRUE : Boolean.FALSE;
-            } else {
+            try {
+                return camelContext.getTypeConverter().mandatoryConvertTo(clazz, s);
+            } catch (Exception e) {
                 if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Boolean.");
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as a " + clazz.getName() + ".", e);
                 } else {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Boolean.");
+                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a " + clazz.getName() + ".", e);
                 }
             }
         }

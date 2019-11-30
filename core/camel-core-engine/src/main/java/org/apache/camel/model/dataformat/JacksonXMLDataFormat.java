@@ -36,7 +36,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String xmlMapper;
     @XmlAttribute
-    private Boolean prettyPrint;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String prettyPrint;
     @XmlAttribute
     private String unmarshalTypeName;
     @XmlTransient
@@ -46,15 +47,18 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String include;
     @XmlAttribute
-    private Boolean allowJmsType;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String allowJmsType;
     @XmlAttribute
     private String collectionTypeName;
     @XmlTransient
     private Class<?> collectionType;
     @XmlAttribute
-    private Boolean useList;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String useList;
     @XmlAttribute
-    private Boolean enableJaxbAnnotationModule;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String enableJaxbAnnotationModule;
     @XmlAttribute
     private String moduleClassNames;
     @XmlAttribute
@@ -64,7 +68,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String disableFeatures;
     @XmlAttribute
-    private Boolean allowUnmarshallType;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String allowUnmarshallType;
 
     public JacksonXMLDataFormat() {
         super("jacksonxml");
@@ -81,7 +86,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
         this.xmlMapper = xmlMapper;
     }
 
-    public Boolean getPrettyPrint() {
+    public String getPrettyPrint() {
         return prettyPrint;
     }
 
@@ -90,7 +95,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default false.
      */
-    public void setPrettyPrint(Boolean prettyPrint) {
+    public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
 
@@ -143,7 +148,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
         this.include = include;
     }
 
-    public Boolean getAllowJmsType() {
+    public String getAllowJmsType() {
         return allowJmsType;
     }
 
@@ -151,7 +156,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
      * Used for JMS users to allow the JMSType header from the JMS spec to
      * specify a FQN classname to use to unmarshal to.
      */
-    public void setAllowJmsType(Boolean allowJmsType) {
+    public void setAllowJmsType(String allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
 
@@ -176,18 +181,18 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
         this.collectionType = collectionType;
     }
 
-    public Boolean getUseList() {
+    public String getUseList() {
         return useList;
     }
 
     /**
      * To unarmshal to a List of Map or a List of Pojo.
      */
-    public void setUseList(Boolean useList) {
+    public void setUseList(String useList) {
         this.useList = useList;
     }
 
-    public Boolean getEnableJaxbAnnotationModule() {
+    public String getEnableJaxbAnnotationModule() {
         return enableJaxbAnnotationModule;
     }
 
@@ -195,7 +200,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
      * Whether to enable the JAXB annotations module when using jackson. When
      * enabled then JAXB annotations can be used by Jackson.
      */
-    public void setEnableJaxbAnnotationModule(Boolean enableJaxbAnnotationModule) {
+    public void setEnableJaxbAnnotationModule(String enableJaxbAnnotationModule) {
         this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
     }
 
@@ -262,7 +267,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
         this.disableFeatures = disableFeatures;
     }
 
-    public Boolean getAllowUnmarshallType() {
+    public String getAllowUnmarshallType() {
         return allowUnmarshallType;
     }
 
@@ -272,7 +277,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
      * <p/>
      * This should only be enabled when desired to be used.
      */
-    public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
+    public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
     }
 

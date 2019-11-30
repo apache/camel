@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
@@ -33,22 +34,24 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreamResequencerConfig extends ResequencerConfig {
     @XmlAttribute
-    @Metadata(defaultValue = "100")
-    private Integer capacity;
+    @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
+    private String capacity;
     @XmlAttribute
-    @Metadata(defaultValue = "1000")
-    private Long timeout;
+    @Metadata(defaultValue = "1000", javaType = "java.lang.Long")
+    private String timeout;
     @XmlAttribute
-    @Metadata(defaultValue = "1000")
-    private Long deliveryAttemptInterval;
+    @Metadata(defaultValue = "1000", javaType = "java.lang.Long")
+    private String deliveryAttemptInterval;
     @XmlAttribute
-    private Boolean ignoreInvalidExchanges;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreInvalidExchanges;
     @XmlTransient
     private ExpressionResultComparator comparator;
     @XmlAttribute
     private String comparatorRef;
     @XmlAttribute
-    private Boolean rejectOld;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String rejectOld;
 
     /**
      * Creates a new {@link StreamResequencerConfig} instance using default
@@ -115,9 +118,9 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * @param comparator comparator for sequence comparision
      */
     public StreamResequencerConfig(int capacity, long timeout, Boolean rejectOld, ExpressionResultComparator comparator) {
-        this.capacity = capacity;
-        this.timeout = timeout;
-        this.rejectOld = rejectOld;
+        this.capacity = Integer.toString(capacity);
+        this.timeout = Long.toString(timeout);
+        this.rejectOld = rejectOld != null ? Boolean.toString(rejectOld) : null;
         this.comparator = comparator;
     }
 
@@ -133,29 +136,29 @@ public class StreamResequencerConfig extends ResequencerConfig {
         return new StreamResequencerConfig();
     }
 
-    public int getCapacity() {
+    public String getCapacity() {
         return capacity;
     }
 
     /**
      * Sets the capacity of the resequencer's inbound queue.
      */
-    public void setCapacity(int capacity) {
+    public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
-    public long getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
     /**
      * Sets minimum time to wait for missing elements (messages).
      */
-    public void setTimeout(long timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
-    public Long getDeliveryAttemptInterval() {
+    public String getDeliveryAttemptInterval() {
         return deliveryAttemptInterval;
     }
 
@@ -163,18 +166,18 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * Sets the interval in milli seconds the stream resequencer will at most
      * wait while waiting for condition of being able to deliver.
      */
-    public void setDeliveryAttemptInterval(Long deliveryAttemptInterval) {
+    public void setDeliveryAttemptInterval(String deliveryAttemptInterval) {
         this.deliveryAttemptInterval = deliveryAttemptInterval;
     }
 
-    public Boolean getIgnoreInvalidExchanges() {
+    public String getIgnoreInvalidExchanges() {
         return ignoreInvalidExchanges;
     }
 
     /**
      * Whether to ignore invalid exchanges
      */
-    public void setIgnoreInvalidExchanges(Boolean ignoreInvalidExchanges) {
+    public void setIgnoreInvalidExchanges(String ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
 
@@ -204,11 +207,11 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * If true, throws an exception when messages older than the last delivered
      * message are processed
      */
-    public void setRejectOld(boolean value) {
+    public void setRejectOld(String value) {
         this.rejectOld = value;
     }
 
-    public Boolean getRejectOld() {
+    public String getRejectOld() {
         return rejectOld;
     }
 

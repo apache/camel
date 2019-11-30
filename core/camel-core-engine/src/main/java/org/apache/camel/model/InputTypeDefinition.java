@@ -45,9 +45,24 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
     private String urn;
     @XmlAttribute
     @Metadata(defaultValue = "false")
-    private Boolean validate = false;
+    private String validate = "false";
 
     public InputTypeDefinition() {
+    }
+
+    public InputTypeDefinition urn(String urn) {
+        setUrn(urn);
+        return this;
+    }
+
+    public InputTypeDefinition javaClass(Class<?> clazz) {
+        setJavaClass(clazz);
+        return this;
+    }
+
+    public InputTypeDefinition validate(boolean validate) {
+        setValidate(Boolean.toString(validate));
+        return this;
     }
 
     /**
@@ -82,7 +97,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
      * 
      * @return true if validate
      */
-    public boolean isValidate() {
+    public String getValidate() {
         return this.validate;
     }
 
@@ -91,7 +106,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
      * 
      * @param validate true if validate
      */
-    public void setValidate(boolean validate) {
+    public void setValidate(String validate) {
         this.validate = validate;
     }
 

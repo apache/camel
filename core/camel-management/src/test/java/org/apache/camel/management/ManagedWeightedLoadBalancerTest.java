@@ -64,8 +64,8 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
         Integer size = (Integer) mbeanServer.getAttribute(on, "Size");
         assertEquals(2, size.intValue());
 
-        Boolean roundRobin = (Boolean) mbeanServer.getAttribute(on, "RoundRobin");
-        assertEquals(true, roundRobin.booleanValue());
+        String roundRobin = (String) mbeanServer.getAttribute(on, "RoundRobin");
+        assertEquals(Boolean.toString(true), roundRobin);
 
         String ratio = (String) mbeanServer.getAttribute(on, "DistributionRatio");
         assertEquals("1,2", ratio);

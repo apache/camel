@@ -45,7 +45,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", definition, true);
 
         // must use InOnly for WireTap
-        definition.setPattern(ExchangePattern.InOnly);
+        definition.setPattern(ExchangePattern.InOnly.name());
 
         // create the send dynamic producer to send to the wire tapped endpoint
         SendDynamicProcessor dynamicTo = (SendDynamicProcessor)super.createProcessor(routeContext);
@@ -58,9 +58,12 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         // is true by default
-        boolean isCopy = definition.getCopy() == null || definition.getCopy();
+        boolean isCopy = definition.getCopy() == null || parseBoolean(routeContext, definition.getCopy());
 
-        WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal, definition.getPattern(), threadPool, shutdownThreadPool, definition.isDynamic());
+        WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal,
+                parse(routeContext, ExchangePattern.class, definition.getPattern()),
+                threadPool, shutdownThreadPool,
+                definition.getDynamicUri() == null || parseBoolean(routeContext, definition.getDynamicUri()));
         answer.setCopy(isCopy);
         if (definition.getNewExchangeProcessorRef() != null) {
             definition.setNewExchangeProcessor(routeContext.mandatoryLookup(definition.getNewExchangeProcessorRef(), Processor.class));
@@ -90,7 +93,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
     @Override
     protected Expression createExpression(RouteContext routeContext, String uri) {
         // whether to use dynamic or static uri
-        if (definition.isDynamic()) {
+        if (definition.getDynamicUri() == null || parseBoolean(routeContext, definition.getDynamicUri())) {
             return super.createExpression(routeContext, uri);
         } else {
             return ExpressionBuilder.constantExpression(uri);

@@ -17,13 +17,13 @@
 package org.apache.camel.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Route to be executed when all other choices evaluate to <tt>false</tt>
@@ -48,12 +48,7 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer("otherwise[");
-        List<ProcessorDefinition<?>> list = getOutputs();
-        for (ProcessorDefinition<?> type : list) {
-            buffer.append(type.getLabel());
-        }
-        buffer.append("]");
-        return buffer.toString();
+        return getOutputs().stream().map(ProcessorDefinition::getLabel)
+                .collect(Collectors.joining(",", getShortName() + "[", "]"));
     }
 }

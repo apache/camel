@@ -45,7 +45,7 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.valueOf(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

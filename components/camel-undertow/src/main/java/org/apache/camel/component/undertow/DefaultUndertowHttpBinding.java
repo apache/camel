@@ -60,6 +60,8 @@ import org.xnio.channels.BlockingReadableByteChannel;
 import org.xnio.channels.StreamSourceChannel;
 import org.xnio.streams.ChannelInputStream;
 
+import static org.apache.camel.util.BufferCaster.cast;
+
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
  * By default {@link UndertowHeaderFilterStrategy} is also used.
@@ -457,7 +459,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             } else if (res == 0) {
                 LOG.error("Channel did not block");
             } else {
-                buffer.flip();
+                cast(buffer).flip();
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
                 buffer.clear();
             }

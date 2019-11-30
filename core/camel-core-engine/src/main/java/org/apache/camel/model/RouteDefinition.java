@@ -528,9 +528,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition inputType(String urn) {
-        inputType = new InputTypeDefinition();
-        inputType.setUrn(urn);
-        inputType.setValidate(false);
+        inputType = new InputTypeDefinition().urn(urn).validate(false);
         return this;
     }
 
@@ -549,9 +547,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition inputTypeWithValidate(String urn) {
-        inputType = new InputTypeDefinition();
-        inputType.setUrn(urn);
-        inputType.setValidate(true);
+        inputType = new InputTypeDefinition().urn(urn).validate(true);
         return this;
     }
 
@@ -565,9 +561,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition inputType(Class clazz) {
-        inputType = new InputTypeDefinition();
-        inputType.setJavaClass(clazz);
-        inputType.setValidate(false);
+        inputType = new InputTypeDefinition().javaClass(clazz).validate(false);
         return this;
     }
 
@@ -584,9 +578,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition inputTypeWithValidate(Class clazz) {
-        inputType = new InputTypeDefinition();
-        inputType.setJavaClass(clazz);
-        inputType.setValidate(true);
+        inputType = new InputTypeDefinition().javaClass(clazz).validate(true);
         return this;
     }
 
@@ -603,9 +595,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition outputType(String urn) {
-        outputType = new OutputTypeDefinition();
-        outputType.setUrn(urn);
-        outputType.setValidate(false);
+        outputType = new OutputTypeDefinition().urn(urn).validate(false);
         return this;
     }
 
@@ -624,9 +614,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition outputTypeWithValidate(String urn) {
-        outputType = new OutputTypeDefinition();
-        outputType.setUrn(urn);
-        outputType.setValidate(true);
+        outputType = new OutputTypeDefinition().urn(urn).validate(true);
         return this;
     }
 
@@ -640,9 +628,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition outputType(Class clazz) {
-        outputType = new OutputTypeDefinition();
-        outputType.setJavaClass(clazz);
-        outputType.setValidate(false);
+        outputType = new OutputTypeDefinition().javaClass(clazz).validate(false);
         return this;
     }
 
@@ -659,9 +645,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * @return the builder
      */
     public RouteDefinition outputTypeWithValidate(Class clazz) {
-        outputType = new OutputTypeDefinition();
-        outputType.setJavaClass(clazz);
-        outputType.setValidate(true);
+        outputType = new OutputTypeDefinition().javaClass(clazz).validate(true);
         return this;
     }
 

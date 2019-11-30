@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
@@ -33,18 +34,19 @@ import org.apache.camel.spi.Metadata;
 public class Base64DataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "76")
-    private Integer lineLength;
+    @Metadata(defaultValue = "76", javaType = "java.lang.Integer")
+    private String lineLength;
     @XmlAttribute
     private String lineSeparator;
     @XmlAttribute
-    private Boolean urlSafe;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String urlSafe;
 
     public Base64DataFormat() {
         super("base64");
     }
 
-    public Integer getLineLength() {
+    public String getLineLength() {
         return lineLength;
     }
 
@@ -53,7 +55,7 @@ public class Base64DataFormat extends DataFormatDefinition {
      * <p/>
      * By default 76 is used.
      */
-    public void setLineLength(Integer lineLength) {
+    public void setLineLength(String lineLength) {
         this.lineLength = lineLength;
     }
 
@@ -70,7 +72,7 @@ public class Base64DataFormat extends DataFormatDefinition {
         this.lineSeparator = lineSeparator;
     }
 
-    public Boolean getUrlSafe() {
+    public String getUrlSafe() {
         return urlSafe;
     }
 
@@ -79,7 +81,7 @@ public class Base64DataFormat extends DataFormatDefinition {
      * is only applied to encode operations. Decoding seamlessly handles both
      * modes. Is by default false.
      */
-    public void setUrlSafe(Boolean urlSafe) {
+    public void setUrlSafe(String urlSafe) {
         this.urlSafe = urlSafe;
     }
 }

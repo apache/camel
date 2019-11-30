@@ -65,16 +65,16 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     @XmlAttribute
     @Metadata(defaultValue = "auto")
-    private RestBindingMode bindingMode;
+    private String bindingMode;
 
     @XmlAttribute
-    private Boolean skipBindingOnErrorCode;
+    private String skipBindingOnErrorCode;
 
     @XmlAttribute
-    private Boolean clientRequestValidation;
+    private String clientRequestValidation;
 
     @XmlAttribute
-    private Boolean enableCORS;
+    private String enableCORS;
 
     @XmlAttribute
     private String type;
@@ -102,7 +102,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private String routeId;
     @XmlAttribute
-    private Boolean apiDocs;
+    private String apiDocs;
 
     @XmlTransient
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
@@ -202,7 +202,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         this.produces = produces;
     }
 
-    public RestBindingMode getBindingMode() {
+    public String getBindingMode() {
         return bindingMode;
     }
 
@@ -212,11 +212,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      * <p/>
      * The default value is auto
      */
-    public void setBindingMode(RestBindingMode bindingMode) {
+    public void setBindingMode(String bindingMode) {
         this.bindingMode = bindingMode;
     }
 
-    public Boolean getSkipBindingOnErrorCode() {
+    public String getSkipBindingOnErrorCode() {
         return skipBindingOnErrorCode;
     }
 
@@ -226,11 +226,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      * json / xml etc, as success messages otherwise will do. This option will
      * override what may be configured on a parent level
      */
-    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+    public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
-    public Boolean getClientRequestValidation() {
+    public String getClientRequestValidation() {
         return clientRequestValidation;
     }
 
@@ -244,11 +244,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      * <p/>
      * The default value is false.
      */
-    public void setClientRequestValidation(Boolean clientRequestValidation) {
+    public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public Boolean getEnableCORS() {
+    public String getEnableCORS() {
         return enableCORS;
     }
 
@@ -258,7 +258,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      * <p/>
      * The default value is false.
      */
-    public void setEnableCORS(Boolean enableCORS) {
+    public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
     }
 
@@ -305,7 +305,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         this.routeId = routeId;
     }
 
-    public Boolean getApiDocs() {
+    public String getApiDocs() {
         return apiDocs;
     }
 
@@ -314,7 +314,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      * <p/>
      * The default value is true.
      */
-    public void setApiDocs(Boolean apiDocs) {
+    public void setApiDocs(String apiDocs) {
         this.apiDocs = apiDocs;
     }
 

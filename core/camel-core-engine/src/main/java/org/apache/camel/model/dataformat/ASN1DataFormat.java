@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
@@ -33,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ASN1DataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean usingIterator;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String usingIterator;
     @XmlAttribute
     private String clazzName;
 
@@ -43,16 +45,16 @@ public class ASN1DataFormat extends DataFormatDefinition {
 
     public ASN1DataFormat(Boolean usingIterator) {
         this();
-        setUsingIterator(usingIterator);
+        setUsingIterator(usingIterator != null ? usingIterator.toString() : null);
     }
 
     public ASN1DataFormat(String clazzName) {
         this();
-        setUsingIterator(Boolean.TRUE);
+        setUsingIterator(Boolean.toString(true));
         setClazzName(clazzName);
     }
 
-    public Boolean getUsingIterator() {
+    public String getUsingIterator() {
         return usingIterator;
     }
 
@@ -61,7 +63,7 @@ public class ASN1DataFormat extends DataFormatDefinition {
      * true, allows to work with the splitter EIP, to split the data using an
      * iterator in a streaming mode.
      */
-    public void setUsingIterator(Boolean usingIterator) {
+    public void setUsingIterator(String usingIterator) {
         this.usingIterator = usingIterator;
     }
 

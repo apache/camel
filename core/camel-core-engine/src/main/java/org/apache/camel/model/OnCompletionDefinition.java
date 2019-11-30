@@ -43,18 +43,18 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @Metadata(defaultValue = "AfterConsumer")
     private OnCompletionMode mode;
     @XmlAttribute
-    private Boolean onCompleteOnly;
+    private String onCompleteOnly;
     @XmlAttribute
-    private Boolean onFailureOnly;
+    private String onFailureOnly;
     @XmlElement(name = "onWhen")
     @AsPredicate
     private WhenDefinition onWhen;
     @XmlAttribute
-    private Boolean parallelProcessing;
+    private String parallelProcessing;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
-    private Boolean useOriginalMessagePolicy;
+    private String useOriginalMessage;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
@@ -156,15 +156,15 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onCompleteOnly() {
-        boolean isOnFailureOnly = getOnFailureOnly() != null && getOnFailureOnly();
+        boolean isOnFailureOnly = Boolean.toString(true).equals(onFailureOnly);
         if (isOnFailureOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able
         // to invoke onFailureOnly/onCompleteOnly more than once
-        setOnCompleteOnly(Boolean.TRUE);
-        setOnFailureOnly(Boolean.FALSE);
+        setOnCompleteOnly(Boolean.toString(true));
+        setOnFailureOnly(Boolean.toString(false));
         return this;
     }
 
@@ -175,15 +175,15 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition onFailureOnly() {
-        boolean isOnCompleteOnly = getOnCompleteOnly() != null && getOnCompleteOnly();
+        boolean isOnCompleteOnly = Boolean.toString(true).equals(onCompleteOnly);
         if (isOnCompleteOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         // must define return type as OutputDefinition and not this type to
         // avoid end user being able
         // to invoke onFailureOnly/onCompleteOnly more than once
-        setOnCompleteOnly(Boolean.FALSE);
-        setOnFailureOnly(Boolean.TRUE);
+        setOnCompleteOnly(Boolean.toString(false));
+        setOnFailureOnly(Boolean.toString(true));
         return this;
     }
 
@@ -211,7 +211,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition useOriginalBody() {
-        setUseOriginalMessagePolicy(Boolean.TRUE);
+        setUseOriginalMessage(Boolean.toString(true));
         return this;
     }
 
@@ -246,7 +246,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition parallelProcessing() {
-        setParallelProcessing(true);
+        setParallelProcessing(Boolean.toString(true));
         return this;
     }
 
@@ -259,7 +259,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @return the builder
      */
     public OnCompletionDefinition parallelProcessing(boolean parallelProcessing) {
-        setParallelProcessing(parallelProcessing);
+        setParallelProcessing(Boolean.toString(parallelProcessing));
         return this;
     }
 
@@ -285,19 +285,19 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.mode = mode;
     }
 
-    public Boolean getOnCompleteOnly() {
+    public String getOnCompleteOnly() {
         return onCompleteOnly;
     }
 
-    public void setOnCompleteOnly(Boolean onCompleteOnly) {
+    public void setOnCompleteOnly(String onCompleteOnly) {
         this.onCompleteOnly = onCompleteOnly;
     }
 
-    public Boolean getOnFailureOnly() {
+    public String getOnFailureOnly() {
         return onFailureOnly;
     }
 
-    public void setOnFailureOnly(Boolean onFailureOnly) {
+    public void setOnFailureOnly(String onFailureOnly) {
         this.onFailureOnly = onFailureOnly;
     }
 
@@ -329,8 +329,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Boolean getUseOriginalMessagePolicy() {
-        return useOriginalMessagePolicy;
+    public String getUseOriginalMessage() {
+        return useOriginalMessage;
     }
 
     /**
@@ -339,15 +339,15 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * <p/>
      * By default this feature is off.
      */
-    public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
-        this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+    public void setUseOriginalMessage(String useOriginalMessage) {
+        this.useOriginalMessage = useOriginalMessage;
     }
 
-    public Boolean getParallelProcessing() {
+    public String getParallelProcessing() {
         return parallelProcessing;
     }
 
-    public void setParallelProcessing(Boolean parallelProcessing) {
+    public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 

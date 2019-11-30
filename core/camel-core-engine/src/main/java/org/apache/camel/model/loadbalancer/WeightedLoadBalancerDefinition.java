@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlAttribute
-    private Boolean roundRobin;
+    private String roundRobin;
     @XmlAttribute(required = true)
     private String distributionRatio;
     @XmlAttribute
@@ -45,7 +45,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     public WeightedLoadBalancerDefinition() {
     }
 
-    public Boolean getRoundRobin() {
+    public String getRoundRobin() {
         return roundRobin;
     }
 
@@ -55,7 +55,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
      * <p/>
      * The default value is false.
      */
-    public void setRoundRobin(Boolean roundRobin) {
+    public void setRoundRobin(String roundRobin) {
         this.roundRobin = roundRobin;
     }
 
@@ -88,11 +88,12 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @Override
     public String toString() {
-        boolean isRoundRobin = getRoundRobin() != null && getRoundRobin();
-        if (isRoundRobin) {
+        if (roundRobin == null || Boolean.FALSE.toString().equals(roundRobin)) {
+            return "WeightedRandomLoadBalancer[" + distributionRatio + "]";
+        } else if (roundRobin != null && Boolean.TRUE.toString().equals(roundRobin)) {
             return "WeightedRoundRobinLoadBalancer[" + distributionRatio + "]";
         } else {
-            return "WeightedRandomLoadBalancer[" + distributionRatio + "]";
+            return "WeightedLoadBalancer[roundRobin=" + roundRobin + "," + distributionRatio + "]";
         }
     }
 }

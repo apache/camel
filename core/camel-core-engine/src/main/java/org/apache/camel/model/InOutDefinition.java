@@ -59,7 +59,7 @@ public class InOutDefinition extends SendDefinition<InOutDefinition> {
     }
 
     @Override
-    public ExchangePattern getPattern() {
-        return ExchangePattern.InOut;
+    public String getPattern() {
+        return ExchangePattern.InOut.name();
     }
 }
