@@ -18,13 +18,13 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the ftps component over TLS (explicit) and without client authentication
  */
-@Ignore
+@Disabled
 public class FileToFtpsWithDefaultSettingsIPV6Test extends FtpsServerExplicitTLSWithoutClientAuthTestSupport {
     
     private String getFtpUrl() {

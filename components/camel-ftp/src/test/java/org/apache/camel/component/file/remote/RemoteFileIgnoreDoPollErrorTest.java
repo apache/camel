@@ -25,8 +25,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RemoteFileIgnoreDoPollErrorTest {
     private final RemoteFileEndpoint<Object> remoteFileEndpoint = new RemoteFileEndpoint<Object>() {
@@ -55,14 +59,14 @@ public class RemoteFileIgnoreDoPollErrorTest {
     public void testReadDirErrorIsHandled() throws Exception {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("true", true);
         boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
-        Assert.assertTrue(result);
+        assertTrue(result);
     }
 
     @Test
     public void testReadDirErrorIsHandledWithNoMorePoll() throws Exception {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("false", true);
         boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
-        Assert.assertFalse(result);
+        assertFalse(result);
     }
 
     @Test
@@ -70,9 +74,9 @@ public class RemoteFileIgnoreDoPollErrorTest {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("IllegalStateException", false);
         try {
             consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
-            Assert.fail("Must throw wrapped IllegalStateException in GenericFileOperationFailedException");
+            fail("Must throw wrapped IllegalStateException in GenericFileOperationFailedException");
         } catch (GenericFileOperationFailedException e) {
-            Assert.assertTrue(e.getCause() instanceof IllegalStateException);
+            assertTrue(e.getCause() instanceof IllegalStateException);
         }
     }
 
@@ -81,9 +85,9 @@ public class RemoteFileIgnoreDoPollErrorTest {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("GenericFileOperationFailedException", false);
         try {
             consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
-            Assert.fail("Must throw GenericFileOperationFailedException");
+            fail("Must throw GenericFileOperationFailedException");
         } catch (GenericFileOperationFailedException e) {
-            Assert.assertNull(e.getCause());
+            assertNull(e.getCause());
         }
     }
 

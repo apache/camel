@@ -21,7 +21,11 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpProducerFileWithPathPathSeparatorAutoNoStepwiseTest extends FtpServerTestSupport {
 
@@ -40,7 +44,7 @@ public class FtpProducerFileWithPathPathSeparatorAutoNoStepwiseTest extends FtpS
         assertNotNull(out);
 
         File file = new File(FTP_ROOT_DIR + "/upload/hello/claus.txt");
-        assertTrue("The uploaded file should exists", file.exists());
+        assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
 
         assertEquals("upload/hello/claus.txt", out.getIn().getHeader(Exchange.FILE_NAME_PRODUCED));

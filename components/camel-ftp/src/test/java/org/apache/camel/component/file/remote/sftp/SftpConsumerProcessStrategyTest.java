@@ -22,7 +22,11 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
@@ -42,7 +46,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
         assertNotNull(out);
         // Apache SSHD appends \u0000 at last byte in retrieved file
         assertTrue(out.startsWith("Hello World"));
-        assertEquals("CustomProcessStrategy should have been invoked 1 times", 1, myStrategy.getInvoked());
+        assertEquals(1, myStrategy.getInvoked(), "CustomProcessStrategy should have been invoked 1 times");
     }
 
     private static class MyStrategy implements GenericFileProcessStrategy {

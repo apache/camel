@@ -21,13 +21,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Concurrent producers test.
  */
-@Ignore("TODO: investigate for Camel 3.0")
+@Disabled("TODO: investigate for Camel 3.0")
 public class FtpProducerConcurrentTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {

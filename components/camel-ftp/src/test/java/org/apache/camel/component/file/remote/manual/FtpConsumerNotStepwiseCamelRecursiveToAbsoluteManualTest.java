@@ -17,16 +17,18 @@
 package org.apache.camel.component.file.remote.manual;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Run this test manually")
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+
+@Disabled("Run this test manually")
 public class FtpConsumerNotStepwiseCamelRecursiveToAbsoluteManualTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/ftptest");
         super.setUp();

@@ -24,8 +24,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify that we can pool a BINARY file from the FTP Server and store it on a local file path
@@ -39,7 +41,7 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -52,17 +54,17 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
         resultEndpoint.assertIsSatisfied();
         Exchange ex = resultEndpoint.getExchanges().get(0);
         byte[] bytes = ex.getIn().getBody(byte[].class);
-        assertTrue("Logo size wrong", bytes.length > 10000);
+        assertTrue(bytes.length > 10000, "Logo size wrong");
 
         // assert the file
         File file = new File("target/ftptest/logo.jpeg");
-        assertTrue(" The binary file should exists", file.exists());
-        assertTrue("Logo size wrong", file.length() > 10000);
+        assertTrue(file.exists(), " The binary file should exists");
+        assertTrue(file.length() > 10000, "Logo size wrong");
 
         // assert the file
         file = new File("target/ftptest/a/logo1.jpeg");
-        assertTrue("The binary file should exists", file.exists());
-        assertTrue("Logo size wrong", file.length() > 10000);
+        assertTrue(file.exists(), "The binary file should exists");
+        assertTrue(file.length() > 10000, "Logo size wrong");
     }
 
     private void prepareFtpServer() throws Exception {

@@ -19,15 +19,17 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.net.ftp.FTPClient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpProducerDisconnectOnBatchCompleteTest extends FtpServerTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -47,8 +49,8 @@ public class FtpProducerDisconnectOnBatchCompleteTest extends FtpServerTestSuppo
 
         Thread.sleep(2000);
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
-        assertFalse("The FTPClient should be already disconnected", endpoint.getFtpClient().isConnected());
-        assertTrue("The FtpEndpoint should be configured to disconnect", endpoint.isDisconnectOnBatchComplete());
+        assertFalse(endpoint.getFtpClient().isConnected(), "The FTPClient should be already disconnected");
+        assertTrue(endpoint.isDisconnectOnBatchComplete(), "The FtpEndpoint should be configured to disconnect");
     }
     
     @Override

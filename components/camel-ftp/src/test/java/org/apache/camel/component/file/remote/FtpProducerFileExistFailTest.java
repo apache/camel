@@ -21,8 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
 
@@ -31,7 +36,7 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/exist");
@@ -50,7 +55,7 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
+            assertEquals(cause.getMessage(), "File already exist: exist/hello.txt. Cannot write new file.");
         }
 
         assertMockEndpointsSatisfied();

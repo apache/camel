@@ -23,17 +23,23 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.ssl.SslConfigurationFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Abstract base class for unit testing using a secure FTP Server (over SSL/TLS)
  */
 public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
-    
+
     protected static final String AUTH_VALUE_SSL = "SSLv3";
     protected static final String AUTH_VALUE_TLS = "TLSv1.2";
 
     protected static final File FTPSERVER_KEYSTORE = new File("./src/test/resources/server.jks");
     protected static final String FTPSERVER_KEYSTORE_PASSWORD = "password";
+
+    private static final Logger LOG = LoggerFactory.getLogger(FtpsServerTestSupport.class);
 
     @Override
     protected FtpServerFactory createFtpServerFactory() throws Exception {
@@ -45,7 +51,7 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
             if (nsae != null) {
                 String name = System.getProperty("os.name");
                 String message = nsae.getMessage();
-                log.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
+                LOG.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
                 
                 return null;
             } else {

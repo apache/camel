@@ -18,8 +18,13 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UriConfigurationTest extends CamelTestSupport {
 
@@ -160,11 +165,11 @@ public class UriConfigurationTest extends CamelTestSupport {
     }
 
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
-        RemoteFileEndpoint<?> endpoint = resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
-        assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
+        RemoteFileEndpoint<?> endpoint = TestSupport.resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
+        assertNotNull(endpoint, "Could not find endpoint: " + endpointUri);
 
         String file = endpoint.getConfiguration().getDirectory();
-        assertEquals("For uri: " + endpointUri + " the file is not equal", expectedFile, file);
+        assertEquals(expectedFile, file, "For uri: " + endpointUri + " the file is not equal");
     }
 
     @Test

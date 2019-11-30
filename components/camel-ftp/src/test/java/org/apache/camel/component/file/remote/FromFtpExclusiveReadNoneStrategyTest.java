@@ -24,9 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test to verify *NON* exclusive read.
@@ -40,12 +46,10 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
                 + "&readLock=none&delay=500";
     }
 
+    // Cannot test on windows due file system works differently with file locks
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testPollFileWhileSlowFileIsBeingWrittenUsingNonExclusiveRead() throws Exception {
-        // cannot test on windows due file system works differently with file locks
-        if (isPlatform("windows")) {
-            return;
-        }
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -70,7 +74,7 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
         // file currently in progress of being written - so we get only the Hello World part
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         LOG.debug("Body is: " + body);
-        assertFalse("Should not wait and read the entire file", body.endsWith("Bye World"));
+        assertFalse(body.endsWith("Bye World"), "Should not wait and read the entire file");
     }
 
     private static class MySlowFileProcessor implements Processor {

@@ -19,7 +19,9 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpProducerRecipientListTest extends FtpServerTestSupport {
 
@@ -34,13 +36,13 @@ public class FtpProducerRecipientListTest extends FtpServerTestSupport {
         template.sendBodyAndHeader("direct:start", "Hi World", "foo", getFtpUrl() + "&fileName=hi.txt");
 
         File file1 = new File(FTP_ROOT_DIR + "/list/hello.txt");
-        assertTrue("File should exists " + file1, file1.exists());
+        assertTrue(file1.exists(), "File should exists " + file1);
 
         File file2 = new File(FTP_ROOT_DIR + "/list/bye.txt");
-        assertTrue("File should exists " + file2, file1.exists());
+        assertTrue(file1.exists(), "File should exists " + file2);
 
         File file3 = new File(FTP_ROOT_DIR + "/list/hi.txt");
-        assertTrue("File should exists " + file3, file1.exists());
+        assertTrue(file1.exists(), "File should exists " + file3);
     }
 
     @Override

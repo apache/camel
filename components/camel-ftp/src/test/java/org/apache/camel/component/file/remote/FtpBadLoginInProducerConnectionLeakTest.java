@@ -26,7 +26,10 @@ import java.util.Map;
 import javax.net.SocketFactory;
 
 import org.apache.camel.BindToRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSupport {
 
@@ -53,11 +56,11 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
             }
         }
 
-        assertEquals("Expected 2 socket connections to be created", 2, socketAudits.size());
+        assertEquals(2, socketAudits.size(), "Expected 2 socket connections to be created");
 
         for (Map.Entry<Integer, boolean[]> socketStats : socketAudits.entrySet()) {
-            assertTrue("Socket should be connected", socketStats.getValue()[0]);
-            assertEquals("Socket should be closed", socketStats.getValue()[0], socketStats.getValue()[1]);
+            assertTrue(socketStats.getValue()[0], "Socket should be connected");
+            assertEquals(socketStats.getValue()[0], socketStats.getValue()[1], "Socket should be closed");
         }
     }
 

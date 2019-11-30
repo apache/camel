@@ -22,10 +22,13 @@ import com.jcraft.jsch.ProxyHTTP;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthorizationHandler;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
 
@@ -50,7 +53,7 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&proxy=#proxy", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
-        assertTrue("File should exist: " + file, file.exists());
+        assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
         
         proxyServer.stop();
@@ -75,7 +78,7 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/mysub?username=admin&password=admin&proxy=#proxy", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/bye.txt");
-        assertTrue("File should exist: " + file, file.exists());
+        assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
 
         proxyServer.stop();
@@ -101,7 +104,7 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
             "farewell.txt");
 
         File file = new File(FTP_ROOT_DIR + "/mysub/myother/farewell.txt");
-        assertTrue("File should exist: " + file, file.exists());
+        assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Farewell World", context.getTypeConverter().convertTo(String.class, file));
 
         proxyServer.stop();

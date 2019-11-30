@@ -29,13 +29,21 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.net.ftp.FTPClient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test which checks leaking connections when FTP server returns correct status for NOOP operation.
  */
 public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FtpBadLoginMockNoopConnectionLeakTest.class);
+
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
@@ -50,7 +58,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -75,8 +83,8 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
         stopCamelContext();
 
         for (Map.Entry<Integer, boolean[]> socketStats : socketAudits.entrySet()) {
-            assertTrue("Socket should be connected", socketStats.getValue()[0]);
-            assertEquals("Socket should be closed", socketStats.getValue()[0], socketStats.getValue()[1]);
+            assertTrue(socketStats.getValue()[0], "Socket should be connected");
+            assertEquals(socketStats.getValue()[0], socketStats.getValue()[1], "Socket should be closed");
         }
 
         mock.assertIsSatisfied();
@@ -132,7 +140,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
 
         @Override
         public void connect(SocketAddress endpoint, int timeout) throws IOException {
-            log.info("Connecting socket {}", System.identityHashCode(this));
+            LOG.info("Connecting socket {}", System.identityHashCode(this));
             super.connect(endpoint, timeout);
             boolean[] value = socketAudits.get(System.identityHashCode(this));
             value[0] = true;
@@ -140,7 +148,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
 
         @Override
         public synchronized void close() throws IOException {
-            log.info("Disconnecting socket {}", System.identityHashCode(this));
+            LOG.info("Disconnecting socket {}", System.identityHashCode(this));
             super.close();
             boolean[] value = socketAudits.get(System.identityHashCode(this));
             value[1] = true;
