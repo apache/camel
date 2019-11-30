@@ -19,6 +19,7 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Processor;
@@ -52,12 +53,12 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
 
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
         processor.setCamelContext(routeContext.getCamelContext());
-        processor.setPattern(definition.getPattern());
+        processor.setPattern(parse(routeContext, ExchangePattern.class, definition.getPattern()));
         if (definition.getCacheSize() != null) {
-            processor.setCacheSize(definition.getCacheSize());
+            processor.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
         }
         if (definition.getIgnoreInvalidEndpoint() != null) {
-            processor.setIgnoreInvalidEndpoint(definition.getIgnoreInvalidEndpoint());
+            processor.setIgnoreInvalidEndpoint(parseBoolean(routeContext, definition.getIgnoreInvalidEndpoint()));
         }
         return processor;
     }

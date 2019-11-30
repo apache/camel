@@ -86,7 +86,7 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         // should be INFO by default
-        LoggingLevel level = definition.getLoggingLevel() != null ? definition.getLoggingLevel() : LoggingLevel.INFO;
+        LoggingLevel level = definition.getLoggingLevel() != null ? parse(routeContext, LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
         return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getLogListeners());

@@ -223,7 +223,7 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
      */
     public CircuitBreakerDefinition onFallbackViaNetwork() {
         onFallback = new OnFallbackDefinition();
-        onFallback.setFallbackViaNetwork(true);
+        onFallback.setFallbackViaNetwork(Boolean.toString(true));
         onFallback.setParent(this);
         return this;
     }

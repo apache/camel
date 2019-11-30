@@ -20,6 +20,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ClaimCheckDefinition;
+import org.apache.camel.model.ClaimCheckOperation;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -39,7 +40,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         notNull(definition.getOperation(), "operation", this);
 
         ClaimCheckProcessor claim = new ClaimCheckProcessor();
-        claim.setOperation(definition.getOperation().name());
+        claim.setOperation(parse(routeContext, ClaimCheckOperation.class, definition.getOperation()).name());
         claim.setKey(definition.getKey());
         claim.setFilter(definition.getFilter());
 

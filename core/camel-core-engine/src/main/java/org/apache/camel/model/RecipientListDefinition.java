@@ -47,36 +47,36 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(defaultValue = ",")
     private String delimiter;
     @XmlAttribute
-    private Boolean parallelProcessing;
+    private String parallelProcessing;
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
-    private Boolean strategyMethodAllowNull;
+    private String strategyMethodAllowNull;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    private Boolean stopOnException;
+    private String stopOnException;
     @XmlAttribute
-    private Boolean ignoreInvalidEndpoints;
+    private String ignoreInvalidEndpoints;
     @XmlAttribute
-    private Boolean streaming;
+    private String streaming;
     @XmlAttribute
     @Metadata(defaultValue = "0")
-    private Long timeout;
+    private String timeout;
     @XmlAttribute
     private String onPrepareRef;
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
-    private Boolean shareUnitOfWork;
+    private String shareUnitOfWork;
     @XmlAttribute
-    private Integer cacheSize;
+    private String cacheSize;
     @XmlAttribute
-    private Boolean parallelAggregate;
+    private String parallelAggregate;
     @XmlAttribute
-    private Boolean stopOnAggregateException;
+    private String stopOnAggregateException;
 
     public RecipientListDefinition() {
     }
@@ -182,7 +182,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> aggregationStrategyMethodAllowNull() {
-        setStrategyMethodAllowNull(true);
+        setStrategyMethodAllowNull(Boolean.toString(true));
         return this;
     }
 
@@ -193,7 +193,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> ignoreInvalidEndpoints() {
-        setIgnoreInvalidEndpoints(true);
+        setIgnoreInvalidEndpoints(Boolean.toString(true));
         return this;
     }
 
@@ -206,7 +206,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> parallelProcessing() {
-        setParallelProcessing(true);
+        setParallelProcessing(Boolean.toString(true));
         return this;
     }
 
@@ -219,7 +219,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> parallelProcessing(boolean parallelProcessing) {
-        setParallelProcessing(parallelProcessing);
+        setParallelProcessing(Boolean.toString(parallelProcessing));
         return this;
     }
 
@@ -234,7 +234,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> parallelAggregate() {
-        setParallelAggregate(true);
+        setParallelAggregate(Boolean.toString(true));
         return this;
     }
 
@@ -249,7 +249,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> stopOnAggregateException() {
-        setStopOnAggregateException(true);
+        setStopOnAggregateException(Boolean.toString(true));
         return this;
     }
 
@@ -261,7 +261,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> streaming() {
-        setStreaming(true);
+        setStreaming(Boolean.toString(true));
         return this;
     }
 
@@ -282,7 +282,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> stopOnException() {
-        setStopOnException(true);
+        setStopOnException(Boolean.toString(true));
         return this;
     }
 
@@ -376,7 +376,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> timeout(long timeout) {
-        setTimeout(timeout);
+        setTimeout(Long.toString(timeout));
         return this;
     }
 
@@ -389,7 +389,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder.
      */
     public RecipientListDefinition<Type> shareUnitOfWork() {
-        setShareUnitOfWork(true);
+        setShareUnitOfWork(Boolean.toString(true));
         return this;
     }
 
@@ -403,7 +403,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * @return the builder
      */
     public RecipientListDefinition<Type> cacheSize(int cacheSize) {
-        setCacheSize(cacheSize);
+        setCacheSize(Integer.toString(cacheSize));
         return this;
     }
 
@@ -429,11 +429,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.delimiter = delimiter;
     }
 
-    public Boolean getParallelProcessing() {
+    public String getParallelProcessing() {
         return parallelProcessing;
     }
 
-    public void setParallelProcessing(Boolean parallelProcessing) {
+    public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 
@@ -463,7 +463,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.strategyMethodName = strategyMethodName;
     }
 
-    public Boolean getStrategyMethodAllowNull() {
+    public String getStrategyMethodAllowNull() {
         return strategyMethodAllowNull;
     }
 
@@ -473,7 +473,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * the oldExchange (when no data to enrich), when using POJOs as the
      * AggregationStrategy
      */
-    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
@@ -487,19 +487,19 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Boolean getIgnoreInvalidEndpoints() {
+    public String getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
 
-    public void setIgnoreInvalidEndpoints(Boolean ignoreInvalidEndpoints) {
+    public void setIgnoreInvalidEndpoints(String ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
-    public Boolean getStopOnException() {
+    public String getStopOnException() {
         return stopOnException;
     }
 
-    public void setStopOnException(Boolean stopOnException) {
+    public void setStopOnException(String stopOnException) {
         this.stopOnException = stopOnException;
     }
 
@@ -527,19 +527,19 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.executorService = executorService;
     }
 
-    public Boolean getStreaming() {
+    public String getStreaming() {
         return streaming;
     }
 
-    public void setStreaming(Boolean streaming) {
+    public void setStreaming(String streaming) {
         this.streaming = streaming;
     }
 
-    public Long getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(Long timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -559,35 +559,35 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.onPrepare = onPrepare;
     }
 
-    public Boolean getShareUnitOfWork() {
+    public String getShareUnitOfWork() {
         return shareUnitOfWork;
     }
 
-    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+    public void setShareUnitOfWork(String shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    public Integer getCacheSize() {
+    public String getCacheSize() {
         return cacheSize;
     }
 
-    public void setCacheSize(Integer cacheSize) {
+    public void setCacheSize(String cacheSize) {
         this.cacheSize = cacheSize;
     }
 
-    public Boolean getParallelAggregate() {
+    public String getParallelAggregate() {
         return parallelAggregate;
     }
 
-    public void setParallelAggregate(Boolean parallelAggregate) {
+    public void setParallelAggregate(String parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }
 
-    public Boolean getStopOnAggregateException() {
+    public String getStopOnAggregateException() {
         return stopOnAggregateException;
     }
 
-    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+    public void setStopOnAggregateException(String stopOnAggregateException) {
         this.stopOnAggregateException = stopOnAggregateException;
     }
 }

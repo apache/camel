@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -47,17 +48,21 @@ public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute
     private String headerName;
     @XmlAttribute
-    private Boolean regex;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String regex;
     @XmlAttribute
-    private Boolean xml;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String xml;
     @XmlAttribute
-    private Boolean includeTokens;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String includeTokens;
     @XmlAttribute
     private String group;
     @XmlAttribute
     private String groupDelimiter;
     @XmlAttribute
-    private Boolean skipFirst;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String skipFirst;
 
     public TokenizerExpression() {
     }
@@ -112,11 +117,11 @@ public class TokenizerExpression extends ExpressionDefinition {
      * <p/>
      * The default value is false
      */
-    public void setRegex(boolean regex) {
+    public void setRegex(String regex) {
         this.regex = regex;
     }
 
-    public Boolean getRegex() {
+    public String getRegex() {
         return regex;
     }
 
@@ -132,7 +137,7 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
     }
 
-    public Boolean getXml() {
+    public String getXml() {
         return xml;
     }
 
@@ -140,11 +145,11 @@ public class TokenizerExpression extends ExpressionDefinition {
      * Whether the input is XML messages. This option must be set to true if
      * working with XML payloads.
      */
-    public void setXml(Boolean xml) {
+    public void setXml(String xml) {
         this.xml = xml;
     }
 
-    public Boolean getIncludeTokens() {
+    public String getIncludeTokens() {
         return includeTokens;
     }
 
@@ -153,7 +158,7 @@ public class TokenizerExpression extends ExpressionDefinition {
      * <p/>
      * The default value is false
      */
-    public void setIncludeTokens(Boolean includeTokens) {
+    public void setIncludeTokens(String includeTokens) {
         this.includeTokens = includeTokens;
     }
 
@@ -182,14 +187,14 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.groupDelimiter = groupDelimiter;
     }
 
-    public Boolean getSkipFirst() {
+    public String getSkipFirst() {
         return skipFirst;
     }
 
     /**
      * To skip the very first element
      */
-    public void setSkipFirst(Boolean skipFirst) {
+    public void setSkipFirst(String skipFirst) {
         this.skipFirst = skipFirst;
     }
 
@@ -208,20 +213,20 @@ public class TokenizerExpression extends ExpressionDefinition {
         language.setHeaderName(headerName);
         language.setGroupDelimiter(groupDelimiter);
         if (regex != null) {
-            language.setRegex(regex);
+            language.setRegex(Boolean.parseBoolean(regex));
         }
         if (xml != null) {
-            language.setXml(xml);
+            language.setXml(Boolean.parseBoolean(xml));
         }
         if (includeTokens != null) {
-            language.setIncludeTokens(includeTokens);
+            language.setIncludeTokens(Boolean.parseBoolean(includeTokens));
         }
         if (group != null && !"0".equals(group)) {
             language.setGroup(group);
         }
 
         if (skipFirst != null) {
-            language.setSkipFirst(skipFirst);
+            language.setSkipFirst(Boolean.parseBoolean(skipFirst));
         }
         return language.createExpression();
     }

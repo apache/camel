@@ -67,12 +67,13 @@ import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
-public abstract class DataFormatReifier<T extends DataFormatDefinition> {
+public abstract class DataFormatReifier<T extends DataFormatDefinition> extends AbstractReifier {
 
     private static final Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
@@ -192,7 +193,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
                 dataFormat = doCreateDataFormat(camelContext);
                 if (dataFormat != null) {
                     // is enabled by default so assume true if null
-                    final boolean contentTypeHeader = definition.getContentTypeHeader() == null || definition.getContentTypeHeader();
+                    final boolean contentTypeHeader = definition.getContentTypeHeader() == null || Boolean.parseBoolean(definition.getContentTypeHeader());
                     try {
                         setProperty(camelContext, dataFormat, "contentTypeHeader", contentTypeHeader);
                     } catch (Exception e) {

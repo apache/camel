@@ -46,12 +46,12 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
     @XmlAttribute
-    private Boolean roundRobin;
+    private String roundRobin;
     @XmlAttribute
-    private Boolean sticky;
+    private String sticky;
     @XmlAttribute
     @Metadata(defaultValue = "-1")
-    private Integer maximumFailoverAttempts;
+    private String maximumFailoverAttempts;
 
     public FailoverLoadBalancerDefinition() {
     }
@@ -80,7 +80,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         this.exceptionTypes = exceptionTypes;
     }
 
-    public Boolean getRoundRobin() {
+    public String getRoundRobin() {
         return roundRobin;
     }
 
@@ -95,11 +95,11 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
      * will pick the last known good endpoint to use when starting the load
      * balancing (instead of using the next when starting).
      */
-    public void setRoundRobin(Boolean roundRobin) {
+    public void setRoundRobin(String roundRobin) {
         this.roundRobin = roundRobin;
     }
 
-    public Boolean getSticky() {
+    public String getSticky() {
         return sticky;
     }
 
@@ -114,11 +114,11 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
      * will pick the last known good endpoint to use when starting the load
      * balancing (instead of using the next when starting).
      */
-    public void setSticky(Boolean sticky) {
+    public void setSticky(String sticky) {
         this.sticky = sticky;
     }
 
-    public Integer getMaximumFailoverAttempts() {
+    public String getMaximumFailoverAttempts() {
         return maximumFailoverAttempts;
     }
 
@@ -129,7 +129,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
      * before giving up. his option can be used whether or not roundRobin is
      * enabled or not.
      */
-    public void setMaximumFailoverAttempts(Integer maximumFailoverAttempts) {
+    public void setMaximumFailoverAttempts(String maximumFailoverAttempts) {
         this.maximumFailoverAttempts = maximumFailoverAttempts;
     }
 

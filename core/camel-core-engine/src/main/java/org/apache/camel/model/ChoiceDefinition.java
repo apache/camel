@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,7 +33,6 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -218,13 +218,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer("choice[");
-        List<WhenDefinition> list = getWhenClauses();
-        for (WhenDefinition whenType : list) {
-            buffer.append(whenType.getLabel());
-        }
-        buffer.append("]");
-        return buffer.toString();
+        return getOutputs().stream().map(ProcessorDefinition::getLabel)
+                .collect(Collectors.joining(",", getShortName() + "[", "]"));
     }
 
     public List<WhenDefinition> getWhenClauses() {

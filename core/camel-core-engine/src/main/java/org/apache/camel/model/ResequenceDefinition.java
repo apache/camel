@@ -129,13 +129,13 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      */
     public ResequenceDefinition timeout(long timeout) {
         if (streamConfig != null) {
-            streamConfig.setTimeout(timeout);
+            streamConfig.setTimeout(Long.toString(timeout));
         } else {
             // initialize batch mode as its default mode
             if (batchConfig == null) {
                 batch();
             }
-            batchConfig.setBatchTimeout(timeout);
+            batchConfig.setBatchTimeout(Long.toString(timeout));
         }
         return this;
     }
@@ -151,7 +151,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         if (streamConfig == null) {
             throw new IllegalStateException("deliveryAttemptInterval() only supported for stream resequencer");
         }
-        streamConfig.setDeliveryAttemptInterval(deliveryAttemptInterval);
+        streamConfig.setDeliveryAttemptInterval(Long.toString(deliveryAttemptInterval));
         return this;
     }
 
@@ -165,7 +165,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         if (streamConfig == null) {
             throw new IllegalStateException("rejectOld() only supported for stream resequencer");
         }
-        streamConfig.setRejectOld(true);
+        streamConfig.setRejectOld(Boolean.toString(true));
         return this;
     }
 
@@ -183,7 +183,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         if (batchConfig == null) {
             batch();
         }
-        batchConfig.setBatchSize(batchSize);
+        batchConfig.setBatchSize(Integer.toString(batchSize));
         return this;
     }
 
@@ -197,7 +197,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         if (streamConfig == null) {
             throw new IllegalStateException("capacity() only supported for stream resequencer");
         }
-        streamConfig.setCapacity(capacity);
+        streamConfig.setCapacity(Integer.toString(capacity));
         return this;
 
     }
@@ -215,7 +215,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         if (batchConfig == null) {
             batch();
         }
-        batchConfig.setAllowDuplicates(true);
+        batchConfig.setAllowDuplicates(Boolean.toString(true));
         return this;
     }
 
@@ -235,7 +235,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         if (batchConfig == null) {
             batch();
         }
-        batchConfig.setReverse(true);
+        batchConfig.setReverse(Boolean.toString(true));
         return this;
     }
 
@@ -247,13 +247,13 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      */
     public ResequenceDefinition ignoreInvalidExchanges() {
         if (streamConfig != null) {
-            streamConfig.setIgnoreInvalidExchanges(true);
+            streamConfig.setIgnoreInvalidExchanges(Boolean.toString(true));
         } else {
             // initialize batch mode as its default mode
             if (batchConfig == null) {
                 batch();
             }
-            batchConfig.setIgnoreInvalidExchanges(true);
+            batchConfig.setIgnoreInvalidExchanges(Boolean.toString(true));
         }
         return this;
     }

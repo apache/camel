@@ -36,7 +36,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     @XmlAttribute(required = true)
     private String uri;
     @XmlAttribute
-    private Boolean skipSendToOriginalEndpoint;
+    private String skipSendToOriginalEndpoint;
     @XmlAttribute
     private String afterUri;
 
@@ -91,7 +91,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
      * @return the builder
      */
     public InterceptSendToEndpointDefinition skipSendToOriginalEndpoint() {
-        setSkipSendToOriginalEndpoint(Boolean.TRUE);
+        setSkipSendToOriginalEndpoint(Boolean.toString(true));
         return this;
     }
 
@@ -150,7 +150,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         }
     }
 
-    public Boolean getSkipSendToOriginalEndpoint() {
+    public String getSkipSendToOriginalEndpoint() {
         return skipSendToOriginalEndpoint;
     }
 
@@ -159,7 +159,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
      * default (false) the message is both intercepted and then sent to the
      * original endpoint.
      */
-    public void setSkipSendToOriginalEndpoint(Boolean skipSendToOriginalEndpoint) {
+    public void setSkipSendToOriginalEndpoint(String skipSendToOriginalEndpoint) {
         this.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint;
     }
 

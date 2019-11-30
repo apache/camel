@@ -43,14 +43,17 @@ public class CryptoDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String algorithmParameterRef;
     @XmlAttribute
-    private Integer buffersize;
+    @Metadata(javaType = "java.lang.Integer")
+    private String buffersize;
     @XmlAttribute
     @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
-    private Boolean shouldAppendHMAC;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String shouldAppendHMAC;
     @XmlAttribute
-    private Boolean inline;
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String inline;
 
     public CryptoDataFormat() {
         super("crypto");
@@ -117,14 +120,14 @@ public class CryptoDataFormat extends DataFormatDefinition {
         this.algorithmParameterRef = algorithmParameterRef;
     }
 
-    public Integer getBuffersize() {
+    public String getBuffersize() {
         return buffersize;
     }
 
     /**
      * The size of the buffer used in the signature process.
      */
-    public void setBuffersize(Integer buffersize) {
+    public void setBuffersize(String buffersize) {
         this.buffersize = buffersize;
     }
 
@@ -139,7 +142,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
         this.macAlgorithm = macAlgorithm;
     }
 
-    public Boolean getShouldAppendHMAC() {
+    public String getShouldAppendHMAC() {
         return shouldAppendHMAC;
     }
 
@@ -147,11 +150,11 @@ public class CryptoDataFormat extends DataFormatDefinition {
      * Flag indicating that a Message Authentication Code should be calculated
      * and appended to the encrypted data.
      */
-    public void setShouldAppendHMAC(Boolean shouldAppendHMAC) {
+    public void setShouldAppendHMAC(String shouldAppendHMAC) {
         this.shouldAppendHMAC = shouldAppendHMAC;
     }
 
-    public Boolean getInline() {
+    public String getInline() {
         return inline;
     }
 
@@ -161,7 +164,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default false.
      */
-    public void setInline(Boolean inline) {
+    public void setInline(String inline) {
         this.inline = inline;
     }
 }

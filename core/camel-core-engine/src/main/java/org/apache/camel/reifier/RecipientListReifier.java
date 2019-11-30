@@ -46,13 +46,13 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         final Expression expression = definition.getExpression().createExpression(routeContext);
 
-        boolean isParallelProcessing = definition.getParallelProcessing() != null && definition.getParallelProcessing();
-        boolean isStreaming = definition.getStreaming() != null && definition.getStreaming();
-        boolean isParallelAggregate = definition.getParallelAggregate() != null && definition.getParallelAggregate();
-        boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork();
-        boolean isStopOnException = definition.getStopOnException() != null && definition.getStopOnException();
-        boolean isIgnoreInvalidEndpoints = definition.getIgnoreInvalidEndpoints() != null && definition.getIgnoreInvalidEndpoints();
-        boolean isStopOnAggregateException = definition.getStopOnAggregateException() != null && definition.getStopOnAggregateException();
+        boolean isParallelProcessing = definition.getParallelProcessing() != null && parseBoolean(routeContext, definition.getParallelProcessing());
+        boolean isStreaming = definition.getStreaming() != null && parseBoolean(routeContext, definition.getStreaming());
+        boolean isParallelAggregate = definition.getParallelAggregate() != null && parseBoolean(routeContext, definition.getParallelAggregate());
+        boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && parseBoolean(routeContext, definition.getShareUnitOfWork());
+        boolean isStopOnException = definition.getStopOnException() != null && parseBoolean(routeContext, definition.getStopOnException());
+        boolean isIgnoreInvalidEndpoints = definition.getIgnoreInvalidEndpoints() != null && parseBoolean(routeContext, definition.getIgnoreInvalidEndpoints());
+        boolean isStopOnAggregateException = definition.getStopOnAggregateException() != null && parseBoolean(routeContext, definition.getStopOnAggregateException());
 
         RecipientList answer;
         if (definition.getDelimiter() != null) {
@@ -69,7 +69,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
         answer.setStopOnAggregateException(isStopOnAggregateException);
         if (definition.getCacheSize() != null) {
-            answer.setCacheSize(definition.getCacheSize());
+            answer.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
         }
         if (definition.getOnPrepareRef() != null) {
             definition.setOnPrepare(CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getOnPrepareRef(), Processor.class));
@@ -78,14 +78,14 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             answer.setOnPrepare(definition.getOnPrepare());
         }
         if (definition.getTimeout() != null) {
-            answer.setTimeout(definition.getTimeout());
+            answer.setTimeout(parseLong(routeContext, definition.getTimeout()));
         }
 
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, isParallelProcessing);
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", definition, isParallelProcessing);
         answer.setExecutorService(threadPool);
         answer.setShutdownExecutorService(shutdownThreadPool);
-        long timeout = definition.getTimeout() != null ? definition.getTimeout() : 0;
+        long timeout = definition.getTimeout() != null ? parseLong(routeContext, definition.getTimeout()) : 0;
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
@@ -126,8 +126,8 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(definition.getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(definition.getStrategyMethodAllowNull());
+                    adapter.setAllowNullNewExchange(parseBoolean(routeContext, definition.getStrategyMethodAllowNull()));
+                    adapter.setAllowNullOldExchange(parseBoolean(routeContext, definition.getStrategyMethodAllowNull()));
                 }
                 strategy = adapter;
             } else {
@@ -144,7 +144,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
         }
 
-        if (definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork()) {
+        if (definition.getShareUnitOfWork() != null && parseBoolean(routeContext, definition.getShareUnitOfWork())) {
             // wrap strategy in share unit of work
             strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }

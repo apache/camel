@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
     @XmlAttribute
-    private ExchangePattern pattern;
+    private String pattern;
 
     public ToDefinition() {
     }
@@ -56,17 +56,17 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
 
     public ToDefinition(String uri, ExchangePattern pattern) {
         this(uri);
-        this.pattern = pattern;
+        this.pattern = pattern.name();
     }
 
     public ToDefinition(Endpoint endpoint, ExchangePattern pattern) {
         this(endpoint);
-        this.pattern = pattern;
+        this.pattern = pattern.name();
     }
 
     public ToDefinition(EndpointProducerBuilder endpoint, ExchangePattern pattern) {
         this(endpoint);
-        this.pattern = pattern;
+        this.pattern = pattern.name();
     }
 
     @Override
@@ -80,14 +80,14 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     @Override
-    public ExchangePattern getPattern() {
+    public String getPattern() {
         return pattern;
     }
 
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
-    public void setPattern(ExchangePattern pattern) {
+    public void setPattern(String pattern) {
         this.pattern = pattern;
     }
 

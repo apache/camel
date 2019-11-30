@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.xpath.XPathFactory;
 
@@ -44,7 +45,8 @@ public class XPathExpression extends NamespaceAwareExpression {
     @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
     private String resultTypeName;
     @XmlAttribute
-    private Boolean saxon;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String saxon;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String factoryRef;
@@ -52,7 +54,8 @@ public class XPathExpression extends NamespaceAwareExpression {
     @Metadata(label = "advanced")
     private String objectModel;
     @XmlAttribute
-    private Boolean logNamespaces;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String logNamespaces;
     @XmlAttribute
     private String headerName;
     @XmlTransient
@@ -62,8 +65,8 @@ public class XPathExpression extends NamespaceAwareExpression {
     @XmlTransient
     private XPathFactory xpathFactory;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private Boolean threadSafety;
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String threadSafety;
 
     public XPathExpression() {
     }
@@ -136,11 +139,11 @@ public class XPathExpression extends NamespaceAwareExpression {
     /**
      * Whether to use Saxon.
      */
-    public void setSaxon(Boolean saxon) {
+    public void setSaxon(String saxon) {
         this.saxon = saxon;
     }
 
-    public Boolean getSaxon() {
+    public String getSaxon() {
         return saxon;
     }
 
@@ -169,11 +172,11 @@ public class XPathExpression extends NamespaceAwareExpression {
     /**
      * Whether to log namespaces which can assist during trouble shooting
      */
-    public void setLogNamespaces(Boolean logNamespaces) {
+    public void setLogNamespaces(String logNamespaces) {
         this.logNamespaces = logNamespaces;
     }
 
-    public Boolean getLogNamespaces() {
+    public String getLogNamespaces() {
         return logNamespaces;
     }
 
@@ -188,7 +191,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.headerName = headerName;
     }
 
-    public Boolean getThreadSafety() {
+    public String getThreadSafety() {
         return threadSafety;
     }
 
@@ -204,7 +207,7 @@ public class XPathExpression extends NamespaceAwareExpression {
      * Saxon in your application. Saxon has thread-safety issues which can be
      * prevented by turning this option on.
      */
-    public void setThreadSafety(Boolean threadSafety) {
+    public void setThreadSafety(String threadSafety) {
         this.threadSafety = threadSafety;
     }
 
@@ -243,8 +246,8 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
-        boolean isSaxon = getSaxon() != null && getSaxon();
-        boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
+        boolean isSaxon = getSaxon() != null && Boolean.parseBoolean(getSaxon());
+        boolean isLogNamespaces = getLogNamespaces() != null && Boolean.parseBoolean(getLogNamespaces());
 
         if (documentType != null) {
             setProperty(camelContext, expression, "documentType", documentType);
@@ -277,8 +280,8 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        boolean isSaxon = getSaxon() != null && getSaxon();
-        boolean isLogNamespaces = getLogNamespaces() != null && getLogNamespaces();
+        boolean isSaxon = getSaxon() != null && Boolean.parseBoolean(getSaxon());
+        boolean isLogNamespaces = getLogNamespaces() != null && Boolean.parseBoolean(getLogNamespaces());
 
         if (documentType != null) {
             setProperty(camelContext, predicate, "documentType", documentType);

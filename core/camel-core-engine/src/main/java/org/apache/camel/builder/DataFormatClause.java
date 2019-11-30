@@ -134,9 +134,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T base64(int lineLength, String lineSeparator, boolean urlSafe) {
         Base64DataFormat dataFormat = new Base64DataFormat();
-        dataFormat.setLineLength(lineLength);
+        dataFormat.setLineLength(Integer.toString(lineLength));
         dataFormat.setLineSeparator(lineSeparator);
-        dataFormat.setUrlSafe(urlSafe);
+        dataFormat.setUrlSafe(Boolean.toString(urlSafe));
         return dataFormat(dataFormat);
     }
 
@@ -169,9 +169,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         dataFormat.setMapping(mapping);
         dataFormat.setStreamName(streamName);
         dataFormat.setEncoding(encoding);
-        dataFormat.setIgnoreUnidentifiedRecords(ignoreUnidentifiedRecords);
-        dataFormat.setIgnoreUnexpectedRecords(ignoreUnexpectedRecords);
-        dataFormat.setIgnoreInvalidRecords(ignoreInvalidRecords);
+        dataFormat.setIgnoreUnidentifiedRecords(Boolean.toString(ignoreUnidentifiedRecords));
+        dataFormat.setIgnoreUnexpectedRecords(Boolean.toString(ignoreUnexpectedRecords));
+        dataFormat.setIgnoreInvalidRecords(Boolean.toString(ignoreInvalidRecords));
         return dataFormat(dataFormat);
     }
 
@@ -428,8 +428,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         pgp.setKeyFileName(keyFileName);
         pgp.setKeyUserid(keyUserid);
         pgp.setPassword(password);
-        pgp.setArmored(armored);
-        pgp.setIntegrity(integrity);
+        pgp.setArmored(Boolean.toString(armored));
+        pgp.setIntegrity(Boolean.toString(integrity));
         return dataFormat(pgp);
     }
 
@@ -472,7 +472,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T jacksonxml(boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
-        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        jacksonXMLDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(jacksonXMLDataFormat);
     }
 
@@ -485,7 +485,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T jacksonxml(Class<?> unmarshalType, boolean prettyPrint) {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
-        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        jacksonXMLDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(jacksonXMLDataFormat);
     }
 
@@ -500,7 +500,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         JacksonXMLDataFormat jacksonXMLDataFormat = new JacksonXMLDataFormat();
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         jacksonXMLDataFormat.setJsonView(jsonView);
-        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        jacksonXMLDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(jacksonXMLDataFormat);
     }
 
@@ -532,7 +532,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         jacksonXMLDataFormat.setUnmarshalType(unmarshalType);
         jacksonXMLDataFormat.setJsonView(jsonView);
         jacksonXMLDataFormat.setInclude(include);
-        jacksonXMLDataFormat.setPrettyPrint(prettyPrint);
+        jacksonXMLDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
         return dataFormat(jacksonXMLDataFormat);
     }
 

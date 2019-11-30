@@ -31,18 +31,18 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OptimisticLockRetryPolicyDefinition {
     @XmlAttribute
-    private Integer maximumRetries;
+    private String maximumRetries;
     @XmlAttribute
     @Metadata(defaultValue = "50")
-    private Long retryDelay;
+    private String retryDelay;
     @XmlAttribute
     @Metadata(defaultValue = "1000")
-    private Long maximumRetryDelay;
+    private String maximumRetryDelay;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean exponentialBackOff;
+    private String exponentialBackOff;
     @XmlAttribute
-    private Boolean randomBackOff;
+    private String randomBackOff;
 
     public OptimisticLockRetryPolicyDefinition() {
     }
@@ -51,15 +51,19 @@ public class OptimisticLockRetryPolicyDefinition {
      * Sets the maximum number of retries
      */
     public OptimisticLockRetryPolicyDefinition maximumRetries(int maximumRetries) {
+        return maximumRetries(String.valueOf(maximumRetries));
+    }
+
+    public OptimisticLockRetryPolicyDefinition maximumRetries(String maximumRetries) {
         setMaximumRetries(maximumRetries);
         return this;
     }
 
-    public Integer getMaximumRetries() {
+    public String getMaximumRetries() {
         return maximumRetries;
     }
 
-    public void setMaximumRetries(Integer maximumRetries) {
+    public void setMaximumRetries(String maximumRetries) {
         this.maximumRetries = maximumRetries;
     }
 
@@ -67,15 +71,22 @@ public class OptimisticLockRetryPolicyDefinition {
      * Sets the delay in millis between retries
      */
     public OptimisticLockRetryPolicyDefinition retryDelay(long retryDelay) {
+        return retryDelay(Long.toString(retryDelay));
+    }
+
+    /**
+     * Sets the delay in millis between retries
+     */
+    public OptimisticLockRetryPolicyDefinition retryDelay(String retryDelay) {
         setRetryDelay(retryDelay);
         return this;
     }
 
-    public Long getRetryDelay() {
+    public String getRetryDelay() {
         return retryDelay;
     }
 
-    public void setRetryDelay(Long retryDelay) {
+    public void setRetryDelay(String retryDelay) {
         this.retryDelay = retryDelay;
     }
 
@@ -84,15 +95,23 @@ public class OptimisticLockRetryPolicyDefinition {
      * exponential or random backoff
      */
     public OptimisticLockRetryPolicyDefinition maximumRetryDelay(long maximumRetryDelay) {
+        return maximumRetryDelay(Long.toString(maximumRetryDelay));
+    }
+
+    /**
+     * Sets the upper value of retry in millis between retries, when using
+     * exponential or random backoff
+     */
+    public OptimisticLockRetryPolicyDefinition maximumRetryDelay(String maximumRetryDelay) {
         setMaximumRetryDelay(maximumRetryDelay);
         return this;
     }
 
-    public Long getMaximumRetryDelay() {
+    public String getMaximumRetryDelay() {
         return maximumRetryDelay;
     }
 
-    public void setMaximumRetryDelay(Long maximumRetryDelay) {
+    public void setMaximumRetryDelay(String maximumRetryDelay) {
         this.maximumRetryDelay = maximumRetryDelay;
     }
 
@@ -104,15 +123,19 @@ public class OptimisticLockRetryPolicyDefinition {
     }
 
     public OptimisticLockRetryPolicyDefinition exponentialBackOff(boolean exponentialBackOff) {
+        return exponentialBackOff(Boolean.toString(exponentialBackOff));
+    }
+
+    public OptimisticLockRetryPolicyDefinition exponentialBackOff(String exponentialBackOff) {
         setExponentialBackOff(exponentialBackOff);
         return this;
     }
 
-    public Boolean getExponentialBackOff() {
+    public String getExponentialBackOff() {
         return exponentialBackOff;
     }
 
-    public void setExponentialBackOff(Boolean exponentialBackOff) {
+    public void setExponentialBackOff(String exponentialBackOff) {
         this.exponentialBackOff = exponentialBackOff;
     }
 
@@ -124,15 +147,19 @@ public class OptimisticLockRetryPolicyDefinition {
      * Enables random backoff
      */
     public OptimisticLockRetryPolicyDefinition randomBackOff(boolean randomBackOff) {
+        return randomBackOff(String.valueOf(randomBackOff));
+    }
+
+    public OptimisticLockRetryPolicyDefinition randomBackOff(String randomBackOff) {
         setRandomBackOff(randomBackOff);
         return this;
     }
 
-    public Boolean getRandomBackOff() {
+    public String getRandomBackOff() {
         return randomBackOff;
     }
 
-    public void setRandomBackOff(Boolean randomBackOff) {
+    public void setRandomBackOff(String randomBackOff) {
         this.randomBackOff = randomBackOff;
     }
 }

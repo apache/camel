@@ -46,7 +46,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         // create the after
         Processor afterProcessor = null;
         if (definition.getAfterUri() != null) {
-            ToDefinition to = new ToDefinition(definition.getAfterUri());
+            ToDefinition to = new ToDefinition(parseString(routeContext, definition.getAfterUri()));
             // at first use custom factory
             if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
                 afterProcessor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, to);
@@ -58,7 +58,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             }
         }
         final Processor after = afterProcessor;
-        final String matchURI = definition.getUri();
+        final String matchURI = parseString(routeContext, definition.getUri());
 
         // register endpoint callback so we can proxy the endpoint
         routeContext.getCamelContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(new EndpointStrategy() {
@@ -70,7 +70,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                     // only proxy if the uri is matched decorate endpoint with
                     // our proxy
                     // should be false by default
-                    boolean skip = definition.getSkipSendToOriginalEndpoint() != null && definition.getSkipSendToOriginalEndpoint();
+                    boolean skip = definition.getSkipSendToOriginalEndpoint() != null && parseBoolean(routeContext, definition.getSkipSendToOriginalEndpoint());
                     DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
                     proxy.setBefore(before);
                     proxy.setAfter(after);

@@ -38,7 +38,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     private String message;
     @XmlAttribute
     @Metadata(defaultValue = "INFO")
-    private LoggingLevel loggingLevel;
+    private String loggingLevel;
     @XmlAttribute
     private String logName;
     @XmlAttribute
@@ -71,7 +71,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return "log";
     }
 
-    public LoggingLevel getLoggingLevel() {
+    public String getLoggingLevel() {
         return loggingLevel;
     }
 
@@ -80,7 +80,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
      * <p/>
      * The default value is INFO
      */
-    public void setLoggingLevel(LoggingLevel loggingLevel) {
+    public void setLoggingLevel(String loggingLevel) {
         this.loggingLevel = loggingLevel;
     }
 

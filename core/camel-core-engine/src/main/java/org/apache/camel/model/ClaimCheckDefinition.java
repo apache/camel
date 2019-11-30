@@ -38,7 +38,8 @@ import org.apache.camel.spi.Metadata;
 public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinition> {
 
     @XmlAttribute(required = true)
-    private ClaimCheckOperation operation;
+    @Metadata(enums = "Get,GetAndRemove,Set,Push,Pop", javaType = "org.apache.camel.model.ClaimCheckOperation")
+    private String operation;
     @XmlAttribute
     private String key;
     @XmlAttribute
@@ -90,6 +91,22 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
      * </ul>
      */
     public ClaimCheckDefinition operation(ClaimCheckOperation operation) {
+        return operation(operation.name());
+    }
+
+    /**
+     * The claim check operation to use. The following operations is supported:
+     * <ul>
+     * <li>Get</li> - Gets (does not remove) the claim check by the given key.
+     * <li>GetAndRemove</li> - Gets and remove the claim check by the given key.
+     * <li>Set</li> - Sets a new (will override if key already exists) claim
+     * check with the given key.
+     * <li>Push</li> - Sets a new claim check on the stack (does not use key).
+     * <li>Pop</li> - Gets the latest claim check from the stack (does not use
+     * key).
+     * </ul>
+     */
+    public ClaimCheckDefinition operation(String operation) {
         setOperation(operation);
         return this;
     }
@@ -190,11 +207,11 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
         this.key = key;
     }
 
-    public ClaimCheckOperation getOperation() {
+    public String getOperation() {
         return operation;
     }
 
-    public void setOperation(ClaimCheckOperation operation) {
+    public void setOperation(String operation) {
         this.operation = operation;
     }
 

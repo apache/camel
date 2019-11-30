@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.CamelContextHelper;
 
 public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityFixedWidthDataFormat> {
 
@@ -34,11 +35,11 @@ public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataF
         if (definition.getHeaders() != null) {
             int[] lengths = new int[definition.getHeaders().size()];
             for (int i = 0; i < lengths.length; i++) {
-                Integer length = definition.getHeaders().get(i).getLength();
+                String length = definition.getHeaders().get(i).getLength();
                 if (length == null) {
                     throw new IllegalArgumentException("The length of all headers must be defined.");
                 }
-                lengths[i] = length;
+                lengths[i] = CamelContextHelper.parseInteger(camelContext, length);
             }
             setProperty(camelContext, dataFormat, "fieldLengths", lengths);
         }

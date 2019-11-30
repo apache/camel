@@ -56,7 +56,7 @@ public class HystrixRouteConfigTest extends CamelTestSupport {
         
         HystrixConfigurationDefinition config = ((CircuitBreakerDefinition) route.getOutputs().get(0)).getHystrixConfiguration();
         assertEquals("test2", config.getGroupKey());
-        assertEquals(99999, config.getMetricsHealthSnapshotIntervalInMilliseconds().intValue());
+        assertEquals(Integer.toString(99999), config.getMetricsHealthSnapshotIntervalInMilliseconds());
     }
 
     

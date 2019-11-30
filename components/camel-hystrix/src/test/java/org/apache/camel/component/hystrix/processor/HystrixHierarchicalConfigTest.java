@@ -35,11 +35,11 @@ public class HystrixHierarchicalConfigTest {
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
         def.setThreadPoolKey("global-thread-key");
-        def.setCorePoolSize(10);
+        def.corePoolSize(10);
 
         HystrixConfigurationDefinition ref = new HystrixConfigurationDefinition();
         ref.setGroupKey("ref-group-key");
-        ref.setCorePoolSize(5);
+        ref.corePoolSize(5);
 
         registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, def);
         registry.bind("ref-hystrix", ref);
@@ -56,7 +56,7 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.valueOf(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 
     @Test
@@ -66,11 +66,11 @@ public class HystrixHierarchicalConfigTest {
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
         def.setThreadPoolKey("global-thread-key");
-        def.setCorePoolSize(10);
+        def.corePoolSize(10);
 
         HystrixConfigurationDefinition ref = new HystrixConfigurationDefinition();
         ref.setGroupKey("ref-group-key");
-        ref.setCorePoolSize(5);
+        ref.corePoolSize(5);
 
         context.getExtension(Model.class).setHystrixConfiguration(def);
         context.getExtension(Model.class).addHystrixConfiguration("ref-hystrix", ref);
@@ -87,7 +87,7 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.valueOf(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 
     @Test
@@ -98,17 +98,17 @@ public class HystrixHierarchicalConfigTest {
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
         def.setThreadPoolKey("global-thread-key");
-        def.setCorePoolSize(10);
+        def.corePoolSize(10);
 
         HystrixConfigurationDefinition ref = new HystrixConfigurationDefinition();
         ref.setGroupKey("ref-group-key");
-        ref.setCorePoolSize(5);
+        ref.corePoolSize(5);
 
         // this should be ignored
         HystrixConfigurationDefinition defReg = new HystrixConfigurationDefinition();
         defReg.setGroupKey("global-reg-group-key");
         defReg.setThreadPoolKey("global-reg-thread-key");
-        defReg.setCorePoolSize(20);
+        defReg.corePoolSize(20);
 
         context.getExtension(Model.class).setHystrixConfiguration(def);
 
@@ -127,6 +127,6 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(Integer.valueOf(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
     }
 }

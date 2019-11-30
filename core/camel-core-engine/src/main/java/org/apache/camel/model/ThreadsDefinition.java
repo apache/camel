@@ -42,18 +42,17 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    private Integer poolSize;
+    private String poolSize;
     @XmlAttribute
-    private Integer maxPoolSize;
+    private String maxPoolSize;
     @XmlAttribute
-    private Long keepAliveTime;
+    private String keepAliveTime;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    private TimeUnit timeUnit;
+    private String timeUnit;
     @XmlAttribute
-    private Integer maxQueueSize;
+    private String maxQueueSize;
     @XmlAttribute
-    private Boolean allowCoreThreadTimeOut;
+    private String allowCoreThreadTimeOut;
     @XmlAttribute
     @Metadata(defaultValue = "Threads")
     private String threadName;
@@ -61,7 +60,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     private ThreadPoolRejectedPolicy rejectedPolicy;
     @XmlAttribute
     @Metadata(defaultValue = "true")
-    private Boolean callerRunsWhenRejected;
+    private String callerRunsWhenRejected;
 
     public ThreadsDefinition() {
         this.threadName = "Threads";
@@ -108,7 +107,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * @return the builder
      */
     public ThreadsDefinition poolSize(int poolSize) {
-        setPoolSize(poolSize);
+        setPoolSize(Integer.toString(poolSize));
         return this;
     }
 
@@ -119,7 +118,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * @return the builder
      */
     public ThreadsDefinition maxPoolSize(int maxPoolSize) {
-        setMaxPoolSize(maxPoolSize);
+        setMaxPoolSize(Integer.toString(maxPoolSize));
         return this;
     }
 
@@ -130,7 +129,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * @return the builder
      */
     public ThreadsDefinition keepAliveTime(long keepAliveTime) {
-        setKeepAliveTime(keepAliveTime);
+        setKeepAliveTime(Long.toString(keepAliveTime));
         return this;
     }
 
@@ -141,7 +140,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * @return the builder
      */
     public ThreadsDefinition timeUnit(TimeUnit keepAliveTimeUnits) {
-        setTimeUnit(keepAliveTimeUnits);
+        setTimeUnit(keepAliveTimeUnits.name());
         return this;
     }
 
@@ -154,7 +153,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * @return the builder
      */
     public ThreadsDefinition maxQueueSize(int maxQueueSize) {
-        setMaxQueueSize(maxQueueSize);
+        setMaxQueueSize(Integer.toString(maxQueueSize));
         return this;
     }
 
@@ -192,7 +191,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * @return the builder
      */
     public ThreadsDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
-        setCallerRunsWhenRejected(callerRunsWhenRejected);
+        setCallerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
         return this;
     }
 
@@ -206,7 +205,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
      * @return the builder
      */
     public ThreadsDefinition allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
-        setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        setAllowCoreThreadTimeOut(Boolean.toString(allowCoreThreadTimeOut));
         return this;
     }
 
@@ -230,43 +229,43 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Integer getPoolSize() {
+    public String getPoolSize() {
         return poolSize;
     }
 
-    public void setPoolSize(Integer poolSize) {
+    public void setPoolSize(String poolSize) {
         this.poolSize = poolSize;
     }
 
-    public Integer getMaxPoolSize() {
+    public String getMaxPoolSize() {
         return maxPoolSize;
     }
 
-    public void setMaxPoolSize(Integer maxPoolSize) {
+    public void setMaxPoolSize(String maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
 
-    public Long getKeepAliveTime() {
+    public String getKeepAliveTime() {
         return keepAliveTime;
     }
 
-    public void setKeepAliveTime(Long keepAliveTime) {
+    public void setKeepAliveTime(String keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
 
-    public TimeUnit getTimeUnit() {
+    public String getTimeUnit() {
         return timeUnit;
     }
 
-    public void setTimeUnit(TimeUnit timeUnit) {
+    public void setTimeUnit(String timeUnit) {
         this.timeUnit = timeUnit;
     }
 
-    public Integer getMaxQueueSize() {
+    public String getMaxQueueSize() {
         return maxQueueSize;
     }
 
-    public void setMaxQueueSize(Integer maxQueueSize) {
+    public void setMaxQueueSize(String maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
 
@@ -286,19 +285,19 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
         this.rejectedPolicy = rejectedPolicy;
     }
 
-    public Boolean getCallerRunsWhenRejected() {
+    public String getCallerRunsWhenRejected() {
         return callerRunsWhenRejected;
     }
 
-    public void setCallerRunsWhenRejected(Boolean callerRunsWhenRejected) {
+    public void setCallerRunsWhenRejected(String callerRunsWhenRejected) {
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
-    public Boolean getAllowCoreThreadTimeOut() {
+    public String getAllowCoreThreadTimeOut() {
         return allowCoreThreadTimeOut;
     }
 
-    public void setAllowCoreThreadTimeOut(Boolean allowCoreThreadTimeOut) {
+    public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
 }

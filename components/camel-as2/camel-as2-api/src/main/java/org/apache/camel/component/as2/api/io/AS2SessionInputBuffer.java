@@ -35,6 +35,8 @@ import org.apache.http.util.Asserts;
 import org.apache.http.util.ByteArrayBuffer;
 import org.apache.http.util.CharArrayBuffer;
 
+import static org.apache.camel.util.BufferCaster.cast;
+
 public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
 
     private final HttpTransportMetricsImpl metrics;
@@ -335,7 +337,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         if (result.isError()) {
             result.throwException();
         }
-        this.cbuf.flip();
+        cast(this.cbuf).flip();
         final int len = this.cbuf.remaining();
         while (this.cbuf.hasRemaining()) {
             charbuffer.append(this.cbuf.get());

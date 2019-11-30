@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
@@ -36,8 +37,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
-    @Metadata(defaultValue = "60")
-    private Integer timeout = 60;
+    @Metadata(defaultValue = "60", javaType = "java.lang.Integer")
+    private String timeout = Integer.toString(60);
     @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     @Metadata(defaultValue = "SECONDS")
@@ -62,14 +63,14 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     // Properties
     // *************************************************************************
 
-    public Integer getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
     /**
      * Set the time the services will be retained.
      */
-    public void setTimeout(Integer timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -102,8 +103,8 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     /**
      * Set the time the services will be retained.
      */
-    public CachingServiceCallServiceDiscoveryConfiguration timeout(Integer timeout) {
-        setTimeout(timeout);
+    public CachingServiceCallServiceDiscoveryConfiguration timeout(int timeout) {
+        setTimeout(Integer.toString(timeout));
         return this;
     }
 

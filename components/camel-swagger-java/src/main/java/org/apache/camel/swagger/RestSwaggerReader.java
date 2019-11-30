@@ -120,7 +120,7 @@ public class RestSwaggerReader {
     private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver) throws ClassNotFoundException {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
-        Collections.sort(verbs, new VerbOrdering());
+        verbs.sort(new VerbOrdering());
 
         // we need to group the operations within the same tag, so use the path as default if not configured
         String pathAsTag = rest.getTag() != null ? rest.getTag() : FileUtil.stripLeadingSeparator(rest.getPath());
@@ -181,14 +181,14 @@ public class RestSwaggerReader {
         for (VerbDefinition verb : verbs) {
 
             // check if the Verb Definition must be excluded from documentation
-            Boolean apiDocs;
+            String apiDocs;
             if (verb.getApiDocs() != null) {
                 apiDocs = verb.getApiDocs();
             } else {
                 // fallback to option on rest
                 apiDocs = rest.getApiDocs();
             }
-            if (apiDocs != null && !apiDocs) {
+            if (apiDocs != null && !Boolean.parseBoolean(apiDocs)) {
                 continue;
             }
 
@@ -237,14 +237,14 @@ public class RestSwaggerReader {
 
         for (VerbDefinition verb : verbs) {
             // check if the Verb Definition must be excluded from documentation
-            Boolean apiDocs;
+            String apiDocs;
             if (verb.getApiDocs() != null) {
                 apiDocs = verb.getApiDocs();
             } else {
                 // fallback to option on rest
                 apiDocs = rest.getApiDocs();
             }
-            if (apiDocs != null && !apiDocs) {
+            if (apiDocs != null && !Boolean.parseBoolean(apiDocs)) {
                 continue;
             }
             // the method must be in lower case

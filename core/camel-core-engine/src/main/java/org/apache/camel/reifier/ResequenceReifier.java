@@ -81,16 +81,16 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
-        boolean isReverse = config.getReverse() != null && config.getReverse();
-        boolean isAllowDuplicates = config.getAllowDuplicates() != null && config.getAllowDuplicates();
+        boolean isReverse = config.getReverse() != null && parseBoolean(routeContext, config.getReverse());
+        boolean isAllowDuplicates = config.getAllowDuplicates() != null && parseBoolean(routeContext, config.getAllowDuplicates());
 
         Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression, isAllowDuplicates, isReverse);
-        resequencer.setBatchSize(config.getBatchSize());
-        resequencer.setBatchTimeout(config.getBatchTimeout());
+        resequencer.setBatchSize(parseInt(routeContext, config.getBatchSize()));
+        resequencer.setBatchTimeout(parseLong(routeContext, config.getBatchTimeout()));
         resequencer.setReverse(isReverse);
         resequencer.setAllowDuplicates(isAllowDuplicates);
         if (config.getIgnoreInvalidExchanges() != null) {
-            resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
+            resequencer.setIgnoreInvalidExchanges(parseBoolean(routeContext, config.getIgnoreInvalidExchanges()));
         }
         return resequencer;
     }
@@ -126,14 +126,14 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         comparator.setExpression(expression);
 
         StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator, expression);
-        resequencer.setTimeout(config.getTimeout());
+        resequencer.setTimeout(parseLong(routeContext, config.getTimeout()));
         if (config.getDeliveryAttemptInterval() != null) {
-            resequencer.setDeliveryAttemptInterval(config.getDeliveryAttemptInterval());
+            resequencer.setDeliveryAttemptInterval(parseLong(routeContext, config.getDeliveryAttemptInterval()));
         }
-        resequencer.setCapacity(config.getCapacity());
-        resequencer.setRejectOld(config.getRejectOld());
+        resequencer.setCapacity(parseInt(routeContext, config.getCapacity()));
+        resequencer.setRejectOld(parseBoolean(routeContext, config.getRejectOld()));
         if (config.getIgnoreInvalidExchanges() != null) {
-            resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
+            resequencer.setIgnoreInvalidExchanges(parseBoolean(routeContext, config.getIgnoreInvalidExchanges()));
         }
         return resequencer;
     }
