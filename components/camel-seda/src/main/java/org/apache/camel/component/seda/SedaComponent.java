@@ -45,6 +45,8 @@ public class SedaComponent extends DefaultComponent {
     @Metadata(label = "producer")
     private boolean defaultBlockWhenFull;
     @Metadata(label = "producer")
+    private boolean defaultDiscardWhenFull;
+    @Metadata(label = "producer")
     private long defaultOfferTimeout;
 
     private final Map<String, QueueReference> queues = new HashMap<>();
@@ -96,6 +98,20 @@ public class SedaComponent extends DefaultComponent {
      */
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
+    }
+
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will be discarded.
+     * By default, an exception will be thrown stating that the queue is full.
+     * By enabling this option, the calling thread will give up sending and continue,
+     * meaning that the message was not sent to the SEDA queue.
+     */
+    public boolean isDefaultDiscardWhenFull() {
+        return defaultDiscardWhenFull;
+    }
+
+    public void setDefaultDiscardWhenFull(boolean defaultDiscardWhenFull) {
+        this.defaultDiscardWhenFull = defaultDiscardWhenFull;
     }
 
     public long getDefaultOfferTimeout() {
@@ -200,11 +216,14 @@ public class SedaComponent extends DefaultComponent {
 
         // if blockWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
         boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", Boolean.class, defaultBlockWhenFull);
+        // if discardWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
+        boolean discardWhenFull = getAndRemoveParameter(parameters, "discardWhenFull", Boolean.class, defaultDiscardWhenFull);
         // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
         long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
 
         answer.setOfferTimeout(offerTimeout);
         answer.setBlockWhenFull(blockWhenFull);
+        answer.setDiscardWhenFull(discardWhenFull);
         answer.configureProperties(parameters);
         answer.setConcurrentConsumers(consumers);
         answer.setLimitConcurrentConsumers(limitConcurrentConsumers);

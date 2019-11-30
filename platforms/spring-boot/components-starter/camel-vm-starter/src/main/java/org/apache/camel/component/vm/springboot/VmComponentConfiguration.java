@@ -60,6 +60,13 @@ public class VmComponentConfiguration
      */
     private Boolean defaultBlockWhenFull = false;
     /**
+     * Whether a thread that sends messages to a full SEDA queue will be
+     * discarded. By default, an exception will be thrown stating that the queue
+     * is full. By enabling this option, the calling thread will give up sending
+     * and continue, meaning that the message was not sent to the SEDA queue.
+     */
+    private Boolean defaultDiscardWhenFull = false;
+    /**
      * Whether a thread that sends messages to a full SEDA queue will block
      * until the queue's capacity is no longer exhausted. By default, an
      * exception will be thrown stating that the queue is full. By enabling this
@@ -123,6 +130,14 @@ public class VmComponentConfiguration
 
     public void setDefaultBlockWhenFull(Boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
+    }
+
+    public Boolean getDefaultDiscardWhenFull() {
+        return defaultDiscardWhenFull;
+    }
+
+    public void setDefaultDiscardWhenFull(Boolean defaultDiscardWhenFull) {
+        this.defaultDiscardWhenFull = defaultDiscardWhenFull;
     }
 
     public Long getDefaultOfferTimeout() {
