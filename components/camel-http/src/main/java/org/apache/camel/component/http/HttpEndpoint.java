@@ -118,6 +118,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private int connectionsPerRoute;
     @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
+    @UriParam(label = "producer", description = "To use custom host header for producer.")
+    private String customHostHeader;
 
     public HttpEndpoint() {
     }
@@ -493,6 +495,24 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
+    }
+
+    /**
+     * Defines a custom host header which will be sent when producing http request.
+     * <p>
+     * When not set in query will be ignored. When set will override
+     * host header derived from url.
+     * </p>
+     * <p>
+     * Default: {@code null}
+     * </p>
+     */
+    public void setCustomHostHeader(String customHostHeader) {
+        this.customHostHeader = customHostHeader;
+    }
+
+    public String getCustomHostHeader() {
+        return customHostHeader;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")

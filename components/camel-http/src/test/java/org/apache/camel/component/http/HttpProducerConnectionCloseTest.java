@@ -69,9 +69,9 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
     public void noDataDefaultIsGet() throws Exception {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+        HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
             + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
-        HttpProducer producer = new HttpProducer(endpoiont);
+        HttpProducer producer = new HttpProducer(endpoint);
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);
         exchange.getIn().setHeader("connection", HTTP.CONN_CLOSE);
@@ -84,7 +84,7 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         ConnectionCloseHeaderFilter connectionCloseFilterStrategy = new ConnectionCloseHeaderFilter();
         registry.bind("myFilter", connectionCloseFilterStrategy);
     }
