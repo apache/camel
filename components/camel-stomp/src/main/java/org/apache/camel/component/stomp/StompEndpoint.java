@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncEndpoint;
@@ -124,6 +125,8 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
                         if (!consumers.isEmpty()) {
                             Exchange exchange = createExchange();
                             exchange.getIn().setBody(value.content());
+			    exchange.getIn().setHeaders(value.headerMap().entrySet().stream()
+			            .collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
                             for (StompConsumer consumer : consumers) {
                                 consumer.processExchange(exchange);
                             }
