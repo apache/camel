@@ -1185,6 +1185,7 @@
     <bundle dependency='true'>mvn:io.netty/netty-tcnative-boringssl-static/${grpc-netty-tcnative-boringssl-static-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${grpc-guava-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.errorprone/error_prone_annotations/${grpc-errorprone-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <!-- Third party dependencies -->
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.perfmark/perfmark-api/${perfmark-version}</bundle>
