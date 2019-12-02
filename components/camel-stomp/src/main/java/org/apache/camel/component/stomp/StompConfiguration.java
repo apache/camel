@@ -110,10 +110,10 @@ public class StompConfiguration implements Cloneable {
     }
 
     /**
-     * The STOMP Version
+     * The stomp version (1.1, or 1.2)
      */
     public void setVersion(String version) {
-	this.version = version;
+        this.version = version;
     }
 
 }

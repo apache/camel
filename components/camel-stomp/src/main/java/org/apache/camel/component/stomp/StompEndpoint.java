@@ -99,9 +99,9 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         if (configuration.getSslContextParameters() != null) {
             stomp.setSslContext(configuration.getSslContextParameters().createSSLContext(getCamelContext()));
         }
-	if (configuration.getVersion() != null && !configuration.getVersion().isEmpty()) {
-	    stomp.setVersion(configuration.getVersion());
-	}
+        if (configuration.getVersion() != null && !configuration.getVersion().isEmpty()) {
+            stomp.setVersion(configuration.getVersion());
+        }
         stomp.connectCallback(promise);
         if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
             stomp.setHost(configuration.getHost());
@@ -125,8 +125,8 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
                         if (!consumers.isEmpty()) {
                             Exchange exchange = createExchange();
                             exchange.getIn().setBody(value.content());
-			    exchange.getIn().setHeaders(value.headerMap().entrySet().stream()
-			            .collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
+                            exchange.getIn().setHeaders(value.headerMap().entrySet().stream()
+                                    .collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
                             for (StompConsumer consumer : consumers) {
                                 consumer.processExchange(exchange);
                             }
