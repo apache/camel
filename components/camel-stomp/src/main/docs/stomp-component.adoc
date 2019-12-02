@@ -137,7 +137,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.stomp.configuration.login* | The username |  | String
 | *camel.component.stomp.configuration.passcode* | The password |  | String
 | *camel.component.stomp.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
-| *camel.component.stomp.configuration.version* | The STOMP Version |  | String
+| *camel.component.stomp.configuration.version* | The stomp version (1.1, or 1.2) |  | String
 | *camel.component.stomp.enabled* | Whether to enable auto configuration of the stomp component. This is enabled by default. |  | Boolean
 | *camel.component.stomp.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.stomp.host* | The virtual host |  | String
