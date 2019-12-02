@@ -50,8 +50,8 @@ public class StompConsumer extends DefaultConsumer {
 
     void processExchange(Exchange exchange) {
         try {
-	    exchange.getIn().getHeaders().entrySet().removeIf(e -> getEndpoint().getHeaderFilterStrategy()
-		    .applyFilterToExternalHeaders(e.getKey(), e.getValue(), exchange));
+            exchange.getIn().getHeaders().entrySet().removeIf(e -> getEndpoint().getHeaderFilterStrategy()
+                    .applyFilterToExternalHeaders(e.getKey(), e.getValue(), exchange));
             getProcessor().process(exchange);
         } catch (Throwable e) {
             exchange.setException(e);

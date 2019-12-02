@@ -199,7 +199,7 @@ public class StompComponentConfiguration
          */
         private SSLContextParameters sslContextParameters;
         /**
-         * The STOMP Version
+         * The stomp version (1.1, or 1.2)
          */
         private String version;
 
