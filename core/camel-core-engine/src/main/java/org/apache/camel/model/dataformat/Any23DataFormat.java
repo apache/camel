@@ -41,7 +41,7 @@ public class Any23DataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "RDF4JMODEL", enums = "NTRIPLES,TURTLE,NQUADS,RDFXML,JSONLD,RDFJSON,RDF4JMODEL",
-              javaType="org.apache.camel.model.dataformat.Any23Type")
+              javaType = "org.apache.camel.model.dataformat.Any23Type")
     private String outputFormat;
     @XmlJavaTypeAdapter(PropertyDescriptionsAdapter.class)
     private Map<String, String> configuration = new HashMap<>();
