@@ -94,6 +94,20 @@ public abstract class HttpsTest extends CamelTestSupport {
             equalTo("application/xml, application/json")));
     }
 
+
+    @Test
+    public void swaggerJsonOverHttps() throws Exception {
+        final Pet pet = template.requestBodyAndHeader("direct:httpsJsonGetPetById", NO_BODY, "petId", 14, Pet.class);
+
+        assertNotNull(pet);
+
+        assertEquals(Integer.valueOf(14), pet.id);
+        assertEquals("Olafur Eliason Arnalds", pet.name);
+
+        petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept",
+                equalTo("application/xml, application/json")));
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext camelContext = super.createCamelContext();
@@ -101,9 +115,10 @@ public abstract class HttpsTest extends CamelTestSupport {
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setComponentName(componentName);
         component.setHost("https://localhost:" + petstore.httpsPort());
+        component.setUseGlobalSslContextParameters(true);
 
         camelContext.addComponent("petStore", component);
-
+        camelContext.setSSLContextParameters(createHttpsParameters(camelContext));
         return camelContext;
     }
 
@@ -119,6 +134,8 @@ public abstract class HttpsTest extends CamelTestSupport {
                 jaxb.setJaxbProviderProperties(Collections.singletonMap(Marshaller.JAXB_FORMATTED_OUTPUT, false));
 
                 from("direct:getPetById").to("petStore:getPetById").unmarshal(jaxb);
+
+                from("direct:httpsJsonGetPetById").to("petStore:https://localhost:" + petstore.httpsPort() + "/swagger.json#getPetById").unmarshal(jaxb);
             }
         };
     }
