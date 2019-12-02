@@ -17,7 +17,7 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +29,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * An extension of the {@link RouteBuilder} to provide some additional helper
  * methods
  */
-public abstract class SpringRouteBuilder extends RouteBuilder implements ApplicationContextAware {
+public abstract class SpringRouteBuilder extends EndpointRouteBuilder implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     /**
