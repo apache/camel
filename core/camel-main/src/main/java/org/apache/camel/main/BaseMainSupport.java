@@ -88,6 +88,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
     protected List<Object> configurations = new ArrayList<>();
     protected String configurationClasses;
     protected String propertyPlaceholderLocations;
+    protected String defaultPropertyPlaceholderLocation = "classpath:application.properties;optional=true";
     protected Properties initialProperties;
     protected Properties overrideProperties;
 
@@ -241,6 +242,20 @@ public abstract class BaseMainSupport extends ServiceSupport {
      */
     public void setPropertyPlaceholderLocations(String location) {
         this.propertyPlaceholderLocations = location;
+    }
+
+    public String getDefaultPropertyPlaceholderLocation() {
+        return defaultPropertyPlaceholderLocation;
+    }
+
+    /**
+     * Set the default location for application properties if no locations have been set.
+     * If the value is set to "false" or empty, the default location is not taken into account.
+     * <p/>
+     * Default value is "classpath:application.properties;optional=true".
+     */
+    public void setDefaultPropertyPlaceholderLocation(String defaultPropertyPlaceholderLocation) {
+        this.defaultPropertyPlaceholderLocation = defaultPropertyPlaceholderLocation;
     }
 
     @Deprecated
@@ -480,12 +495,12 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 pc.setOverrideProperties(overrideProperties);
             }
             LOG.info("Using properties from: {}", propertyPlaceholderLocations);
-        } else {
-            // lets default to application.properties and ignore if its missing
-            // if there are no existing locations configured
+        } else if (ObjectHelper.isNotEmpty(defaultPropertyPlaceholderLocation) && !ObjectHelper.equal("false", defaultPropertyPlaceholderLocation)) {
+            // lets default to defaultPropertyPlaceholderLocation if
+            // there are no existing locations configured
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             if (pc.getLocations().isEmpty()) {
-                pc.addLocation("classpath:application.properties;optional=true");
+                pc.addLocation(defaultPropertyPlaceholderLocation);
             }
             if (initialProperties != null) {
                 pc.setInitialProperties(initialProperties);
@@ -493,7 +508,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
             if (overrideProperties != null) {
                 pc.setOverrideProperties(overrideProperties);
             }
-            LOG.info("Using properties from classpath:application.properties");
+            LOG.info("Using properties from {}", defaultPropertyPlaceholderLocation);
         }
 
         if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
