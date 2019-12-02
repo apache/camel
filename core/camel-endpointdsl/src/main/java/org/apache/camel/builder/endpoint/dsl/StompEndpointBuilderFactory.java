@@ -67,7 +67,7 @@ public interface StompEndpointBuilderFactory {
             return this;
         }
         /**
-         * The STOMP Version.
+         * The stomp version (1.1, or 1.2).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -344,7 +344,7 @@ public interface StompEndpointBuilderFactory {
             return this;
         }
         /**
-         * The STOMP Version.
+         * The stomp version (1.1, or 1.2).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -568,7 +568,7 @@ public interface StompEndpointBuilderFactory {
             return this;
         }
         /**
-         * The STOMP Version.
+         * The stomp version (1.1, or 1.2).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
