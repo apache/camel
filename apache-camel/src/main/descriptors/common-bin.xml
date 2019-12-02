@@ -40,6 +40,7 @@
         <include>org.apache.camel:camel-cloud</include>
         <include>org.apache.camel:camel-jaxp</include>
         <include>org.apache.camel:camel-main</include>
+        <include>org.apache.camel:camel-main-osgi</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
