@@ -98,6 +98,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String tracePattern;
     @XmlAttribute
+    private String debug;
+    @XmlAttribute
     private String messageHistory;
     @XmlAttribute
     private String logMask;
@@ -608,6 +610,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setTracePattern(String tracePattern) {
         this.tracePattern = tracePattern;
+    }
+
+    @Override
+    public String getDebug() {
+        return debug;
+    }
+
+    /**
+     * Sets whether debugging is enabled or not.
+     */
+    public void setDebug(String debug) {
+        this.debug = debug;
     }
 
     @Override

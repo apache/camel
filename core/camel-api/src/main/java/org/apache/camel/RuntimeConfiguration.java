@@ -69,27 +69,32 @@ public interface RuntimeConfiguration {
     /**
      * Sets whether backlog tracing is enabled or not (default is disabled).
      *
+     * To use backlog tracing then this must be enabled on startup to be installed in the CamelContext.
+     *
      * @param backlogTrace whether to enable backlog tracing.
      * @see #setTracing(Boolean)
      */
     void setBacklogTracing(Boolean backlogTrace);
 
     /**
-     * Returns whether backlog tracing enabled
+     * Returns whether backlog tracing is enabled.
      *
      * @return <tt>true</tt> if backlog tracing is enabled
      */
     Boolean isBacklogTracing();
 
     /**
-     * Sets whether debugging is enabled or not (default is disabled).
+     * Sets whether debugging (will use backlog if no custom debugger has been configured)
+     * is enabled or not (default is disabled).
+     *
+     * To use debugging then this must be enabled on startup to be installed in the CamelContext.
      *
      * @param debugging whether to enable debugging.
      */
     void setDebugging(Boolean debugging);
 
     /**
-     * Returns whether debugging enabled
+     * Returns whether debugging is enabled.
      *
      * @return <tt>true</tt> if debugging is enabled
      */

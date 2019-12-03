@@ -108,6 +108,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String backlogTrace;
     @XmlAttribute
     private String tracePattern;
+    @XmlAttribute
+    private String debug;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String messageHistory;
     @XmlAttribute @Metadata(defaultValue = "false")
@@ -697,6 +699,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setBacklogTrace(String backlogTrace) {
         this.backlogTrace = backlogTrace;
+    }
+
+    @Override
+    public String getDebug() {
+        return debug;
+    }
+
+    /**
+     * Sets whether debugging is enabled or not.
+     */
+    public void setDebug(String debug) {
+        this.debug = debug;
     }
 
     @Override
