@@ -20,7 +20,6 @@ import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,7 +105,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
                     .transacted("PROPAGATION_REQUIRED")

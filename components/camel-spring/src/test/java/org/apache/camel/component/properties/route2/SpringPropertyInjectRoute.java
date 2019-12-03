@@ -17,9 +17,9 @@
 package org.apache.camel.component.properties.route2;
 
 import org.apache.camel.PropertyInject;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 
-public class SpringPropertyInjectRoute extends SpringRouteBuilder {
+public class SpringPropertyInjectRoute extends RouteBuilder {
 
     @PropertyInject("hello")
     private String greeting;

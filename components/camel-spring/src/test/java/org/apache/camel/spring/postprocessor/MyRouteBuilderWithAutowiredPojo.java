@@ -18,10 +18,10 @@ package org.apache.camel.spring.postprocessor;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MyRouteBuilderWithAutowiredPojo extends SpringRouteBuilder {
+public class MyRouteBuilderWithAutowiredPojo extends RouteBuilder {
 
     @Autowired
     private TestPojo pojo;

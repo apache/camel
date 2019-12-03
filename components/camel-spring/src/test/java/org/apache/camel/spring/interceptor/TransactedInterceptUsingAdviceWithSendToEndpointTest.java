@@ -20,7 +20,6 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
 /**
@@ -68,7 +67,7 @@ public class TransactedInterceptUsingAdviceWithSendToEndpointTest extends Transa
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
                     .routeId("ok_route")

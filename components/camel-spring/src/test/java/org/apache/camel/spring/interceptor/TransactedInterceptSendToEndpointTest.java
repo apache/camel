@@ -18,7 +18,6 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
 /**
@@ -50,7 +49,7 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:(foo|bar)").to("mock:intercepted");
 
