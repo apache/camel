@@ -749,6 +749,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getTracePattern();
 
+    public abstract String getBacklogTrace();
+
     public abstract String getMessageHistory();
 
     public abstract String getLogMask();
@@ -849,6 +851,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getTracePattern() != null) {
             context.setTracingPattern(CamelContextHelper.parseText(context, getTracePattern()));
+        }
+        if (getBacklogTrace() != null) {
+            context.setBacklogTracing(CamelContextHelper.parseBoolean(context, getBacklogTrace()));
         }
         if (getMessageHistory() != null) {
             context.setMessageHistory(CamelContextHelper.parseBoolean(context, getMessageHistory()));
