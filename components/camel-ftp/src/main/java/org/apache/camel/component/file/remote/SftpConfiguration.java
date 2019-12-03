@@ -206,7 +206,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Allows you to set the serverAliveInterval of the sftp session
+     * Sets the interval (millis) to send a keep-alive message.  If zero is
+     * specified, any keep-alive message must not be sent. The default interval is zero.
      */
     public void setServerAliveInterval(int serverAliveInterval) {
         this.serverAliveInterval = serverAliveInterval;
@@ -217,7 +218,10 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Allows you to set the serverAliveCountMax of the sftp session
+     * Sets the number of keep-alive messages which may be sent without
+     * receiving any messages back from the server. If this threshold is
+     * reached while keep-alive messages are being sent, the connection will
+     * be disconnected. The default value is one.
      */
     public void setServerAliveCountMax(int serverAliveCountMax) {
         this.serverAliveCountMax = serverAliveCountMax;
