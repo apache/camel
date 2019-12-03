@@ -2650,7 +2650,10 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2662,7 +2665,10 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2674,7 +2680,9 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2686,7 +2694,9 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -3987,7 +3997,10 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -3999,7 +4012,10 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4011,7 +4027,9 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4023,7 +4041,9 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4850,7 +4870,10 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4862,7 +4885,10 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4874,7 +4900,9 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4886,7 +4914,9 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
