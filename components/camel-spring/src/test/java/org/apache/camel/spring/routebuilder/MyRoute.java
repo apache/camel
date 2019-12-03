@@ -17,9 +17,9 @@
 package org.apache.camel.spring.routebuilder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 
-public class MyRoute extends SpringRouteBuilder {
+public class MyRoute extends RouteBuilder {
 
     private CamelContext ctx;
 

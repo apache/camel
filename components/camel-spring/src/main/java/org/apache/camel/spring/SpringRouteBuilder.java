@@ -28,7 +28,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * An extension of the {@link RouteBuilder} to provide some additional helper
  * methods
+ *
+ * @deprecated use plain {@link RouteBuilder}
  */
+@Deprecated
 public abstract class SpringRouteBuilder extends RouteBuilder implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
