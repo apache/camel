@@ -82,7 +82,7 @@ public interface RuntimeConfiguration {
     Boolean isBacklogTracing();
 
     /**
-     * Sets whether debugging is enabled or not (default is enabled).
+     * Sets whether debugging is enabled or not (default is disabled).
      *
      * @param debugging whether to enable debugging.
      */
@@ -91,7 +91,7 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether debugging enabled
      *
-     * @return <tt>true</tt> if tracing is enabled
+     * @return <tt>true</tt> if debugging is enabled
      */
     Boolean isDebugging();
 
