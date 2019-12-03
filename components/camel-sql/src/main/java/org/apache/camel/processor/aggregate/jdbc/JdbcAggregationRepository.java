@@ -120,7 +120,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     /**
      * Sets the DataSource to use for accessing the database
      */
-    public final void setDataSource(DataSource dataSource) {
+    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
 
         jdbcTemplate = new JdbcTemplate(dataSource);
