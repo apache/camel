@@ -488,12 +488,6 @@ public abstract class BaseMainSupport extends ServiceSupport {
         if (propertyPlaceholderLocations != null) {
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             pc.addLocation(propertyPlaceholderLocations);
-            if (initialProperties != null) {
-                pc.setInitialProperties(initialProperties);
-            }
-            if (overrideProperties != null) {
-                pc.setOverrideProperties(overrideProperties);
-            }
             LOG.info("Using properties from: {}", propertyPlaceholderLocations);
         } else if (ObjectHelper.isNotEmpty(defaultPropertyPlaceholderLocation) && !ObjectHelper.equal("false", defaultPropertyPlaceholderLocation)) {
             // lets default to defaultPropertyPlaceholderLocation if
@@ -502,13 +496,16 @@ public abstract class BaseMainSupport extends ServiceSupport {
             if (pc.getLocations().isEmpty()) {
                 pc.addLocation(defaultPropertyPlaceholderLocation);
             }
-            if (initialProperties != null) {
-                pc.setInitialProperties(initialProperties);
-            }
-            if (overrideProperties != null) {
-                pc.setOverrideProperties(overrideProperties);
-            }
+
             LOG.info("Using properties from {}", defaultPropertyPlaceholderLocation);
+        }
+
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        if (initialProperties != null) {
+            pc.setInitialProperties(initialProperties);
+        }
+        if (overrideProperties != null) {
+            pc.setOverrideProperties(overrideProperties);
         }
 
         if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
