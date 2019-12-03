@@ -1902,9 +1902,9 @@
   </feature>
   <feature name='camel-quartz2' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java6/${hikaricp-version}</bundle>
+    <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.quartz-scheduler/quartz/${quartz2-version}$overwrite=merge&amp;DynamicImport-Package=org.apache.camel.component.quartz2</bundle>
-    <feature version='${project.version}'>camel-core</feature>
+  <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-quartz2/${project.version}</bundle>
   </feature>
   <feature name='camel-quickfix' version='${project.version}' resolver='(obr)' start-level='50'>
