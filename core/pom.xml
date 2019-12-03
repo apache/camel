@@ -50,6 +50,7 @@
         <module>camel-core-xml</module>
         <module>camel-cloud</module>
         <module>camel-main</module>
+        <module>camel-main-osgi</module>
     </modules>
 
     <build>
