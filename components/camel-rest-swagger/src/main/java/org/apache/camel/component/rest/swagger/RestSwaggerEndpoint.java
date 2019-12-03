@@ -51,6 +51,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.http.HttpComponent;
+import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.component.http.HttpProducer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
@@ -58,9 +61,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.http.client.methods.HttpGet;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
@@ -123,6 +128,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         + " any value present in the Swagger specification. Overrides all other configuration.", label = "producer")
     private String produces;
 
+    @UriParam(label = "security", description = "To configure security using SSLContextParameters.")
+    private SSLContextParameters sslContextParameters;
+
     @UriPath(description = "Path to the Swagger specification file. The scheme, host base path are taken from this"
         + " specification, but these can be overridden with properties on the component or endpoint level. If not"
         + " given the component tries to load `swagger.json` resource from the classpath. Note that the `host` defined on the"
@@ -165,7 +173,8 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         final CamelContext camelContext = getCamelContext();
-        final Swagger swagger = loadSpecificationFrom(camelContext, specificationUri);
+
+        final Swagger swagger = loadSpecificationFrom(camelContext, specificationUri, resolveSslContextParameters());
 
         final Map<String, Path> paths = swagger.getPaths();
 
@@ -200,6 +209,16 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             + "`. Operations defined in the specification are: " + supportedOperations);
     }
 
+    private SSLContextParameters resolveSslContextParameters() {
+        if (sslContextParameters != null) {
+            return sslContextParameters;
+        }
+        if (component().getSslContextParameters() != null) {
+            return component().getSslContextParameters();
+        }
+        return component().retrieveGlobalSslContextParameters();
+    }
+
     public String getBasePath() {
         return basePath;
     }
@@ -210,6 +229,10 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
     public String getConsumes() {
         return consumes;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
     }
 
     public String getHost() {
@@ -243,6 +266,10 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
     public void setConsumes(final String consumes) {
         this.consumes = isMediaRange(consumes, "consumes");
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public void setHost(final String host) {
@@ -592,31 +619,53 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
      * @return the specification
      * @throws IOException
      */
-    static Swagger loadSpecificationFrom(final CamelContext camelContext, final URI uri) throws IOException {
+    static Swagger loadSpecificationFrom(final CamelContext camelContext, final URI uri, SSLContextParameters sslContextParameters) throws IOException {
         final ObjectMapper mapper = Json.mapper();
 
         final SwaggerParser swaggerParser = new SwaggerParser();
 
         final String uriAsString = uri.toString();
 
-        try (InputStream stream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uriAsString)) {
-            final JsonNode node = mapper.readTree(stream);
-
-            return swaggerParser.read(node);
-        } catch (final Exception e) {
-            // try Swaggers loader
-            final Swagger swagger = swaggerParser.read(uriAsString);
-
-            if (swagger != null) {
-                return swagger;
+        if (sslContextParameters == null) {
+            try (InputStream stream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uriAsString)) {
+                return parseInputStream(swaggerParser, mapper, stream);
+            } catch (final Exception e) {
+                return loadSpecificationFallback(swaggerParser, uriAsString, e);
             }
+        }
 
-            throw new IllegalArgumentException("The given Swagger specification could not be loaded from `" + uri
+        HttpComponent httpComponent = new HttpComponent();
+        httpComponent.setSslContextParameters(sslContextParameters);
+        httpComponent.setCamelContext(camelContext);
+        try (HttpEndpoint e = (HttpEndpoint)httpComponent.createEndpoint(uriAsString);
+             HttpProducer p = (HttpProducer)e.createProducer();
+             InputStream stream = p.getHttpClient().execute(new HttpGet(uri)).getEntity().getContent())  {
+
+            return parseInputStream(swaggerParser, mapper, stream);
+        } catch (final Exception e) {
+            return loadSpecificationFallback(swaggerParser, uriAsString, e);
+        }
+    }
+
+    static Swagger loadSpecificationFallback(SwaggerParser swaggerParser, String uriAsString, Exception originalException) {
+        // try Swaggers loader
+        final Swagger swagger = swaggerParser.read(uriAsString);
+
+        if (swagger != null) {
+            return swagger;
+        }
+
+        throw new IllegalArgumentException("The given Swagger specification could not be loaded from `" + uriAsString
                 + "`. Tried loading using Camel's resource resolution and using Swagger's own resource resolution."
                 + " Swagger tends to swallow exceptions while parsing, try specifying Java system property `debugParser`"
                 + " (e.g. `-DdebugParser=true`), the exception that occurred when loading using Camel's resource"
-                + " loader follows", e);
-        }
+                + " loader follows", originalException);
+    }
+
+    static Swagger parseInputStream(SwaggerParser swaggerParser, ObjectMapper mapper, InputStream stream) throws IOException {
+        final JsonNode node = mapper.readTree(stream);
+
+        return swaggerParser.read(node);
     }
 
     static String pickBestScheme(final String specificationScheme, final List<Scheme> schemes) {
@@ -650,5 +699,6 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         return expression.toString();
     }
+
 
 }

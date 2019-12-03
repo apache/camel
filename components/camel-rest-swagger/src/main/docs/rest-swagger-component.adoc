@@ -126,7 +126,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (8 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -140,6 +140,7 @@ with the following path and query parameters:
 | *produces* (producer) | What payload type this component is producing. For example application/json according to the RFC7231. This equates to the value of Content-Type HTTP header. If set overrides any value present in the Swagger specification. Overrides all other configuration. |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
