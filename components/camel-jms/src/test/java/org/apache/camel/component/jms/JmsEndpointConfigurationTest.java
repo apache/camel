@@ -326,7 +326,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(1, endpoint.getIdleConsumerLimit());
         assertNull(endpoint.getJmsMessageType());
         assertNull(endpoint.getJmsOperations());
-        assertNotNull(endpoint.getListenerConnectionFactory());
+        assertNull(endpoint.getListenerConnectionFactory());
+        assertNotNull(endpoint.getConfiguration().getOrCreateListenerConnectionFactory());
         assertEquals(0, endpoint.getMaxConcurrentConsumers());
         assertEquals(-1, endpoint.getMaxMessagesPerTask());
         assertNull(endpoint.getMessageConverter());
@@ -346,7 +347,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getTransactionName());
         assertEquals(-1, endpoint.getTransactionTimeout());
         assertNull(endpoint.getTaskExecutor());
-        assertNotNull(endpoint.getTemplateConnectionFactory());
+        assertNull(endpoint.getTemplateConnectionFactory());
+        assertNotNull(endpoint.getConfiguration().getOrCreateTemplateConnectionFactory());
         assertNull(endpoint.getTransactionManager());
         assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
 
