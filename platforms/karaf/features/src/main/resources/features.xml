@@ -2083,6 +2083,7 @@
   </feature> -->
   <feature name='camel-rest-swagger' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-http</feature>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
