@@ -78,6 +78,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String trace;
 
     @XmlAttribute
+    private String backlogTrace;
+
+    @XmlAttribute
     private String tracePattern;
 
     @XmlAttribute
@@ -572,6 +575,18 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setTrace(String trace) {
         this.trace = trace;
+    }
+
+    @Override
+    public String getBacklogTrace() {
+        return backlogTrace;
+    }
+
+    /**
+     * Sets whether backlog tracing is enabled or not.
+     */
+    public void setBacklogTrace(String backlogTrace) {
+        this.backlogTrace = backlogTrace;
     }
 
     @Override
