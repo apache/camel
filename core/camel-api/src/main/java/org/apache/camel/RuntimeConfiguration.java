@@ -46,6 +46,8 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether tracing enabled
      *
+     * To use tracing then this must be enabled on startup to be installed in the CamelContext.
+     *
      * @return <tt>true</tt> if tracing is enabled
      */
     Boolean isTracing();

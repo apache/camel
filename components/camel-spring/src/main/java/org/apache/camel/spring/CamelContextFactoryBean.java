@@ -684,6 +684,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     /**
      * Sets whether tracing is enabled or not.
+     *
+     * To use tracing then this must be enabled on startup to be installed in the CamelContext.
      */
     public void setTrace(String trace) {
         this.trace = trace;
@@ -696,6 +698,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     /**
      * Sets whether backlog tracing is enabled or not.
+     *
+     * To use backlog tracing then this must be enabled on startup to be installed in the CamelContext.
      */
     public void setBacklogTrace(String backlogTrace) {
         this.backlogTrace = backlogTrace;
@@ -708,6 +712,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     /**
      * Sets whether debugging is enabled or not.
+     *
+     * To use debugging then this must be enabled on startup to be installed in the CamelContext.
      */
     public void setDebug(String debug) {
         this.debug = debug;
