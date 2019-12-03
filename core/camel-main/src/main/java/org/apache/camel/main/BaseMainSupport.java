@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -496,7 +497,6 @@ public abstract class BaseMainSupport extends ServiceSupport {
             if (pc.getLocations().isEmpty()) {
                 pc.addLocation(defaultPropertyPlaceholderLocation);
             }
-
             LOG.info("Using properties from {}", defaultPropertyPlaceholderLocation);
         }
 
@@ -887,67 +887,35 @@ public abstract class BaseMainSupport extends ServiceSupport {
         Map<PropertyOptionKey, Map<String, Object>> properties = new LinkedHashMap<>();
 
         for (String key : prop.stringPropertyNames()) {
-            if (key.startsWith("camel.component.")) {
-                // grab name
-                int dot = key.indexOf(".", 16);
-                String name = dot == -1 ? key.substring(16) : key.substring(16, dot);
-                // skip properties as its already configured earlier
-                if ("properties".equals(name)) {
-                    continue;
-                }
-                Component component = camelContext.getComponent(name);
-                if (component == null) {
+            computeProperties("camel.component.", key, prop, properties, name -> {
+                Component target = camelContext.getComponent(name);
+                if (target == null) {
                     throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find component with name " + name
                             + ". Make sure you have the component on the classpath");
                 }
-                String option = dot == -1 ? "" : key.substring(dot + 1);
-                String value = prop.getProperty(key, "");
-                String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
-                validateOptionAndValue(key, option, value);
-                PropertyOptionKey pok = new PropertyOptionKey(key, component, prefix);
-                Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
-                // we ignore case for property keys (so we should store them in canonical style
-                values.put(optionKey(option), value);
-                properties.put(pok, values);
-            }
-            if (key.startsWith("camel.dataformat.")) {
-                // grab name
-                int dot = key.indexOf(".", 17);
-                String name = dot == -1 ? key.substring(17) : key.substring(17, dot);
-                DataFormat dataformat = camelContext.resolveDataFormat(name);
-                if (dataformat == null) {
+
+                return target;
+            });
+            computeProperties("camel.dataformat.", key, prop, properties, name -> {
+                DataFormat target = camelContext.resolveDataFormat(name);
+                if (target == null) {
                     throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find dataformat with name " + name
                             + ". Make sure you have the dataformat on the classpath");
                 }
-                String option = dot == -1 ? "" : key.substring(dot + 1);
-                String value = prop.getProperty(key, "");
-                String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
-                validateOptionAndValue(key, option, value);
-                PropertyOptionKey pok = new PropertyOptionKey(key, dataformat, prefix);
-                Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
-                values.put(optionKey(option), value);
-                properties.put(pok, values);
-            }
-            if (key.startsWith("camel.language.")) {
-                // grab name
-                int dot = key.indexOf(".", 15);
-                String name = dot == -1 ? key.substring(15) : key.substring(15, dot);
-                Language language;
+
+                return target;
+            });
+            computeProperties("camel.language.", key, prop, properties, name -> {
+                Language target;
                 try {
-                    language = camelContext.resolveLanguage(name);
+                    target = camelContext.resolveLanguage(name);
                 } catch (NoSuchLanguageException e) {
                     throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find language with name " + name
                             + ". Make sure you have the language on the classpath");
                 }
-                String option = dot == -1 ? "" : key.substring(dot + 1);
-                String value = prop.getProperty(key, "");
-                String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
-                validateOptionAndValue(key, option, value);
-                PropertyOptionKey pok = new PropertyOptionKey(key, language, prefix);
-                Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
-                values.put(optionKey(option), value);
-                properties.put(pok, values);
-            }
+
+                return target;
+            });
         }
 
         if (!properties.isEmpty()) {
@@ -986,7 +954,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         });
     }
 
-    protected void validateOptionAndValue(String key, String option, String value) {
+    protected static void validateOptionAndValue(String key, String option, String value) {
         if (ObjectHelper.isEmpty(option)) {
             throw new IllegalArgumentException("Error configuring property: " + key + " because option is empty");
         }
@@ -1081,5 +1049,70 @@ public abstract class BaseMainSupport extends ServiceSupport {
         public int hashCode() {
             return Objects.hash(key, instance);
         }
+    }
+
+    public static void computeProperties(String keyPrefix, String key, Properties prop, Map<PropertyOptionKey, Map<String, Object>> properties, Function<String, Object> supplier) {
+        if (key.startsWith(keyPrefix)) {
+            // grab name
+            final int dot = key.indexOf(".", keyPrefix.length());
+            final String name = dot == -1 ? key.substring(keyPrefix.length()) : key.substring(keyPrefix.length(), dot);
+
+            // enabled is a virtual property
+            if ("enabled".equals(name)) {
+                return;
+            }
+            // skip properties as its already keyPrefix earlier
+            if ("properties".equals(name)) {
+                return;
+            }
+
+            // determine if the service is enabled or not by taking into account two options:
+            //
+            //   1. ${keyPrefix}.enabled = true|false
+            //   2. ${keyPrefix}.${name}.enabled = true|false
+            //
+            // The option [2] has the higher priority so as example:
+            //
+            //   camel.component.enabled = false
+            //   camel.component.seda.enabled = true
+            //
+            // enables auto configuration of the seda component only
+            if (!isServiceEnabled(keyPrefix, name, prop)) {
+                return;
+            }
+
+            Object target = supplier.apply(name);
+            String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
+            String option = dot == -1 ? "" : key.substring(dot + 1);
+            String value = prop.getProperty(key, "");
+
+            // enabled is a virtual property
+            if ("enabled".equalsIgnoreCase(option)) {
+                return;
+            }
+
+            validateOptionAndValue(key, option, value);
+
+            PropertyOptionKey pok = new PropertyOptionKey(key, target, prefix);
+            Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
+
+            // we ignore case for property keys (so we should store them in canonical style
+            values.put(optionKey(option), value);
+        }
+    }
+
+    public static boolean isServiceEnabled(String prefix, String name, Properties properties) {
+        ObjectHelper.notNull(prefix, "prefix");
+        ObjectHelper.notNull(name, "name");
+        ObjectHelper.notNull(properties, "properties");
+
+        if (!prefix.endsWith(".")) {
+            prefix = prefix + ".";
+        }
+
+        final String group = properties.getProperty(prefix + "enabled", "true");
+        final String item = properties.getProperty(prefix + name + ".enabled", group);
+
+        return Boolean.valueOf(item);
     }
 }
