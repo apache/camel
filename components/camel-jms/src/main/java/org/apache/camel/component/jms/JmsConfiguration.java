@@ -678,7 +678,7 @@ public class JmsConfiguration implements Cloneable {
             return jmsOperations;
         }
 
-        ConnectionFactory factory = getTemplateConnectionFactory();
+        ConnectionFactory factory = getOrCreateTemplateConnectionFactory();
         JmsTemplate template = new CamelJmsTemplate(this, factory);
 
         template.setPubSubDomain(pubSubDomain);
@@ -822,6 +822,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public ConnectionFactory getListenerConnectionFactory() {
+        return listenerConnectionFactory;
+    }
+
+    public ConnectionFactory getOrCreateListenerConnectionFactory() {
         if (listenerConnectionFactory == null) {
             listenerConnectionFactory = createListenerConnectionFactory();
         }
@@ -836,6 +840,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public ConnectionFactory getTemplateConnectionFactory() {
+        return templateConnectionFactory;
+    }
+
+    public ConnectionFactory getOrCreateTemplateConnectionFactory() {
         if (templateConnectionFactory == null) {
             templateConnectionFactory = createTemplateConnectionFactory();
         }
@@ -1095,6 +1103,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public PlatformTransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public PlatformTransactionManager getOrCreateTransactionManager() {
         if (transactionManager == null && isTransacted() && isLazyCreateTransactionManager()) {
             transactionManager = createTransactionManager();
         }
@@ -1471,7 +1483,9 @@ public class JmsConfiguration implements Cloneable {
 
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
                                                      JmsEndpoint endpoint) throws Exception {
-        container.setConnectionFactory(getListenerConnectionFactory());
+        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
+        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
+        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
             container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
         } else if (destinationResolver != null) {
@@ -1580,7 +1594,7 @@ public class JmsConfiguration implements Cloneable {
         if (taskExecutor != null) {
             container.setTaskExecutor(taskExecutor);
         }
-        PlatformTransactionManager tm = getTransactionManager();
+        PlatformTransactionManager tm = getOrCreateTransactionManager();
         if (tm != null) {
             container.setTransactionManager(tm);
         } else if (transactionManager == null && transacted && !lazyCreateTransactionManager) {
