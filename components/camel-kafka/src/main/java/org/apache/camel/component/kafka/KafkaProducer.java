@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -190,14 +191,24 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 public ProducerRecord next() {
                     // must convert each entry of the iterator into the value according to the serializer
                     Object next = msgList.next();
+                    String innerTopic = msgTopic;
+
+                    if (next instanceof Exchange && ((Exchange) next).getIn().getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
+                        innerTopic = (String) ((Exchange) next).getIn().removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+                    }
+
+                    if (next instanceof Message && ((Message) next).getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
+                        innerTopic = (String) ((Message) next).removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+                    }
+
                     Object value = tryConvertToSerializedType(exchange, next, endpoint.getConfiguration().getSerializerClass());
 
                     if (hasPartitionKey && hasMessageKey) {
-                        return new ProducerRecord(msgTopic, partitionKey, null, key, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, partitionKey, null, key, value, propagatedHeaders);
                     } else if (hasMessageKey) {
-                        return new ProducerRecord(msgTopic, null, null, key, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, null, null, key, value, propagatedHeaders);
                     } else {
-                        return new ProducerRecord(msgTopic, null, null, null, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, null, null, null, value, propagatedHeaders);
                     }
                 }
 
