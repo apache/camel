@@ -30,7 +30,7 @@
       <outputDirectory/>
       <outputFileNameMapping>${artifact.artifactId}.jar</outputFileNameMapping>
       <includes>
-        <include>org.apache.camel:camel-main-osgi</include>
+        <include>org.apache.camel:camel-core-osgi-activator</include>
       </includes>
     </dependencySet>
   </dependencySets>

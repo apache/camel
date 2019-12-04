@@ -63,7 +63,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<Rout
         }
 
         this.routeServiceTracker.open();
-        LOG.info("Camel Main Osgi RouteBuilder ServiceTracker Tracker Open");
+        LOG.info("Camel Core OSGi Activator RouteBuilder ServiceTracker Tracker Open");
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<Rout
             // need to synchronize here since adding routes is not synchronized
             synchronized (camelContext) {
                 this.camelContext.addRoutes(builder);
-                LOG.debug("Camel Routes from RouteBuilder Class {} Added to Camel Main", builder.getClass().getName());
+                LOG.debug("Camel Routes from RouteBuilder Class {} Added to Camel Core OSGi Activator Context", builder.getClass().getName());
             }
         } catch (Exception e) {
             LOG.error("Error Adding Camel Route Builder", e);
@@ -103,7 +103,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<Rout
         try {
             synchronized (camelContext) {
                 camelContext.removeRouteDefinitions(routesToBeRemoved);
-                LOG.debug("Camel Routes from RouteBuilder Class {} Removed to Camel Main",
+                LOG.debug("Camel Routes from RouteBuilder Class {} Removed from Camel Core OSGi Activator Context",
                         service.getClass().getName());
             }
         } catch (Exception e) {

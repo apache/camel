@@ -28,11 +28,11 @@
     <version>3.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-main-osgi</artifactId>
+  <artifactId>camel-core-osgi-activator</artifactId>
   <packaging>jar</packaging>
 
-  <name>Camel :: Main OSGi</name>
-  <description>Camel Main OSGi</description>
+  <name>Camel :: Core OSGi Activator</name>
+  <description>Camel Core OSGi Activator</description>
 
   <properties>
     <maven.failsafe.version>2.22.1</maven.failsafe.version>
