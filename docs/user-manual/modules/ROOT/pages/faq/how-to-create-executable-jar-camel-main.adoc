@@ -1,7 +1,10 @@
-[[HowtocreateexecutableJAR-HowtocreateexecutableJAR]]
-= How to create executable JAR
+[[HowtocreateexecutableJARcamelmain-HowtocreateexecutableJARcamelmain]]
+= How to create executable JAR for camel-main project
 
 You need to use `maven-shade-plugin` to create executable JAR.
+Be aware that uber jar is not fully tested feature and it is Your responsibility to ensure all services are fully functional.
+You might need some modifications, depending on Your project structure.
+See xref:faq/how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?] for more details.
 
 [source]
 ----
