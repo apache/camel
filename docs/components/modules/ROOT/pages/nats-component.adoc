@@ -36,13 +36,14 @@ Where *servers* represents the list of NATS servers.
 
 
 // component options: START
-The Nats component supports 4 options, which are listed below.
+The Nats component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *servers* (common) | URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -58,7 +59,7 @@ The Nats component supports 4 options, which are listed below.
 The Nats endpoint is configured using URI syntax:
 
 ----
-nats:servers
+nats:topic
 ----
 
 with the following path and query parameters:
@@ -69,19 +70,18 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *servers* | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
+| *topic* | *Required* The name of topic we want to use |  | String
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connection* (common) | Reference an already instantiated connection to Nats server |  | Connection
 | *connectionTimeout* (common) | Timeout for connection attempts. (in milliseconds) | 2000 | int
-| *flushConnection* (common) | Define if we want to flush connection or not | false | boolean
+| *flushConnection* (common) | Define if we want to flush connection when stopping or not | false | boolean
 | *flushTimeout* (common) | Set the flush timeout (in milliseconds) | 1000 | int
 | *maxPingsOut* (common) | maximum number of pings have not received a response allowed by the client | 2 | int
 | *maxReconnectAttempts* (common) | Max reconnection attempts | 60 | int
@@ -92,17 +92,19 @@ with the following path and query parameters:
 | *reconnect* (common) | Whether or not using reconnection feature | true | boolean
 | *reconnectTimeWait* (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
 | *requestCleanupInterval* (common) | Interval to clean up cancelled/timed out requests. | 5000 | int
-| *topic* (common) | *Required* The name of topic we want to use |  | String
+| *servers* (common) | URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
 | *verbose* (common) | Whether or not running in verbose mode | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *maxMessages* (consumer) | Stop receiving messages from a topic we are subscribing to after maxMessages |  | String
-| *poolSize* (consumer) | Consumer pool size | 10 | int
+| *poolSize* (consumer) | Consumer thread pool size (default is 10) | 10 | int
 | *queueName* (consumer) | The Queue name if we are using nats for a queue configuration |  | String
+| *replyToDisabled* (consumer) | Can be used to turn off sending back reply message in the consumer. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *replySubject* (producer) | the subject to which subscribers should send response |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *connection* (advanced) | Reference an already instantiated connection to Nats server |  | Connection
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *secure* (security) | Set secure option indicating TLS is required | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
@@ -148,10 +150,21 @@ The component supports 5 options, which are listed below.
 [width="100%",options="header"]
 |=======================================================================
 |Name |Type |Description
-
-|CamelNatsMessageTimestamp |long |The timestamp of a consumed message.
+| CamelNatsSID | String | The SID of a consumed message.
+| CamelNatsReplyTo | String | The ReplyTo of a consumed message (may be null).
+| CamelNatsSubject | String | The Subject of a consumed message.
+| CamelNatsQueueName | String | The Queue name of a consumed message (may be null).
+| CamelNatsMessageTimestamp | long | The timestamp of a consumed message.
 |=======================================================================
- 
+
+== Request/Reply support
+The producer only supports publishing (sending) messages.
+The producer does not support request/reply where it can wait for an expected reply message.
+
+The consumer will when routing the message is complete, send back the message as reply-message if required.
+
+== Examples
+
 *Producer example:*
 
 [source,java]

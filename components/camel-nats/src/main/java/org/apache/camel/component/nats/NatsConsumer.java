@@ -62,7 +62,6 @@ public class NatsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-
         if (getEndpoint().getConfiguration().isFlushConnection()) {
             log.debug("Flushing Messages before stopping");
             connection.flush(Duration.ofMillis(getEndpoint().getConfiguration().getFlushTimeout()));

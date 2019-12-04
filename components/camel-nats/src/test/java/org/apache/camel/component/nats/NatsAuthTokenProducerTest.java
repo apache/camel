@@ -23,7 +23,6 @@ public class NatsAuthTokenProducerTest extends NatsAuthTestSupport {
     
     @Test
     public void sendTest() throws Exception {
-        
         template.sendBody("direct:send", "pippo");
     }
 
@@ -32,7 +31,7 @@ public class NatsAuthTokenProducerTest extends NatsAuthTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://" + getNatsUrl() + "?topic=test");
+                from("direct:send").to("nats:test");
             }
         };
     }

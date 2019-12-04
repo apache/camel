@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * The nats component allows you produce and consume messages from <a href="http://nats.io/">NATS</a>.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:servers", label = "messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", label = "messaging")
 public class NatsEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -54,7 +54,9 @@ public class NatsEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new NatsConsumer(this, processor);
+        NatsConsumer consumer = new NatsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
     
     public ExecutorService createExecutor() {

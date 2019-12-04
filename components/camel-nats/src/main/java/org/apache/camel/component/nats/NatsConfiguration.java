@@ -33,20 +33,19 @@ public class NatsConfiguration {
 
     @UriPath
     @Metadata(required = true)
-    private String servers;
-    @UriParam
-    @Metadata(required = true)
     private String topic;
-    @UriParam
+    @UriParam(label = "common")
+    private String servers;
+    @UriParam(label = "advanced")
     private Connection connection;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean reconnect = true;
-    @UriParam
+    @UriParam(label = "common", defaultValue = "2000")
+    private int reconnectTimeWait = 2000;
+    @UriParam(label = "common")
     private boolean pedantic;
     @UriParam
     private boolean verbose;
-    @UriParam(defaultValue = "2000")
-    private int reconnectTimeWait = 2000;
     @UriParam(defaultValue = "60")
     private int maxReconnectAttempts = Options.DEFAULT_MAX_RECONNECT;
     @UriParam(defaultValue = "120000")
@@ -79,6 +78,7 @@ public class NatsConfiguration {
     private boolean secure;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when
      * specifying multiple servers.
@@ -284,7 +284,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Consumer pool size
+     * Consumer thread pool size (default is 10)
      */
     public int getPoolSize() {
         return poolSize;
@@ -299,7 +299,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Define if we want to flush connection or not
+     * Define if we want to flush connection when stopping or not
      */
     public void setFlushConnection(boolean flushConnection) {
         this.flushConnection = flushConnection;

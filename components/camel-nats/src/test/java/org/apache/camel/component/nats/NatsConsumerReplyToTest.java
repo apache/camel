@@ -36,7 +36,7 @@ public class NatsConsumerReplyToTest extends NatsTestSupport {
         mockResultEndpoint.assertIsSatisfied();
 
         // grab reply message from the reply queue
-        String out = consumer.receiveBody("nats://"  + getNatsUrl() + "?topic=myReplyQueue", 5000, String.class);
+        String out = consumer.receiveBody("nats:myReplyQueue", 5000, String.class);
         assertEquals("Bye World", out);
     }
 
@@ -46,9 +46,9 @@ public class NatsConsumerReplyToTest extends NatsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:send")
-                        .to("nats://"  + getNatsUrl() + "?topic=test&replySubject=myReplyQueue&flushConnection=true");
+                        .to("nats:test?replySubject=myReplyQueue&flushConnection=true");
 
-                from("nats://" + getNatsUrl() + "?topic=test&flushConnection=true")
+                from("nats:test?flushConnection=true")
                         .to(mockResultEndpoint)
                         .convertBodyTo(String.class)
                         .setBody().simple("Bye ${body}");

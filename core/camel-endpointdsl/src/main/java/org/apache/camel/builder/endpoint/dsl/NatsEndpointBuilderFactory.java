@@ -42,29 +42,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointConsumerBuilder) this;
         }
         /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointConsumerBuilder connection(Object connection) {
-            doSetProperty("connection", connection);
-            return this;
-        }
-        /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointConsumerBuilder connection(String connection) {
-            doSetProperty("connection", connection);
-            return this;
-        }
-        /**
          * Timeout for connection attempts. (in milliseconds).
          * 
          * The option is a: <code>int</code> type.
@@ -89,7 +66,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -101,7 +78,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -353,15 +330,15 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of topic we want to use.
+         * URLs to one or more NAT servers. Use comma to separate URLs when
+         * specifying multiple servers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NatsEndpointConsumerBuilder topic(String topic) {
-            doSetProperty("topic", topic);
+        default NatsEndpointConsumerBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -435,7 +412,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Consumer pool size.
+         * Consumer thread pool size (default is 10).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -446,7 +423,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Consumer pool size.
+         * Consumer thread pool size (default is 10).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -634,6 +611,29 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option is a: <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder connection(Object connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder connection(String connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -671,29 +671,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointProducerBuilder) this;
         }
         /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointProducerBuilder connection(Object connection) {
-            doSetProperty("connection", connection);
-            return this;
-        }
-        /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointProducerBuilder connection(String connection) {
-            doSetProperty("connection", connection);
-            return this;
-        }
-        /**
          * Timeout for connection attempts. (in milliseconds).
          * 
          * The option is a: <code>int</code> type.
@@ -718,7 +695,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -730,7 +707,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -982,15 +959,15 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of topic we want to use.
+         * URLs to one or more NAT servers. Use comma to separate URLs when
+         * specifying multiple servers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NatsEndpointProducerBuilder topic(String topic) {
-            doSetProperty("topic", topic);
+        default NatsEndpointProducerBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -1152,6 +1129,29 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option is a: <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder connection(Object connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder connection(String connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1189,29 +1189,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointBuilder) this;
         }
         /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointBuilder connection(Object connection) {
-            doSetProperty("connection", connection);
-            return this;
-        }
-        /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointBuilder connection(String connection) {
-            doSetProperty("connection", connection);
-            return this;
-        }
-        /**
          * Timeout for connection attempts. (in milliseconds).
          * 
          * The option is a: <code>int</code> type.
@@ -1234,7 +1211,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1245,7 +1222,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1493,15 +1470,15 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of topic we want to use.
+         * URLs to one or more NAT servers. Use comma to separate URLs when
+         * specifying multiple servers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NatsEndpointBuilder topic(String topic) {
-            doSetProperty("topic", topic);
+        default NatsEndpointBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -1612,6 +1589,29 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option is a: <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder connection(Object connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder connection(String connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1644,11 +1644,10 @@ public interface NatsEndpointBuilderFactory {
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-nats
      * 
-     * Syntax: <code>nats:servers</code>
+     * Syntax: <code>nats:topic</code>
      * 
-     * Path parameter: servers (required)
-     * URLs to one or more NAT servers. Use comma to separate URLs when
-     * specifying multiple servers.
+     * Path parameter: topic (required)
+     * The name of topic we want to use
      */
     default NatsEndpointBuilder nats(String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {

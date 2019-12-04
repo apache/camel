@@ -43,9 +43,11 @@ public class NatsConsumerMaxMessagesQueueTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://" + getNatsUrl() + "?topic=test");
-                from("nats://"  + getNatsUrl() +  "?topic=test&maxMessages=5&queueName=test").routeId("cons1").to(mockResultEndpoint);
-                from("nats://" + getNatsUrl() + "?topic=test&maxMessages=6&queueName=test").routeId("cons2").to(mockResultEndpoint);
+                from("direct:send").to("nats:test");
+
+                from("nats:test?maxMessages=5&queueName=test").routeId("cons1").to(mockResultEndpoint);
+
+                from("nats:test?maxMessages=6&queueName=test").routeId("cons2").to(mockResultEndpoint);
             }
         };
     }
