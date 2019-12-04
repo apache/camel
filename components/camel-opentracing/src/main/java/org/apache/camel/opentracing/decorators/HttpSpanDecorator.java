@@ -23,4 +23,9 @@ public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
         return "http";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.http.HttpComponent";
+    }
+
 }

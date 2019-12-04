@@ -38,6 +38,11 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.rest.RestComponent";
+    }
+
+    @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         return getPath(endpoint.getEndpointUri());
     }

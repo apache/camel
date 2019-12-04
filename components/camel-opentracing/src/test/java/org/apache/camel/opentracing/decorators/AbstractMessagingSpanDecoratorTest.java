@@ -40,6 +40,11 @@ public class AbstractMessagingSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
         };
 
         assertEquals("MyQueue", decorator.getOperationName(null, endpoint));
@@ -54,6 +59,11 @@ public class AbstractMessagingSpanDecoratorTest {
         SpanDecorator decorator = new AbstractMessagingSpanDecorator() {
             @Override
             public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
                 return null;
             }
         };
@@ -79,6 +89,12 @@ public class AbstractMessagingSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
+
             @Override
             public String getMessageId(Exchange exchange) {
                 return messageId;

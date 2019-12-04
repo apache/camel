@@ -32,6 +32,11 @@ public class RabbitmqSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.rabbitmq.RabbitMQComponent";
+    }
+
+    @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
         return (String)exchange.getIn().getHeader(EXCHANGE_NAME);
     }

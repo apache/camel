@@ -23,4 +23,9 @@ public class AhcSpanDecorator extends AbstractHttpSpanDecorator {
         return "ahc";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.ahc.AhcComponent";
+    }
+
 }

@@ -31,6 +31,11 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.mongodb.MongoDbComponent";
+    }
+
+    @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         String opName = queryParameters.get("operation");

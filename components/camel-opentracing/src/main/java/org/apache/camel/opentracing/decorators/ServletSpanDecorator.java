@@ -23,4 +23,9 @@ public class ServletSpanDecorator extends AbstractHttpSpanDecorator {
         return "servlet";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.servlet.ServletComponent";
+    }
+
 }

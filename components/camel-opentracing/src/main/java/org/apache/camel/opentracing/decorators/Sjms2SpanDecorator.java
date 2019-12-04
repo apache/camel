@@ -16,25 +16,16 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import org.apache.camel.Exchange;
-
-public class AwsSnsSpanDecorator extends AbstractMessagingSpanDecorator {
-
-    public static final String CAMEL_AWS_SNS_MESSAGE_ID = "CamelAwsSnsMessageId";
+public class Sjms2SpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "aws-sns";
+        return "sjms2";
     }
 
     @Override
     public String getComponentClassName() {
-        return "org.apache.camel.component.aws.sns.SnsComponent";
-    }
-
-    @Override
-    protected String getMessageId(Exchange exchange) {
-        return (String)exchange.getIn().getHeader(CAMEL_AWS_SNS_MESSAGE_ID);
+        return "org.apache.camel.component.sjms2.Sjms2Component";
     }
 
 }

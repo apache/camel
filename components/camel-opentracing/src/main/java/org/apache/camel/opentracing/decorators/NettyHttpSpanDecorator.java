@@ -23,4 +23,9 @@ public class NettyHttpSpanDecorator extends AbstractHttpSpanDecorator {
         return "netty-http";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.netty.http.NettyHttpComponent";
+    }
+
 }

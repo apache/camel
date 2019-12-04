@@ -23,4 +23,9 @@ public class AmqpSpanDecorator extends AbstractMessagingSpanDecorator {
         return "amqp";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.amqp.AMQPComponent";
+    }
+
 }

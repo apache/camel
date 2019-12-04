@@ -40,6 +40,11 @@ public interface SpanDecorator {
             return null;
         }
 
+        @Override
+        public String getComponentClassName() {
+            return null;
+        }
+
     };
 
     /**
@@ -51,11 +56,18 @@ public interface SpanDecorator {
     boolean newSpan();
 
     /**
-     * The camel component associated with the decorator.
+     * The camel component name associated with the decorator.
      *
      * @return The camel component name
      */
     String getComponent();
+
+    /**
+     * The camel component FQN classname associated with the decorator.
+     *
+     * @return The camel component FQN classname
+     */
+    String getComponentClassName();
 
     /**
      * This method returns the operation name to use with the Span representing

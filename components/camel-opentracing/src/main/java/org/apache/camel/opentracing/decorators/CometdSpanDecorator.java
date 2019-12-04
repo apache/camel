@@ -29,6 +29,11 @@ public class CometdSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.cometd.CometdComponent";
+    }
+
+    @Override
     protected String getDestination(Exchange exchange, Endpoint endpoint) {
         // Extract path, and remove leading '/'
         return URI.create(endpoint.getEndpointUri()).getPath().substring(1);

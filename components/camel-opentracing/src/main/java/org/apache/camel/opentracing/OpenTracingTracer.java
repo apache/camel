@@ -31,6 +31,7 @@ import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
@@ -46,6 +47,7 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
@@ -201,13 +203,25 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     }
 
     protected SpanDecorator getSpanDecorator(Endpoint endpoint) {
-        SpanDecorator sd = SpanDecorator.DEFAULT;
+        SpanDecorator sd = null;
 
         String uri = endpoint.getEndpointUri();
         String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
         if (splitURI[1] != null) {
             String scheme = splitURI[0];
-            sd = decorators.getOrDefault(scheme, sd);
+            sd = decorators.get(scheme);
+        }
+        if (sd == null) {
+            // okay there was no decorator found via component name (scheme), then try FQN
+            if (endpoint instanceof DefaultEndpoint) {
+                Component comp = ((DefaultEndpoint) endpoint).getComponent();
+                String fqn = comp.getClass().getName();
+                // lookup via FQN
+                sd = decorators.values().stream().filter(d -> fqn.equals(d.getComponentClassName())).findFirst().orElse(null);
+            }
+        }
+        if (sd == null) {
+            sd = SpanDecorator.DEFAULT;
         }
 
         return sd;
