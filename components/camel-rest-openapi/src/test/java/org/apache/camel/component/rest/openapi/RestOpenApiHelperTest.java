@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.apache.camel.component.rest.openapi.RestOpenApiHelper;
+
 
 public class RestOpenApiHelperTest {
 

@@ -35,12 +35,10 @@ import javax.xml.bind.Marshaller;
 import com.github.tomakehurst.wiremock.common.HttpsSettings;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.io.Resources;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.RestEndpoint;
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.support.jsse.CipherSuitesParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;

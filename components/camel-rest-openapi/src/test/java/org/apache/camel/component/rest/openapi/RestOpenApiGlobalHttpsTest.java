@@ -17,7 +17,7 @@
 package org.apache.camel.component.rest.openapi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
+
 
 public class RestOpenApiGlobalHttpsTest extends HttpsTest {
 
