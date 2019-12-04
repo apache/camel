@@ -27,6 +27,11 @@ public class TimerSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.timer.TimerComponent";
+    }
+
+    @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         Object name = exchange.getProperty(Exchange.TIMER_NAME);
         if (name instanceof String) {

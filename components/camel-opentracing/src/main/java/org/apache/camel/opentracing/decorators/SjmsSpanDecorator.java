@@ -23,4 +23,9 @@ public class SjmsSpanDecorator extends AbstractMessagingSpanDecorator {
         return "sjms";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.sjms.SjmsComponent";
+    }
+
 }

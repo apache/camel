@@ -44,6 +44,11 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.kafka.KafkaComponent";
+    }
+
+    @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
         String topic = (String)exchange.getIn().getHeader(TOPIC);
         if (topic == null) {

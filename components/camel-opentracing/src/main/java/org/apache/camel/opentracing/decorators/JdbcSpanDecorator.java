@@ -29,6 +29,11 @@ public class JdbcSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.jdbc.JdbcComponent";
+    }
+
+    @Override
     public void pre(Span span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 

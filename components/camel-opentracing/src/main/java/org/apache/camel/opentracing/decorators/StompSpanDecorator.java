@@ -29,6 +29,11 @@ public class StompSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.stomp.StompComponent";
+    }
+
+    @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
         String destination = super.getDestination(exchange, endpoint);
         if (destination.startsWith(QUEUE_PREFIX)) {

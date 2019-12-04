@@ -36,6 +36,11 @@ public class CqlSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.cassandra.CassandraComponent";
+    }
+
+    @Override
     public void pre(Span span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 

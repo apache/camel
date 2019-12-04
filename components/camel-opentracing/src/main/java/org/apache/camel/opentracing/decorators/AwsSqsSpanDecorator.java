@@ -28,6 +28,11 @@ public class AwsSqsSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.aws.sqs.SqsComponent";
+    }
+
+    @Override
     protected String getMessageId(Exchange exchange) {
         return (String)exchange.getIn().getHeader(CAMEL_AWS_SQS_MESSAGE_ID);
     }
