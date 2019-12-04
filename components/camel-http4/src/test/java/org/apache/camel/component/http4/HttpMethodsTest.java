@@ -86,7 +86,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpGetWithBody() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get?getWithBody=true", new Processor() {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get?getWithBody=true", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "GET");
                 exchange.getIn().setBody("rocks camel?");
