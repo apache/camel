@@ -25,19 +25,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
-import org.apache.camel.component.rest.openapi.RestOpenApiEndpoint;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
-
 import io.apicurio.datamodels.core.models.common.SecurityRequirement;
 import io.apicurio.datamodels.openapi.models.OasParameter;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Operation;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Parameter;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SecurityScheme;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.spi.RestConfiguration;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;

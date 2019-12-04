@@ -19,9 +19,6 @@ package org.apache.camel.component.rest.openapi;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
-import org.apache.camel.component.rest.openapi.RestOpenApiEndpoint;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

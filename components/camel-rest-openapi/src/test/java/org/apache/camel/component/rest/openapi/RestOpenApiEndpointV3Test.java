@@ -25,13 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
-import org.apache.camel.component.rest.openapi.RestOpenApiEndpoint;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
-
 import io.apicurio.datamodels.core.models.common.SecurityRequirement;
 import io.apicurio.datamodels.openapi.models.OasParameter;
 import io.apicurio.datamodels.openapi.models.OasResponse;
@@ -40,6 +33,12 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Operation;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.spi.RestConfiguration;
+import org.junit.Test;
+
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -245,7 +244,7 @@ public class RestOpenApiEndpointV3Test {
 
         assertThat(endpoint.determineHost(openapi)).isEqualTo("http://petstore.openapi.io");
 
-        openapi.getServers().clear();;
+        openapi.getServers().clear();
         openapi.addServer("https://petstore.openapi.io", "v3 test");
         assertThat(endpoint.determineHost(openapi)).isEqualTo("https://petstore.openapi.io");
     }
