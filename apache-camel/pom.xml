@@ -85,6 +85,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-osgi-activator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-xml</artifactId>
         </dependency>
         <dependency>
@@ -106,10 +110,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-main-osgi</artifactId>
         </dependency>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
