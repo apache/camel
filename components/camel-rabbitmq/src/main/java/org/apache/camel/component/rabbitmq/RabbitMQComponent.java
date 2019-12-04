@@ -186,6 +186,8 @@ public class RabbitMQComponent extends DefaultComponent {
         }
 
         @SuppressWarnings("unchecked")
+        Map<String, Object> args = resolveAndRemoveReferenceParameter(params, "args", Map.class, getArgs());
+        @SuppressWarnings("unchecked")
         Map<String, Object> clientProperties = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class, getClientProperties());
         TrustManager trustManager = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class, getTrustManager());
         RabbitMQEndpoint endpoint;
@@ -202,6 +204,7 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setAddresses(getAddresses());
         endpoint.setThreadPoolSize(getThreadPoolSize());
         endpoint.setExchangeName(exchangeName);
+        endpoint.setArgs(args);
         endpoint.setClientProperties(clientProperties);
         endpoint.setSslProtocol(getSslProtocol());
         endpoint.setTrustManager(trustManager);
@@ -249,9 +252,9 @@ public class RabbitMQComponent extends DefaultComponent {
         }
 
         Map<String, Object> localArgs = new HashMap<>();
-        if (getArgs() != null) {
+        if (endpoint.getArgs() != null) {
             // copy over the component configured args
-            localArgs.putAll(getArgs());
+            localArgs.putAll(endpoint.getArgs());
         }
         localArgs.putAll(PropertiesHelper.extractProperties(params, ARG_PREFIX));
         endpoint.setArgs(localArgs);
