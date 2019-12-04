@@ -405,7 +405,7 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows to plugin to use a custom
+         * Allows the plugin to use a custom
          * org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to
          * control preparation of the query and prepared statement.
          * 
@@ -420,7 +420,7 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows to plugin to use a custom
+         * Allows the plugin to use a custom
          * org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to
          * control preparation of the query and prepared statement.
          * 
