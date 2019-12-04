@@ -1,0 +1,33 @@
+[[HowtocreateexecutableJAR-HowtocreateexecutableJAR]]
+= How to create executable JAR
+
+You need to use `maven-shade-plugin` to create executable JAR.
+
+[source]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.2.1</version>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
+            <configuration>
+                <shadedArtifactAttached>true</shadedArtifactAttached>
+                <shadedClassifierName>executable-jar</shadedClassifierName>
+                <transformers>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        <mainClass>my.package.MainClass</mainClass>
+                    </transformer>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                        <resource>META-INF/services/org/apache/camel/TypeConverterLoader</resource>
+                    </transformer>
+                </transformers>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
