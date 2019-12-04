@@ -97,7 +97,7 @@ Questions on using Apache Camel
 * xref:faq/how-should-i-package-applications-using-camel-and-activemq.adoc[How should I package applications using Camel and ActiveMQ?]
 * xref:faq/how-to-avoid-importing-bunch-of-cxf-packages-when-start-up-the-camel-cxf-endpoint-from-osgi-platform-.adoc[How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform?]
 * xref:faq/how-to-avoid-sending-some-or-all-message-headers.adoc[How to avoid sending some or all message headers?]
-* xref:faq/how-to-create-executable-jar.adoc[How to create executable JAR?]
+* xref:faq/how-to-create-executable-jar-camel-main.adoc[How to create executable JAR for camel-main project?]
 * xref:faq/how-to-define-a-static-camel-converter-method-in-scala.adoc[How to define a static Camel converter method in Scala?]
 * xref:faq/how-to-remove-the-http-protocol-headers-in-the-camel-message.adoc[How to remove the http protocol headers in the camel message?]
 * xref:faq/how-to-send-the-same-message-to-multiple-endpoints.adoc[How to send the same message to multiple endpoints?]
