@@ -40,15 +40,19 @@ public class NatsProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         NatsConfiguration config = getEndpoint().getConfiguration();
-        String body = exchange.getIn().getMandatoryBody(String.class);
+        byte[] body = exchange.getIn().getBody(byte[].class);
+        if (body == null) {
+            // fallback to use string
+            body = exchange.getIn().getMandatoryBody(String.class).getBytes();
+        }
 
         log.debug("Publishing to topic: {}", config.getTopic());
         
         if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
             String replySubject = config.getReplySubject();
-            connection.publish(config.getTopic(), replySubject, body.getBytes());
+            connection.publish(config.getTopic(), replySubject, body);
         } else {
-            connection.publish(config.getTopic(), body.getBytes());
+            connection.publish(config.getTopic(), body);
         }
     }
     
