@@ -65,10 +65,16 @@ public class NettyHttpComponentConfiguration
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
-     * The thread pool size for the EventExecutorGroup if its in use. The
-     * default value is 16.
+     * Sets a maximum thread pool size for the netty consumer ordered thread
+     * pool. The default size is 2 x cpu core 1. Setting this value to eg 10
+     * will then use 10 threads unless 2 x cpu core 1 is a higher value, which
+     * then will override and be used. For example if there are 8 cores, then
+     * the consumer thread pool will be 17. This thread pool is used to route
+     * messages received from Netty by Camel. We use a separate thread pool to
+     * ensure ordering of messages and also in case some messages will block,
+     * then nettys worker threads (event loop) wont be affected.
      */
-    private Integer maximumPoolSize = 16;
+    private Integer maximumPoolSize;
     /**
      * To use the given EventExecutorGroup. The option is a
      * io.netty.util.concurrent.EventExecutorGroup type.

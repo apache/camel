@@ -18,13 +18,18 @@ package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.concurrent.ThreadFactory;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.DefaultAddressedEnvelope;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,6 +124,18 @@ public final class NettyHelper {
                 }
             });
         }
+    }
+
+    /**
+     * Creates a {@link DefaultEventExecutorGroup} with the given name and maximum thread pool size.
+     */
+    public static EventExecutorGroup createExecutorGroup(CamelContext camelContext, String name, int threads) {
+        // Provide the executor service for the application
+        // and use a Camel thread factory so we have consistent thread namings
+        // we should use a shared thread pool as recommended by Netty
+        String pattern = camelContext.getExecutorServiceManager().getThreadNamePattern();
+        ThreadFactory factory = new CamelThreadFactory(pattern, name, true);
+        return new DefaultEventExecutorGroup(threads, factory);
     }
 
 }
