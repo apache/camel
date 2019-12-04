@@ -183,7 +183,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement.
+     * Allows the plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement.
      */
     public void setPrepareStatementStrategy(JdbcPrepareStatementStrategy prepareStatementStrategy) {
         this.prepareStatementStrategy = prepareStatementStrategy;
