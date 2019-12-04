@@ -34,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-kms is used for managing Amazon Translate
+ * The aws-translate component is used for managing Amazon Translate
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "aws-translate", title = "AWS Translate", syntax = "aws-translate:label", producerOnly = true, label = "cloud,management")
 public class TranslateEndpoint extends ScheduledPollEndpoint {
