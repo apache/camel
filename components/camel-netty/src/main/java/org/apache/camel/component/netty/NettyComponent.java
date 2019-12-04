@@ -19,10 +19,10 @@ package org.apache.camel.component.netty;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ThreadFactory;
 
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.EventExecutorGroup;
+import io.netty.util.internal.SystemPropertyUtil;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
@@ -33,16 +33,15 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 @Component("netty")
 public class NettyComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private NettyConfiguration configuration;
-    @Metadata(label = "advanced", defaultValue = "16")
-    private int maximumPoolSize = 16;
-    @Metadata(label = "advanced")
+    @Metadata(label = "consumer,advanced")
+    private int maximumPoolSize;
+    @Metadata(label = "consumer,advanced")
     private volatile EventExecutorGroup executorService;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
@@ -62,9 +61,14 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * The thread pool size for the EventExecutorGroup if its in use.
-     * <p/>
-     * The default value is 16.
+     * Sets a maximum thread pool size for the netty consumer ordered thread pool.
+     * The default size is 2 x cpu core + 1. Setting this value to eg 10 will then use 10 threads
+     * unless 2 x cpu core + 1 is a higher value, which then will override and be used. For example
+     * if there are 8 cores, then the consumer thread pool will be 17.
+     *
+     * This thread pool is used to route messages received from Netty by Camel.
+     * We use a separate thread pool to ensure ordering of messages and also in case some messages
+     * will block, then nettys worker threads (event loop) wont be affected.
      */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
@@ -164,19 +168,16 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
 
         //Only setup the executorService if it is needed
         if (configuration.isUsingExecutorService() && executorService == null) {
-            executorService = createExecutorService();
+            int netty = SystemPropertyUtil.getInt("io.netty.eventLoopThreads", NettyRuntime.availableProcessors() * 2);
+            // we want one more thread than netty uses for its event loop
+            // and if there is a custom size for maximum pool size then use it, unless netty event loops has more threads
+            // and therefore we use math.max to find the highest value
+            int threads = Math.max(maximumPoolSize, netty + 1);
+            executorService = NettyHelper.createExecutorGroup(getCamelContext(), "NettyConsumerExecutorGroup", threads);
+            log.info("Creating shared NettyConsumerExecutorGroup with {} threads", threads);
         }
 
         super.doStart();
-    }
-
-    protected EventExecutorGroup createExecutorService() {
-        // Provide the executor service for the application
-        // and use a Camel thread factory so we have consistent thread namings
-        // we should use a shared thread pool as recommended by Netty
-        String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
-        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyEventExecutorGroup", true);
-        return new DefaultEventExecutorGroup(getMaximumPoolSize(), factory);
     }
 
     @Override
