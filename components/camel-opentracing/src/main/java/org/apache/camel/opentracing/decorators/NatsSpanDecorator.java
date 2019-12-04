@@ -16,9 +16,6 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 public class NatsSpanDecorator extends AbstractMessagingSpanDecorator {
@@ -33,13 +30,6 @@ public class NatsSpanDecorator extends AbstractMessagingSpanDecorator {
     @Override
     public String getComponentClassName() {
         return "org.apache.camel.component.nats.NatsComponent";
-    }
-
-    @Override
-    public String getDestination(Exchange exchange, Endpoint endpoint) {
-        Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
-        String topic = queryParameters.get("topic");
-        return topic != null ? topic : super.getDestination(exchange, endpoint);
     }
 
     @Override
