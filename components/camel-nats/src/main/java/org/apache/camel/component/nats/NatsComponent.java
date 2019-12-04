@@ -21,20 +21,24 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("nats")
 public class NatsComponent extends DefaultComponent implements SSLContextParametersAware {
 
+    @Metadata
+    private String servers;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         NatsConfiguration config = new NatsConfiguration();
+        config.setTopic(remaining);
+        config.setServers(servers);
         setProperties(config, parameters);
-        config.setServers(remaining);
 
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
@@ -42,6 +46,18 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
 
         NatsEndpoint endpoint = new NatsEndpoint(uri, this, config);
         return endpoint;
+    }
+
+    /**
+     * URLs to one or more NAT servers. Use comma to separate URLs when
+     * specifying multiple servers.
+     */
+    public String getServers() {
+        return servers;
+    }
+
+    public void setServers(String servers) {
+        this.servers = servers;
     }
 
     @Override

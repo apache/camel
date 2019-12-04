@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.nats;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
@@ -33,9 +30,9 @@ public class NatsConsumerLoadTest extends NatsTestSupport {
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
+    public void testLoadConsumer() throws Exception {
         mockResultEndpoint.setExpectedMessageCount(10000);
-        Options options = new Options.Builder().server("nats://" + getNatsUrl()).build();
+        Options options = new Options.Builder().server("nats://" + getNatsBrokerUrl()).build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 10000; i++) {
@@ -50,7 +47,7 @@ public class NatsConsumerLoadTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("nats://"  + getNatsUrl() + "?topic=test").to(mockResultEndpoint);
+                from("nats:test").to(mockResultEndpoint);
             }
         };
     }

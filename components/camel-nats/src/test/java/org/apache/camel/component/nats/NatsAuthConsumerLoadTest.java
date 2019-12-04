@@ -35,7 +35,7 @@ public class NatsAuthConsumerLoadTest extends NatsAuthTestSupport {
     @Test
     public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
         mockResultEndpoint.setExpectedMessageCount(100);
-        Options options = new Options.Builder().server("nats://" + getNatsUrl()).build();
+        Options options = new Options.Builder().server("nats://" + getNatsBrokerUrl()).build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 100; i++) {
@@ -50,7 +50,7 @@ public class NatsAuthConsumerLoadTest extends NatsAuthTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("nats://"  + getNatsUrl() + "?topic=test").to(mockResultEndpoint);
+                from("nats:test").to(mockResultEndpoint);
             }
         };
     }

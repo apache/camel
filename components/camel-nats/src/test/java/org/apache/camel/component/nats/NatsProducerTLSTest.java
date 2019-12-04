@@ -37,7 +37,6 @@ public class NatsProducerTLSTest extends CamelTestSupport {
 
     @Test
     public void sendTest() throws Exception {
-        
         template.sendBody("direct:send", "pippo");
     }
     
@@ -60,7 +59,7 @@ public class NatsProducerTLSTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://localhost:4222?topic=test&sslContextParameters=#ssl&secure=true");
+                from("direct:send").to("nats:topic=test?servers=localhost:4222&sslContextParameters=#ssl&secure=true");
             }
         };
     }

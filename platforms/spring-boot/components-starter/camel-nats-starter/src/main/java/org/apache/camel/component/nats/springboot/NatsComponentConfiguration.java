@@ -37,6 +37,11 @@ public class NatsComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * URLs to one or more NAT servers. Use comma to separate URLs when
+     * specifying multiple servers.
+     */
+    private String servers;
+    /**
      * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;
@@ -65,6 +70,14 @@ public class NatsComponentConfiguration
      * will be logged at WARN or ERROR level and ignored.
      */
     private Boolean bridgeErrorHandler = false;
+
+    public String getServers() {
+        return servers;
+    }
+
+    public void setServers(String servers) {
+        this.servers = servers;
+    }
 
     public Boolean getUseGlobalSslContextParameters() {
         return useGlobalSslContextParameters;
