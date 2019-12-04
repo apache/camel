@@ -66,6 +66,8 @@ public class NatsConfiguration {
     @UriParam(label = "consumer")
     private String queueName;
     @UriParam(label = "consumer")
+    private boolean replyToDisabled;
+    @UriParam(label = "consumer")
     private String maxMessages;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
@@ -256,6 +258,17 @@ public class NatsConfiguration {
 
     public void setQueueName(String queueName) {
         this.queueName = queueName;
+    }
+
+    public boolean isReplyToDisabled() {
+        return replyToDisabled;
+    }
+
+    /**
+     * Can be used to turn off sending back reply message in the consumer.
+     */
+    public void setReplyToDisabled(boolean replyToDisabled) {
+        this.replyToDisabled = replyToDisabled;
     }
 
     /**

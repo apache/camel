@@ -21,19 +21,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class NatsConsumerTest extends NatsTestSupport {
+public class NatsConsumerReplyToTest extends NatsTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void testConsumer() throws Exception {
-        mockResultEndpoint.expectedBodiesReceived("Hello World");
+    public void testReplyTo() throws Exception {
+        mockResultEndpoint.expectedBodiesReceived("World");
         mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
 
-        template.sendBody("direct:send", "Hello World");
+        template.sendBody("direct:send", "World");
 
         mockResultEndpoint.assertIsSatisfied();
+
+        // grab reply message from the reply queue
+        String out = consumer.receiveBody("nats://"  + getNatsUrl() + "?topic=myReplyQueue", 5000, String.class);
+        assertEquals("Bye World", out);
     }
 
     @Override
@@ -41,8 +45,13 @@ public class NatsConsumerTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://"  + getNatsUrl() + "?topic=test&flushConnection=true");
-                from("nats://" + getNatsUrl() + "?topic=test&flushConnection=true").to(mockResultEndpoint);
+                from("direct:send")
+                        .to("nats://"  + getNatsUrl() + "?topic=test&replySubject=myReplyQueue&flushConnection=true");
+
+                from("nats://" + getNatsUrl() + "?topic=test&flushConnection=true")
+                        .to(mockResultEndpoint)
+                        .convertBodyTo(String.class)
+                        .setBody().simple("Bye ${body}");
             }
         };
     }

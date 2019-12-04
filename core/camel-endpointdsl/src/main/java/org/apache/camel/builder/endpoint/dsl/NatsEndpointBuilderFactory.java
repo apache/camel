@@ -468,6 +468,30 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Can be used to turn off sending back reply message in the consumer.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NatsEndpointConsumerBuilder replyToDisabled(
+                boolean replyToDisabled) {
+            doSetProperty("replyToDisabled", replyToDisabled);
+            return this;
+        }
+        /**
+         * Can be used to turn off sending back reply message in the consumer.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NatsEndpointConsumerBuilder replyToDisabled(
+                String replyToDisabled) {
+            doSetProperty("replyToDisabled", replyToDisabled);
+            return this;
+        }
+        /**
          * Set secure option indicating TLS is required.
          * 
          * The option is a: <code>boolean</code> type.

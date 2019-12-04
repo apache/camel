@@ -155,6 +155,18 @@ public class NatsConsumer extends DefaultConsumer {
                 } catch (Exception e) {
                     getExceptionHandler().handleException("Error during processing", exchange, e);
                 }
+
+                // is there a reply?
+                if (!configuration.isReplyToDisabled()
+                        && msg.getReplyTo() != null && msg.getConnection() != null) {
+                    Connection con = msg.getConnection();
+                    byte[] data = exchange.getMessage().getBody(byte[].class);
+                    if (data != null) {
+                        log.debug("Publishing replyTo: {} message", msg.getReplyTo());
+                        con.publish(msg.getReplyTo(), data);
+                    }
+                }
+
             }
         }
     }
