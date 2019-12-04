@@ -19,4 +19,8 @@ package org.apache.camel.component.nats;
 public interface NatsConstants {
 
     String NATS_MESSAGE_TIMESTAMP = "CamelNatsMessageTimestamp";
+    String NATS_SID = "CamelNatsSID";
+    String NATS_REPLY_TO = "CamelNatsReplyTo";
+    String NATS_SUBJECT = "CamelNatsSubject";
+    String NATS_QUEUE_NAME = "CamelNatsQueueName";
 }

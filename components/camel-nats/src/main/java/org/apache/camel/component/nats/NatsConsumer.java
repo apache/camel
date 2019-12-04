@@ -144,7 +144,11 @@ public class NatsConsumer extends DefaultConsumer {
             public void onMessage(Message msg) throws InterruptedException {
                 log.debug("Received Message: {}", msg);
                 Exchange exchange = getEndpoint().createExchange();
-                exchange.getIn().setBody(msg);
+                exchange.getIn().setBody(msg.getData());
+                exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
+                exchange.getIn().setHeader(NatsConstants.NATS_SID, msg.getSID());
+                exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
+                exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
                 exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
                 try {
                     processor.process(exchange);

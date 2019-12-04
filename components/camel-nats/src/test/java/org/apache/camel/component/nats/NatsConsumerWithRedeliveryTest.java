@@ -18,7 +18,6 @@ package org.apache.camel.component.nats;
 
 import java.io.IOException;
 
-import io.nats.client.Message;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -66,8 +65,7 @@ public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
 
                     @Override
                     public boolean matches(Exchange exchange) {
-                        Message g = exchange.getIn().getBody(Message.class);
-                        String s = new String(g.getData());
+                        String s = exchange.getMessage().getBody(String.class);
                         if (s.contains("test")) {
                             return true;
                         }
