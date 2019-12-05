@@ -69,7 +69,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  *
  * <pre>
  * Component petstore = new RestOpenApiComponent();
- * petstore.setSpecificationUri("http://petstore.openapi.io/v2/swagger.json");
+ * petstore.setSpecificationUri("https://petstore3.swagger.io/api/v3/openapi.json");
  * petstore.setComponentName("undertow");
  * //...
  * camelContext.addComponent("petstore", petstore);
