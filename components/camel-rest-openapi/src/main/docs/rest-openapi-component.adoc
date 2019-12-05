@@ -154,7 +154,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-rest-swagger-starter</artifactId>
+  <artifactId>camel-rest-openapi-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -168,7 +168,7 @@ The component supports 10 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.rest-swagger.base-path* | API basePath, for example /v2. Default is unset, if set overrides the value present in OpenApi specification. |  | String
+| *camel.component.rest-openapi.base-path* | API basePath, for example /v2. Default is unset, if set overrides the value present in OpenApi specification. |  | String
 | *camel.component.rest-swagger.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.rest-swagger.component-name* | Name of the Camel component that will perform the requests. The component must be present in Camel registry and it must implement RestProducerFactory service provider interface. If not set CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.consumes* | What payload type this component capable of consuming. Could be one type, like application/json or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This equates to the value of Accept HTTP header. If set overrides any value found in the OpenApi specification. Can be overridden in endpoint configuration |  | String
@@ -184,7 +184,7 @@ The component supports 10 options, which are listed below.
 
 == Example: PetStore
 
-Checkout the example in the `camel-example-rest-swagger` project in
+Checkout the example in the `camel-example-rest-openapi` project in
 the `examples` directory.
 
 For example if you wanted to use the 
@@ -207,7 +207,7 @@ Here are our dependencies defined in Maven POM file:
 
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-rest-swagger-starter</artifactId>
+  <artifactId>camel-rest-openapi-starter</artifactId>
 </dependency>
 ----
 
@@ -218,7 +218,7 @@ _RestOpenApiComponent_:
 ----
 @Bean
 public Component petstore(CamelContext camelContext, UndertowComponent undertow) {
-    RestOpenApiComponent petstore = new RestSwaggerComponent(camelContext);
+    RestOpenApiComponent petstore = new RestOpenApiComponent(camelContext);
     petstore.setSpecificationUri("http://petstore.swagger.io/v2/swagger.json");
     petstore.setDelegate(undertow);
 

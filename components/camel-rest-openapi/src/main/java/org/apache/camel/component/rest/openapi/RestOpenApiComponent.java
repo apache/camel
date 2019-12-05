@@ -46,7 +46,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * <p>
  *
  * <pre>
- * from(...).to("rest-openapi:http://petstore.swagger.io/v2/swagger.json#getPetById")
+ * from(...).to("rest-openapi:https://petstore3.swagger.io/api/v3/openapi.json#getPetById")
  * </pre>
  *
  * This relies on only one {@link RestProducerFactory} component being available
@@ -61,7 +61,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * //...
  * camelContext.addComponent("myUndertow", undertow);
  *
- * from(...).to("rest-openapi:http://petstore.swagger.io/v2/swagger.json#getPetById?componentName=myUndertow")
+ * from(...).to("rest-openapi:https://petstore3.swagger.io/api/v3/openapi.json#getPetById?componentName=myUndertow")
  * </pre>
  *
  * The most concise way of using this component would be to define it in the
@@ -69,7 +69,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  *
  * <pre>
  * Component petstore = new RestOpenApiComponent();
- * petstore.setSpecificationUri("http://petstore.openapi.io/v2/swagger.json");
+ * petstore.setSpecificationUri("https://petstore3.swagger.io/api/v3/openapi.json");
  * petstore.setComponentName("undertow");
  * //...
  * camelContext.addComponent("petstore", petstore);
