@@ -168,7 +168,7 @@ The component supports 10 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.rest-swagger.base-path* | API basePath, for example /v2. Default is unset, if set overrides the value present in OpenApi specification. |  | String
+| *camel.component.rest-openapi.base-path* | API basePath, for example /v2. Default is unset, if set overrides the value present in OpenApi specification. |  | String
 | *camel.component.rest-swagger.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.rest-swagger.component-name* | Name of the Camel component that will perform the requests. The component must be present in Camel registry and it must implement RestProducerFactory service provider interface. If not set CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.consumes* | What payload type this component capable of consuming. Could be one type, like application/json or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This equates to the value of Accept HTTP header. If set overrides any value found in the OpenApi specification. Can be overridden in endpoint configuration |  | String
