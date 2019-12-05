@@ -260,6 +260,7 @@ public interface EndpointBuilderFactory extends
         RefEndpointBuilderFactory,
         RestApiEndpointBuilderFactory,
         RestEndpointBuilderFactory,
+        RestOpenApiEndpointBuilderFactory,
         RestSwaggerEndpointBuilderFactory,
         RobotFrameworkEndpointBuilderFactory,
         RssEndpointBuilderFactory,
