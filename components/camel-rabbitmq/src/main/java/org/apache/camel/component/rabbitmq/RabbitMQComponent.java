@@ -254,7 +254,12 @@ public class RabbitMQComponent extends DefaultComponent {
             localArgs.putAll(getArgs());
         }
         localArgs.putAll(PropertiesHelper.extractProperties(params, ARG_PREFIX));
-        endpoint.setArgs(localArgs);
+        Map<String, Object> existing = endpoint.getArgs();
+        if (existing != null) {
+            existing.putAll(localArgs);
+        } else {
+            endpoint.setArgs(localArgs);
+        }
 
         // Change null headers processing for message converter
         endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
