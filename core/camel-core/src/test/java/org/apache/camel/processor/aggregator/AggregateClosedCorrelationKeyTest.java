@@ -76,7 +76,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "id", 2);
         template.sendBodyAndHeader("direct:start", "E", "id", 3);
         template.sendBodyAndHeader("direct:start", "F", "id", 3);
-
+        Thread.sleep(200);
         // 2 of them should now be closed
         int closed = 0;
 

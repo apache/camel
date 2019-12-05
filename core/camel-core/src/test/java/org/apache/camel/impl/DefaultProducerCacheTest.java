@@ -191,7 +191,6 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         public boolean isSingleton() {
             return isSingleton;
         }
-
     }
 
     private final class MyProducer extends DefaultProducer {
@@ -215,5 +214,4 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             shutdownCounter.incrementAndGet();
         }
     }
-
 }
