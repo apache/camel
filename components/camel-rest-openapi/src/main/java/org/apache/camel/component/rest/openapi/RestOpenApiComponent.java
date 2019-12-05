@@ -46,7 +46,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * <p>
  *
  * <pre>
- * from(...).to("rest-openapi:http://petstore.swagger.io/v2/swagger.json#getPetById")
+ * from(...).to("rest-openapi:https://petstore3.swagger.io/api/v3/openapi.json#getPetById")
  * </pre>
  *
  * This relies on only one {@link RestProducerFactory} component being available
