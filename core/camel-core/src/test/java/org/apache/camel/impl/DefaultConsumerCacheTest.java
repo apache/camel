@@ -16,11 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.engine.DefaultConsumerCache;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class DefaultConsumerCacheTest extends ContextTestSupport {
 
@@ -41,7 +45,7 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         cache.cleanUp();
-
+        await().atMost(1, TimeUnit.SECONDS).until(() -> cache.size() == 1000);
         assertEquals("Size should be 1000", 1000, cache.size());
         cache.stop();
     }

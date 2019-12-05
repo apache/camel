@@ -345,7 +345,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         template.cleanUp();
-
+        await().atMost(1, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 500);
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 
@@ -368,7 +368,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         template.cleanUp();
-
+        await().atMost(1, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 500);
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 
@@ -394,5 +394,4 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         assertFalse("File should have been deleted " + file, file.exists());
     }
-
 }
