@@ -24,7 +24,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The Kubernetes Service Accounts component provides a producer to execute
+ * The Kubernetes Services component provides a producer to execute
  * service operations and a consumer to consume service events.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services", syntax = "kubernetes-services:masterUrl", label = "container,cloud,paas")
