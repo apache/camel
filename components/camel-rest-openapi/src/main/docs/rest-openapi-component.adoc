@@ -207,7 +207,7 @@ Here are our dependencies defined in Maven POM file:
 
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-rest-swagger-starter</artifactId>
+  <artifactId>camel-rest-openapi-starter</artifactId>
 </dependency>
 ----
 
