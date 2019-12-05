@@ -184,7 +184,7 @@ The component supports 10 options, which are listed below.
 
 == Example: PetStore
 
-Checkout the example in the `camel-example-rest-swagger` project in
+Checkout the example in the `camel-example-rest-openapi` project in
 the `examples` directory.
 
 For example if you wanted to use the 
