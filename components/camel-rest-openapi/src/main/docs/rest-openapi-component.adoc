@@ -218,7 +218,7 @@ _RestOpenApiComponent_:
 ----
 @Bean
 public Component petstore(CamelContext camelContext, UndertowComponent undertow) {
-    RestOpenApiComponent petstore = new RestSwaggerComponent(camelContext);
+    RestOpenApiComponent petstore = new RestOpenApiComponent(camelContext);
     petstore.setSpecificationUri("http://petstore.swagger.io/v2/swagger.json");
     petstore.setDelegate(undertow);
 
