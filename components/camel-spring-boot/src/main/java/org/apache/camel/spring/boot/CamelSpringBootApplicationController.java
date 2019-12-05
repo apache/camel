@@ -52,6 +52,11 @@ public class CamelSpringBootApplicationController {
             }
 
             @Override
+            protected void initCamelContext() throws Exception {
+                // spring boot has already initialized camel context so we should not do it again
+            }
+
+            @Override
             protected void doStop() throws Exception {
                 LOG.debug("Controller is shutting down CamelContext");
                 try {
