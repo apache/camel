@@ -34,7 +34,7 @@
     <description>Camel REST support using OpenApi</description>
 
     <properties>
-        <firstVersion>2.19.0</firstVersion>
+        <firstVersion>3.1.0</firstVersion>
         <label>rest,api,http</label>
     </properties>
 
