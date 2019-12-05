@@ -58,7 +58,6 @@
     <bundle>mvn:org.apache.camel/camel-core-engine/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-core-osgi-activator/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jaxp/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-main/${project.version}</bundle>

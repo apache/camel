@@ -193,7 +193,7 @@ indexId in the body.
 |===
 
 == Configure the component and enable basic authentication
-To use the Elasticsearch component is has to be configured with a minimum configuration.
+To use the Elasticsearch component it has to be configured with a minimum configuration.
 
 [source,java]
 ----
