@@ -41,13 +41,9 @@ public class DozerComponent extends DefaultComponent {
         config.setMappingConfiguration(getAndRemoveOrResolveReferenceParameter(
                 parameters, "mappingConfiguration", DozerBeanMapperConfiguration.class));
 
-        setProperties(config, parameters);
-
-        // Validate endpoint parameters
-        if (config.getTargetModel() == null) {
-            throw new IllegalArgumentException("The targetModel parameter is required for dozer endpoints");
-        }
-
-        return new DozerEndpoint(uri, this, config);
+        DozerEndpoint answer = new DozerEndpoint(uri, this, config);
+        answer.setConfiguration(config);
+        setProperties(answer, parameters);
+        return answer;
     }
 }
