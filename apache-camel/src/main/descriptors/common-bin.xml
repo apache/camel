@@ -270,6 +270,7 @@
         <include>org.apache.camel:camel-ref</include>
         <include>org.apache.camel:camel-resilience4j</include>
         <include>org.apache.camel:camel-rest</include>
+        <include>org.apache.camel:camel-rest-openapi</include>
         <include>org.apache.camel:camel-rest-swagger</include>
         <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-robotframework</include>
@@ -621,6 +622,7 @@
         <include>org.apache.camel.springboot:camel-reactor-starter</include>
         <include>org.apache.camel.springboot:camel-ref-starter</include>
         <include>org.apache.camel.springboot:camel-resilience4j-starter</include>
+        <include>org.apache.camel.springboot:camel-rest-openapi-starter</include>
         <include>org.apache.camel.springboot:camel-rest-starter</include>
         <include>org.apache.camel.springboot:camel-rest-swagger-starter</include>
         <include>org.apache.camel.springboot:camel-ribbon-starter</include>

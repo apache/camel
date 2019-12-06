@@ -157,6 +157,11 @@
         <version>1.7</version>
       </dependency>
       <dependency>
+        <groupId>io.apicurio</groupId>
+        <artifactId>apicurio-data-models</artifactId>
+        <version>1.0.16.Final</version>
+      </dependency>
+      <dependency>
         <groupId>io.krakens</groupId>
         <artifactId>java-grok</artifactId>
         <version>0.1.9</version>
