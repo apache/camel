@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.dozer;
 
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class DozerComponentTest {
+public class DozerComponentTest extends CamelTestSupport {
     
     private static final String NAME = "examplename";
     private static final String MARSHAL_ID = "marshal123";
     private static final String UNMARSHAL_ID = "unmarshal456";
     private static final String SOURCE_MODEL = "org.example.A";
     private static final String TARGET_MODEL = "org.example.B";
-    private static final String DOZER_CONFIG_PATH = "test/dozerBeanMapping.xml";
+    private static final String DOZER_CONFIG_PATH = "mapping.xml";
     private static final String TRANSFORM_EP_1 =
             "dozer:" + NAME 
             + "?marshalId=" + MARSHAL_ID 
@@ -38,9 +38,7 @@ public class DozerComponentTest {
     
     @Test
     public void testCreateEndpoint() throws Exception {
-        DozerComponent comp = new DozerComponent();
-        comp.setCamelContext(new DefaultCamelContext());
-        DozerEndpoint ep = (DozerEndpoint)comp.createEndpoint(TRANSFORM_EP_1);
+        DozerEndpoint ep = context.getEndpoint(TRANSFORM_EP_1, DozerEndpoint.class);
         DozerConfiguration config = ep.getConfiguration();
         Assert.assertEquals(NAME, config.getName());
         Assert.assertEquals(MARSHAL_ID, config.getMarshalId());
@@ -52,12 +50,10 @@ public class DozerComponentTest {
     
     @Test
     public void requiredTargetModelMissing() throws Exception {
-        DozerComponent comp = new DozerComponent();
-        comp.setCamelContext(new DefaultCamelContext());
         try {
-            comp.createEndpoint("dozer:noTargetModel?mappingFile=mapping.xml");
+            DozerEndpoint ep = context.getEndpoint("dozer:noTargetModel?mappingFile=mapping.xml", DozerEndpoint.class);
             Assert.fail("targetModel is a required parameter");
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             // expected
         }
     }
