@@ -45,10 +45,9 @@ public class ThriftComponent extends DefaultComponent implements SSLContextParam
             sslParameters = retrieveGlobalSslContextParameters();
             config.setSslParameters(sslParameters);
         }
-        
-        setProperties(config, parameters);
+        ThriftEndpoint endpoint = new ThriftEndpoint(uri, this, config);
+        setProperties(endpoint, parameters);
 
-        Endpoint endpoint = new ThriftEndpoint(uri, this, config);
         return endpoint;
     }
 
