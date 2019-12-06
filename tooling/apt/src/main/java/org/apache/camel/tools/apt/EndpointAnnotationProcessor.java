@@ -52,7 +52,11 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
-import org.apache.camel.tools.apt.model.*;
+import org.apache.camel.tools.apt.model.ComponentModel;
+import org.apache.camel.tools.apt.model.ComponentOption;
+import org.apache.camel.tools.apt.model.EndpointOption;
+import org.apache.camel.tools.apt.model.EndpointPath;
+import org.apache.camel.tools.apt.model.PropertyOption;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
