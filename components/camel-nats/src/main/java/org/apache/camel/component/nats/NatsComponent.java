@@ -38,14 +38,14 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
         NatsConfiguration config = new NatsConfiguration();
         config.setTopic(remaining);
         config.setServers(servers);
-        setProperties(config, parameters);
 
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        NatsEndpoint endpoint = new NatsEndpoint(uri, this, config);
-        return endpoint;
+        NatsEndpoint answer = new NatsEndpoint(uri, this, config);
+        setProperties(answer, parameters);
+        return answer;
     }
 
     /**
