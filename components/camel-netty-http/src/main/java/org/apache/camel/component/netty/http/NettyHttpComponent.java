@@ -151,7 +151,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         // configure configuration
         config = parseConfiguration(config, remaining, parameters);
-        setProperties(config, parameters);
 
         // set default ssl config
         if (config.getSslContextParameters() == null) {
