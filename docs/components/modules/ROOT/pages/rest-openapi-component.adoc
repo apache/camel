@@ -1,5 +1,6 @@
 [[rest-openapi-component]]
 = REST OpenApi Component
+:page-source: components/camel-rest-openapi/src/main/docs/rest-openapi-component.adoc
 = REST OpenApi Component
 *Since Camel 3.1*
 

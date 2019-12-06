@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 305 in 243 JAR artifacts (0 deprecated)
+Number of Components: 306 in 244 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -260,7 +260,7 @@ Number of Components: 305 in 243 JAR artifacts (0 deprecated)
 
 | xref:hazelcast-seda-component.adoc[Hazelcast SEDA] (camel-hazelcast) | 2.7 | The hazelcast-seda component is used to access Hazelcast BlockingQueue.
 
-| xref:hazelcast-set-component.adoc[Hazelcast Set] (camel-hazelcast) | 2.7 | The camel Endpoint to access Hazelcast distributed set.
+| xref:hazelcast-set-component.adoc[Hazelcast Set] (camel-hazelcast) | 2.7 | The hazelcast-set component is used to access Hazelcast distributed set.
 
 | xref:hazelcast-topic-component.adoc[Hazelcast Topic] (camel-hazelcast) | 2.15 | The hazelcast-topic component is used to access Hazelcast distributed topic.
 
@@ -368,7 +368,7 @@ Number of Components: 305 in 243 JAR artifacts (0 deprecated)
 
 | xref:kubernetes-service-accounts-component.adoc[Kubernetes Service Account] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
 
-| xref:kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
+| xref:kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) | 2.17 | The Kubernetes Services component provides a producer to execute service operations and a consumer to consume service events.
 
 | xref:kudu-component.adoc[Kudu] (camel-kudu) | 3.0 | Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
@@ -485,6 +485,8 @@ Number of Components: 305 in 243 JAR artifacts (0 deprecated)
 | xref:rest-component.adoc[REST] (camel-rest) | 2.14 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
 
 | xref:rest-api-component.adoc[REST API] (camel-rest) | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
+
+| xref:rest-openapi-component.adoc[REST OpenApi] (camel-rest-openapi) | 3.1 | An awesome REST endpoint backed by OpenApi specifications.
 
 | xref:rest-swagger-component.adoc[REST Swagger] (camel-rest-swagger) | 2.19 | An awesome REST endpoint backed by Swagger specifications.
 
