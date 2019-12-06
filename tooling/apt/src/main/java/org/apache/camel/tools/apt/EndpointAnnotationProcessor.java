@@ -52,10 +52,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
-import org.apache.camel.tools.apt.model.ComponentModel;
-import org.apache.camel.tools.apt.model.ComponentOption;
-import org.apache.camel.tools.apt.model.EndpointOption;
-import org.apache.camel.tools.apt.model.EndpointPath;
+import org.apache.camel.tools.apt.model.*;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -206,13 +203,15 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         String fqClassName = packageName + "." + className;
 
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            ComponentPropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
-            ComponentPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
+            PropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
+            PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
         } else if (uriEndpoint.generateConfigurer() && !componentOptions.isEmpty()) {
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                ComponentPropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, componentOptions);
-                ComponentPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
+                Set<PropertyOption> set = new LinkedHashSet<>();
+                set.addAll(componentOptions);
+                PropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, set);
+                PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
             }
         }
     }
@@ -233,13 +232,15 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         String fqClassName = packageName + "." + className;
 
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            EndpointPropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
-            EndpointPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
+            PropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
+            PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
         } else if (uriEndpoint.generateConfigurer() && !endpointOptions.isEmpty()) {
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                EndpointPropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, endpointClassName, endpointOptions);
-                EndpointPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
+                Set<PropertyOption> set = new LinkedHashSet<>();
+                set.addAll(endpointOptions);
+                PropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, endpointClassName, set);
+                PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
             }
         }
     }

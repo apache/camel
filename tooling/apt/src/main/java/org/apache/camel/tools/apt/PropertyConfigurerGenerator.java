@@ -28,15 +28,13 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 
 import org.apache.camel.tools.apt.helper.IOHelper;
-import org.apache.camel.tools.apt.model.EndpointOption;
+import org.apache.camel.tools.apt.model.PropertyOption;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
 
-// TODO: ComponentPropertyConfigurerGenerator and EndpointPropertyConfigurerGenerator can be merged to one
+public final class PropertyConfigurerGenerator {
 
-public final class EndpointPropertyConfigurerGenerator {
-
-    private EndpointPropertyConfigurerGenerator() {
+    private PropertyConfigurerGenerator() {
     }
 
     public static void generateExtendConfigurer(ProcessingEnvironment processingEnv, TypeElement parent,
@@ -69,7 +67,7 @@ public final class EndpointPropertyConfigurerGenerator {
 
     public static void generatePropertyConfigurer(ProcessingEnvironment processingEnv, TypeElement parent,
                                                   String pn, String cn, String fqn, String en,
-                                                  Set<EndpointOption> options) {
+                                                  Set<PropertyOption> options) {
 
         Writer w = null;
         try {
@@ -95,17 +93,17 @@ public final class EndpointPropertyConfigurerGenerator {
             w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");
             w.write("\n");
             w.write("    @Override\n");
-            w.write("    public boolean configure(CamelContext camelContext, Object endpoint, String name, Object value, boolean ignoreCase) {\n");
+            w.write("    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {\n");
             w.write("        if (ignoreCase) {\n");
-            w.write("            return doConfigureIgnoreCase(camelContext, endpoint, name, value);\n");
+            w.write("            return doConfigureIgnoreCase(camelContext, target, name, value);\n");
             w.write("        } else {\n");
-            w.write("            return doConfigure(camelContext, endpoint, name, value);\n");
+            w.write("            return doConfigure(camelContext, target, name, value);\n");
             w.write("        }\n");
             w.write("    }\n");
             w.write("\n");
-            w.write("    private static boolean doConfigure(CamelContext camelContext, Object endpoint, String name, Object value) {\n");
+            w.write("    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {\n");
             w.write("        switch (name) {\n");
-            for (EndpointOption option : options) {
+            for (PropertyOption option : options) {
                 String getOrSet = option.getName();
                 getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                 String setterLambda = setterLambda(en, getOrSet, option.getType(), option.getConfigurationField());
@@ -115,9 +113,9 @@ public final class EndpointPropertyConfigurerGenerator {
             w.write("        }\n");
             w.write("    }\n");
             w.write("\n");
-            w.write("    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object endpoint, String name, Object value) {\n");
+            w.write("    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {\n");
             w.write("        switch (name.toLowerCase()) {\n");
-            for (EndpointOption option : options) {
+            for (PropertyOption option : options) {
                 String getOrSet = option.getName();
                 getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                 String setterLambda = setterLambda(en, getOrSet, option.getType(), option.getConfigurationField());
@@ -148,7 +146,8 @@ public final class EndpointPropertyConfigurerGenerator {
             getOrSet = "set" + getOrSet;
         }
 
-        return String.format("((%s) endpoint).%s(property(camelContext, %s.class, value))", en, getOrSet, type);
+        // ((LogComponent) target).setGroupSize(property(camelContext, java.lang.Integer.class, value))
+        return String.format("((%s) target).%s(property(camelContext, %s.class, value))", en, getOrSet, type);
     }
 
     public static void generateMetaInfConfigurer(ProcessingEnvironment processingEnv, String name, String fqn) {

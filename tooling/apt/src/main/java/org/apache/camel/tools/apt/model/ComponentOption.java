@@ -20,7 +20,7 @@ import java.util.Set;
 
 import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
 
-public final class ComponentOption {
+public final class ComponentOption implements PropertyOption {
 
     private String name;
     private String displayName;
