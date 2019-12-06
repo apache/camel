@@ -61,7 +61,9 @@ public class ThriftEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new ThriftConsumer(this, processor, configuration);
+        ThriftConsumer consumer = new ThriftConsumer(this, processor, configuration);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public String getServiceName() {
