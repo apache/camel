@@ -2180,6 +2180,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    @Override
     public String getVersion() {
         if (version == null) {
             synchronized (lock) {

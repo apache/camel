@@ -16,10 +16,7 @@
  */
 package org.apache.camel;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -214,6 +211,11 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the uptime in millis seconds
      */
     long getUptimeMillis();
+
+    /**
+     * Gets the date and time Camel was started up.
+     */
+    Date getStartDate();
 
     // Service Methods
     //-----------------------------------------------------------------------

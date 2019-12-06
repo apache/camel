@@ -42,6 +42,14 @@ import org.junit.Test;
 public class DefaultCamelContextTest extends TestSupport {
 
     @Test
+    public void testStartDate() {
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+        assertNull(ctx.getStartDate());
+        ctx.start();
+        assertNotNull(ctx.getStartDate());
+    }
+
+    @Test
     public void testAutoCreateComponentsOn() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
