@@ -56,7 +56,10 @@ public class SmppComponent extends DefaultComponent {
         config.configureFromURI(new URI(uri));
         setProperties(config, parameters);
 
-        return createEndpoint(uri, config);
+        SmppEndpoint answer = new SmppEndpoint(uri, this, config);
+        setProperties(answer, parameters);
+        
+        return answer;
     }
 
     /**
