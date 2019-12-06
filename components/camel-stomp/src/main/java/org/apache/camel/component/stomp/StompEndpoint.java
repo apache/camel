@@ -86,7 +86,9 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new StompConsumer(this, processor);
+        StompConsumer consumer = new StompConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
