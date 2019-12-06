@@ -157,11 +157,6 @@
         <version>1.7</version>
       </dependency>
       <dependency>
-        <groupId>io.apicurio</groupId>
-        <artifactId>apicurio-data-models</artifactId>
-        <version>1.0.16.Final</version>
-      </dependency>
-      <dependency>
         <groupId>io.krakens</groupId>
         <artifactId>java-grok</artifactId>
         <version>0.1.9</version>
@@ -1319,6 +1314,11 @@
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-resilience4j-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-rest-openapi-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3046,6 +3046,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rest</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-rest-openapi</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
