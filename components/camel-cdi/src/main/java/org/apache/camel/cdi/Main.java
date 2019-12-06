@@ -104,6 +104,11 @@ public class Main extends MainCommandLineSupport {
         warnIfNoCamelFound();
     }
 
+    @Override
+    protected void initCamelContext() throws Exception {
+        // camel-cdi has already initialized and start CamelContext so we should not do this again
+    }
+
     private void warnIfNoCamelFound() {
         BeanManager manager = cdiContainer.getBeanManager();
         Set<Bean<?>> contexts = manager.getBeans(CamelContext.class, ANY);
