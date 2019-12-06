@@ -168,6 +168,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
         NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
+        setProperties(answer, parameters);
 
         // must use a copy of the binding on the endpoint to avoid sharing same
         // instance that can cause side-effects
