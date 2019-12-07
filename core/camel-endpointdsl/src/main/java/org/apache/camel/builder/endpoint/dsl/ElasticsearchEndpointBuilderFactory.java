@@ -87,6 +87,30 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable automatically discover nodes from a running Elasticsearch
+         * cluster.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder enableSniffer(boolean enableSniffer) {
+            doSetProperty("enableSniffer", enableSniffer);
+            return this;
+        }
+        /**
+         * Enable automatically discover nodes from a running Elasticsearch
+         * cluster.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder enableSniffer(String enableSniffer) {
+            doSetProperty("enableSniffer", enableSniffer);
+            return this;
+        }
+        /**
          * Enable SSL.
          * 
          * The option is a: <code>boolean</code> type.
@@ -242,6 +266,59 @@ public interface ElasticsearchEndpointBuilderFactory {
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 String scrollKeepAliveMs) {
             doSetProperty("scrollKeepAliveMs", scrollKeepAliveMs);
+            return this;
+        }
+        /**
+         * The delay of a sniff execution scheduled after a failure (in
+         * milliseconds).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
+                int sniffAfterFailureDelay) {
+            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
+            return this;
+        }
+        /**
+         * The delay of a sniff execution scheduled after a failure (in
+         * milliseconds).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
+                String sniffAfterFailureDelay) {
+            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
+            return this;
+        }
+        /**
+         * The interval between consecutive ordinary sniff executions in
+         * milliseconds. Will be honoured when sniffOnFailure is disabled or
+         * when there are no failures between consecutive sniff executions.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder snifferInterval(int snifferInterval) {
+            doSetProperty("snifferInterval", snifferInterval);
+            return this;
+        }
+        /**
+         * The interval between consecutive ordinary sniff executions in
+         * milliseconds. Will be honoured when sniffOnFailure is disabled or
+         * when there are no failures between consecutive sniff executions.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder snifferInterval(
+                String snifferInterval) {
+            doSetProperty("snifferInterval", snifferInterval);
             return this;
         }
         /**

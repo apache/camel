@@ -29,6 +29,9 @@ public class ElasticsearchConfiguration {
 
     private List<HttpHost> hostAddressesList;
 
+    private String user;
+    private String password;
+
     @UriPath @Metadata(required = true)
     private String clusterName;
     @UriParam
@@ -53,13 +56,13 @@ public class ElasticsearchConfiguration {
     private boolean useScroll;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
     private int scrollKeepAliveMs = ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
-
-    private String user;
-    private String password;
-    //Sniffer parameter.
+    @UriParam
     private boolean enableSniffer;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
+
     /**
      * Name of the cluster
      */
