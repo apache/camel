@@ -52,7 +52,6 @@ public class GoraComponent extends DefaultComponent {
     }
 
     /**
-     *
      * Initialize class and create DataStore instance
      *
      * @param config component configuration
@@ -72,11 +71,13 @@ public class GoraComponent extends DefaultComponent {
                                       final String remaining,
                                       final Map<String, Object> parameters) throws Exception {
 
-        final GoraConfiguration config = new GoraConfiguration();
-        setProperties(config, parameters);
+        GoraConfiguration config = new GoraConfiguration();
         config.setName(remaining);
+
+        GoraEndpoint endpoint = new GoraEndpoint(uri, this, config, dataStore);
+        setProperties(endpoint, parameters);
         init(config);
-        return new GoraEndpoint(uri, this, config, dataStore);
+        return endpoint;
     }
 
     /**
