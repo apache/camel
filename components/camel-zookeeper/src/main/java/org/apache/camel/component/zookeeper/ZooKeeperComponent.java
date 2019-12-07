@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultComponent;
 public class ZooKeeperComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
-    private ZooKeeperConfiguration configuration;
+    private ZooKeeperConfiguration configuration = new ZooKeeperConfiguration();
 
     public ZooKeeperComponent() {
     }
@@ -50,9 +50,10 @@ public class ZooKeeperComponent extends DefaultComponent {
 
         ZooKeeperConfiguration config = getConfiguration().copy();
         extractConfigFromUri(uri, config);
-        setProperties(config, parameters);
 
-        return new ZooKeeperEndpoint(uri, this, config);
+        Endpoint endpoint = new ZooKeeperEndpoint(uri, this, config);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     private void extractConfigFromUri(String remaining, ZooKeeperConfiguration config) throws URISyntaxException {
@@ -65,9 +66,6 @@ public class ZooKeeperComponent extends DefaultComponent {
     }
 
     public ZooKeeperConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new ZooKeeperConfiguration();
-        }
         return configuration;
     }
 
