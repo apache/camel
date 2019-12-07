@@ -41,7 +41,10 @@ public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesNamespacesConsumer(this, processor);
+        Consumer consumer = new KubernetesNamespacesConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+
     }
 
 }
