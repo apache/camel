@@ -84,10 +84,10 @@ public class ElasticsearchComponent extends DefaultComponent {
         config.setSniffAfterFailureDelay(this.getSniffAfterFailureDelay());
         config.setClusterName(remaining);
 
-        setProperties(config, parameters);
+        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
+        setProperties(endpoint, parameters);
         config.setHostAddressesList(parseHostAddresses(config.getHostAddresses(), config));
 
-        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
         return endpoint;
     }
     
