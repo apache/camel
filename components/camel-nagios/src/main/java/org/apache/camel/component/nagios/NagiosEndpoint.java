@@ -78,7 +78,18 @@ public class NagiosEndpoint extends DefaultEndpoint {
         this.sendSync = sendSync;
     }
 
-    public synchronized PassiveCheckSender getSender() {
+    public PassiveCheckSender getSender() {
+        return sender;
+    }
+
+    public void setSender(PassiveCheckSender sender) {
+        this.sender = sender;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (sender == null) {
             if (isSendSync()) {
                 sender = new NagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
@@ -87,10 +98,5 @@ public class NagiosEndpoint extends DefaultEndpoint {
                 sender = new NonBlockingNagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
             }
         }
-        return sender;
-    }
-
-    public void setSender(PassiveCheckSender sender) {
-        this.sender = sender;
     }
 }

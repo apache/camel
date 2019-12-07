@@ -43,7 +43,6 @@ public class NagiosComponent extends DefaultComponent {
         ObjectHelper.notNull(configuration, "configuration");
         NagiosConfiguration config = configuration.copy();
         config.configure(url);
-        setProperties(config, parameters);
 
         NagiosEndpoint endpoint = new NagiosEndpoint(uri, this);
         endpoint.setConfiguration(config);

@@ -171,35 +171,6 @@ public interface NagiosEndpointBuilderFactory {
             return this;
         }
         /**
-         * To specify an encryption method.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
-         * type.
-         * 
-         * Group: security
-         */
-        @Deprecated
-        default NagiosEndpointBuilder encryptionMethod(
-                NagiosEncryptionMethod encryptionMethod) {
-            doSetProperty("encryptionMethod", encryptionMethod);
-            return this;
-        }
-        /**
-         * To specify an encryption method.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
-         * type.
-         * 
-         * Group: security
-         */
-        @Deprecated
-        default NagiosEndpointBuilder encryptionMethod(String encryptionMethod) {
-            doSetProperty("encryptionMethod", encryptionMethod);
-            return this;
-        }
-        /**
          * Password to be authenticated when sending checks to Nagios.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -285,17 +256,6 @@ public interface NagiosEndpointBuilderFactory {
         RIJNDAEL192,
         RIJNDAEL256,
         BLOWFISH;
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
-     * enum.
-     */
-    enum NagiosEncryptionMethod {
-        No,
-        Xor,
-        TripleDes;
     }
     /**
      * Nagios (camel-nagios)
