@@ -204,8 +204,6 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SparkConfiguration config = getSparkConfiguration().copy();
-        //TODO: we need to remove the usage of setProperties for populating the copy of the configuration
-        setProperties(config, parameters);
 
         SparkEndpoint answer = new SparkEndpoint(uri, this);
         answer.setSparkConfiguration(config);
