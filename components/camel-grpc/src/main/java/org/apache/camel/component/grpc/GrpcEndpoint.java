@@ -39,16 +39,6 @@ public class GrpcEndpoint extends DefaultEndpoint {
     public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config) throws Exception {
         super(uri, component);
         this.configuration = config;
-        
-        // Extract service and package names from the full service name
-        serviceName = GrpcUtils.extractServiceName(configuration.getService());
-        servicePackage = GrpcUtils.extractServicePackage(configuration.getService());
-        
-        // Convert method name to the camel case style
-        // This requires if method name as described inside .proto file directly
-        if (!ObjectHelper.isEmpty(configuration.getMethod())) {
-            configuration.setMethod(GrpcUtils.convertMethod2CamelCase(configuration.getMethod()));
-        }
     }
 
     public GrpcConfiguration getConfiguration() {
@@ -67,7 +57,24 @@ public class GrpcEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new GrpcConsumer(this, processor, configuration);
+        GrpcConsumer consumer = new GrpcConsumer(this, processor, configuration);
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // Extract service and package names from the full service name
+        serviceName = GrpcUtils.extractServiceName(configuration.getService());
+        servicePackage = GrpcUtils.extractServicePackage(configuration.getService());
+
+        // Convert method name to the camel case style
+        // This requires if method name as described inside .proto file directly
+        if (!ObjectHelper.isEmpty(configuration.getMethod())) {
+            configuration.setMethod(GrpcUtils.convertMethod2CamelCase(configuration.getMethod()));
+        }
     }
 
     public String getServiceName() {

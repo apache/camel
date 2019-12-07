@@ -380,7 +380,7 @@ public class GrpcConfiguration {
         return maxConcurrentCallsPerConnection;
     }
 
-    public void parseURI(URI uri, Map<String, Object> parameters, GrpcComponent component) {
+    public void parseURI(URI uri) {
         setHost(uri.getHost());
         
         if (uri.getPort() != -1) {
