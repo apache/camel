@@ -67,13 +67,15 @@ public class MinaComponent extends DefaultComponent implements SSLContextParamet
         config.setPort(u.getPort());
         config.setProtocol(u.getScheme());
         config.setFilters(resolveAndRemoveReferenceListParameter(parameters, "filters", IoFilter.class));
-        setProperties(config, parameters);
+
+        Endpoint endpoint = createEndpoint(uri, config);
+        setProperties(endpoint, parameters);
 
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        return createEndpoint(uri, config);
+        return endpoint;
     }
 
     public Endpoint createEndpoint(MinaConfiguration config) throws Exception {
