@@ -32,11 +32,10 @@ public class GrpcComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GrpcConfiguration config = new GrpcConfiguration();
-        
-        config = parseConfiguration(config, uri, parameters);
-        setProperties(config, parameters);
+        config = parseConfiguration(config, uri);
 
         Endpoint endpoint = new GrpcEndpoint(uri, this, config);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
     
@@ -45,8 +44,8 @@ public class GrpcComponent extends DefaultComponent {
      * 
      * @return the parsed and valid configuration to use
      */
-    protected GrpcConfiguration parseConfiguration(GrpcConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
-        configuration.parseURI(new URI(remaining), parameters, this);
+    protected GrpcConfiguration parseConfiguration(GrpcConfiguration configuration, String remaining) throws Exception {
+        configuration.parseURI(new URI(remaining));
         return configuration;
     }
 }
