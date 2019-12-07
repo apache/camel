@@ -30,8 +30,8 @@
     <artifactId>camel-management</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Management Implementation</name>
-    <description>The Camel Management Implementation</description>
+    <name>Camel :: Management</name>
+    <description>Camel Management</description>
 
     <dependencies>
 
