@@ -157,6 +157,10 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
 
     private void processCommit(Exchange exchange) {
         try {
+            // Reset the `payload` buffer first because it's already processed, and in case of losing the connection
+            // while updating the status, the next poll will try to reconnect again instead of processing the stale payload.
+            this.payload = null;
+
             PGReplicationStream stream = getStream();
 
             if (stream == null) {
@@ -166,8 +170,6 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
             stream.setAppliedLSN(stream.getLastReceiveLSN());
             stream.setFlushedLSN(stream.getLastReceiveLSN());
             stream.forceUpdateStatus();
-
-            this.payload = null;
         } catch (SQLException e) {
             getExceptionHandler().handleException("Exception while sending feedback to PostgreSQL.", exchange, e);
         }
