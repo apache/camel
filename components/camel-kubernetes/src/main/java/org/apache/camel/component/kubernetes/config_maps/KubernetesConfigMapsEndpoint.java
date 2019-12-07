@@ -41,7 +41,10 @@ public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesConfigMapsConsumer(this, processor);
+        Consumer consumer = new KubernetesConfigMapsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+
     }
 
 }

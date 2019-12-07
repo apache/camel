@@ -42,7 +42,9 @@ public class KubernetesReplicationControllersEndpoint extends AbstractKubernetes
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesReplicationControllersConsumer(this, processor);
+        Consumer consumer = new KubernetesReplicationControllersConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
 }
