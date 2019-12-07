@@ -41,7 +41,9 @@ public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesDeploymentsConsumer(this, processor);
+        Consumer consumer = new KubernetesDeploymentsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
 }

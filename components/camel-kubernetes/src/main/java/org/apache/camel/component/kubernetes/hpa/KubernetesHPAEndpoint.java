@@ -41,7 +41,10 @@ public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesHPAConsumer(this, processor);
+        Consumer consumer = new KubernetesHPAConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+
     }
 
 }
