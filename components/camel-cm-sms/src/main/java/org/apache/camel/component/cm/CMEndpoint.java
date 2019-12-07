@@ -38,7 +38,7 @@ public class CMEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String host;
     @UriParam
-    private CMConfiguration configuration;
+    private CMConfiguration configuration = new CMConfiguration();
 
     public CMEndpoint(final String uri, final CMComponent component) {
         super(uri, component);

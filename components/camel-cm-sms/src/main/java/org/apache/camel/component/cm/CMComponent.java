@@ -47,14 +47,13 @@ public class CMComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-
-        // Set configuration based on uri parameters
-        final CMConfiguration config = new CMConfiguration();
-        setProperties(config, parameters);
+        CMEndpoint endpoint = new CMEndpoint(uri, this);
+        endpoint.setHost(remaining);
+        setProperties(endpoint, parameters);
 
         // Validate configuration
         log.debug("Validating uri based configuration");
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator().validate(config);
+        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator().validate(endpoint.getConfiguration());
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
@@ -65,22 +64,19 @@ public class CMComponent extends DefaultComponent {
             throw new ResolveEndpointFailedException(uri, msg.toString());
         }
 
-        // Component is an Endpoint factory. So far, just one Endpoint type.
-        // Endpoint construction and configuration.
-
-        final CMEndpoint endpoint = new CMEndpoint(uri, this);
-        endpoint.setConfiguration(config);
-        endpoint.setHost(remaining);
-
         return endpoint;
     }
 
     public Validator getValidator() {
+        return validator;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
         if (validator == null) {
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             validator = factory.getValidator();
         }
-        return validator;
     }
-
 }
