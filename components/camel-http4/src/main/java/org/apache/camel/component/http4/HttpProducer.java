@@ -452,18 +452,24 @@ public class HttpProducer extends DefaultProducer {
         }
 
         // create http holder objects for the request
-        HttpEntity requestEntity = createRequestEntity(exchange);
-        HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
+        HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint());
         HttpRequestBase method = methodToUse.createMethod(url);
 
-        // special for HTTP DELETE if the message body should be included
+        // special for HTTP DELETE/GET if the message body should be included
         if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())) {
+            HttpEntity requestEntity = createRequestEntity(exchange);
             method = new HttpDeleteWithBodyMethod(url, requestEntity);
+        } else if (getEndpoint().isGetWithBody() && "GET".equals(method.getMethod())) {
+            HttpEntity requestEntity = createRequestEntity(exchange);
+            method = new HttpGetWithBodyMethod(url, requestEntity);
         }
+
 
         LOG.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {
+            // only create entity for http payload if the HTTP method carries payload (such as POST)
+            HttpEntity requestEntity = createRequestEntity(exchange);
             ((HttpEntityEnclosingRequestBase) method).setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
                 LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
