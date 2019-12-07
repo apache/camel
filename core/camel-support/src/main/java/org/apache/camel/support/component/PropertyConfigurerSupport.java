@@ -17,6 +17,7 @@
 package org.apache.camel.support.component;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchBeanException;
 
 /**
  * Base class used by the camel-apt compiler plugin when it generates source code for fast
@@ -43,6 +44,9 @@ public abstract class PropertyConfigurerSupport {
                 Object obj = camelContext.getRegistry().lookupByName(ref);
                 if (obj != null) {
                     value = obj;
+                } else {
+                    // no bean found so throw an exception
+                    throw new NoSuchBeanException(ref, type.getName());
                 }
             }
         }
