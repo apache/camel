@@ -49,7 +49,7 @@ public class GangliaConfiguration implements Cloneable {
     @UriPath(defaultValue = "" + DEFAULT_PORT)
     private int port = DEFAULT_PORT;
 
-    @UriParam(defaultValue = "MULTICAST")
+    @UriParam(defaultValue = "MULTICAST", enums = "MULTICAST,UNICAST")
     private GMetric.UDPAddressingMode mode = DEFAULT_MODE;
 
     @UriParam(defaultValue = "5")
@@ -70,10 +70,10 @@ public class GangliaConfiguration implements Cloneable {
     @UriParam(defaultValue = "metric")
     private String metricName = DEFAULT_METRIC_NAME;
 
-    @UriParam(defaultValue = "STRING")
+    @UriParam(defaultValue = "string", enums = "string,int8,uint8,int16,uint16,int32,uint32,float,double")
     private GMetricType type = DEFAULT_TYPE;
 
-    @UriParam(defaultValue = "BOTH")
+    @UriParam(defaultValue = "BOTH", enums = "ZERO,POSITIVE,NEGATIVE,BOTH")
     private GMetricSlope slope = DEFAULT_SLOPE;
 
     @UriParam
