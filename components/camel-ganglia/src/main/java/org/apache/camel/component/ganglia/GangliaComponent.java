@@ -43,7 +43,6 @@ public class GangliaComponent extends DefaultComponent {
         ObjectHelper.notNull(configuration, "configuration");
         GangliaConfiguration config = configuration.copy();
         config.configure(url);
-        setProperties(config, parameters);
 
         GangliaEndpoint endpoint = new GangliaEndpoint(uri, this);
         endpoint.setConfiguration(config);
