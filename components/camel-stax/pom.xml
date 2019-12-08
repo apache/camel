@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.fasterxml.woodstox</groupId>
             <artifactId>woodstox-core</artifactId>
-            <version>${woodstox-core-version}</version>
+            <version>${woodstox-version}</version>
         </dependency>
         
         <!-- test dependencies -->

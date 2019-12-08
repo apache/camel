@@ -647,8 +647,7 @@
         <weld3-version>3.0.5.Final</weld3-version>
         <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
         <wiremock-version>2.24.1</wiremock-version>
-        <woodstox-version>4.4.1</woodstox-version>
-        <woodstox-core-version>5.2.1</woodstox-core-version>
+        <woodstox-version>6.0.3</woodstox-version>
         <wsdl4j-bundle-version>1.6.3_1</wsdl4j-bundle-version>
         <wsdl4j-version>1.6.3</wsdl4j-version>
         <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
@@ -5143,8 +5142,8 @@
                 <version>${xml-apis-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
+                <groupId>com.fasterxml.woodstox</groupId>
+                <artifactId>woodstox-core</artifactId>
                 <version>${woodstox-version}</version>
                 <exclusions>
                     <exclusion>
@@ -6112,8 +6111,8 @@
 
             <dependencies>
                 <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                    <artifactId>woodstox-core</artifactId>
                     <version>${woodstox-version}</version>
                     <scope>test</scope>
                 </dependency>

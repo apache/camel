@@ -142,8 +142,8 @@
 
         <!-- testing -->
         <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
