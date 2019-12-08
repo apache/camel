@@ -145,7 +145,7 @@ public class GangliaComponentConfiguration
         /**
          * The type of value
          */
-        private GMetricType type = GMetricType.string;
+        private GMetricType type = GMetricType.STRING;
         /**
          * The slope
          */

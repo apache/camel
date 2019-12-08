@@ -70,7 +70,7 @@ public class GangliaConfiguration implements Cloneable {
     @UriParam(defaultValue = "metric")
     private String metricName = DEFAULT_METRIC_NAME;
 
-    @UriParam(defaultValue = "string", enums = "string,int8,uint8,int16,uint16,int32,uint32,float,double")
+    @UriParam(defaultValue = "STRING", enums = "STRING,INT8,UINT8,INT16,UINT16,INT32,UINT32,FLOAT,DOUBLE")
     private GMetricType type = DEFAULT_TYPE;
 
     @UriParam(defaultValue = "BOTH", enums = "ZERO,POSITIVE,NEGATIVE,BOTH")
