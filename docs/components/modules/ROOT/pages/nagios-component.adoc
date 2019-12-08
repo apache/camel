@@ -84,7 +84,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -97,7 +97,6 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *encryption* (security) | To specify an encryption method. |  | Encryption
-| *encryptionMethod* (security) | *Deprecated* To specify an encryption method. |  | NagiosEncryptionMethod
 | *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // endpoint options: END
