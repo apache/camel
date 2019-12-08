@@ -37,8 +37,8 @@ public class HazelcastTopicComponent extends HazelcastDefaultComponent {
     @Override
     protected HazelcastDefaultEndpoint doCreateEndpoint(String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance) throws Exception {
         final HazelcastTopicConfiguration config = new HazelcastTopicConfiguration();
-        setProperties(config, parameters);
         HazelcastTopicEndpoint answer = new HazelcastTopicEndpoint(hzInstance, uri, this, remaining, config);
+        setProperties(answer, parameters);
         return answer;
     }
 
