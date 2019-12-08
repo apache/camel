@@ -486,21 +486,21 @@ public final class PropertyBindingSupport {
                     valid = key.indexOf('.') == -1;
                 }
                 if (valid) {
-                    // GeneratedPropertyConfigurer works by invoking the methods directly but it does
-                    // not resolve property placeholders eventually defined in the value before invoking
-                    // the setter.
-                    if (value instanceof String) {
-                        value = camelContext.resolvePropertyPlaceholders((String) value);
-                    }
                     try {
+                        // GeneratedPropertyConfigurer works by invoking the methods directly but it does
+                        // not resolve property placeholders eventually defined in the value before invoking
+                        // the setter.
+                        if (value instanceof String) {
+                            value = camelContext.resolvePropertyPlaceholders((String) value);
+                        }
                         value = resolveValue(camelContext, target, key, value, ignoreCase, fluentBuilder, allowPrivateSetter);
+                        boolean hit = gen.configure(camelContext, target, key, value, ignoreCase);
+                        if (removeParameter && hit) {
+                            iter.remove();
+                            rc = true;
+                        }
                     } catch (Exception e) {
-                        throw new PropertyBindingException(target, e);
-                    }
-                    boolean hit = gen.configure(camelContext, target, key, value, ignoreCase);
-                    if (removeParameter && hit) {
-                        iter.remove();
-                        rc = true;
+                        throw new PropertyBindingException(target, key, value, e);
                     }
                 }
             }
