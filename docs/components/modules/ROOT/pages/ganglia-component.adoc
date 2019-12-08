@@ -111,7 +111,7 @@ with the following path and query parameters:
 | *spoofHostname* (producer) | Spoofing information IP:hostname |  | String
 | *tmax* (producer) | Maximum time in seconds that the value can be considered current. After this, Ganglia considers the value to have expired. | 60 | int
 | *ttl* (producer) | If using multicast, set the TTL of the packets | 5 | int
-| *type* (producer) | The type of value | string | GMetricType
+| *type* (producer) | The type of value | STRING | GMetricType
 | *units* (producer) | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
 | *wireFormat31x* (producer) | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
