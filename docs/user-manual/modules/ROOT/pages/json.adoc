@@ -521,9 +521,9 @@ as shown below:
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------
 // enable Jackson json type converter
-getContext().getProperties().put("CamelJacksonEnableTypeConverter", "true");
+getContext().getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
 // allow Jackson json to convert to pojo types also (by default jackson only converts to String and other simple types)
-getContext().getProperties().put("CamelJacksonTypeConverterToPojo", "true");
+getContext().getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
 -----------------------------------------------------------------------------------------------------------------------
 
 The `camel-jackson` type converter integrates with JAXB which means you
