@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.XmlAccessType;

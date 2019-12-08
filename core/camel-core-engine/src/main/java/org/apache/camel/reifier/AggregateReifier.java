@@ -35,7 +35,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {

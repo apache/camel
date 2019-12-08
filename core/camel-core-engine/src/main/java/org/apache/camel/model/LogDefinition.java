@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 
