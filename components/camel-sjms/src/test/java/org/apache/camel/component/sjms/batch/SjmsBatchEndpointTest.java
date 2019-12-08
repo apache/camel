@@ -78,7 +78,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         return true;
     }
 
-    @Test(expected = FailedToStartRouteException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void testProducerFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
