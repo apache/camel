@@ -57,7 +57,7 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
         Object marshalled = template.requestBody("direct:inPretty", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        String expected = "<HashMap>\n  <name>Camel</name>\n</HashMap>\n";
+        String expected = "<HashMap>" + LS + "  <name>Camel</name>" + LS + "</HashMap>" + LS;
         assertEquals(expected, marshalledAsString);
 
         template.sendBody("direct:backPretty", marshalled);
