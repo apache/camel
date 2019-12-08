@@ -81,6 +81,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
             endpoint.setDefaultOperation(HazelcastOperation.getHazelcastOperation(defaultOperation));
         }
 
+        setProperties(endpoint, parameters);
+
         return endpoint;
     }
 
