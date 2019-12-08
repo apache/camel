@@ -560,14 +560,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the JSON data format using the XStream json library
+     * Uses the JSON data format using the Jackson library
      */
     public T json() {
         return dataFormat(new JsonDataFormat());
     }
 
     /**
-     * Uses the JSON data format using the XStream json library turning pretty
+     * Uses the JSON data format using the Jackson library turning pretty
      * printing on or off
      *
      * @param prettyPrint turn pretty printing on or off
