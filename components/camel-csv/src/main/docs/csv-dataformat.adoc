@@ -305,7 +305,22 @@ should illustrate this customization.
 </bean>
 -----------------------------------------------------------------------------------------------------------------------------
 
-== Using skipFirstLine option while unmarshaling
+== Using skipFirstLine or skipHeaderRecord option while unmarshaling
+
+*For Camel >= 2.16.5 
+The instruction for CSV Data format to skip headers or first line is the following. 
+Usign the Spring/XML DSL:
+
+[source,xml]
+---------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <unmarshal>
+    <csv skipHeaderRecord="true" />
+  </unmarshal>
+  <to uri="bean:myCsvHandler?method=doHandleCsv" />
+</route>
+---------------------------------------------------
 
 *Since Camel 2.10 and deleted for Camel 2.15*
 
