@@ -61,7 +61,7 @@ public class BundleIT {
                         .read(
                             Files.newInputStream(
                                 Paths.get("target/test-bundles")
-                                    .resolve("camel-core-osgi-activator.jar")))
+                                    .resolve("camel-osgi-activator.jar")))
                         .build()),
                 junitBundles());
     }
@@ -70,7 +70,7 @@ public class BundleIT {
     public void testBundleLoaded() throws Exception {
         boolean hasCore = false;
         boolean hasOsgi = false;
-        boolean hasCamelCoreOsgiActivator = false;
+        boolean hasCamelOsgiActivator = false;
         for (Bundle b : bc.getBundles()) {
             if ("org.apache.camel.camel-core".equals(b.getSymbolicName())) {
                 hasCore = true;
@@ -81,14 +81,14 @@ public class BundleIT {
                 assertEquals("Camel Core OSGi not activated", Bundle.ACTIVE, b.getState());
             }
             
-            if ("org.apache.camel.camel-core-osgi-activator".equals(b.getSymbolicName())) {
-                hasCamelCoreOsgiActivator = true;
-                assertEquals("Camel Core OSGi Activator not activated", Bundle.ACTIVE, b.getState());
+            if ("org.apache.camel.camel-osgi-activator".equals(b.getSymbolicName())) {
+                hasCamelOsgiActivator = true;
+                assertEquals("Camel OSGi Activator not activated", Bundle.ACTIVE, b.getState());
             }
         }
         assertTrue("Camel Core bundle not found", hasCore);
         assertTrue("Camel Core OSGi bundle not found", hasOsgi);
-        assertTrue("Camel Core OSGi Activator bundle not found", hasCamelCoreOsgiActivator);
+        assertTrue("Camel OSGi Activator bundle not found", hasCamelOsgiActivator);
     }
 
     @Test
