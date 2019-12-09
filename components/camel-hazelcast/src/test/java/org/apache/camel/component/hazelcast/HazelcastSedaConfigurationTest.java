@@ -83,7 +83,7 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
             context.getEndpoint("hazelcast-seda:foo?onErrorDelay=-1");
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertIsInstanceOf(PropertyBindingException.class, e.getCause());
         }
     }
 
