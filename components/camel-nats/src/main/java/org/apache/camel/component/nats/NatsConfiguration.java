@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class NatsConfiguration {
@@ -373,7 +374,10 @@ public class NatsConfiguration {
         StringBuilder servers = new StringBuilder();
         String prefix = "nats://";
 
-        String[] pieces = getServers().split(",");
+        String srvspec = getServers();
+        ObjectHelper.notNull(srvspec, "No servers configured");
+
+        String[] pieces = srvspec.split(",");
         for (int i = 0; i < pieces.length; i++) {
             if (i < pieces.length - 1) {
                 servers.append(prefix + pieces[i] + ",");
