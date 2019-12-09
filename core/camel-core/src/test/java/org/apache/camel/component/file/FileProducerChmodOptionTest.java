@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -101,7 +102,9 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
             fail("Expected FailedToCreateRouteException");
         } catch (FailedToCreateRouteException e) {
             assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
+            assertEquals("chmod", pbe.getPropertyName());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
             assertEquals("chmod option [abc] is not valid", iae.getMessage());
         }
     }

@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 306 in 244 JAR artifacts (0 deprecated)
+Number of Components: 306 in 244 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -136,7 +136,7 @@ Number of Components: 306 in 244 JAR artifacts (0 deprecated)
 
 | xref:crypto-component.adoc[Crypto (JCE)] (camel-crypto) | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 
-| xref:crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) | 2.20 | The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
+| xref:crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) | 2.20 | *deprecated* The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
 
 | xref:cxf-component.adoc[CXF] (camel-cxf) | 1.0 | The cxf component is used for SOAP WebServices using Apache CXF.
 
@@ -776,7 +776,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 39 in 39 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 40 in 40 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -807,6 +807,8 @@ Number of Miscellaneous Components: 39 in 39 JAR artifacts (0 deprecated)
 | xref:microprofile-health.adoc[Microprofile Health] (camel-microprofile-health) | 3.0 | Bridging Eclipse MicroProfile Health with Camel health checks
 
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
+
+| xref:osgi-activator.adoc[Osgi Activator] (camel-osgi-activator) |  | Camel OSGi Activator
 
 | xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert.x
 

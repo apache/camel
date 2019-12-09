@@ -1,7 +1,10 @@
 [[crypto-cms-component]]
-= Crypto CMS Component
+= Crypto CMS Component (deprecated)
 
 *Since Camel 2.20*
+
+*Since Camel 2.20*
+
 
 // HEADER START
 *Only producer is supported*

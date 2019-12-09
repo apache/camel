@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.core.osgi.main.internal;
+package org.apache.camel.osgi.activator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +33,9 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Activator implements BundleActivator, ServiceTrackerCustomizer<RouteBuilder, RouteBuilder> {
+public class CamelRoutesActivator implements BundleActivator, ServiceTrackerCustomizer<RouteBuilder, RouteBuilder> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelRoutesActivator.class);
     private ServiceRegistration<CamelContext> camelContextRef;
     private ModelCamelContext camelContext;
     private BundleContext bundleContext;
@@ -63,7 +63,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<Rout
         }
 
         this.routeServiceTracker.open();
-        LOG.info("Camel Core OSGi Activator RouteBuilder ServiceTracker Tracker Open");
+        LOG.info("Camel OSGi Activator RouteBuilder ServiceTracker Tracker Open");
     }
 
     @Override
@@ -73,10 +73,10 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<Rout
             // need to synchronize here since adding routes is not synchronized
             synchronized (camelContext) {
                 this.camelContext.addRoutes(builder);
-                LOG.debug("Camel Routes from RouteBuilder Class {} Added to Camel Core OSGi Activator Context", builder.getClass().getName());
+                LOG.debug("Camel Routes from RouteBuilder Class {} Added to Camel OSGi Activator Context", builder.getClass().getName());
             }
         } catch (Exception e) {
-            LOG.error("Error Adding Camel Route Builder", e);
+            LOG.error("Error Adding Camel RouteBuilder", e);
         }
 
         return builder;
@@ -103,7 +103,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<Rout
         try {
             synchronized (camelContext) {
                 camelContext.removeRouteDefinitions(routesToBeRemoved);
-                LOG.debug("Camel Routes from RouteBuilder Class {} Removed from Camel Core OSGi Activator Context",
+                LOG.debug("Camel Routes from RouteBuilder Class {} Removed from Camel OSGi Activator Context",
                         service.getClass().getName());
             }
         } catch (Exception e) {

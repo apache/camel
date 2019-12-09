@@ -28,7 +28,7 @@
 
     <artifactId>camel-crypto-cms</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Crypto CMS</name>
+    <name>Camel :: Crypto CMS (deprecated)</name>
     <description>Camel Cryptographic Message Syntax Support</description>
 
     <dependencies>

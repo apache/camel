@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.quartz.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -56,10 +57,14 @@ public class QuartzComponentConfiguration
      */
     private Boolean enableJmx = true;
     /**
-     * Properties to configure the Quartz scheduler. The option is a
-     * java.util.Properties type.
+     * References to an existing Properties or Map to lookup in the registry to
+     * use for configuring quartz.
      */
-    private String properties;
+    private String propertiesRef;
+    /**
+     * Properties to configure the Quartz scheduler.
+     */
+    private Map properties;
     /**
      * File name of the properties to load from the classpath
      */
@@ -147,11 +152,19 @@ public class QuartzComponentConfiguration
         this.enableJmx = enableJmx;
     }
 
-    public String getProperties() {
+    public String getPropertiesRef() {
+        return propertiesRef;
+    }
+
+    public void setPropertiesRef(String propertiesRef) {
+        this.propertiesRef = propertiesRef;
+    }
+
+    public Map getProperties() {
         return properties;
     }
 
-    public void setProperties(String properties) {
+    public void setProperties(Map properties) {
         this.properties = properties;
     }
 
