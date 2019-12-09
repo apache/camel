@@ -24,7 +24,11 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Date;
 import java.util.Set;
 
-import org.apache.camel.*;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.PropertyBindingException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
