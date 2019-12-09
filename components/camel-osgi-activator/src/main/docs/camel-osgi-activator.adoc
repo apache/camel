@@ -1,0 +1,39 @@
+= camel-osgi-activator
+
+A small bundle for starting an OSGi Apache Camel Project.
+
+The bundle starts the CamelContext and registering RouteBuilders from any bundle.
+
+== Install bundle
+
+Register an Apache Camel RouteBuilder as an OSGi service.
+
+Using annotations
+
+[source,java]
+----
+@Component(service = RouteBuilder.class)
+public class MyRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("timer:test?fixedRate=true&period=1000")
+            .log("Hello");
+    }
+}
+----
+
+Or Manually
+
+[source,java]
+----
+public void start(BundleContext context) throws Exception {
+  context.registerService(RouteBuilder.class, new MyRouteBuilder(), null);
+}
+----
+
+And it's automatically added or removed to the context from any bundle!
+
+[source,text]
+----
+Route: route1 started and consuming from: timer://test?fixedRate=true&period=1000
+----
