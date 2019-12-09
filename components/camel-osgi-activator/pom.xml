@@ -32,7 +32,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: OSGi Activator</name>
-    <description>Camel OSGi Activator</description>
+    <description>Camel OSGi Activator for running Camel routes from other bundles</description>
 
     <properties>
         <camel.osgi.activator>org.apache.camel.osgi.activator.CamelRoutesActivator</camel.osgi.activator>

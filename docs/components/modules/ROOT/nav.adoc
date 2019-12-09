@@ -272,7 +272,7 @@
 * xref:openstack.adoc[Openstack Component]
 * xref:opentracing.adoc[OpenTracing Component]
 * xref:optaplanner-component.adoc[OptaPlanner Component]
-* xref:camel-osgi-activator.adoc[camel-osgi-activator]
+* xref:osgi-activator.adoc[OSGi Camel Routes Activator]
 * xref:paho-component.adoc[Paho Component]
 * xref:paxlogging-component.adoc[OSGi PAX Logging Component]
 * xref:pdf-component.adoc[PDF Component]
