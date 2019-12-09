@@ -34,6 +34,8 @@ import org.junit.Test;
 
 public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
+    private Config config;
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         // setup MPC
@@ -44,11 +46,19 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
         // create PMC config source and register it so we can use it for testing
         final PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
-        final Config config = new SmallRyeConfigBuilder().withSources(pcs).build();
+        config = new SmallRyeConfigBuilder().withSources(pcs).build();
 
         ConfigProviderResolver.instance().registerConfig(config, CamelMicroProfilePropertiesSourceTest.class.getClassLoader());
 
         return super.createCamelContext();
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        if (config != null) {
+            ConfigProviderResolver.instance().releaseConfig(config);
+        }
+        super.tearDown();
     }
 
     @Override

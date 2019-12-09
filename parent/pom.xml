@@ -567,7 +567,7 @@
         <slf4j-api-version>1.7.29</slf4j-api-version>
         <slf4j-version>1.7.29</slf4j-version>
         <smack-version>4.3.4</smack-version>
-        <smallrye-config-version>1.0.0</smallrye-config-version>
+        <smallrye-config-version>1.5.0</smallrye-config-version>
         <smallrye-metrics-version>2.3.1</smallrye-metrics-version>
         <smallrye-health-version>2.1.0</smallrye-health-version>
         <snakeyaml-version>1.25</snakeyaml-version>
