@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf.main;
+package org.apache.camel.itest.karaf.activator;
 
 import java.io.File;
 

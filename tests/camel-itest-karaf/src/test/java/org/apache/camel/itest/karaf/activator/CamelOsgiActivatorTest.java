@@ -14,12 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf.main;
+package org.apache.camel.itest.karaf.activator;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -34,35 +31,26 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.streamBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
-public class BundleIT {
+public class CamelOsgiActivatorTest {
     @Inject
     private BundleContext bc;
 
     @Configuration
-    public Option[] configuration() throws IOException, URISyntaxException, ClassNotFoundException {
+    public Option[] configuration() throws IOException {
         return options(
                 PaxExamOptions.KARAF.option(),
                 PaxExamOptions.CAMEL_CORE_OSGI.option(),
-                streamBundle(
-                    TinyBundles.bundle()
-                        .read(
-                            Files.newInputStream(
-                                Paths.get("target/test-bundles")
-                                    .resolve("camel-osgi-activator.jar")))
-                        .build()),
+                mavenBundle("org.apache.camel", "camel-osgi-activator").versionAsInProject(),
                 junitBundles());
     }
     
