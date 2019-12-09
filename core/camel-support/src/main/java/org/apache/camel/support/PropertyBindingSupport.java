@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -471,7 +472,9 @@ public final class PropertyBindingSupport {
         org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         org.apache.camel.util.ObjectHelper.notNull(target, "target");
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
-        boolean rc = false;
+
+        final String uOptionPrefix = ignoreCase && isNotEmpty(optionPrefix) ? optionPrefix.toUpperCase(Locale.US) : "";
+        final int size = properties.size();
 
         if (configurer instanceof GeneratedPropertyConfigurer) {
             GeneratedPropertyConfigurer gen = (GeneratedPropertyConfigurer) configurer;
@@ -480,12 +483,9 @@ public final class PropertyBindingSupport {
                 Map.Entry<String, Object> entry = iter.next();
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                boolean valid = true;
-                if (nesting) {
-                    // property configurer does not support nested names so skip if the name has a dot
-                    valid = key.indexOf('.') == -1;
-                }
-                if (valid) {
+
+                // property configurer does not support nested names so skip if the name has a dot
+                if (key.indexOf('.') != -1) {
                     try {
                         // GeneratedPropertyConfigurer works by invoking the methods directly but it does
                         // not resolve property placeholders eventually defined in the value before invoking
@@ -497,7 +497,6 @@ public final class PropertyBindingSupport {
                         boolean hit = gen.configure(camelContext, target, key, value, ignoreCase);
                         if (removeParameter && hit) {
                             iter.remove();
-                            rc = true;
                         }
                     } catch (Exception e) {
                         throw new PropertyBindingException(target, key, value, e);
@@ -507,39 +506,44 @@ public final class PropertyBindingSupport {
         }
 
         // must set reference parameters first before the other bindings
-        int size = properties.size();
         setReferenceProperties(camelContext, target, properties);
-        rc |= properties.size() != size;
 
-        String uOptionPrefix = "";
-        if (ignoreCase && isNotEmpty(optionPrefix)) {
-            uOptionPrefix = optionPrefix.toUpperCase(Locale.US);
-        }
+        // sort the keys by nesting level so when moving to the nest level all the
+        // propertis of the curent level are bound to the target. This allow the 
+        // properties binging engine to be indipendent to the order of properrties.
+        //
+        // As example:
+        //
+        //     configuration.my-property = myCustomValue
+        //     configuration = #class:my.custom.Config
+        //
+        // 'configuration.my-property' has lower precedence over 'configuration' as
+        // it is one level deep and will be set after all the properties of the current
+        // level are set which allow `my-property` to be set of the right instance.
+        properties.keySet().stream()
+            .sorted(Comparator.comparingInt(s -> StringHelper.countChar(s, '.')))
+            .forEach(key -> {
+                final Object value = properties.get(key);
 
-        for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry<String, Object> entry = iter.next();
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-            if (isNotEmpty(optionPrefix)) {
-                boolean match = key.startsWith(optionPrefix) || ignoreCase && key.toUpperCase(Locale.US).startsWith(uOptionPrefix);
-                if (!match) {
-                    continue;
+                if (isNotEmpty(optionPrefix)) {
+                    boolean match = key.startsWith(optionPrefix) || ignoreCase && key.toUpperCase(Locale.US).startsWith(uOptionPrefix);
+                    if (!match) {
+                        return;
+                    }
+                    key = key.substring(optionPrefix.length());
                 }
-                key = key.substring(optionPrefix.length());
-            }
 
-            boolean bound = bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
-            if (bound && removeParameter) {
-                iter.remove();
-                rc = true;
+                boolean bound = bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+                if (bound && removeParameter) {
+                    properties.remove(key);
+                }
+                if (mandatory && !bound) {
+                    throw new PropertyBindingException(target, key, value);
+                }
             }
-            if (mandatory && !bound) {
-                throw new PropertyBindingException(target, key, value);
-            }
-        }
+        );
 
-        return rc;
+        return properties.size() != size;
     }
 
     private static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value,
