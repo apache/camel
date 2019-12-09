@@ -405,29 +405,6 @@ public class SupervisingRouteController extends DefaultRouteController {
         );
     }
 
-    private synchronized void stopRoutes() {
-        if (!isRunAllowed()) {
-            return;
-        }
-
-        final List<String> routeList;
-
-        synchronized (lock) {
-            routeList = routes.stream()
-                .filter(r -> r.getStatus() == ServiceStatus.Started)
-                .map(RouteHolder::getId)
-                .collect(Collectors.toList());
-        }
-
-        for (String route: routeList) {
-            try {
-                stopRoute(route);
-            } catch (Exception e) {
-                // ignored, exception handled by stopRoute
-            }
-        }
-    }
-
     // *********************************
     // RouteChecker
     // *********************************
@@ -496,11 +473,6 @@ public class SupervisingRouteController extends DefaultRouteController {
             }
 
             return task != null;
-        }
-
-        void clear() {
-            routes.values().forEach(BackOffTimer.Task::cancel);
-            routes.clear();
         }
 
         public Optional<BackOffTimer.Task> getBackOffContext(String id) {

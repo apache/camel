@@ -22,7 +22,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -839,42 +838,6 @@ public abstract class AbstractCamelCatalog {
             }
         }
         return null;
-    }
-
-    private String doAsEndpointUri(String scheme, String json, String ampersand, boolean encode) throws URISyntaxException {
-        List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
-
-        Map<String, String> copy = new HashMap<>();
-        for (Map<String, String> row : rows) {
-            String name = row.get("name");
-            String required = row.get("required");
-            String value = row.get("value");
-            String defaultValue = row.get("defaultValue");
-
-            // only add if either required, or the value is != default value
-            String valueToAdd = null;
-            if ("true".equals(required)) {
-                valueToAdd = value != null ? value : defaultValue;
-                if (valueToAdd == null) {
-                    valueToAdd = "";
-                }
-            } else {
-                // if we have a value and no default then add it
-                if (value != null && defaultValue == null) {
-                    valueToAdd = value;
-                }
-                // otherwise only add if the value is != default value
-                if (value != null && defaultValue != null && !value.equals(defaultValue)) {
-                    valueToAdd = value;
-                }
-            }
-
-            if (valueToAdd != null) {
-                copy.put(name, valueToAdd);
-            }
-        }
-
-        return doAsEndpointUri(scheme, copy, ampersand, encode);
     }
 
     public String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
