@@ -267,6 +267,7 @@
         <module>camel-openstack</module>
         <module>camel-opentracing</module>
         <module>camel-optaplanner</module>
+        <module>camel-osgi-activator</module>
         <module>camel-paho</module>
         <module>camel-paxlogging</module>
         <module>camel-pdf</module>

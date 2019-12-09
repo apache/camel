@@ -36,7 +36,6 @@
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-engine</include>
         <include>org.apache.camel:camel-core-osgi</include>
-        <include>org.apache.camel:camel-core-osgi-activator</include>
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-cloud</include>
         <include>org.apache.camel:camel-jaxp</include>
