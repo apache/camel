@@ -57,7 +57,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for Camel 3.0
 
-    private UnitOfWork parent;
     private String id;
     private CamelContext context;
     private List<Synchronization> synchronizations;
@@ -140,7 +139,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void setParentUnitOfWork(UnitOfWork parentUnitOfWork) {
-        this.parent = parentUnitOfWork;
     }
 
     @Override
@@ -167,7 +165,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
         routeContextStack.clear();
         originalInMessage = null;
-        parent = null;
         id = null;
     }
 

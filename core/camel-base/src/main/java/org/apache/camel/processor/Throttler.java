@@ -243,10 +243,6 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
             this.key = key;
         }
 
-        public String getKey() {
-            return key;
-        }
-
         public int getThrottleRate() {
             return throttleRate;
         }

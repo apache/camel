@@ -37,7 +37,6 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V>  implements StaticService {
 
-    private static final long serialVersionUID = 1L;
     protected final CamelContext context;
     protected final int maxCacheSize;
     protected final Map<K, V> dynamicMap;

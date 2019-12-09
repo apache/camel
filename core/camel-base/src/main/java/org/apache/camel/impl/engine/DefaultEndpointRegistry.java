@@ -28,8 +28,6 @@ import org.apache.camel.support.CamelContextHelper;
  */
 public class DefaultEndpointRegistry extends AbstractDynamicRegistry<EndpointKey, Endpoint> implements EndpointRegistry<EndpointKey> {
 
-    private static final long serialVersionUID = 1L;
-
     public DefaultEndpointRegistry(CamelContext context) {
         super(context, CamelContextHelper.getMaximumEndpointCacheSize(context));
     }
