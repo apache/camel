@@ -30,8 +30,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Messaging client for Google Cloud Platform PubSub Service
@@ -85,9 +86,9 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void afterPropertiesSet() throws Exception {
         if (Strings.isNullOrEmpty(loggerId)) {
-            log = LoggerFactory.getLogger(this.getClass().getName());
+            log = LogManager.getLogger(this.getClass().getName());
         } else {
-            log = LoggerFactory.getLogger(loggerId);
+            log = LogManager.getLogger(loggerId);
         }
 
         // Default pubsub connection.

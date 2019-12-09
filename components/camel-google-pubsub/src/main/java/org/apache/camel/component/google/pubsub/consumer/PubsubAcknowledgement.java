@@ -22,8 +22,9 @@ import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.model.AcknowledgeRequest;
 import com.google.api.services.pubsub.model.ModifyAckDeadlineRequest;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public abstract class PubsubAcknowledgement {
 
@@ -42,7 +43,7 @@ public abstract class PubsubAcknowledgement {
             loggerId = this.getClass().getName();
         }
 
-        logger = LoggerFactory.getLogger(loggerId);
+        logger = LogManager.getRootLogger();
     }
 
     void acknowledge(List<String> ackIdList) {

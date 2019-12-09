@@ -29,8 +29,9 @@ import com.google.api.services.pubsub.model.PublishResponse;
 import com.google.api.services.pubsub.model.PubsubMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Generic PubSub Producer
@@ -48,7 +49,7 @@ public class GooglePubsubProducer extends DefaultProducer {
             loggerId = this.getClass().getName();
         }
 
-        logger = LoggerFactory.getLogger(loggerId);
+        logger = LogManager.getLogger(loggerId);
     }
 
     /**

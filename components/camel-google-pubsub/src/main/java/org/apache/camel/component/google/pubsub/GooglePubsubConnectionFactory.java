@@ -36,14 +36,15 @@ import com.google.api.services.pubsub.PubsubScopes;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class GooglePubsubConnectionFactory {
 
     private static JsonFactory jsonFactory = new JacksonFactory();
 
-    private final Logger logger = LoggerFactory.getLogger(GooglePubsubConnectionFactory.class);
+    private final Logger logger = LogManager.getLogger(GooglePubsubConnectionFactory.class);
 
     private String serviceAccount;
     private String serviceAccountKey;
