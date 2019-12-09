@@ -776,7 +776,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 39 in 39 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 40 in 40 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -807,6 +807,8 @@ Number of Miscellaneous Components: 39 in 39 JAR artifacts (0 deprecated)
 | xref:microprofile-health.adoc[Microprofile Health] (camel-microprofile-health) | 3.0 | Bridging Eclipse MicroProfile Health with Camel health checks
 
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
+
+| xref:osgi-activator.adoc[Osgi Activator] (camel-osgi-activator) |  | Camel OSGi Activator
 
 | xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert.x
 

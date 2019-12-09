@@ -37,6 +37,7 @@
     <properties>
         <camel.osgi.activator>org.apache.camel.osgi.activator.CamelRoutesActivator</camel.osgi.activator>
         <camel.osgi.dynamic>*</camel.osgi.dynamic>
+        <firstVersion>3.1.0</firstVersion>
     </properties>
 
     <dependencies>
