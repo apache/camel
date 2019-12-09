@@ -142,7 +142,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
     private boolean convertIfRequired(Message message, DataType type) throws Exception {
         // TODO for better performance it may be better to add TypeConverterTransformer
         // into transformer registry automatically to avoid unnecessary scan in transformer registry
-        if (type != null && type.isJavaType() && type.getName() != null) {
+        if (type != null && type.isJavaType() && type.getName() != null && message != null && message.getBody() != null) {
             CamelContext context = message.getExchange().getContext();
             Class<?> typeJava = getClazz(type.getName(), context);
             if (!typeJava.isAssignableFrom(message.getBody().getClass())) {
