@@ -47,7 +47,6 @@
         <module>camel-core</module>
         <module>camel-endpointdsl</module>
         <module>camel-core-osgi</module>
-        <module>camel-core-osgi-activator</module>
         <module>camel-core-xml</module>
         <module>camel-cloud</module>
         <module>camel-main</module>

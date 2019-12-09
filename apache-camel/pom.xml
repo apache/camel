@@ -85,10 +85,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-osgi-activator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-xml</artifactId>
         </dependency>
         <dependency>
@@ -1147,6 +1143,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-optaplanner</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-osgi-activator</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

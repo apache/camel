@@ -17,7 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -74,12 +74,12 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
-                Properties cacheConfigurationProperties) {
+                Map cacheConfigurationProperties) {
             doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
@@ -87,8 +87,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a <code>java.util.Map</code> type.
          * 
          * Group: common
          */
@@ -639,12 +638,12 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointProducerBuilder cacheConfigurationProperties(
-                Properties cacheConfigurationProperties) {
+                Map cacheConfigurationProperties) {
             doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
@@ -652,8 +651,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a <code>java.util.Map</code> type.
          * 
          * Group: common
          */
@@ -1062,12 +1060,12 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointBuilder cacheConfigurationProperties(
-                Properties cacheConfigurationProperties) {
+                Map cacheConfigurationProperties) {
             doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
@@ -1075,8 +1073,7 @@ public interface JCacheEndpointBuilderFactory {
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a <code>java.util.Map</code> type.
          * 
          * Group: common
          */

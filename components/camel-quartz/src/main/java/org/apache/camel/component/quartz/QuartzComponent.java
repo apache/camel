@@ -19,6 +19,7 @@ package org.apache.camel.component.quartz;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,6 +29,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
@@ -52,7 +54,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private Scheduler scheduler;
     @Metadata(label = "advanced")
     private SchedulerFactory schedulerFactory;
-    private Properties properties;
+    private String propertiesRef;
+    private Map properties;
     private String propertiesFile;
     @Metadata(label = "scheduler")
     private int startDelayedSeconds;
@@ -123,14 +126,25 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         this.enableJmx = enableJmx;
     }
 
-    public Properties getProperties() {
+    public String getPropertiesRef() {
+        return propertiesRef;
+    }
+
+    /**
+     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring quartz.
+     */
+    public void setPropertiesRef(String propertiesRef) {
+        this.propertiesRef = propertiesRef;
+    }
+
+    public Map getProperties() {
         return properties;
     }
 
     /**
      * Properties to configure the Quartz scheduler.
      */
-    public void setProperties(Properties properties) {
+    public void setProperties(Map properties) {
         this.properties = properties;
     }
 
@@ -278,7 +292,16 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     private Properties loadProperties() throws SchedulerException {
-        Properties answer = getProperties();
+        Properties answer = null;
+        if (getProperties() != null) {
+            answer = new Properties();
+            answer.putAll(getProperties());
+        }
+        if (answer == null && getPropertiesRef() != null) {
+            Map map = CamelContextHelper.mandatoryLookup(getCamelContext(), getPropertiesRef(), Map.class);
+            answer = new Properties();
+            answer.putAll(map);
+        }
         if (answer == null && getPropertiesFile() != null) {
             log.info("Loading Quartz properties file from: {}", getPropertiesFile());
             InputStream is = null;
