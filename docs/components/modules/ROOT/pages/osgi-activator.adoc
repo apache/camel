@@ -1,10 +1,12 @@
-= camel-osgi-activator
+[[OsgiActivator]]
+= OSGi Camel Routes Activator
+:page-source: components/camel-osgi-activator/src/main/docs/osgi-activator.adoc
 
 *Since Camel 3.1*
 
 A small OSGi activator for starting an OSGi Apache Camel Project.
 
-The bundle starts a shared CamelContext and registers any `RouteBuilder`s instances
+The bundle starts a shared CamelContext and registers any RouteBuilder instances
 (discovered via the OSGi Service Registry), from any other bundles that gets installed.
 And when the bundles gets uninstalled then the routes are stopped and removed from the shared CamelContext.
 
@@ -24,7 +26,7 @@ Therefore only use this for prototyping and experiments. This is NOT recommended
 
 Register an Apache Camel RouteBuilder as an OSGi service.
 
-Using annotations
+Using OSGi annotations:
 
 [source,java]
 ----
@@ -38,7 +40,7 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
-Or Manually
+Or Manually:
 
 [source,java]
 ----
