@@ -59,7 +59,7 @@
         </dependency>
 
         <dependency>
-            <groupId>io.smallrye.config</groupId>
+            <groupId>io.smallrye</groupId>
             <artifactId>smallrye-config</artifactId>
             <version>${smallrye-config-version}</version>
             <scope>test</scope>
