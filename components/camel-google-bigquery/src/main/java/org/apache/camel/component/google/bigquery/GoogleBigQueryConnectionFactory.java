@@ -36,14 +36,14 @@ import com.google.api.services.bigquery.BigqueryScopes;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GoogleBigQueryConnectionFactory {
 
     private static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
-    private final Logger logger = LoggerFactory.getLogger(GoogleBigQueryConnectionFactory.class);
+    private final Logger logger = LogManager.getLogger(GoogleBigQueryConnectionFactory.class);
 
     private String serviceAccount;
     private String serviceAccountKey;

@@ -31,8 +31,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.consumer.ExchangeAckTransaction;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 class GooglePubsubConsumer extends DefaultConsumer {
 
@@ -59,7 +60,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
             loggerId = this.getClass().getName();
         }
 
-        localLog = LoggerFactory.getLogger(loggerId);
+        localLog = LogManager.getLogger(loggerId);
     }
 
     @Override
