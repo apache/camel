@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 306 in 244 JAR artifacts (0 deprecated)
+Number of Components: 306 in 244 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -136,7 +136,7 @@ Number of Components: 306 in 244 JAR artifacts (0 deprecated)
 
 | xref:crypto-component.adoc[Crypto (JCE)] (camel-crypto) | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 
-| xref:crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) | 2.20 | The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
+| xref:crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) | 2.20 | *deprecated* The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
 
 | xref:cxf-component.adoc[CXF] (camel-cxf) | 1.0 | The cxf component is used for SOAP WebServices using Apache CXF.
 

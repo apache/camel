@@ -557,6 +557,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * different signer/verifier/encryptor/decryptor endpoints within the camel
      * context.
      */
+    @Deprecated
     default CryptoCmsEndpointBuilder cryptoCms(String path) {
         class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder, AdvancedCryptoCmsEndpointBuilder {
             public CryptoCmsEndpointBuilderImpl(String path) {
