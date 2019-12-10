@@ -79,9 +79,9 @@ public class AtmosComponent extends DefaultComponent {
         AtmosConfigurationValidator.validate(configuration);
 
         // and then override from parameters
-        setProperties(configuration, parameters);
-
-        return new AtmosEndpoint(uri, this, configuration);
+        AtmosEndpoint endpoint = new AtmosEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     public String getFullTokenId() {

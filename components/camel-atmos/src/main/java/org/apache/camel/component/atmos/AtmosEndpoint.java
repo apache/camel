@@ -95,6 +95,7 @@ public class AtmosEndpoint extends DefaultEndpoint {
         if (this.configuration.getOperation() == AtmosOperation.get) {
             consumer = new AtmosScheduledPollGetConsumer(this, processor, configuration);
             consumer.setDelay(POLL_CONSUMER_DELAY);
+            configureConsumer(consumer);
             return consumer;
         } else {
             throw new AtmosException("operation specified is not valid for consumer!");
