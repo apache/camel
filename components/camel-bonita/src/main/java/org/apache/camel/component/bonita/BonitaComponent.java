@@ -37,7 +37,6 @@ public class BonitaComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BonitaConfiguration configuration = new BonitaConfiguration();
-        setProperties(configuration, parameters);
 
         BonitaOperation op = getCamelContext().getTypeConverter().tryConvertTo(BonitaOperation.class, remaining);
         if (op == null) {
@@ -45,6 +44,8 @@ public class BonitaComponent extends DefaultComponent {
         }
         configuration.setOperation(op);
 
-        return new BonitaEndpoint(uri, this, configuration);
+        BonitaEndpoint endpoint = new BonitaEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 }
