@@ -26,30 +26,27 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Represents the component that manages {@link DigitalOceanEndpoint}.
- */
 @Component("digitalocean")
 public class DigitalOceanComponent extends DefaultComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanComponent.class);
-
 
     public DigitalOceanComponent() {
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         DigitalOceanConfiguration configuration = new DigitalOceanConfiguration();
-        setProperties(configuration, parameters);
         configuration.setResource(DigitalOceanResources.valueOf(remaining));
+
+        DigitalOceanEndpoint endpoint = new DigitalOceanEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
 
         if (ObjectHelper.isEmpty(configuration.getOAuthToken()) && ObjectHelper.isEmpty(configuration.getDigitalOceanClient())) {
             throw new DigitalOceanException("oAuthToken or digitalOceanClient must be specified");
         }
 
-        return new DigitalOceanEndpoint(uri, this, configuration);
+        return endpoint;
     }
 
 }
