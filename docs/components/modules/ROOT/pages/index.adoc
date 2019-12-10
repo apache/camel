@@ -808,7 +808,7 @@ Number of Miscellaneous Components: 40 in 40 JAR artifacts (0 deprecated)
 
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
-| xref:osgi-activator.adoc[Osgi Activator] (camel-osgi-activator) |  | Camel OSGi Activator
+| xref:osgi-activator.adoc[Osgi Activator] (camel-osgi-activator) | 3.1 | Camel OSGi Activator for running Camel routes from other bundles
 
 | xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert.x
 
