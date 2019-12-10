@@ -32,12 +32,11 @@ import static org.apache.camel.component.nsq.NsqConstants.NSQ_DEFAULT_PORT;
 @UriParams
 public class NsqConfiguration {
 
-    @UriPath(description = "The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer).")
-    @Metadata(required = true)
-    private String servers;
-    @UriParam(description = "The NSQ topic")
+    @UriPath(description = "The NSQ topic")
     @Metadata(required = true)
     private String topic;
+    @UriParam(description = "The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer).")
+    private String servers;
     @UriParam(label = "consumer", description = "The NSQ channel")
     private String channel;
     @UriParam(label = "consumer", defaultValue = "10")
@@ -61,9 +60,6 @@ public class NsqConfiguration {
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
-    /*
-     * URL a NSQ lookup server hostname.
-     */
     public String getServers() {
         return servers;
     }
@@ -226,17 +222,4 @@ public class NsqConfiguration {
         this.sslContextParameters = sslContextParameters;
     }
 
-    private String splitServers() {
-        StringBuilder servers = new StringBuilder();
-
-        String[] pieces = getServers().split(",");
-        for (int i = 0; i < pieces.length; i++) {
-            if (i < pieces.length - 1) {
-                servers.append(pieces[i] + ",");
-            } else {
-                servers.append(pieces[i]);
-            }
-        }
-        return servers.toString();
-    }
 }

@@ -45,11 +45,9 @@ public class NsqProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-
         String topic = exchange.getIn().getHeader(NsqConstants.NSQ_MESSAGE_TOPIC, configuration.getTopic(), String.class);
 
         LOG.debug("Publishing to topic: {}", topic);
-
         byte[] body = exchange.getIn().getBody(byte[].class);
         producer.produce(topic, body);
     }

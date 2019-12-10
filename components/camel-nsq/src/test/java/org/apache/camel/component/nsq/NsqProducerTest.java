@@ -88,7 +88,10 @@ public class NsqProducerTest extends NsqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nsq://" + getNsqProducerUrl() + "?topic=test");
+                NsqComponent nsq = context.getComponent("nsq", NsqComponent.class);
+                nsq.setServers(getNsqProducerUrl());
+
+                from("direct:send").to("nsq://test");
             }
         };
     }

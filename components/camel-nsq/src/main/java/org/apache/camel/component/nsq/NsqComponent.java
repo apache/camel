@@ -23,6 +23,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link NsqEndpoint}.
@@ -30,21 +31,40 @@ import org.apache.camel.support.DefaultComponent;
 @Component("nsq")
 public class NsqComponent extends DefaultComponent implements SSLContextParametersAware {
 
+    @Metadata
+    private String servers;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         NsqConfiguration configuration = new NsqConfiguration();
-        setProperties(configuration, parameters);
-        configuration.setServers(remaining);
+        configuration.setServers(servers);
+        configuration.setTopic(remaining);
+
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Topic must be configured");
+        }
+
+        NsqEndpoint endpoint = new NsqEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
 
         if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        NsqEndpoint endpoint = new NsqEndpoint(uri, this, configuration);
         return endpoint;
+    }
+
+    /**
+     * The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer).
+     */
+    public String getServers() {
+        return servers;
+    }
+
+    public void setServers(String servers) {
+        this.servers = servers;
     }
 
     @Override
