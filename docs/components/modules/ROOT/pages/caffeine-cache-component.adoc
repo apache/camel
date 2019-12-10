@@ -5,7 +5,7 @@
 *Since Camel 2.20*
 
 // HEADER START
-*Both producer and consumer is supported*
+*Only producer is supported*
 // HEADER END
 
 The Caffeine Cache component enables you to perform caching operations using
@@ -73,19 +73,16 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *createCacheIfNotExist* (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
 | *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
 | *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
 | *evictionType* (producer) | Set the eviction Type for this cache | SIZE_BASED | EvictionType
 | *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
 | *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
