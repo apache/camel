@@ -3,7 +3,7 @@
 This document is intended for helping you migrate your Apache Camel application
 from Camel 3.x to Camel 3.y.
 
-IMPORTANT: If you are migrating from Camel 2.x then read first the
+IMPORTANT: If you are migrating from Camel 2.x then use the
 xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
 
 For example if you are migrating from Camel 3.0 to 3.2, then you should follow the guides
