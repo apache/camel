@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -121,13 +122,15 @@ public abstract class BaseMainSupport extends ServiceSupport {
     }
 
     protected static boolean setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties,
-                                                   String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+                                                   String optionKey, String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
                                                    Map<String, String> autoConfiguredProperties) throws Exception {
         ObjectHelper.notNull(context, "context");
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
 
         boolean rc = false;
+        Iterator it = properties.entrySet().iterator();
+
         PropertyConfigurer configurer = null;
         if (target instanceof Component) {
             // the component needs to be initialized to have the configurer ready
@@ -135,47 +138,41 @@ public abstract class BaseMainSupport extends ServiceSupport {
             configurer = ((Component) target).getComponentPropertyConfigurer();
         }
 
-        try {
-            // keep a reference of the original keys
-            Map<String, Object> backup = new LinkedHashMap<>(properties);
-
-            rc = PropertyBindingSupport.build()
-                .withMandatory(failIfNotSet)
-                .withRemoveParameters(true)
-                .withConfigurer(configurer)
-                .withIgnoreCase(ignoreCase)
-                .bind(context, target, properties);
-
-            for (Map.Entry<String, Object> entry: backup.entrySet()) {
-                if (entry.getValue() != null && !properties.containsKey(entry.getKey())) {
-                    String prefix = optionPrefix;
-                    if (prefix != null && !prefix.endsWith(".")) {
-                        prefix = "." + prefix;
-                    }
-
-                    LOG.debug("Configured property: {}{}={} on bean: {}", prefix, entry.getKey(), entry.getValue(), target);
-                    autoConfiguredProperties.put(prefix + entry.getKey(), entry.getValue().toString());
-                }
-            }
-        } catch (PropertyBindingException e) {
-            String key = e.getOptionKey();
-            if (key == null) {
-                String prefix = e.getOptionPrefix();
-                if (prefix != null && !prefix.endsWith(".")) {
-                    prefix = "." + prefix;
-                }
-
-                key = prefix != null
-                    ? prefix + "." + e.getPropertyName()
-                    : e.getPropertyName();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry) it.next();
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            String stringValue = value != null ? value.toString() : null;
+            String key = name;
+            if (optionPrefix != null && optionKey != null) {
+                key = optionPrefix + optionKey;
+            } else if (optionPrefix != null) {
+                key = optionPrefix + name;
             }
 
-            if (failIfNotSet) {
-                // enrich the error with more precise details with option prefix and key
-                throw new PropertyBindingException(e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, key, e.getCause());
-            } else {
-                LOG.debug("Error configuring property (" + key + ") with name: " + e.getPropertyName() + ") on bean: " + target
-                    + " with value: " + e.getValue() + ". This exception is ignored as failIfNotSet=false.", e);
+            LOG.debug("Configuring property: {}={} on bean: {}", key, stringValue, target);
+            try {
+                boolean hit;
+                if (failIfNotSet) {
+                    PropertyBindingSupport.build().withMandatory(true).withConfigurer(configurer).withIgnoreCase(ignoreCase).bind(context, target, name, stringValue);
+                    hit = true;
+                } else {
+                    hit = PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true).bind(context, target, name, stringValue);
+                }
+                if (hit) {
+                    it.remove();
+                    rc = true;
+                    LOG.debug("Configured property: {}={} on bean: {}", key, stringValue, target);
+                    autoConfiguredProperties.put(key, stringValue);
+                }
+            } catch (PropertyBindingException e) {
+                if (failIfNotSet) {
+                    // enrich the error with more precise details with option prefix and key
+                    throw new PropertyBindingException(e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, optionKey, e.getCause());
+                } else {
+                    LOG.debug("Error configuring property (" + key + ") with name: " + name + ") on bean: " + target
+                            + " with value: " + stringValue + ". This exception is ignored as failIfNotSet=false.", e);
+                }
             }
         }
 
@@ -710,7 +707,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         }
         if (!contextProperties.isEmpty()) {
             LOG.debug("Auto-configuring CamelContext from loaded properties: {}", contextProperties.size());
-            setPropertiesOnTarget(camelContext, camelContext, contextProperties, "camel.context.",
+            setPropertiesOnTarget(camelContext, camelContext, contextProperties, null, "camel.context.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!hystrixProperties.isEmpty()) {
@@ -721,7 +718,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 hystrix = new HystrixConfigurationDefinition();
                 model.setHystrixConfiguration(hystrix);
             }
-            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, "camel.hystrix.",
+            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, null, "camel.hystrix.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!resilience4jProperties.isEmpty()) {
@@ -732,7 +729,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 resilience4j = new Resilience4jConfigurationDefinition();
                 model.setResilience4jConfiguration(resilience4j);
             }
-            setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, "camel.resilience4j.",
+            setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, null, "camel.resilience4j.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!restProperties.isEmpty()) {
@@ -743,7 +740,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 rest = new RestConfiguration();
                 model.setRestConfiguration(rest);
             }
-            setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
+            setPropertiesOnTarget(camelContext, rest, restProperties, null, "camel.rest.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
@@ -802,8 +799,9 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
         if (!properties.isEmpty()) {
             LOG.debug("Auto-configuring properties component from loaded properties: {}", properties.size());
-            setPropertiesOnTarget(camelContext, camelContext.getPropertiesComponent(), properties, "camel.component.properties.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            setPropertiesOnTarget(camelContext, camelContext.getPropertiesComponent(), properties, null,
+                    "camel.component.properties.", mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    true, autoConfiguredProperties);
         }
 
         // log which options was not set
@@ -840,7 +838,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
         if (!properties.isEmpty()) {
             LOG.debug("Auto-configuring main from loaded properties: {}", properties.size());
-            setPropertiesOnTarget(camelContext, config, properties, "camel.main.",
+            setPropertiesOnTarget(camelContext, config, properties, null, "camel.main.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
@@ -925,15 +923,11 @@ public abstract class BaseMainSupport extends ServiceSupport {
             LOG.debug("Auto-configuring {} components/dataformat/languages from loaded properties: {}", properties.size(), total);
         }
 
-        for (Map.Entry<PropertyOptionKey, Map<String, Object>> entry: properties.entrySet()) {
-            setPropertiesOnTarget(
-                    camelContext,
-                    entry.getKey().getInstance(),
-                    entry.getValue(),
-                    entry.getKey().getOptionPrefix(),
-                    mainConfigurationProperties.isAutoConfigurationFailFast(),
-                    true,
-                    autoConfiguredProperties);
+        for (PropertyOptionKey pok : properties.keySet()) {
+            Map<String, Object> values = properties.get(pok);
+            String optionKey = pok.getKey().substring(pok.getOptionPrefix().length());
+            setPropertiesOnTarget(camelContext, pok.getInstance(), values, optionKey, pok.getOptionPrefix(),
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
         // log which options was not set
@@ -942,7 +936,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 Map<String, Object> values = properties.get(pok);
                 values.forEach((k, v) -> {
                     String stringValue = v != null ? v.toString() : null;
-                    LOG.warn("Property ({}={}) not auto-configured with name: {} on bean: {} with value: {}", pok.getOptionPrefix() +  "." + k, stringValue, k, pok.getInstance(), stringValue);
+                    LOG.warn("Property ({}={}) not auto-configured with name: {} on bean: {} with value: {}", pok.getKey(), stringValue, k, pok.getInstance(), stringValue);
                 });
             }
         }
@@ -1016,12 +1010,19 @@ public abstract class BaseMainSupport extends ServiceSupport {
     }
 
     private static final class PropertyOptionKey {
+
+        private final String key;
         private final Object instance;
         private final String optionPrefix;
 
-        private PropertyOptionKey(Object instance, String optionPrefix) {
-            this.instance = ObjectHelper.notNull(instance, "instance");
-            this.optionPrefix = ObjectHelper.notNull(optionPrefix, "optionPrefix");
+        private PropertyOptionKey(String key, Object instance, String optionPrefix) {
+            this.key = key;
+            this.instance = instance;
+            this.optionPrefix = optionPrefix;
+        }
+
+        public String getKey() {
+            return key;
         }
 
         public Object getInstance() {
@@ -1037,17 +1038,16 @@ public abstract class BaseMainSupport extends ServiceSupport {
             if (this == o) {
                 return true;
             }
-            if (!(o instanceof PropertyOptionKey)) {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            PropertyOptionKey key = (PropertyOptionKey) o;
-            return Objects.equals(instance, key.instance)
-                && Objects.equals(optionPrefix, key.optionPrefix);
+            PropertyOptionKey that = (PropertyOptionKey) o;
+            return key.equals(that.key) && instance.equals(that.instance);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(instance, optionPrefix);
+            return Objects.hash(key, instance);
         }
     }
 
@@ -1093,7 +1093,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
             validateOptionAndValue(key, option, value);
 
-            PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
+            PropertyOptionKey pok = new PropertyOptionKey(key, target, prefix);
             Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
 
             // we ignore case for property keys (so we should store them in canonical style
