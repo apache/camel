@@ -1109,7 +1109,7 @@ with the reply destination to be used. By default Camel uses a temporary
 queue, but you can use the `replyTo` option on the endpoint to specify a
 fixed reply queue (see more below about fixed reply queue).
 
-Camel will automatic setup a consumer which listen on the reply queue,
+Camel will automatically setup a consumer which listen on the reply queue,
 so you should *not* do anything. +
  This consumer is a Spring `DefaultMessageListenerContainer` which
 listen for replies. However it's fixed to 1 concurrent consumer. +
