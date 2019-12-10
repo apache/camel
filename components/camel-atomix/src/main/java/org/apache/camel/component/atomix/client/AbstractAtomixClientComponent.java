@@ -108,8 +108,6 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
                 EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
         }
 
-        setProperties(configuration, parameters);
-
         return configuration;
     }
 

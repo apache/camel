@@ -20,11 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * The atomix-multimap component is used to access Atomix's distributed multi
@@ -41,7 +39,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
      */
     public interface AtomixMultiMapEndpointBuilder
             extends
-                EndpointConsumerBuilder {
+                EndpointProducerBuilder {
         default AdvancedAtomixMultiMapEndpointBuilder advanced() {
             return (AdvancedAtomixMultiMapEndpointBuilder) this;
         }
@@ -50,7 +48,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder atomix(Object atomix) {
             doSetProperty("atomix", atomix);
@@ -62,46 +60,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder atomix(String atomix) {
             doSetProperty("atomix", atomix);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default AtomixMultiMapEndpointBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default AtomixMultiMapEndpointBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -109,7 +71,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder configurationUri(
                 String configurationUri) {
@@ -122,7 +84,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder defaultAction(Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
@@ -134,7 +96,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder defaultAction(String defaultAction) {
             doSetProperty("defaultAction", defaultAction);
@@ -146,7 +108,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder key(Object key) {
             doSetProperty("key", key);
@@ -158,10 +120,50 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder key(String key) {
             doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AtomixMultiMapEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AtomixMultiMapEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -170,7 +172,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder nodes(List<Object> nodes) {
             doSetProperty("nodes", nodes);
@@ -182,7 +184,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder nodes(String nodes) {
             doSetProperty("nodes", nodes);
@@ -193,7 +195,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder resultHeader(String resultHeader) {
             doSetProperty("resultHeader", resultHeader);
@@ -204,7 +206,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder transportClassName(
                 String transportClassName) {
@@ -216,7 +218,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder ttl(long ttl) {
             doSetProperty("ttl", ttl);
@@ -227,7 +229,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Group: consumer
+         * Group: producer
          */
         default AtomixMultiMapEndpointBuilder ttl(String ttl) {
             doSetProperty("ttl", ttl);
@@ -240,66 +242,9 @@ public interface AtomixMultiMapEndpointBuilderFactory {
      */
     public interface AdvancedAtomixMultiMapEndpointBuilder
             extends
-                EndpointConsumerBuilder {
+                EndpointProducerBuilder {
         default AtomixMultiMapEndpointBuilder basic() {
             return (AtomixMultiMapEndpointBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedAtomixMultiMapEndpointBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedAtomixMultiMapEndpointBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedAtomixMultiMapEndpointBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedAtomixMultiMapEndpointBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
         }
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or

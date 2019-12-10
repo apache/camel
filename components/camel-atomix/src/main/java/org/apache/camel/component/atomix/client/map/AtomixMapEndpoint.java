@@ -47,7 +47,9 @@ public class AtomixMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMapCom
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixMapConsumer(this, processor, getResourceName());
+        AtomixMapConsumer consumer = new AtomixMapConsumer(this, processor, getResourceName());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

@@ -47,7 +47,9 @@ public final class AtomixQueueEndpoint extends AbstractAtomixClientEndpoint<Atom
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixQueueConsumer(this, processor, getResourceName());
+        AtomixQueueConsumer consumer = new AtomixQueueConsumer(this, processor, getResourceName());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
