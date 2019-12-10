@@ -42,15 +42,15 @@ public interface NsqEndpointBuilderFactory {
             return (AdvancedNsqEndpointConsumerBuilder) this;
         }
         /**
-         * The name of topic we want to use.
+         * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
+         * servers (producer).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NsqEndpointConsumerBuilder topic(String topic) {
-            doSetProperty("topic", topic);
+        default NsqEndpointConsumerBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -428,15 +428,15 @@ public interface NsqEndpointBuilderFactory {
             return (AdvancedNsqEndpointProducerBuilder) this;
         }
         /**
-         * The name of topic we want to use.
+         * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
+         * servers (producer).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NsqEndpointProducerBuilder topic(String topic) {
-            doSetProperty("topic", topic);
+        default NsqEndpointProducerBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -635,15 +635,15 @@ public interface NsqEndpointBuilderFactory {
             return (AdvancedNsqEndpointBuilder) this;
         }
         /**
-         * The name of topic we want to use.
+         * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
+         * servers (producer).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NsqEndpointBuilder topic(String topic) {
-            doSetProperty("topic", topic);
+        default NsqEndpointBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -775,11 +775,10 @@ public interface NsqEndpointBuilderFactory {
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-nsq
      * 
-     * Syntax: <code>nsq:servers</code>
+     * Syntax: <code>nsq:topic</code>
      * 
-     * Path parameter: servers (required)
-     * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
-     * servers (producer).
+     * Path parameter: topic (required)
+     * The name of topic we want to use
      */
     default NsqEndpointBuilder nsq(String path) {
         class NsqEndpointBuilderImpl extends AbstractEndpointBuilder implements NsqEndpointBuilder, AdvancedNsqEndpointBuilder {

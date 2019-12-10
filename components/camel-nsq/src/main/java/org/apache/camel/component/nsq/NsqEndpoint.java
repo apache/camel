@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a nsq endpoint.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:servers", label = "messaging")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "nsq", title = "NSQ", syntax = "nsq:topic", label = "messaging")
 public class NsqEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -56,11 +56,17 @@ public class NsqEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isEmpty(configuration.getTopic())) {
             throw new RuntimeCamelException("Missing required endpoint configuration: topic must be defined for NSQ consumer");
         }
-        return new NsqConsumer(this, processor);
+        Consumer consumer = new NsqConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "NsqTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
+    }
+
+    public void setConfiguration(NsqConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public NsqConfiguration getConfiguration() {
