@@ -49,13 +49,11 @@ public class WeatherComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         WeatherConfiguration configuration = new WeatherConfiguration(this);
 
-        // and then override from parameters
-        setProperties(configuration, parameters);
-
         httpClient = createHttpClient(configuration);
         geolocationAccessKey = configuration.getGeolocationAccessKey();
         geolocationRequestHostIP = configuration.getGeolocationRequestHostIP();
         WeatherEndpoint endpoint = new WeatherEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
