@@ -78,7 +78,9 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new OptaPlannerConsumer(this, processor, configuration);
+    	OptaPlannerConsumer consumer = new OptaPlannerConsumer(this, processor, configuration);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
