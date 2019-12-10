@@ -34,7 +34,6 @@ public final class ConsulCatalogProducer extends AbstractConsulProducer<CatalogC
 
     @InvokeOnHeader(ConsulCatalogActions.REGISTER)
     protected void register(Message message) throws Exception {
-
         getClient().register(message.getMandatoryBody(CatalogRegistration.class));
         setBodyAndResult(message, null);
     }

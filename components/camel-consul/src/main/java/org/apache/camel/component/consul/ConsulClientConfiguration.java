@@ -32,7 +32,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
-public class ConsulClientConfiguration implements Cloneable {
+public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam
     private String url;
     @UriParam(label = "advanced")
