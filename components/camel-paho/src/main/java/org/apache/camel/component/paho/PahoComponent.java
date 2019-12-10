@@ -55,7 +55,6 @@ public class PahoComponent extends DefaultComponent {
         PahoEndpoint answer = new PahoEndpoint(uri, remaining, this, configuration);
         answer.setClient(client);
 
-        setProperties(configuration, parameters);
         setProperties(answer, parameters);
         return answer;
     }
