@@ -47,7 +47,9 @@ public final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixMessagingConsumer(this, processor);
+        AtomixMessagingConsumer consumer = new AtomixMessagingConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

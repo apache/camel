@@ -47,7 +47,9 @@ public final class AtomixValueEndpoint extends AbstractAtomixClientEndpoint<Atom
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixValueConsumer(this, processor, getResourceName());
+        AtomixValueConsumer consumer = new AtomixValueConsumer(this, processor, getResourceName());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

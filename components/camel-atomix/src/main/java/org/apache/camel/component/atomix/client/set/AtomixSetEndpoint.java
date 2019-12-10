@@ -47,7 +47,9 @@ public final class AtomixSetEndpoint extends AbstractAtomixClientEndpoint<Atomix
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixSetConsumer(this, processor, getResourceName());
+        AtomixSetConsumer consumer = new AtomixSetConsumer(this, processor, getResourceName());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

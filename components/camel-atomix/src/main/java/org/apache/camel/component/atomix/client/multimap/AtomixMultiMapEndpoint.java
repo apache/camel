@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriParam;
     scheme = "atomix-multimap",
     title = "Atomix MultiMap",
     syntax = "atomix-multimap:resourceName",
-    consumerOnly = true,
+    producerOnly = true,
     label = "clustering")
 public final class AtomixMultiMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMultiMapComponent, AtomixMultiMapConfiguration> {
     @UriParam

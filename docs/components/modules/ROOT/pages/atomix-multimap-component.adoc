@@ -5,7 +5,7 @@
 *Since Camel 2.20*
 
 // HEADER START
-*Only consumer is supported*
+*Only producer is supported*
 // HEADER END
 
 The camel Atomix-Multimap component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedMultimap/[Distributed MultiMap] collection.
@@ -37,10 +37,10 @@ The Atomix MultiMap component supports 7 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (consumer) | The shared component configuration |  | AtomixMultiMapConfiguration
-| *atomix* (consumer) | The shared AtomixClient instance |  | AtomixClient
-| *nodes* (consumer) | The nodes the AtomixClient should connect to |  | List
-| *configurationUri* (consumer) | The path to the AtomixClient configuration |  | String
+| *configuration* (producer) | The shared component configuration |  | AtomixMultiMapConfiguration
+| *atomix* (producer) | The shared AtomixClient instance |  | AtomixClient
+| *nodes* (producer) | The nodes the AtomixClient should connect to |  | List
+| *configurationUri* (producer) | The path to the AtomixClient configuration |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -66,23 +66,21 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (19 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *atomix* (consumer) | The Atomix instance to use |  | Atomix
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *configurationUri* (consumer) | The Atomix configuration uri. |  | String
-| *defaultAction* (consumer) | The default action. | PUT | Action
-| *key* (consumer) | The key to use if none is set in the header or to listen for events for a specific key. |  | Object
-| *nodes* (consumer) | The address of the nodes composing the cluster. |  | String
-| *resultHeader* (consumer) | The header that wil carry the result. |  | String
-| *transportClassName* (consumer) | The class name (fqn) of the Atomix transport | io.atomix.catalyst.transport.netty.NettyTransport | String
-| *ttl* (consumer) | The resource ttl. |  | long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *atomix* (producer) | The Atomix instance to use |  | Atomix
+| *configurationUri* (producer) | The Atomix configuration uri. |  | String
+| *defaultAction* (producer) | The default action. | PUT | Action
+| *key* (producer) | The key to use if none is set in the header or to listen for events for a specific key. |  | Object
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *nodes* (producer) | The address of the nodes composing the cluster. |  | String
+| *resultHeader* (producer) | The header that wil carry the result. |  | String
+| *transportClassName* (producer) | The class name (fqn) of the Atomix transport | io.atomix.catalyst.transport.netty.NettyTransport | String
+| *ttl* (producer) | The resource ttl. |  | long
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *defaultResourceConfig* (advanced) | The cluster wide default resource configuration. |  | Properties
 | *defaultResourceOptions* (advanced) | The local default resource options. |  | Properties

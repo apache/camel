@@ -43,9 +43,7 @@ public final class AtomixMapComponent extends AbstractAtomixClientComponent<Atom
 
         AtomixMapEndpoint endpoint = new AtomixMapEndpoint(uri, this, remaining);
         endpoint.setConfiguration(configuration);
-
         setProperties(endpoint, parameters);
-
         return endpoint;
     }
 
