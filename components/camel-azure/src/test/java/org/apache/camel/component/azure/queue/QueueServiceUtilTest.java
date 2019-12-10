@@ -31,8 +31,7 @@ public class QueueServiceUtilTest extends CamelTestSupport {
     public void testPrepareUri() throws Exception {
         registerCredentials();
 
-        QueueServiceComponent component = new QueueServiceComponent(context);
-        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?credentials=#creds");
+        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context.getEndpoint("azure-queue://camelazure/testqueue?credentials=#creds");
         URI uri = QueueServiceUtil.prepareStorageQueueUri(endpoint.getConfiguration());
         assertEquals("https://camelazure.queue.core.windows.net/testqueue", uri.toString());
     }
@@ -42,8 +41,7 @@ public class QueueServiceUtilTest extends CamelTestSupport {
         CloudQueue client = new CloudQueue(URI.create("https://camelazure.queue.core.windows.net/testqueue"), newAccountKeyCredentials());
         context.getRegistry().bind("azureQueueClient", client);
 
-        QueueServiceComponent component = new QueueServiceComponent(context);
-        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?azureQueueClient=#azureQueueClient");
+        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context.getEndpoint("azure-queue://camelazure/testqueue?azureQueueClient=#azureQueueClient");
         assertSame(client, QueueServiceUtil.getConfiguredClient(endpoint.getConfiguration()));
     }
 
@@ -53,8 +51,7 @@ public class QueueServiceUtilTest extends CamelTestSupport {
 
         context.getRegistry().bind("azureQueueClient", client);
 
-        QueueServiceComponent component = new QueueServiceComponent(context);
-        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue2?azureQueueClient=#azureQueueClient");
+        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context.getEndpoint("azure-queue://camelazure/testqueue2?azureQueueClient=#azureQueueClient");
 
         try {
             QueueServiceUtil.getConfiguredClient(endpoint.getConfiguration());

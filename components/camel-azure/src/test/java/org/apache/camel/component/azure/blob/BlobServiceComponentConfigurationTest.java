@@ -41,9 +41,8 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("azureBlobClient", client);
         
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient");
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient");
         
         doTestCreateEndpointWithMinConfig(endpoint, true);
     }
@@ -52,9 +51,8 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     public void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
         registerCredentials();
         
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint("azure-blob://camelazure/container/blob?credentials=#creds");
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?credentials=#creds");
         
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
@@ -94,9 +92,8 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         registerCredentials();
         context.getRegistry().bind("metadata", Collections.emptyMap());
         
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint(
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint) context.getEndpoint(
             "azure-blob://camelazure/container/blob?credentials=#creds&blobType=pageblob"
             + "&blobPrefix=blob1&fileDir=/tmp&blobOffset=512&operation=clearPageBlob&dataLength=1024"
             + "&streamWriteSize=512&streamReadSize=1024&closeStreamAfterRead=false&closeStreamAfterWrite=false"
@@ -125,19 +122,17 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testNoClientAndCredentials() throws Exception {
-        BlobServiceComponent component = new BlobServiceComponent(context);
         try {
-            component.createEndpoint("azure-blob://camelazure/container/blob");
+            context.getEndpoint("azure-blob://camelazure/container/blob");
             fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals("Credentials must be specified.", ex.getMessage());
+        } catch (Exception ex) {
+            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
         }
     }
     @Test
     public void testNoClientAndCredentialsPublicForRead() throws Exception {
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
     
@@ -163,43 +158,39 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("azureBlobClient", client);
         
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true");
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true");
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
     private void doTestClientWithoutCredentials(CloudBlob client) throws Exception {
         context.getRegistry().bind("azureBlobClient", client);
         
-        BlobServiceComponent component = new BlobServiceComponent(context);
         try {
-            component.createEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient");
+            context.getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient");
             fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals("Credentials must be specified.", ex.getMessage());
+        } catch (Exception ex) {
+            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
         }
     }
     
     @Test
     public void testNoBlobNameProducerWithOp() throws Exception {
         registerCredentials();
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpointWithOp = 
-            (BlobServiceEndpoint) component.createEndpoint(
+        BlobServiceEndpoint endpointWithOp =
+            (BlobServiceEndpoint) context.getEndpoint(
             "azure-blob://camelazure/container?operation=deleteBlob&credentials=#creds");
         try {
             endpointWithOp.createProducer();
             fail();
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             assertEquals("Blob name must be specified.", ex.getMessage());
         }
     }
     @Test
     public void testNoBlobNameProducerDefaultOp() throws Exception {
         registerCredentials();
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint(
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint) context.getEndpoint(
             "azure-blob://camelazure/container?credentials=#creds");
         endpoint.createProducer();
         assertEquals(BlobServiceOperations.listBlobs, endpoint.getConfiguration().getOperation());
@@ -208,9 +199,8 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void testNoBlobNameConsumer() throws Exception {
         registerCredentials();
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint) component.createEndpoint(
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint) context.getEndpoint(
             "azure-blob://camelazure/container?credentials=#creds");
         try {
             createConsumer(endpoint);
@@ -222,21 +212,19 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testTooFewPathSegments() throws Exception {
-        BlobServiceComponent component = new BlobServiceComponent(context);
         try {
-            component.createEndpoint("azure-blob://camelazure");
+            context.getEndpoint("azure-blob://camelazure");
             fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals("At least the account and container names must be specified.", ex.getMessage());
+        } catch (Exception ex) {
+            assertEquals("At least the account and container names must be specified.", ex.getCause().getMessage());
         }
     }
     
     @Test
     public void testHierarchicalBlobName() throws Exception {
         registerCredentials();
-        BlobServiceComponent component = new BlobServiceComponent(context);
-        BlobServiceEndpoint endpoint = 
-            (BlobServiceEndpoint)component.createEndpoint("azure-blob://camelazure/component1/blob/sub?credentials=#creds");
+        BlobServiceEndpoint endpoint =
+            (BlobServiceEndpoint)context.getEndpoint("azure-blob://camelazure/component1/blob/sub?credentials=#creds");
         assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
     }
     
