@@ -16,6 +16,9 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.math.BigInteger;
+import java.util.List;
+import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -42,6 +45,171 @@ public interface ConsulEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedConsulEndpointConsumerBuilder advanced() {
             return (AdvancedConsulEndpointConsumerBuilder) this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder connectTimeoutMillis(
+                Long connectTimeoutMillis) {
+            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder connectTimeoutMillis(
+                String connectTimeoutMillis) {
+            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
+            return this;
+        }
+        /**
+         * Reference to a com.orbitz.consul.Consul in the registry.
+         * 
+         * The option is a: <code>com.orbitz.consul.Consul</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder consulClient(Object consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * Reference to a com.orbitz.consul.Consul in the registry.
+         * 
+         * The option will be converted to a
+         * <code>com.orbitz.consul.Consul</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder consulClient(String consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * The default key. Can be overridden by CamelConsulKey.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder key(String key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder pingInstance(boolean pingInstance) {
+            doSetProperty("pingInstance", pingInstance);
+            return this;
+        }
+        /**
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder pingInstance(String pingInstance) {
+            doSetProperty("pingInstance", pingInstance);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder readTimeoutMillis(
+                Long readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder readTimeoutMillis(
+                String readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Set tags. You can separate multiple tags by comma.
+         * 
+         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder tags(Set<String> tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * Set tags. You can separate multiple tags by comma.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder tags(String tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * The Consul agent URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder url(String url) {
+            doSetProperty("url", url);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder writeTimeoutMillis(
+                Long writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointConsumerBuilder writeTimeoutMillis(
+                String writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+            return this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -77,6 +245,135 @@ public interface ConsulEndpointBuilderFactory {
         default ConsulEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The second to wait for a watch event, default 10 seconds.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: watch
+         */
+        default ConsulEndpointConsumerBuilder blockSeconds(Integer blockSeconds) {
+            doSetProperty("blockSeconds", blockSeconds);
+            return this;
+        }
+        /**
+         * The second to wait for a watch event, default 10 seconds.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: watch
+         */
+        default ConsulEndpointConsumerBuilder blockSeconds(String blockSeconds) {
+            doSetProperty("blockSeconds", blockSeconds);
+            return this;
+        }
+        /**
+         * The first index for watch for, default 0.
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: watch
+         */
+        default ConsulEndpointConsumerBuilder firstIndex(BigInteger firstIndex) {
+            doSetProperty("firstIndex", firstIndex);
+            return this;
+        }
+        /**
+         * The first index for watch for, default 0.
+         * 
+         * The option will be converted to a <code>java.math.BigInteger</code>
+         * type.
+         * 
+         * Group: watch
+         */
+        default ConsulEndpointConsumerBuilder firstIndex(String firstIndex) {
+            doSetProperty("firstIndex", firstIndex);
+            return this;
+        }
+        /**
+         * Recursively watch, default false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: watch
+         */
+        default ConsulEndpointConsumerBuilder recursive(boolean recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
+        /**
+         * Recursively watch, default false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: watch
+         */
+        default ConsulEndpointConsumerBuilder recursive(String recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
+        /**
+         * Sets the ACL token to be used with Consul.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder aclToken(String aclToken) {
+            doSetProperty("aclToken", aclToken);
+            return this;
+        }
+        /**
+         * Sets the password to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Sets the username to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -174,6 +471,82 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
+         * The consistencyMode used for queries, default
+         * ConsistencyMode.DEFAULT.
+         * 
+         * The option is a:
+         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointConsumerBuilder consistencyMode(
+                ConsistencyMode consistencyMode) {
+            doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The consistencyMode used for queries, default
+         * ConsistencyMode.DEFAULT.
+         * 
+         * The option will be converted to a
+         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointConsumerBuilder consistencyMode(
+                String consistencyMode) {
+            doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The data center.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointConsumerBuilder datacenter(
+                String datacenter) {
+            doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * The near node to use for queries.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointConsumerBuilder nearNode(String nearNode) {
+            doSetProperty("nearNode", nearNode);
+            return this;
+        }
+        /**
+         * The note meta-data to use for queries.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointConsumerBuilder nodeMeta(
+                List<String> nodeMeta) {
+            doSetProperty("nodeMeta", nodeMeta);
+            return this;
+        }
+        /**
+         * The note meta-data to use for queries.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointConsumerBuilder nodeMeta(String nodeMeta) {
+            doSetProperty("nodeMeta", nodeMeta);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -209,6 +582,182 @@ public interface ConsulEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedConsulEndpointProducerBuilder advanced() {
             return (AdvancedConsulEndpointProducerBuilder) this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder connectTimeoutMillis(
+                Long connectTimeoutMillis) {
+            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder connectTimeoutMillis(
+                String connectTimeoutMillis) {
+            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
+            return this;
+        }
+        /**
+         * Reference to a com.orbitz.consul.Consul in the registry.
+         * 
+         * The option is a: <code>com.orbitz.consul.Consul</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder consulClient(Object consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * Reference to a com.orbitz.consul.Consul in the registry.
+         * 
+         * The option will be converted to a
+         * <code>com.orbitz.consul.Consul</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder consulClient(String consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * The default key. Can be overridden by CamelConsulKey.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder key(String key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder pingInstance(boolean pingInstance) {
+            doSetProperty("pingInstance", pingInstance);
+            return this;
+        }
+        /**
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder pingInstance(String pingInstance) {
+            doSetProperty("pingInstance", pingInstance);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder readTimeoutMillis(
+                Long readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder readTimeoutMillis(
+                String readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Set tags. You can separate multiple tags by comma.
+         * 
+         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder tags(Set<String> tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * Set tags. You can separate multiple tags by comma.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder tags(String tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * The Consul agent URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder url(String url) {
+            doSetProperty("url", url);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder writeTimeoutMillis(
+                Long writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointProducerBuilder writeTimeoutMillis(
+                String writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+            return this;
+        }
+        /**
+         * The default action. Can be overridden by CamelConsulAction.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default ConsulEndpointProducerBuilder action(String action) {
+            doSetProperty("action", action);
+            return this;
         }
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -250,6 +799,92 @@ public interface ConsulEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ConsulEndpointProducerBuilder valueAsString(
+                boolean valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ConsulEndpointProducerBuilder valueAsString(String valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
+         * Sets the ACL token to be used with Consul.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointProducerBuilder aclToken(String aclToken) {
+            doSetProperty("aclToken", aclToken);
+            return this;
+        }
+        /**
+         * Sets the password to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointProducerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointProducerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Sets the username to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointProducerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
+            return this;
+        }
     }
 
     /**
@@ -285,6 +920,82 @@ public interface ConsulEndpointBuilderFactory {
         default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The consistencyMode used for queries, default
+         * ConsistencyMode.DEFAULT.
+         * 
+         * The option is a:
+         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointProducerBuilder consistencyMode(
+                ConsistencyMode consistencyMode) {
+            doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The consistencyMode used for queries, default
+         * ConsistencyMode.DEFAULT.
+         * 
+         * The option will be converted to a
+         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointProducerBuilder consistencyMode(
+                String consistencyMode) {
+            doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The data center.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointProducerBuilder datacenter(
+                String datacenter) {
+            doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * The near node to use for queries.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointProducerBuilder nearNode(String nearNode) {
+            doSetProperty("nearNode", nearNode);
+            return this;
+        }
+        /**
+         * The note meta-data to use for queries.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointProducerBuilder nodeMeta(
+                List<String> nodeMeta) {
+            doSetProperty("nodeMeta", nodeMeta);
+            return this;
+        }
+        /**
+         * The note meta-data to use for queries.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointProducerBuilder nodeMeta(String nodeMeta) {
+            doSetProperty("nodeMeta", nodeMeta);
             return this;
         }
         /**
@@ -324,6 +1035,229 @@ public interface ConsulEndpointBuilderFactory {
         default AdvancedConsulEndpointBuilder advanced() {
             return (AdvancedConsulEndpointBuilder) this;
         }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder connectTimeoutMillis(
+                Long connectTimeoutMillis) {
+            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
+            return this;
+        }
+        /**
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder connectTimeoutMillis(
+                String connectTimeoutMillis) {
+            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
+            return this;
+        }
+        /**
+         * Reference to a com.orbitz.consul.Consul in the registry.
+         * 
+         * The option is a: <code>com.orbitz.consul.Consul</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder consulClient(Object consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * Reference to a com.orbitz.consul.Consul in the registry.
+         * 
+         * The option will be converted to a
+         * <code>com.orbitz.consul.Consul</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder consulClient(String consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * The default key. Can be overridden by CamelConsulKey.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder key(String key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder pingInstance(boolean pingInstance) {
+            doSetProperty("pingInstance", pingInstance);
+            return this;
+        }
+        /**
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder pingInstance(String pingInstance) {
+            doSetProperty("pingInstance", pingInstance);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder readTimeoutMillis(Long readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder readTimeoutMillis(String readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Set tags. You can separate multiple tags by comma.
+         * 
+         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder tags(Set<String> tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * Set tags. You can separate multiple tags by comma.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder tags(String tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * The Consul agent URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder url(String url) {
+            doSetProperty("url", url);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder writeTimeoutMillis(Long writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+            return this;
+        }
+        /**
+         * Write timeout for OkHttpClient.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulEndpointBuilder writeTimeoutMillis(
+                String writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
+            return this;
+        }
+        /**
+         * Sets the ACL token to be used with Consul.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointBuilder aclToken(String aclToken) {
+            doSetProperty("aclToken", aclToken);
+            return this;
+        }
+        /**
+         * Sets the password to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Sets the username to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointBuilder userName(String userName) {
+            doSetProperty("userName", userName);
+            return this;
+        }
     }
 
     /**
@@ -362,6 +1296,80 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
+         * The consistencyMode used for queries, default
+         * ConsistencyMode.DEFAULT.
+         * 
+         * The option is a:
+         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointBuilder consistencyMode(
+                ConsistencyMode consistencyMode) {
+            doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The consistencyMode used for queries, default
+         * ConsistencyMode.DEFAULT.
+         * 
+         * The option will be converted to a
+         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointBuilder consistencyMode(
+                String consistencyMode) {
+            doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The data center.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointBuilder datacenter(String datacenter) {
+            doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * The near node to use for queries.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointBuilder nearNode(String nearNode) {
+            doSetProperty("nearNode", nearNode);
+            return this;
+        }
+        /**
+         * The note meta-data to use for queries.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointBuilder nodeMeta(List<String> nodeMeta) {
+            doSetProperty("nodeMeta", nodeMeta);
+            return this;
+        }
+        /**
+         * The note meta-data to use for queries.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedConsulEndpointBuilder nodeMeta(String nodeMeta) {
+            doSetProperty("nodeMeta", nodeMeta);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -385,6 +1393,16 @@ public interface ConsulEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.orbitz.consul.option.ConsistencyMode</code>
+     * enum.
+     */
+    enum ConsistencyMode {
+        DEFAULT,
+        STALE,
+        CONSISTENT;
     }
     /**
      * Consul (camel-consul)

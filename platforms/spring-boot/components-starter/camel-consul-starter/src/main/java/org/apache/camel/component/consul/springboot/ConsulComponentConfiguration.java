@@ -205,7 +205,7 @@ public class ConsulComponentConfiguration
          * Default to transform values retrieved from Consul i.e. on KV endpoint
          * to string.
          */
-        private Boolean valueAsString;
+        private Boolean valueAsString = false;
         /**
          * The default key. Can be overridden by CamelConsulKey
          */
@@ -238,7 +238,7 @@ public class ConsulComponentConfiguration
         /**
          * The consistencyMode used for queries, default ConsistencyMode.DEFAULT
          */
-        private ConsistencyMode consistencyMode;
+        private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
         /**
          * Set tags. You can separate multiple tags by comma.
          */
@@ -276,11 +276,11 @@ public class ConsulComponentConfiguration
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance
          */
-        private Boolean pingInstance;
+        private Boolean pingInstance = true;
         /**
          * The second to wait for a watch event, default 10 seconds
          */
-        private Integer blockSeconds;
+        private Integer blockSeconds = 10;
         /**
          * The first index for watch for, default 0
          */
@@ -288,7 +288,7 @@ public class ConsulComponentConfiguration
         /**
          * Recursively watch, default false
          */
-        private Boolean recursive;
+        private Boolean recursive = false;
 
         public String getAction() {
             return action;
