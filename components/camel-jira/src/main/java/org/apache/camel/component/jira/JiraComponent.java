@@ -24,9 +24,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link JiraEndpoint}.
- */
 @Component("jira")
 public class JiraComponent extends DefaultComponent {
 
@@ -39,22 +36,21 @@ public class JiraComponent extends DefaultComponent {
 
     public JiraComponent(CamelContext context) {
         super(context);
-        configuration = new JiraConfiguration();
         registerExtension(new JiraVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // override configuration from route parameters
-        setProperties(configuration, parameters);
+        JiraConfiguration config = configuration != null ? configuration.copy() : new JiraConfiguration();
 
-        JiraEndpoint endpoint = new JiraEndpoint(uri, this, configuration);
+        JiraEndpoint endpoint = new JiraEndpoint(uri, this, config);
         endpoint.setType(getCamelContext().getTypeConverter().convertTo(JiraType.class, remaining));
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
     /**
-     * The JiraConfiguration parameters
+     * To use a shared base jira configuration.
      */
     public JiraConfiguration getConfiguration() {
         return configuration;
