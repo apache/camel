@@ -26,7 +26,7 @@ public class ECSComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
-        ECSComponent component = new ECSComponent(context);
+        ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
         ECSEndpoint endpoint = (ECSEndpoint)component.createEndpoint("aws-ecs://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getEcsClient());
@@ -35,7 +35,7 @@ public class ECSComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
-        ECSComponent component = new ECSComponent(context);
+        ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
         ECSEndpoint endpoint = (ECSEndpoint)component.createEndpoint("aws-ecs://TestDomain");
     }
 }
