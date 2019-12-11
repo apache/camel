@@ -52,7 +52,6 @@ public class JcloudsComponent extends DefaultComponent {
         JcloudsConfiguration configuration = new JcloudsConfiguration();
         configuration.setCommand(command);
         configuration.setProviderId(providerId);
-        setProperties(configuration, parameters);
 
         JcloudsEndpoint endpoint;
         if (JcloudsCommand.blobstore == command) {
