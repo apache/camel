@@ -33,7 +33,7 @@ import org.apache.camel.util.URISupport;
 public class WebhookComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
-    private WebhookConfiguration configuration;
+    private WebhookConfiguration configuration = new WebhookConfiguration();
 
     public WebhookComponent() {
     }
@@ -45,31 +45,23 @@ public class WebhookComponent extends DefaultComponent {
             throw new IllegalArgumentException("Wrong uri syntax : webhook:uri, got " + remaining);
         }
 
-        WebhookConfiguration configuration = getConfiguration().copy();
-        setProperties(configuration, parameters);
-
-        RestConfiguration restConfig = getCamelContext().getRestConfiguration(configuration.getWebhookComponentName(), true);
-        configuration.setRestConfiguration(restConfig);
-
+        WebhookConfiguration config =  configuration != null ? configuration.copy() : new WebhookConfiguration();
+        WebhookEndpoint endpoint = new WebhookEndpoint(uri, this, config);
+        setProperties(endpoint, parameters);
         // we need to apply the params here
         if (parameters != null && !parameters.isEmpty()) {
             delegateUri = delegateUri + "?" + URISupport.createQueryString(parameters);
         }
-        configuration.setEndpointUri(delegateUri);
+        endpoint.getConfiguration().setEndpointUri(delegateUri);
 
-        return new WebhookEndpoint(
-                uri,
-                this,
-                configuration,
-                delegateUri
-        );
+        RestConfiguration restConfig = getCamelContext().getRestConfiguration(config.getWebhookComponentName(), true);
+        config.setRestConfiguration(restConfig);
+
+        return endpoint;
     }
 
 
     public WebhookConfiguration getConfiguration() {
-        if (this.configuration == null) {
-            this.configuration = new WebhookConfiguration();
-        }
         return this.configuration;
     }
 
