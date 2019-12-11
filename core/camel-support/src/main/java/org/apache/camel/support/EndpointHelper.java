@@ -245,7 +245,8 @@ public final class EndpointHelper {
      *                                  <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        String valueNoHash = StringHelper.replaceAll(value, "#", "");
+        String valueNoHash = StringHelper.replaceAll(value, "#bean:", "");
+        valueNoHash = StringHelper.replaceAll(valueNoHash, "#", "");
         if (mandatory) {
             return CamelContextHelper.mandatoryLookupAndConvert(context, valueNoHash, type);
         } else {
