@@ -173,7 +173,7 @@ The component supports 92 options, which are listed below.
 | *camel.component.consul.cluster.service.write-timeout-millis* |  |  | Long
 | *camel.component.consul.configuration.acl-token* | Sets the ACL token to be used with Consul |  | String
 | *camel.component.consul.configuration.action* | The default action. Can be overridden by CamelConsulAction |  | String
-| *camel.component.consul.configuration.block-seconds* | The second to wait for a watch event, default 10 seconds |  | Integer
+| *camel.component.consul.configuration.block-seconds* | The second to wait for a watch event, default 10 seconds | 10 | Integer
 | *camel.component.consul.configuration.connect-timeout-millis* | Connect timeout for OkHttpClient |  | Long
 | *camel.component.consul.configuration.consistency-mode* | The consistencyMode used for queries, default ConsistencyMode.DEFAULT |  | ConsistencyMode
 | *camel.component.consul.configuration.consul-client* | Reference to a `com.orbitz.consul.Consul` in the registry. |  | Consul
@@ -183,14 +183,14 @@ The component supports 92 options, which are listed below.
 | *camel.component.consul.configuration.near-node* | The near node to use for queries. |  | String
 | *camel.component.consul.configuration.node-meta* | The note meta-data to use for queries. |  | List
 | *camel.component.consul.configuration.password* | Sets the password to be used for basic authentication |  | String
-| *camel.component.consul.configuration.ping-instance* | Configure if the AgentClient should attempt a ping before returning the Consul instance |  | Boolean
+| *camel.component.consul.configuration.ping-instance* | Configure if the AgentClient should attempt a ping before returning the Consul instance | true | Boolean
 | *camel.component.consul.configuration.read-timeout-millis* | Read timeout for OkHttpClient |  | Long
-| *camel.component.consul.configuration.recursive* | Recursively watch, default false |  | Boolean
+| *camel.component.consul.configuration.recursive* | Recursively watch, default false | false | Boolean
 | *camel.component.consul.configuration.ssl-context-parameters* | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
 | *camel.component.consul.configuration.tags* | Set tags. You can separate multiple tags by comma. |  | Set
 | *camel.component.consul.configuration.url* | The Consul agent URL |  | String
 | *camel.component.consul.configuration.user-name* | Sets the username to be used for basic authentication |  | String
-| *camel.component.consul.configuration.value-as-string* | Default to transform values retrieved from Consul i.e. on KV endpoint to string. |  | Boolean
+| *camel.component.consul.configuration.value-as-string* | Default to transform values retrieved from Consul i.e. on KV endpoint to string. | false | Boolean
 | *camel.component.consul.configuration.write-timeout-millis* | Write timeout for OkHttpClient |  | Long
 | *camel.component.consul.datacenter* | The data center |  | String
 | *camel.component.consul.enabled* | Whether to enable auto configuration of the consul component. This is enabled by default. |  | Boolean
