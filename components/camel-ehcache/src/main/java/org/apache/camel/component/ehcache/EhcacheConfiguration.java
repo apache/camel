@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.ehcache;
 
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
