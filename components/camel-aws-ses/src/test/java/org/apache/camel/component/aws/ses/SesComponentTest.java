@@ -31,6 +31,12 @@ public class SesComponentTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSESClient")
     private AmazonSESClientMock sesClient = new AmazonSESClientMock();
+    
+    @BindToRegistry("toList")
+    private List<String> toList = Arrays.asList("to1@example.com", "to2@example.com");
+    
+    @BindToRegistry("replyToList")
+    private List<String> replyToList = Arrays.asList("replyTo1@example.com", "replyTo2@example.com");
 
     @Test
     public void sendInOnlyMessageUsingUrlOptions() throws Exception {
@@ -105,10 +111,10 @@ public class SesComponentTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("aws-ses://from@example.com"
-                        + "?to=to1@example.com,to2@example.com"
+                        + "?to=#toList"
                         + "&subject=Subject"
                         + "&returnPath=bounce@example.com"
-                        + "&replyToAddresses=replyTo1@example.com,replyTo2@example.com"
+                        + "&replyToAddresses=#replyToList"
                         + "&amazonSESClient=#amazonSESClient");
             }
         };
