@@ -53,7 +53,7 @@ public class ECSComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-    	ECSConfiguration configuration = this.configuration != null ? this.configuration.copy() : new ECSConfiguration();
+        ECSConfiguration configuration = this.configuration != null ? this.configuration.copy() : new ECSConfiguration();
         ECSEndpoint endpoint = new ECSEndpoint(uri, this, configuration);
         endpoint.getConfiguration().setAccessKey(accessKey);
         endpoint.getConfiguration().setSecretKey(secretKey);
