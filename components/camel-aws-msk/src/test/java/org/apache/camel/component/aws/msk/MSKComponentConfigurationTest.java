@@ -25,7 +25,7 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        MSKComponent component = new MSKComponent(context);
+        MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         MSKEndpoint endpoint = (MSKEndpoint)component.createEndpoint("aws-msk://label");
@@ -36,7 +36,7 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        MSKComponent component = new MSKComponent(context);
+        MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -49,7 +49,7 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        MSKComponent component = new MSKComponent(context);
+        MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());

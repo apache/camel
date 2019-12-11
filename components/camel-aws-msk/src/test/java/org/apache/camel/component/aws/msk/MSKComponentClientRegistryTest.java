@@ -26,7 +26,7 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonMSKClientMock awsMSKClient = new AmazonMSKClientMock();
         context.getRegistry().bind("awsMskClient", awsMSKClient);
-        MSKComponent component = new MSKComponent(context);
+        MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
         MSKEndpoint endpoint = (MSKEndpoint) component.createEndpoint("aws-msk://label");
 
         assertNotNull(endpoint.getConfiguration().getMskClient());
@@ -35,7 +35,7 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalMSKClientMisconfiguration() throws Exception {
 
-        MSKComponent component = new MSKComponent(context);
+        MSKComponent component = context.getComponent("aws-msk", MSKComponent.class);
         MSKEndpoint endpoint = (MSKEndpoint) component.createEndpoint("aws-msk://label");
     }
 }
