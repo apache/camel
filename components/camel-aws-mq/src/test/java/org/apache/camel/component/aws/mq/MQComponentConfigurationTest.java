@@ -26,7 +26,7 @@ public class MQComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        MQComponent component = new MQComponent(context);
+        MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         MQEndpoint endpoint = (MQEndpoint)component.createEndpoint("aws-mq://MyQueue");
@@ -37,7 +37,7 @@ public class MQComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        MQComponent component = new MQComponent(context);
+        MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -50,7 +50,7 @@ public class MQComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        MQComponent component = new MQComponent(context);
+        MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
