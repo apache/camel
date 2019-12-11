@@ -51,13 +51,12 @@ import org.knowm.xchange.utils.Assert;
 public class XChangeEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private final XChangeConfiguration configuration;
-    private final XChange exchange;
-    
-    public XChangeEndpoint(String uri, XChangeComponent component, XChangeConfiguration configuration, XChange exchange) {
+    private XChangeConfiguration configuration;
+    private transient XChange xchange;
+
+    public XChangeEndpoint(String uri, XChangeComponent component, XChangeConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        this.exchange = exchange;
     }
 
     @Override
@@ -72,7 +71,6 @@ public class XChangeEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        
         Producer producer = null;
         
         XChangeService service = getConfiguration().getService();
@@ -88,29 +86,41 @@ public class XChangeEndpoint extends DefaultEndpoint {
         return producer;
     }
 
+    public void setConfiguration(XChangeConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     public XChangeConfiguration getConfiguration() {
         return configuration;
     }
 
+    public XChange getXchange() {
+        return xchange;
+    }
+
+    public void setXchange(XChange xchange) {
+        this.xchange = xchange;
+    }
+
     public List<Currency> getCurrencies() {
-        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        ExchangeMetaData metaData = xchange.getExchangeMetaData();
         return metaData.getCurrencies().keySet().stream().sorted().collect(Collectors.toList());
     }
     
     public CurrencyMetaData getCurrencyMetaData(Currency curr) {
         Assert.notNull(curr, "Null currency");
-        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        ExchangeMetaData metaData = xchange.getExchangeMetaData();
         return metaData.getCurrencies().get(curr);
     }
     
     public List<CurrencyPair> getCurrencyPairs() {
-        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        ExchangeMetaData metaData = xchange.getExchangeMetaData();
         return metaData.getCurrencyPairs().keySet().stream().sorted().collect(Collectors.toList());
     }
     
     public CurrencyPairMetaData getCurrencyPairMetaData(CurrencyPair pair) {
         Assert.notNull(pair, "Null currency");
-        ExchangeMetaData metaData = exchange.getExchangeMetaData();
+        ExchangeMetaData metaData = xchange.getExchangeMetaData();
         return metaData.getCurrencyPairs().get(pair);
     }
 
@@ -138,7 +148,7 @@ public class XChangeEndpoint extends DefaultEndpoint {
     }
 
     public List<FundingRecord> getFundingHistory() throws IOException {
-        AccountService accountService = exchange.getAccountService();
+        AccountService accountService = xchange.getAccountService();
         TradeHistoryParams fundingHistoryParams = accountService.createFundingHistoryParams();
         return accountService.getFundingHistory(fundingHistoryParams).stream().sorted(new Comparator<FundingRecord>() {
             public int compare(FundingRecord o1, FundingRecord o2) {
@@ -148,7 +158,7 @@ public class XChangeEndpoint extends DefaultEndpoint {
     }
 
     public List<Wallet> getWallets() throws IOException {
-        AccountService accountService = exchange.getAccountService();
+        AccountService accountService = xchange.getAccountService();
         AccountInfo accountInfo = accountService.getAccountInfo();
         return accountInfo.getWallets().values().stream().sorted(new Comparator<Wallet>() {
             public int compare(Wallet o1, Wallet o2) {
@@ -159,7 +169,7 @@ public class XChangeEndpoint extends DefaultEndpoint {
 
     public Ticker getTicker(CurrencyPair pair) throws IOException {
         Assert.notNull(pair, "Null currency pair");
-        MarketDataService marketService = exchange.getMarketDataService();
+        MarketDataService marketService = xchange.getMarketDataService();
         return marketService.getTicker(pair);
     }
 }
