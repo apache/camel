@@ -45,12 +45,13 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
             throw new IllegalArgumentException(String.format("Connector name must be configured on endpoint using syntax debezium-%s:name", configuration.getConnectorDatabaseType()));
         }
 
-        setProperties(configuration, parameters);
-
         // if we have name in path, we override the name in the configuration
         if (!ObjectHelper.isEmpty(remaining)) {
             configuration.setName(remaining);
         }
+
+        DebeziumEndpoint endpoint = initializeDebeziumEndpoint(uri, configuration);
+        setProperties(endpoint, parameters);
 
         // validate configurations
         final ConfigurationValidation configurationValidation = configuration.validateConfiguration();
@@ -59,7 +60,7 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
             throw new IllegalArgumentException(configurationValidation.getReason());
         }
 
-        return initializeDebeziumEndpoint(uri, configuration);
+        return endpoint;
     }
 
     protected abstract DebeziumEndpoint initializeDebeziumEndpoint(String uri, C configuration);

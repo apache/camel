@@ -45,6 +45,7 @@ public class DebeziumMongodbComponentTest {
                 + "databaseServerName=test&databaseHistoryFileName=/test";
 
         final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
+        debeziumComponent.start();
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
 
         assertNotNull(debeziumEndpoint);
@@ -72,6 +73,7 @@ public class DebeziumMongodbComponentTest {
 
         final String uri = "debezium:dummy";
         final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(configuration);
@@ -96,6 +98,7 @@ public class DebeziumMongodbComponentTest {
         final String remaining = "";
         final String uri = "debezium:";
         final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(null);
@@ -109,6 +112,7 @@ public class DebeziumMongodbComponentTest {
         final String remaining = "dummy";
         final String uri = "debezium:dummy";
         final DebeziumComponent debeziumComponent = new DebeziumMongodbComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(null);
