@@ -68,17 +68,14 @@ public class JiraEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private JiraType type;
-
     @UriParam(label = "consumer")
     private String jql;
-
     @UriParam(label = "consumer", defaultValue = "50")
     private Integer maxResults = 50;
-
     @UriParam
     private JiraConfiguration configuration;
 
-    private JiraRestClient client;
+    private transient JiraRestClient client;
 
     public JiraEndpoint(String uri, JiraComponent component, JiraConfiguration configuration) {
         super(uri, component);
@@ -142,18 +139,17 @@ public class JiraEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) {
+    public Consumer createConsumer(Processor processor) throws Exception {
+        Consumer consumer;
         if (type == JiraType.NEWCOMMENTS) {
-            return new NewCommentsConsumer(this, processor);
+            consumer = new NewCommentsConsumer(this, processor);
         } else if (type == JiraType.NEWISSUES) {
-            return new NewIssuesConsumer(this, processor);
+            consumer = new NewIssuesConsumer(this, processor);
+        } else {
+            throw new IllegalArgumentException("Consumer does not support type: " + type);
         }
-        throw new IllegalArgumentException("Consumer does not support type: " + type);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public JiraType getType() {
