@@ -30,7 +30,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSNSClient", mock);
 
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
         
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
@@ -44,7 +44,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?accessKey=xxx&secretKey=yyy");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
@@ -62,7 +62,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSNSClient", mock);
 
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://arn:aws:sns:us-east-1:account:MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
 
         assertNull(endpoint.getConfiguration().getTopicName());
@@ -75,7 +75,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSNSClient", mock);
         
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
         
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
@@ -98,7 +98,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSNSClient", mock);
         
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy"
                 + "&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,"
                 + "%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message");
@@ -121,7 +121,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSNSClient", mock);
         context.getRegistry().bind("amazonSQSClient", mockSQS);
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&" 
         + "accessKey=xxx&secretKey=yyy&amazonSQSClient=#amazonSQSClient&queueUrl=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
         
@@ -143,7 +143,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSNSClient", mock);
         context.getRegistry().bind("amazonSQSClient", mockSQS);
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx"
         + "&secretKey=yyy&amazonSQSClient=#amazonSQSClient&subscribeSNStoSQS=true");
         
@@ -162,7 +162,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         component.createEndpoint("aws-sns://MyTopic?secretKey=yyy");
     }
     
@@ -174,7 +174,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         SnsEndpoint endpoint = (SnsEndpoint)component.createEndpoint("aws-sns://MyTopic");
@@ -186,7 +186,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -200,7 +200,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithoutAutocreation() throws Exception {
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -215,7 +215,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -235,7 +235,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSNSClient", mock);
 
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
     }
 }
