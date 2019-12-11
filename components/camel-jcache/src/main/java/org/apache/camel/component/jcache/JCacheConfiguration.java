@@ -294,7 +294,9 @@ public class JCacheConfiguration {
     }
 
     public void setEventFilters(List<CacheEntryEventFilter> eventFilters) {
-        this.eventFilters = new LinkedList<>(eventFilters);
+        if (eventFilters != null) {
+            this.eventFilters = new LinkedList<>(eventFilters);
+        }
     }
 
     public void setEventFilters(String eventFilter) {
