@@ -60,16 +60,17 @@ public class EhcacheComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         EhcacheConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
 
-        return new EhcacheEndpoint(uri, this, remaining, createCacheManager(configuration), configuration);
+        EhcacheEndpoint endpoint = new EhcacheEndpoint(uri, this, remaining, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     // ****************************
     // Helpers
     // ****************************
 
-    private EhcacheManager createCacheManager(EhcacheConfiguration configuration) throws IOException {
+    public EhcacheManager createCacheManager(EhcacheConfiguration configuration) throws IOException {
         ObjectHelper.notNull(configuration, "Camel Ehcache configuration");
 
         // Check if a cache manager has been configured

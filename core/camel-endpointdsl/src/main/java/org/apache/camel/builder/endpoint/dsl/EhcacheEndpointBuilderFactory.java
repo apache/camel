@@ -17,7 +17,6 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -217,23 +216,11 @@ public interface EhcacheEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the type of events to listen for.
+         * Set the type of events to listen for
+         * (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple
+         * entries separated by comma.
          * 
-         * The option is a:
-         * <code>java.util.Set&lt;org.ehcache.event.EventType&gt;</code> type.
-         * 
-         * Group: consumer
-         */
-        default EhcacheEndpointConsumerBuilder eventTypes(
-                Set<EventType> eventTypes) {
-            doSetProperty("eventTypes", eventTypes);
-            return this;
-        }
-        /**
-         * Set the type of events to listen for.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Set&lt;org.ehcache.event.EventType&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          */
@@ -1005,17 +992,6 @@ public interface EhcacheEndpointBuilderFactory {
     enum EventOrdering {
         UNORDERED,
         ORDERED;
-    }
-
-    /**
-     * Proxy enum for <code>org.ehcache.event.EventType</code> enum.
-     */
-    enum EventType {
-        EVICTED,
-        EXPIRED,
-        REMOVED,
-        CREATED,
-        UPDATED;
     }
     /**
      * Ehcache (camel-ehcache)

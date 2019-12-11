@@ -54,7 +54,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
             this,
             configuration.getEventOrdering(),
             configuration.getEventFiring(),
-            configuration.getEventTypes()
+            configuration.getEventTypesSet()
         );
     }
 
