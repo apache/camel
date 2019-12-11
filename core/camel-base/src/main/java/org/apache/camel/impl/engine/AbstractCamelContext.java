@@ -454,13 +454,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             strategy.onComponentAdd(componentName, component);
         }
-
-        // keep reference to properties component up to date
-        if (component instanceof PropertiesComponent && "properties".equals(componentName)) {
-            propertiesComponent = (PropertiesComponent)component;
-            // ensure properties component is initialize early
-            ServiceHelper.initService(propertiesComponent);
-        }
     }
 
     @Override
@@ -614,10 +607,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onComponentRemove(componentName, oldComponent);
             }
-        }
-        // keep reference to properties component up to date
-        if (oldComponent != null && "properties".equals(componentName)) {
-            propertiesComponent = null;
         }
         return oldComponent;
     }
