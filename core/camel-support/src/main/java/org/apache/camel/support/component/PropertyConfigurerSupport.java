@@ -56,9 +56,6 @@ public abstract class PropertyConfigurerSupport {
                     // no bean found so throw an exception
                     throw new NoSuchBeanException(text, type.getName());
                 }
-            } else if (type == List.class) {
-                // its a list but we have a string, where we support splitting via comma
-                obj = Arrays.asList(text.split(","));
             }
             if (obj != null) {
                 value = obj;
