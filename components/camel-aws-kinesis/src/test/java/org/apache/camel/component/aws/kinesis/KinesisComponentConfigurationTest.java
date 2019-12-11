@@ -25,7 +25,7 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithAccessAndSecretKey() throws Exception {
-        KinesisComponent component = new KinesisComponent(context);
+        KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
         KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
         
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
@@ -35,7 +35,7 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        KinesisComponent component = new KinesisComponent(context);
+        KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         KinesisEndpoint endpoint = (KinesisEndpoint)component.createEndpoint("aws-kinesis://some_stream_name");
@@ -47,7 +47,7 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        KinesisComponent component = new KinesisComponent(context);
+        KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -61,7 +61,7 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        KinesisComponent component = new KinesisComponent(context);
+        KinesisComponent component = context.getComponent("aws-kinesis", KinesisComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());

@@ -47,18 +47,16 @@ public class SnsComponent extends DefaultComponent {
     public SnsComponent(CamelContext context) {
         super(context);
         
-        this.configuration = new SnsConfiguration();
         registerExtension(new SnsComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SnsConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
 
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
+        SnsConfiguration configuration =  this.configuration != null ? this.configuration.copy() : new SnsConfiguration();
         if (remaining.startsWith("arn:")) {
             String[] parts = remaining.split(":");
             if (parts.length != 6 || !parts[2].equals("sns")) {
@@ -69,22 +67,16 @@ public class SnsComponent extends DefaultComponent {
         } else {
             configuration.setTopicName(remaining);
         }
-
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        SnsEndpoint endpoint = new SnsEndpoint(uri, this, configuration);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
-        SnsEndpoint endpoint = new SnsEndpoint(uri, this, configuration);
         return endpoint;
     }
     
@@ -100,36 +92,36 @@ public class SnsComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
     
     /**
      * The region in which SNS client needs to work
      */
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
     
     private void checkAndSetRegistryClient(SnsConfiguration configuration) {

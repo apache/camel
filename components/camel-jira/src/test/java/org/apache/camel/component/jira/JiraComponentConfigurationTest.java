@@ -41,6 +41,7 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithBasicAuthentication() throws Exception {
         JiraComponent component = new JiraComponent(context);
+        component.start();
         String query = Joiner.on("&").join(
                 concat(JIRA_URL, JIRA_URL_VALUE),
                 concat(USERNAME, USERNAME_VALUE),
@@ -49,14 +50,15 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://newIssues?" + query);
 
         assertEquals("newissues", endpoint.getType().name().toLowerCase());
-        assertEquals(JIRA_URL_VALUE, component.getConfiguration().getJiraUrl());
-        assertEquals(USERNAME_VALUE, component.getConfiguration().getUsername());
-        assertEquals(PASSWORD_VALUE, component.getConfiguration().getPassword());
+        assertEquals(JIRA_URL_VALUE, endpoint.getConfiguration().getJiraUrl());
+        assertEquals(USERNAME_VALUE, endpoint.getConfiguration().getUsername());
+        assertEquals(PASSWORD_VALUE, endpoint.getConfiguration().getPassword());
     }
 
     @Test
     public void createEndpointWithOAuthentication() throws Exception {
         JiraComponent component = new JiraComponent(context);
+        component.start();
         String query = Joiner.on("&").join(
                 concat(JIRA_URL, JIRA_URL_VALUE),
                 concat(VERIF_CODE, VERIF_CODE_VALUE),
@@ -67,11 +69,11 @@ public class JiraComponentConfigurationTest extends CamelTestSupport {
         JiraEndpoint endpoint = (JiraEndpoint) component.createEndpoint("jira://newComments?" + query);
 
         assertEquals("newcomments", endpoint.getType().name().toLowerCase());
-        assertEquals(JIRA_URL_VALUE, component.getConfiguration().getJiraUrl());
-        assertEquals(VERIF_CODE_VALUE, component.getConfiguration().getVerificationCode());
-        assertEquals(ACCESS_TOKEN_VALUE, component.getConfiguration().getAccessToken());
-        assertEquals(CONS_KEY_VALUE, component.getConfiguration().getConsumerKey());
-        assertEquals(PRIV_KEY_VALUE, component.getConfiguration().getPrivateKey());
+        assertEquals(JIRA_URL_VALUE, endpoint.getConfiguration().getJiraUrl());
+        assertEquals(VERIF_CODE_VALUE, endpoint.getConfiguration().getVerificationCode());
+        assertEquals(ACCESS_TOKEN_VALUE, endpoint.getConfiguration().getAccessToken());
+        assertEquals(CONS_KEY_VALUE, endpoint.getConfiguration().getConsumerKey());
+        assertEquals(PRIV_KEY_VALUE, endpoint.getConfiguration().getPrivateKey());
     }
 
     private String concat(String key, String val) {

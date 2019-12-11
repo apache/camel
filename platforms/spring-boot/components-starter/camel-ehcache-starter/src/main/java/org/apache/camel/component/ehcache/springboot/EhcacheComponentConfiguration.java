@@ -17,7 +17,6 @@
 package org.apache.camel.component.ehcache.springboot;
 
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.ehcache.CacheManager;
@@ -215,8 +214,10 @@ public class EhcacheComponentConfiguration
         private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
         /**
          * Set the type of events to listen for
+         * (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple
+         * entries separated by comma.
          */
-        private Set eventTypes;
+        private String eventTypes;
         /**
          * The default cache configuration to be used to create caches.
          */
@@ -310,11 +311,11 @@ public class EhcacheComponentConfiguration
             this.eventFiring = eventFiring;
         }
 
-        public Set getEventTypes() {
+        public String getEventTypes() {
             return eventTypes;
         }
 
-        public void setEventTypes(Set eventTypes) {
+        public void setEventTypes(String eventTypes) {
             this.eventTypes = eventTypes;
         }
 

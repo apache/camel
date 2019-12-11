@@ -57,7 +57,7 @@ public class XChangeMetaDataProducer extends DefaultProducer {
         } else if (XChangeMethod.currencyPairMetaData == method) {
             CurrencyPair pair = exchange.getIn().getHeader(HEADER_CURRENCY_PAIR, CurrencyPair.class);
             pair = pair != null ? pair : exchange.getMessage().getBody(CurrencyPair.class);
-            pair = pair != null ? pair : endpoint.getConfiguration().getCurrencyPair();
+            pair = pair != null ? pair : endpoint.getConfiguration().getAsCurrencyPair();
             Object body = endpoint.getCurrencyPairMetaData(pair);
             exchange.getMessage().setBody(body);
         }

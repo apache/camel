@@ -272,25 +272,11 @@ public interface JCacheEndpointBuilderFactory {
             return this;
         }
         /**
-         * Events a consumer should filter. If using filteredEvents option, then
-         * eventFilters one will be ignored.
+         * Events a consumer should filter (multiple events can be separated by
+         * comma). If using filteredEvents option, then eventFilters one will be
+         * ignored.
          * 
-         * The option is a:
-         * <code>java.util.List&lt;javax.cache.event.EventType&gt;</code> type.
-         * 
-         * Group: consumer
-         */
-        default JCacheEndpointConsumerBuilder filteredEvents(
-                List<EventType> filteredEvents) {
-            doSetProperty("filteredEvents", filteredEvents);
-            return this;
-        }
-        /**
-         * Events a consumer should filter. If using filteredEvents option, then
-         * eventFilters one will be ignored.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;javax.cache.event.EventType&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          */
@@ -1384,16 +1370,6 @@ public interface JCacheEndpointBuilderFactory {
             doSetProperty("lookupProviders", lookupProviders);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>javax.cache.event.EventType</code> enum.
-     */
-    enum EventType {
-        CREATED,
-        UPDATED,
-        REMOVED,
-        EXPIRED;
     }
     /**
      * JCache (camel-jcache)

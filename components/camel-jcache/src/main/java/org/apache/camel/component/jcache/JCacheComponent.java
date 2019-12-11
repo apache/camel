@@ -29,9 +29,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link JCacheEndpoint}.
- */
 @Component("jcache")
 public class JCacheComponent extends DefaultComponent {
 
@@ -58,8 +55,9 @@ public class JCacheComponent extends DefaultComponent {
         configuration.setCacheConfigurationProperties(loadProperties());
         configuration.setConfigurationUri(configurationUri);
 
-        setProperties(configuration, parameters);
-        return new JCacheEndpoint(uri, this, configuration);
+        JCacheEndpoint endpoint = new JCacheEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     private Properties loadProperties() {

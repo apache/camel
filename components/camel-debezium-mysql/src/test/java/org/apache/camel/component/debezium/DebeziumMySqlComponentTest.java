@@ -46,6 +46,7 @@ public class DebeziumMySqlComponentTest {
                 + "databaseServerName=test&databaseHistoryFileName=/test";
 
         final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
+        debeziumComponent.start();
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
 
         assertNotNull(debeziumEndpoint);
@@ -74,6 +75,7 @@ public class DebeziumMySqlComponentTest {
 
         final String uri = "debezium:dummy";
         final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(configuration);
@@ -98,6 +100,7 @@ public class DebeziumMySqlComponentTest {
         final String remaining = "";
         final String uri = "debezium:";
         final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(null);
@@ -111,6 +114,7 @@ public class DebeziumMySqlComponentTest {
         final String remaining = "dummy";
         final String uri = "debezium:dummy";
         final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(null);

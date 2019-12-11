@@ -1,15 +1,15 @@
-= Apache Camel 3.x Migration Guide
+= Apache Camel 3.x Upgrade Guide
 
-This document is intended for helping you migrate your Apache Camel application
-from Camel 3.x to Camel 3.y.
+This document is intended for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y.
 
 IMPORTANT: If you are migrating from Camel 2.x then use the
 xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
 
-For example if you are migrating from Camel 3.0 to 3.2, then you should follow the guides
+For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
-== Migrating from Camel 3.0 to 3.1
+== Upgrading Camel 3.0 to 3.1
 
 === camel-nats
 

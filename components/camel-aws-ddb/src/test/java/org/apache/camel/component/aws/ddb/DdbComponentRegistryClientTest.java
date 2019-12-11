@@ -25,7 +25,7 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
     public void createEndpointWithRegistryClient() throws Exception {
         AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
         context.getRegistry().bind("ddbClient", ddbClient);
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddb://myTable");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
@@ -33,7 +33,7 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutRegistryClient() throws Exception {
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddb://myTable");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());

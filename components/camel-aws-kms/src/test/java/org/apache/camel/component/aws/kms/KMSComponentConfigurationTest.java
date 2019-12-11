@@ -26,7 +26,7 @@ public class KMSComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        KMSComponent component = new KMSComponent(context);
+        KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-kms://label");
@@ -37,7 +37,7 @@ public class KMSComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        KMSComponent component = new KMSComponent(context);
+        KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -50,7 +50,7 @@ public class KMSComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        KMSComponent component = new KMSComponent(context);
+        KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());

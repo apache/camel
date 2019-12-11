@@ -40,7 +40,8 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
                     return false;
                 }
 
-                return !event.getValue().toString().startsWith("to-filter-");
+                String val = event.getValue().toString();
+                return !val.startsWith("to-filter-");
             }
         };
     }
@@ -73,7 +74,8 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
         mockUpdated.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                return exchange.getIn().getBody(String.class).equals(val2);
+                String body = exchange.getIn().getBody(String.class);
+                return body.equalsIgnoreCase(val2);
             }
         });
 
@@ -83,7 +85,8 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
         mockRemoved.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                return exchange.getIn().getBody(String.class) == null;
+                String body = exchange.getIn().getBody(String.class);
+                return body == null;
             }
         });
 
@@ -93,7 +96,8 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
         mockMyFilter.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
-                return exchange.getIn().getBody(String.class).equals(val2);
+                String body = exchange.getIn().getBody(String.class);
+                return body.equalsIgnoreCase(val2);
             }
         });
 

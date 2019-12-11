@@ -36,7 +36,6 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
@@ -104,27 +103,16 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
-    @Metadata(skip = true)
     private List<PropertiesLocation> locations = new ArrayList<>();
-    @Metadata
     private String location;
-    @Metadata
     private boolean ignoreMissingLocation;
-    @Metadata
     private String encoding;
-    @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
-    @Metadata(label = "advanced")
     private Properties initialProperties;
-    @Metadata(label = "advanced")
     private Properties overrideProperties;
-    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE, enums = "0,1,2")
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
-    @Metadata(defaultValue = "" + ENVIRONMENT_VARIABLES_MODE_OVERRIDE, enums = "0,1,2")
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
-    @Metadata(defaultValue = "true")
     private boolean autoDiscoverPropertiesSources = true;
-
 
     public PropertiesComponent() {
         // include out of the box functions

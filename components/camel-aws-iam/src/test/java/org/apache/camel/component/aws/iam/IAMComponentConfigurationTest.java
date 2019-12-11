@@ -26,7 +26,7 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        IAMComponent component = new IAMComponent(context);
+        IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         IAMEndpoint endpoint = (IAMEndpoint)component.createEndpoint("aws-iam://label");
@@ -37,7 +37,7 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        IAMComponent component = new IAMComponent(context);
+        IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -50,7 +50,7 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        IAMComponent component = new IAMComponent(context);
+        IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());

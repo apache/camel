@@ -40,7 +40,7 @@ public class PulsarComponentTest extends CamelTestSupport {
 
     @Test
     public void testPulsarEndpointConfiguration() throws Exception {
-        PulsarComponent component = new PulsarComponent(context);
+        PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
         component.setAutoConfiguration(autoConfiguration);
 
         PulsarEndpoint endpoint = (PulsarEndpoint)component
@@ -51,7 +51,7 @@ public class PulsarComponentTest extends CamelTestSupport {
 
     @Test
     public void testPulsarEndpointDefaultConfiguration() throws Exception {
-        PulsarComponent component = new PulsarComponent(context);
+        PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
         PulsarEndpoint endpoint = (PulsarEndpoint)component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
 
@@ -69,7 +69,7 @@ public class PulsarComponentTest extends CamelTestSupport {
     @Test
     public void testProducerAutoConfigures() throws Exception {
         when(autoConfiguration.isAutoConfigurable()).thenReturn(true);
-        PulsarComponent component = new PulsarComponent(context);
+        PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
         component.setAutoConfiguration(autoConfiguration);
 
         component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
@@ -79,7 +79,7 @@ public class PulsarComponentTest extends CamelTestSupport {
 
     @Test
     public void testPulsarEndpointAllowManualAcknowledgementDefaultTrue() throws Exception {
-        PulsarComponent component = new PulsarComponent(context);
+        PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
         component.setAllowManualAcknowledgement(true);
 
         // allowManualAcknowledgement is absent as a query parameter.

@@ -74,14 +74,13 @@ public class DropboxComponent extends DefaultComponent {
             configuration.setUploadMode(DropboxUploadMode.valueOf((String)parameters.get("uploadMode")));
         }
 
+        DropboxEndpoint endpoint = new DropboxEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
 
         //pass validation test
         DropboxConfigurationValidator.validateCommonProperties(configuration);
 
-        // and then override from parameters
-        setProperties(configuration, parameters);
-
-        return new DropboxEndpoint(uri, this, configuration);
+        return endpoint;
     }
 
 }

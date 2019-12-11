@@ -26,7 +26,7 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);
-        IAMComponent component = new IAMComponent(context);
+        IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
         IAMEndpoint endpoint = (IAMEndpoint)component.createEndpoint("aws-iam://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getIamClient());
@@ -35,7 +35,7 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
-        IAMComponent component = new IAMComponent(context);
+        IAMComponent component = context.getComponent("aws-iam", IAMComponent.class);
         IAMEndpoint endpoint = (IAMEndpoint)component.createEndpoint("aws-iam://TestDomain");
     }
 }

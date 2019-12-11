@@ -527,8 +527,8 @@
         <pulsar-version>2.4.1</pulsar-version>
         <pulsar-bundle-version>2.4.1_1</pulsar-bundle-version>
         <qpid-broker-version>7.1.6</qpid-broker-version>
-        <qpid-proton-j-version>0.33.2</qpid-proton-j-version>
-        <qpid-jms-client-version>0.47.0</qpid-jms-client-version>
+        <qpid-proton-j-version>0.33.3</qpid-proton-j-version>
+        <qpid-jms-client-version>0.48.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.1.1</quickfixj-version>
         <rabbitmq-amqp-client-version>5.7.3</rabbitmq-amqp-client-version>

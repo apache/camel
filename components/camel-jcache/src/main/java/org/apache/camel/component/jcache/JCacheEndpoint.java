@@ -57,7 +57,9 @@ public class JCacheEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new JCacheConsumer(this, processor);
+        JCacheConsumer consumer = new JCacheConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

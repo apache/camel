@@ -25,7 +25,7 @@ public class DdbComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddb://myTable");
@@ -37,7 +37,7 @@ public class DdbComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -51,7 +51,7 @@ public class DdbComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());

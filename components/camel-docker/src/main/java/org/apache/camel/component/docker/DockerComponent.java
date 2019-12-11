@@ -61,7 +61,8 @@ public class DockerComponent extends DefaultComponent {
         configuration.setOperation(operation);
 
         Endpoint endpoint = new DockerEndpoint(uri, this, configuration);
-        setProperties(configuration, parameters);
+        setProperties(endpoint, parameters);
+        // and store any left-over parameters on configuration
         configuration.setParameters(parameters);
 
         return endpoint;

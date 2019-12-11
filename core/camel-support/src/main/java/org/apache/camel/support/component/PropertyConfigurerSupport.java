@@ -16,8 +16,12 @@
  */
 package org.apache.camel.support.component;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.support.EndpointHelper;
 
 /**
  * Base class used by the camel-apt compiler plugin when it generates source code for fast
@@ -37,17 +41,24 @@ public abstract class PropertyConfigurerSupport {
         // if the type is not string based and the value is a bean reference, then we need to lookup
         // the bean from the registry
         if (value instanceof String && String.class != type) {
-            // is it a reference parameter
+            Object obj = null;
+
             String text = value.toString();
-            if (text.startsWith("#")) {
-                String ref = text.startsWith("#bean:") ? text.substring(6) : text.substring(1);
-                Object obj = camelContext.getRegistry().lookupByName(ref);
-                if (obj != null) {
-                    value = obj;
+            if (EndpointHelper.isReferenceParameter(text)) {
+                // special for a list where we refer to beans which can be either a list or a single element
+                // so use Object.class as type
+                if (type == List.class) {
+                    obj = EndpointHelper.resolveReferenceListParameter(camelContext, text, Object.class);
                 } else {
-                    // no bean found so throw an exception
-                    throw new NoSuchBeanException(ref, type.getName());
+                    obj = EndpointHelper.resolveReferenceParameter(camelContext, text, type);
                 }
+                if (obj == null) {
+                    // no bean found so throw an exception
+                    throw new NoSuchBeanException(text, type.getName());
+                }
+            }
+            if (obj != null) {
+                value = obj;
             }
         }
 

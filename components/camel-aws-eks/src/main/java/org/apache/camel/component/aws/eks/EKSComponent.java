@@ -25,7 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon EKS.
@@ -49,30 +48,22 @@ public class EKSComponent extends DefaultComponent {
     public EKSComponent(CamelContext context) {
         super(context);
         
-        this.configuration = new EKSConfiguration();
         registerExtension(new EKSComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EKSConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
-
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        EKSConfiguration configuration =  this.configuration != null ? this.configuration.copy() : new EKSConfiguration();
+        EKSEndpoint endpoint = new EKSEndpoint(uri, this, configuration);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getEksClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
         }
         
-        EKSEndpoint endpoint = new EKSEndpoint(uri, this, configuration);
         return endpoint;
     }
     
@@ -88,36 +79,36 @@ public class EKSComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
     
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
      * The region in which EKS client needs to work
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
 
     private void checkAndSetRegistryClient(EKSConfiguration configuration) {

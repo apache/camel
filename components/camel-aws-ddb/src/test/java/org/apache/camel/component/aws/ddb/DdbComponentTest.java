@@ -42,20 +42,20 @@ public class DdbComponentTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithOnlySecretKeyConfiguration() throws Exception {
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.createEndpoint("aws-ddb://activeTable?secretKey=xxx");
     }
     
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.createEndpoint("aws-ddb://activeTable?amazonDDBClient=#amazonDDBClient");
     }
 
 
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
-        DdbComponent component = new DdbComponent(context);
+        DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.createEndpoint("aws-ddb://activeTable?accessKey=xxx&secretKey=yyy");
     }
 

@@ -65,20 +65,7 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * The currency pair.
          * 
-         * The option is a: <code>org.knowm.xchange.currency.CurrencyPair</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default XChangeEndpointBuilder currencyPair(Object currencyPair) {
-            doSetProperty("currencyPair", currencyPair);
-            return this;
-        }
-        /**
-         * The currency pair.
-         * 
-         * The option will be converted to a
-         * <code>org.knowm.xchange.currency.CurrencyPair</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */

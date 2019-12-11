@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.ehcache;
 
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,8 +60,8 @@ public class EhcacheConfiguration implements Cloneable {
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
     @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")
     private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
-    @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED", defaultValue = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
-    private Set<EventType> eventTypes = EnumSet.of(EventType.values()[0], EventType.values());
+    @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
+    private String eventTypes;
 
     public EhcacheConfiguration() {
     }
@@ -197,25 +196,30 @@ public class EhcacheConfiguration implements Cloneable {
         this.eventFiring = eventFiring;
     }
 
-    public Set<EventType> getEventTypes() {
+    public String getEventTypes() {
         return eventTypes;
     }
 
-    /**
-     * Set the type of events to listen for
-     */
-    public void setEventTypes(String eventTypesString) {
-        Set<EventType> eventTypes = new HashSet<>();
-        String[] events = eventTypesString.split(",");
-        for (String event : events) {
-            eventTypes.add(EventType.valueOf(event));
-        }
+    public Set<EventType> getEventTypesSet() {
+        Set<EventType> answer = new LinkedHashSet<>();
 
-        setEventTypes(eventTypes);
+        String types = eventTypes;
+        if (types == null) {
+            types = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED";
+        }
+        String[] arr = types.split(",");
+        for (String s : arr) {
+            answer.add(EventType.valueOf(s));
+        }
+        return answer;
     }
 
-    public void setEventTypes(Set<EventType> eventTypes) {
-        this.eventTypes = new HashSet<>(eventTypes);
+    /**
+     * Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED).
+     * You can specify multiple entries separated by comma.
+     */
+    public void setEventTypes(String eventTypes) {
+        this.eventTypes = eventTypes;
     }
 
     // ****************************

@@ -454,13 +454,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             strategy.onComponentAdd(componentName, component);
         }
-
-        // keep reference to properties component up to date
-        if (component instanceof PropertiesComponent && "properties".equals(componentName)) {
-            propertiesComponent = (PropertiesComponent)component;
-            // ensure properties component is initialize early
-            ServiceHelper.initService(propertiesComponent);
-        }
     }
 
     @Override
@@ -475,10 +468,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
+        // ensure CamelContext are initialized before we can get a component
         init();
 
-        // Check if the named component is already being created, that would
-        // mean
+        // Check if the named component is already being created, that would mean
         // that the initComponent has triggered a new getComponent
         if (componentsInCreation.get().contains(name)) {
             throw new IllegalStateException("Circular dependency detected, the component " + name + " is already being created");
@@ -497,10 +490,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 }
             });
 
-            // Start the component after its creation as if it is a component
-            // proxy
-            // that creates/start a delegated component, we may end up in a
-            // deadlock
+            // Start the component after its creation as if it is a component proxy
+            // that creates/start a delegated component, we may end up in a deadlock
             if (component != null && created.get() && autoStart && (isStarted() || isStarting())) {
                 // If the component is looked up after the context is started,
                 // lets start it up.
@@ -532,12 +523,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 // requests.
                 //
                 // In spring apps, the component resolver may trigger a new
-                // getComponent
-                // because of the underlying bean factory and as the endpoints
-                // are
-                // registered as singleton, the spring factory creates the bean
-                // and then check the type so the getComponent is always
-                // triggered.
+                // getComponent because of the underlying bean factory and as
+                // the endpoints are registered as singleton, the spring factory
+                // creates the bean and then check the type so the getComponent
+                // is always triggered.
                 //
                 // Simple circular dependency:
                 //
@@ -568,6 +557,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 component = getComponentResolver().resolveComponent(name, this);
                 if (component != null) {
                     component.setCamelContext(this);
+                    ServiceHelper.initService(component);
                     postInitComponent(name, component);
                 }
             } catch (Exception e) {
@@ -617,10 +607,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onComponentRemove(componentName, oldComponent);
             }
-        }
-        // keep reference to properties component up to date
-        if (oldComponent != null && "properties".equals(componentName)) {
-            propertiesComponent = null;
         }
         return oldComponent;
     }
@@ -708,6 +694,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public Endpoint getEndpoint(String uri) {
+        // ensure CamelContext are initialized before we can get an endpoint
         init();
 
         StringHelper.notEmpty(uri, "uri");
