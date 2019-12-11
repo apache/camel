@@ -35,35 +35,29 @@ public class MiloClientComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-
         final MiloClientConfiguration configuration = new MiloClientConfiguration(this.defaultConfiguration);
         configuration.setEndpointUri(remaining);
-        setProperties(configuration, parameters);
 
-        return createEndpoint(uri, configuration, parameters);
+        Endpoint endpoint = doCreateEndpoint(uri, configuration, parameters);
+        return endpoint;
     }
 
-    private synchronized MiloClientEndpoint createEndpoint(final String uri, final MiloClientConfiguration configuration, final Map<String, Object> parameters) throws Exception {
+    private synchronized MiloClientEndpoint doCreateEndpoint(final String uri, final MiloClientConfiguration configuration, final Map<String, Object> parameters) throws Exception {
+        final MiloClientEndpoint endpoint = new MiloClientEndpoint(uri, this, configuration.getEndpointUri());
+        endpoint.setConfiguration(configuration);
+        setProperties(endpoint, parameters);
 
         final String cacheId = configuration.toCacheId();
-
         MiloClientConnection connection = this.cache.get(cacheId);
-
         if (connection == null) {
             log.info("Cache miss - creating new connection instance: {}", cacheId);
-
             connection = new MiloClientConnection(configuration);
             this.cache.put(cacheId, connection);
         }
 
-        final MiloClientEndpoint endpoint = new MiloClientEndpoint(uri, this, connection, configuration.getEndpointUri());
-
-        setProperties(endpoint, parameters);
-
         // register connection with endpoint
-
         this.connectionMap.put(cacheId, endpoint);
-
+        endpoint.setConnection(connection);
         return endpoint;
     }
 

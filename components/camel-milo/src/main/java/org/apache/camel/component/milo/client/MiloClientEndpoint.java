@@ -72,21 +72,21 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     @UriParam
     private boolean defaultAwaitWrites;
 
-    private final MiloClientConnection connection;
     private final MiloClientComponent component;
+    private MiloClientConnection connection;
 
-    public MiloClientEndpoint(final String uri, final MiloClientComponent component, final MiloClientConnection connection, final String endpointUri) {
+    public MiloClientEndpoint(final String uri, final MiloClientComponent component, final String endpointUri) {
         super(uri, component);
 
         Objects.requireNonNull(component);
-        Objects.requireNonNull(connection);
         Objects.requireNonNull(endpointUri);
 
         this.endpointUri = endpointUri;
-
         this.component = component;
-        this.connection = connection;
-        this.configuration = connection.getConfiguration();
+    }
+
+    public void setConfiguration(MiloClientConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public MiloClientConfiguration getConfiguration() {
@@ -111,7 +111,9 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        return new MiloClientConsumer(this, processor, this.connection);
+        MiloClientConsumer consumer = new MiloClientConsumer(this, processor, this.connection);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
@@ -171,5 +173,9 @@ public class MiloClientEndpoint extends DefaultEndpoint {
 
     public void setDefaultAwaitWrites(final boolean defaultAwaitWrites) {
         this.defaultAwaitWrites = defaultAwaitWrites;
+    }
+
+    public void setConnection(MiloClientConnection connection) {
+        this.connection = connection;
     }
 }
