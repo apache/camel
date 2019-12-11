@@ -59,7 +59,7 @@ public class XChangeConfiguration {
     @UriParam(description = "The currency") 
     private Currency currency;
     @UriParam(description = "The currency pair") 
-    private CurrencyPair currencyPair;
+    private String currencyPair;
 
     public XChangeConfiguration(XChangeComponent component) {
         ObjectHelper.notNull(component, "component");
@@ -101,16 +101,19 @@ public class XChangeConfiguration {
         this.currency = Currency.getInstanceNoCreate(curr);
     }
 
-    public CurrencyPair getCurrencyPair() {
+    public CurrencyPair getAsCurrencyPair() {
+        if (currencyPair != null) {
+            return new CurrencyPair(currencyPair);
+        }
+        return null;
+    }
+
+    public String getCurrencyPair() {
         return currencyPair;
     }
 
-    public void setCurrencyPair(CurrencyPair currencyPair) {
+    public void setCurrencyPair(String currencyPair) {
         this.currencyPair = currencyPair;
-    }
-
-    public void setCurrencyPair(String pair) {
-        this.currencyPair = new CurrencyPair(pair);
     }
 
     @SuppressWarnings("unchecked")
