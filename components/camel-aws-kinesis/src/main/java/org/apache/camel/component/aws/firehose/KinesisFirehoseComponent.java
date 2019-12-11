@@ -22,6 +22,7 @@ import java.util.Set;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.aws.kinesis.KinesisConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -46,29 +47,22 @@ public class KinesisFirehoseComponent extends DefaultComponent {
     public KinesisFirehoseComponent(CamelContext context) {
         super(context);
         
-        this.configuration = new KinesisFirehoseConfiguration();
         registerExtension(new KinesisFirehoseComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisFirehoseConfiguration configuration = this.configuration.copy();
+        KinesisFirehoseConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KinesisFirehoseConfiguration();
         configuration.setStreamName(remaining);
-        setProperties(configuration, parameters);
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        KinesisFirehoseEndpoint endpoint = new KinesisFirehoseEndpoint(uri, configuration, this);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonKinesisFirehoseClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
         }
-        KinesisFirehoseEndpoint endpoint = new KinesisFirehoseEndpoint(uri, configuration, this);
         return endpoint;
     }
     
@@ -84,36 +78,36 @@ public class KinesisFirehoseComponent extends DefaultComponent {
     }
     
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
     
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
      * Amazon AWS Region
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
     
     private void checkAndSetRegistryClient(KinesisFirehoseConfiguration configuration) {
