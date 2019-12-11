@@ -46,6 +46,7 @@ public class DebeziumSqlserverComponentTest {
                 + "databaseServerName=test&databaseHistoryFileName=/test";
 
         final DebeziumComponent debeziumComponent = new DebeziumSqlserverComponent(new DefaultCamelContext());
+        debeziumComponent.start();
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
 
         assertNotNull(debeziumEndpoint);
@@ -73,6 +74,7 @@ public class DebeziumSqlserverComponentTest {
 
         final String uri = "debezium:dummy";
         final DebeziumComponent debeziumComponent = new DebeziumSqlserverComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(configuration);
@@ -97,6 +99,7 @@ public class DebeziumSqlserverComponentTest {
         final String remaining = "";
         final String uri = "debezium:";
         final DebeziumComponent debeziumComponent = new DebeziumSqlserverComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(null);
@@ -110,6 +113,7 @@ public class DebeziumSqlserverComponentTest {
         final String remaining = "dummy";
         final String uri = "debezium:dummy";
         final DebeziumComponent debeziumComponent = new DebeziumSqlserverComponent(new DefaultCamelContext());
+        debeziumComponent.start();
 
         // set configurations
         debeziumComponent.setConfiguration(null);
