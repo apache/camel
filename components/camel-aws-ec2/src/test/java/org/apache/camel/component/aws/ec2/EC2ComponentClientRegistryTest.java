@@ -26,7 +26,7 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
         context.getRegistry().bind("amazonEc2Client", clientMock);
-        EC2Component component = new EC2Component(context);
+        EC2Component component = context.getComponent("aws-ec2", EC2Component.class);
         EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
@@ -35,7 +35,7 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalEC2ClientMisconfiguration() throws Exception {
 
-        EC2Component component = new EC2Component(context);
+        EC2Component component = context.getComponent("aws-ec2", EC2Component.class);
         EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain");
     }
 }
