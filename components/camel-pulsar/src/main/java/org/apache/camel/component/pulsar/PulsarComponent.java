@@ -50,15 +50,10 @@ public class PulsarComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
         final PulsarConfiguration configuration = new PulsarConfiguration();
-
         configuration.setAllowManualAcknowledgement(isAllowManualAcknowledgement());
 
-        setProperties(configuration, parameters);
-        if (autoConfiguration != null) {
-            setProperties(autoConfiguration, parameters);
-            if (autoConfiguration.isAutoConfigurable()) {
-                autoConfiguration.ensureNameSpaceAndTenant(path);
-            }
+        if (autoConfiguration != null &&autoConfiguration.isAutoConfigurable()) {
+            autoConfiguration.ensureNameSpaceAndTenant(path);
         }
 
         PulsarEndpoint answer = new PulsarEndpoint(uri, this);
