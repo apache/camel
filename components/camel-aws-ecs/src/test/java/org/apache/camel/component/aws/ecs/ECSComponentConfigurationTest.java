@@ -26,7 +26,7 @@ public class ECSComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        ECSComponent component = new ECSComponent(context);
+        ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         ECSEndpoint endpoint = (ECSEndpoint)component.createEndpoint("aws-ecs://label");
@@ -37,7 +37,7 @@ public class ECSComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        ECSComponent component = new ECSComponent(context);
+        ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -50,7 +50,7 @@ public class ECSComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        ECSComponent component = new ECSComponent(context);
+        ECSComponent component = context.getComponent("aws-ecs", ECSComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
