@@ -36,7 +36,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithAllOptions() throws Exception {
         AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         CwEndpoint endpoint = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&value=2&unit=Count&timestamp=#now");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
@@ -48,25 +48,25 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         component.createEndpoint("aws-cw://camel.apache.org/test?secretKey=yyy");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx");
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx");
     }
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws-cw://camel.apache.org/test");
@@ -78,7 +78,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -92,7 +92,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointOptionsAndProxy() throws Exception {
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
