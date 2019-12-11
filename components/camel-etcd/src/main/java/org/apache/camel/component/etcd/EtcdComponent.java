@@ -56,7 +56,6 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
 
     /**
      * To set the URIs the client connects.
-     * @param uris
      */
     public void setUris(String uris) {
         configuration.setUris(uris);
@@ -68,7 +67,6 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
 
     /**
      * To configure security using SSLContextParameters.
-     * @param sslContextParameters
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         configuration.setSslContextParameters(sslContextParameters);
@@ -80,7 +78,6 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
 
     /**
      * The user name to use for basic authentication.
-     * @param userName
      */
     public void setUserName(String userName) {
         configuration.setUserName(userName);
@@ -92,7 +89,6 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
 
     /**
      * The password to use for basic authentication.
-     * @param password
      */
     public void setPassword(String password) {
         configuration.setPassword(password);
@@ -143,16 +139,19 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
                 path = "/" + path;
             }
 
-            switch (namespace) {
-            case stats:
-                return new EtcdStatsEndpoint(uri, this, configuration, namespace, path);
-            case watch:
-                return new EtcdWatchEndpoint(uri, this, configuration, namespace, path);
-            case keys:
-                return new EtcdKeysEndpoint(uri, this, configuration, namespace, path);
-            default:
+            Endpoint endpoint;
+            if (namespace == EtcdNamespace.stats) {
+                endpoint = new EtcdStatsEndpoint(uri, this, configuration, namespace, path);
+            } else if (namespace == EtcdNamespace.watch) {
+                endpoint = new EtcdWatchEndpoint(uri, this, configuration, namespace, path);
+            } else if (namespace == EtcdNamespace.keys) {
+                endpoint = new EtcdKeysEndpoint(uri, this, configuration, namespace, path);
+            } else {
                 throw new IllegalStateException("No endpoint for " + remaining);
             }
+
+            setProperties(endpoint, parameters);
+            return endpoint;
         }
 
         throw new IllegalStateException("No endpoint for " + remaining);
@@ -161,8 +160,6 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
     protected EtcdConfiguration loadConfiguration(Map<String, Object> parameters) throws Exception {
         EtcdConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(EtcdConfiguration::new).copy();
         configuration.setCamelContext(getCamelContext());
-
-        setProperties(configuration, parameters);
 
         if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
