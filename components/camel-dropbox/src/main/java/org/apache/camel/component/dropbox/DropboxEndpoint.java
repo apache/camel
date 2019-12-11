@@ -97,10 +97,12 @@ public class DropboxEndpoint extends DefaultEndpoint {
         if (this.configuration.getOperation() == DropboxOperation.search) {
             consumer = new DropboxScheduledPollSearchConsumer(this, processor, configuration);
             consumer.setDelay(DropboxConstants.POLL_CONSUMER_DELAY);
+            configureConsumer(consumer);
             return consumer;
         } else if (this.configuration.getOperation() == DropboxOperation.get) {
             consumer = new DropboxScheduledPollGetConsumer(this, processor, configuration);
             consumer.setDelay(DropboxConstants.POLL_CONSUMER_DELAY);
+            configureConsumer(consumer);
             return consumer;
         } else {
             throw new DropboxException("Operation specified is not valid for consumer!");
