@@ -26,7 +26,7 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonMQClientMock awsMQClient = new AmazonMQClientMock();
         context.getRegistry().bind("awsMQClient", awsMQClient);
-        MQComponent component = new MQComponent(context);
+        MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         MQEndpoint endpoint = (MQEndpoint) component.createEndpoint("aws-mq://MyQueue");
 
         assertNotNull(endpoint.getConfiguration().getAmazonMqClient());
@@ -35,7 +35,7 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalMQClientMisconfiguration() throws Exception {
 
-        MQComponent component = new MQComponent(context);
+        MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         MQEndpoint endpoint = (MQEndpoint) component.createEndpoint("aws-mq://MyQueue");
     }
 }
