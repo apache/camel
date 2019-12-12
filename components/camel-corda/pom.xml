@@ -32,10 +32,6 @@
     <name>Camel :: Corda</name>
     <description>Camel Corda which is based on corda-rpc support</description>
 
-    <properties>
-    </properties>
-
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

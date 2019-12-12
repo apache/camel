@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.corda;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import net.corda.core.contracts.ContractState;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.node.services.vault.PageSpecification;
@@ -25,46 +28,70 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class CordaConfiguration implements Cloneable {
-    @UriParam
-    @Metadata(required = true)
+
+    private transient String host;
+    private transient int port;
+
+    @UriPath @Metadata(required = true)
+    private String node;
+    @UriParam(label = "producer")
     private String operation;
-
-    @UriParam
-    @Metadata(required = true, secret = true)
+    @UriParam(label = "security", secret = true)
     private String username;
-
-    @UriParam
-    @Metadata(required = true, secret = true)
+    @UriParam(label = "security", secret = true)
     private String password;
-
-    @Metadata(required = true)
-    private String host;
-
-    @Metadata(required = true)
-    private int port;
-
-    @Metadata(required = false, defaultValue = "true")
+    @Metadata(label = "consumer", defaultValue = "true")
     private boolean processSnapshot = true;
 
     private Class<FlowLogic<?>> flowLociClass;
-
     private Object [] arguments;
-
     private Class<ContractState> contractStateClass;
-
     private QueryCriteria queryCriteria;
-
     private PageSpecification pageSpecification;
-
     private Sort sort;
+
+    public void configure() {
+        try {
+            URI nodeURI = new URI(node);
+            setHost(nodeURI.getHost());
+            setPort(nodeURI.getPort());
+
+            if (nodeURI.getUserInfo() != null) {
+                String[] creds = nodeURI.getUserInfo().split(":");
+                if (getUsername() == null) {
+                    setUsername(creds[0]);
+                }
+                if (getPassword() == null) {
+                    setPassword(creds.length > 1 ? creds[1] : "");
+                }
+            }
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid URI: " + node, e);
+        }
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    /**
+     * The url for the corda node
+     */
+    public void setNode(String node) {
+        this.node = node;
+    }
 
     public String getOperation() {
         return operation;
     }
 
+    /**
+     * Operation to use
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -73,6 +100,9 @@ public class CordaConfiguration implements Cloneable {
         return username;
     }
 
+    /**
+     * Username for login
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -81,6 +111,9 @@ public class CordaConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * Password for login
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -105,6 +138,9 @@ public class CordaConfiguration implements Cloneable {
         return processSnapshot;
     }
 
+    /**
+     * Whether to process snapshots or not
+     */
     public void setProcessSnapshot(boolean processSnapshot) {
         this.processSnapshot = processSnapshot;
     }
