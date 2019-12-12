@@ -313,11 +313,6 @@
         <module>camel-spark</module>
         <module>camel-splunk</module>
         <module>camel-spring-batch</module>
-        <module>camel-spring-boot</module>
-        <module>camel-spring-cloud-consul</module>
-        <module>camel-spring-cloud-netflix</module>
-        <module>camel-spring-cloud-zookeeper</module>
-        <module>camel-spring-cloud</module>
         <module>camel-spring-integration</module>
         <module>camel-spring-javaconfig</module>
         <module>camel-spring-ldap</module>
@@ -386,8 +381,6 @@
                         <id>validate</id>
                         <goals>
                             <goal>validate-components</goal>
-                            <goal>prepare-spring-boot-starter</goal>
-                            <goal>prepare-spring-boot-auto-configuration</goal>
                             <goal>generate-legal</goal>
                             <goal>generate-endpoint-dsl</goal>
                         </goals>

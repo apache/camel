@@ -28,6 +28,6 @@ Camel Java process using the *org.apache.camel.spring.Main* class
 == Spring Boot
 
 You can combine Spring Boot with Camel using
-xref:components::spring-boot.adoc[Camel's Spring Boot integration]. In this case
+Camel's Spring Boot integration. In this case
 your application looks and feels like a regular Spring Boot application
 but with full Camel integration.

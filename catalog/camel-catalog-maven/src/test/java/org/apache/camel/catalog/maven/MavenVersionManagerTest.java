@@ -22,8 +22,8 @@ import java.util.List;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.DefaultRuntimeProvider;
 import org.apache.camel.catalog.karaf.KarafRuntimeProvider;
-import org.apache.camel.catalog.springboot.SpringBootRuntimeProvider;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -87,7 +87,7 @@ public class MavenVersionManagerTest extends Assert {
     public void testRuntimeProviderLoadVersion() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog(false);
         catalog.setVersionManager(new MavenVersionManager());
-        catalog.setRuntimeProvider(new SpringBootRuntimeProvider());
+        catalog.setRuntimeProvider(new DefaultRuntimeProvider                                                                                                       ());
 
         String version = "2.18.2";
 
@@ -113,7 +113,7 @@ public class MavenVersionManagerTest extends Assert {
     public void testRuntimeProviderLoadVersionWithCaching() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog(true);
         catalog.setVersionManager(new MavenVersionManager());
-        catalog.setRuntimeProvider(new SpringBootRuntimeProvider());
+        catalog.setRuntimeProvider(new DefaultRuntimeProvider());
 
         String version = "2.18.2";
 

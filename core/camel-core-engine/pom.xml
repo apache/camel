@@ -148,8 +148,6 @@
                         <id>validate</id>
                         <goals>
                             <goal>validate-components</goal>
-                            <goal>prepare-spring-boot-starter</goal>
-                            <goal>prepare-spring-boot-auto-configuration</goal>
                         </goals>
                         <phase>prepare-package</phase>
                     </execution>

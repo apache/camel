@@ -1,3 +1,0 @@
-= Spring Cloud Consul
-
-*Since Camel 2.22*

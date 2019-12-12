@@ -69,12 +69,6 @@ public class PrepareReleasePomMojo extends AbstractMojo {
     protected File componentsDir;
 
     /**
-     * The directory for spring boot starters
-     */
-    @Parameter(defaultValue = "${project.build.directory}/../../../platforms/spring-boot/components-starter")
-    protected File startersDir;
-
-    /**
      * Maven ProjectHelper.
      */
     @Component
@@ -90,7 +84,6 @@ public class PrepareReleasePomMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         updatePomAndCommonBin(componentsDir, "org.apache.camel", "camel components");
-        updatePomAndCommonBin(startersDir, "org.apache.camel.springboot", "camel starters");
     }
 
     protected void updatePomAndCommonBin(File dir, String groupId, String token) throws MojoExecutionException, MojoFailureException {
