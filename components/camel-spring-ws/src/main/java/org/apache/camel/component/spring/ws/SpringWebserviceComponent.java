@@ -20,7 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SSLContextParametersAware;
@@ -45,15 +44,8 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 @Component("spring-ws")
 public class SpringWebserviceComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
-
-    public SpringWebserviceComponent() {
-    }
-
-    public SpringWebserviceComponent(CamelContext context) {
-        super(context);
-    }
 
     @Override
     @Deprecated
@@ -65,16 +57,19 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringWebserviceConfiguration configuration = new SpringWebserviceConfiguration();
+        // need to do this first
         addConsumerConfiguration(remaining, parameters, configuration);
-        setProperties(configuration, parameters);
+
+        SpringWebserviceEndpoint endpoint = new SpringWebserviceEndpoint(this, uri, configuration);
+        setProperties(endpoint, parameters);
+        // configure and setup configuration after it has its properties set via the endpoint
         configureProducerConfiguration(remaining, configuration);
         configureMessageFilter(configuration);
-
         if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        return new SpringWebserviceEndpoint(this, uri, configuration);
+        return endpoint;
     }
 
     private void addConsumerConfiguration(String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
