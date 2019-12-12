@@ -20,6 +20,8 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
 
+import org.apache.camel.util.URISupport;
+
 /**
  * Default implementation of DestinationCreationStrategy, delegates to Session.createTopic
  * and Session.createQueue.
@@ -28,23 +30,21 @@ import javax.jms.Session;
  * @see javax.jms.Session
  */
 public class DefaultDestinationCreationStrategy implements DestinationCreationStrategy {
-    private static final String TOPIC_PREFIX = "topic://";
-    private static final String QUEUE_PREFIX = "queue://";
 
     @Override
     public Destination createDestination(final Session session, String name, final boolean topic) throws JMSException {
         Destination destination;
+
         if (topic) {
-            if (name.startsWith(TOPIC_PREFIX)) {
-                name = name.substring(TOPIC_PREFIX.length());
-            }
+            name = URISupport.stripPrefix(name, "topic://");
+            name = URISupport.stripPrefix(name, "topic:");
             destination = session.createTopic(name);
         } else {
-            if (name.startsWith(QUEUE_PREFIX)) {
-                name = name.substring(QUEUE_PREFIX.length());
-            }
+            name = URISupport.stripPrefix(name, "queue://");
+            name = URISupport.stripPrefix(name, "queue:");
             destination = session.createQueue(name);
         }
+
         return destination;
     }
 

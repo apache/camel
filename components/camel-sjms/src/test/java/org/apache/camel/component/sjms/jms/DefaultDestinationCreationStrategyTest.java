@@ -34,6 +34,10 @@ public class DefaultDestinationCreationStrategyTest extends JmsTestSupport {
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
 
+        destination = (Queue)strategy.createDestination(getSession(), "queue:test", false);
+        assertNotNull(destination);
+        assertEquals("test", destination.getQueueName());
+
         destination = (Queue)strategy.createDestination(getSession(), "test", false);
         assertNotNull(destination);
         assertEquals("test", destination.getQueueName());
@@ -42,6 +46,10 @@ public class DefaultDestinationCreationStrategyTest extends JmsTestSupport {
     @Test
     public void testTopicCreation() throws Exception {
         Topic destination = (Topic)strategy.createDestination(getSession(), "topic://test", true);
+        assertNotNull(destination);
+        assertEquals("test", destination.getTopicName());
+
+        destination = (Topic)strategy.createDestination(getSession(), "topic:test", true);
         assertNotNull(destination);
         assertEquals("test", destination.getTopicName());
 
