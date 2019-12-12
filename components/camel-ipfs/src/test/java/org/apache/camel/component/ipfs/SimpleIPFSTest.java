@@ -43,15 +43,14 @@ public class SimpleIPFSTest {
         camelctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:startA").to("ipfs:version");
-                from("direct:startB").to("ipfs:127.0.0.1/version");
+                from("direct:startA").to("ipfs:127.0.0.1:5001/version");
+                from("direct:startB").to("ipfs:127.0.0.1:5001/version");
                 from("direct:startC").to("ipfs:127.0.0.1:5001/version");
             }
         });
 
         camelctx.start();
-        assumeIPFSAvailable(camelctx);
-        
+
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             String resA = producer.requestBody("direct:startA", null, String.class);
@@ -60,6 +59,9 @@ public class SimpleIPFSTest {
             Arrays.asList(resA, resB, resC).forEach(res -> {
                 Assert.assertTrue("Expecting 0.4 in: " + resA, resA.startsWith("0.4"));
             });
+        } catch (Exception e) {
+            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+            Assume.assumeFalse("IPFS is running", notRunning);
         } finally {
             camelctx.stop();
         }
@@ -74,18 +76,20 @@ public class SimpleIPFSTest {
         camelctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("ipfs:add");
+                from("direct:start").to("ipfs:127.0.0.1:5001/add");
             }
         });
 
         camelctx.start();
-        assumeIPFSAvailable(camelctx);
-        
+
         try {
             Path path = Paths.get("src/test/resources/html/index.html");
             ProducerTemplate producer = camelctx.createProducerTemplate();
             String res = producer.requestBody("direct:start", path, String.class);
             Assert.assertEquals(hash, res);
+        } catch (Exception e) {
+            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+            Assume.assumeFalse("IPFS is running", notRunning);
         } finally {
             camelctx.stop();
         }
@@ -101,19 +105,21 @@ public class SimpleIPFSTest {
         camelctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("ipfs:add");
+                from("direct:start").to("ipfs:127.0.0.1:5001/add");
             }
         });
 
         camelctx.start();
-        assumeIPFSAvailable(camelctx);
-        
+
         try {
             Path path = Paths.get("src/test/resources/html");
             ProducerTemplate producer = camelctx.createProducerTemplate();
             List<String> res = producer.requestBody("direct:start", path, List.class);
             Assert.assertEquals(10, res.size());
             Assert.assertEquals(hash, res.get(9));
+        } catch (Exception e) {
+            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+            Assume.assumeFalse("IPFS is running", notRunning);
         } finally {
             camelctx.stop();
         }
@@ -128,17 +134,19 @@ public class SimpleIPFSTest {
         camelctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("ipfs:cat");
+                from("direct:start").to("ipfs:127.0.0.1:5001/cat");
             }
         });
 
         camelctx.start();
-        assumeIPFSAvailable(camelctx);
-        
+
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             InputStream res = producer.requestBody("direct:start", hash, InputStream.class);
             verifyFileContent(res);
+        } catch (Exception e) {
+            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+            Assume.assumeFalse("IPFS is running", notRunning);
         } finally {
             camelctx.stop();
         }
@@ -153,18 +161,20 @@ public class SimpleIPFSTest {
         camelctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("ipfs:get?outdir=target");
+                from("direct:start").to("ipfs:127.0.0.1:5001/get?outdir=target");
             }
         });
 
         camelctx.start();
-        assumeIPFSAvailable(camelctx);
-        
+
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Path res = producer.requestBody("direct:start", hash, Path.class);
             Assert.assertEquals(Paths.get("target", hash), res);
             verifyFileContent(new FileInputStream(res.toFile()));
+        } catch (Exception e) {
+            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+            Assume.assumeFalse("IPFS is running", notRunning);
         } finally {
             camelctx.stop();
         }
@@ -179,19 +189,21 @@ public class SimpleIPFSTest {
         camelctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("ipfs:get?outdir=target");
+                from("direct:start").to("ipfs:127.0.0.1:5001/get?outdir=target");
             }
         });
 
         camelctx.start();
-        assumeIPFSAvailable(camelctx);
-        
+
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Path res = producer.requestBody("direct:start", hash, Path.class);
             Assert.assertEquals(Paths.get("target", hash), res);
             Assert.assertTrue(res.toFile().isDirectory());
             Assert.assertTrue(res.resolve("index.html").toFile().exists());
+        } catch (Exception e) {
+            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+            Assume.assumeFalse("IPFS is running", notRunning);
         } finally {
             camelctx.stop();
         }
@@ -203,11 +215,4 @@ public class SimpleIPFSTest {
         Assert.assertEquals("The quick brown fox jumps over the lazy dog.", new String(baos.toByteArray()));
     }
 
-    private void assumeIPFSAvailable(CamelContext camelctx) throws Exception {
-        IPFSEndpoint ipfsEp = camelctx.getEndpoints().stream()
-                .filter(ep -> ep instanceof IPFSEndpoint)
-                .map(ep -> (IPFSEndpoint)ep)
-                .findFirst().get();
-        Assume.assumeTrue(ipfsEp.getIPFSClient().hasConnection());
-    }
 }
