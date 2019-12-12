@@ -46,7 +46,6 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
         }
 
         GoogleBigQuerySQLConfiguration configuration = new GoogleBigQuerySQLConfiguration();
-        setProperties(configuration, parameters);
         configuration.parseRemaining(remaining);
 
         if (configuration.getConnectionFactory() == null) {
