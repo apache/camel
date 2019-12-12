@@ -1,6 +1,6 @@
 [[aws-lambda-component]]
 = AWS Lambda Component
-:page-source: components/camel-aws-lambda/src/main/docs/aws-lambda-component.adoc
+:page-source: components/camel-aws-lambda/bin/src/main/docs/aws-lambda-component.adoc
 
 *Since Camel 2.20*
 

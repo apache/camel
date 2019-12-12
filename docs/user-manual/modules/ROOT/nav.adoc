@@ -237,4 +237,4 @@
  ** xref:faq/why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
  ** xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
 * xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
-* xref:camel-3x-migration-guide.adoc[Camel 3.x Migration Guide]
+* xref:camel-3x-upgrade-guide.adoc[Camel 3.x Migration Guide]

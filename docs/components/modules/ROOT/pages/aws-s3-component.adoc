@@ -1,6 +1,6 @@
 [[aws-s3-component]]
 = AWS S3 Storage Service Component
-:page-source: components/camel-aws-s3/src/main/docs/aws-s3-component.adoc
+:page-source: components/camel-aws-s3/bin/src/main/docs/aws-s3-component.adoc
 
 *Since Camel 2.8*
 

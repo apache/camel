@@ -1,6 +1,6 @@
 [[aws-mq-component]]
 = AWS MQ Component
-:page-source: components/camel-aws-mq/src/main/docs/aws-mq-component.adoc
+:page-source: components/camel-aws-mq/bin/src/main/docs/aws-mq-component.adoc
 
 *Since Camel 2.21*
 

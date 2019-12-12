@@ -1,6 +1,6 @@
 [[robotframework-component]]
 = Robot Framework Component
-:page-source: components/camel-robotframework/src/main/docs/robotframework-component.adoc
+:page-source: components/camel-robotframework/bin/src/main/docs/robotframework-component.adoc
 
 *Since Camel 3.0*
 
