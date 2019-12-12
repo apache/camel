@@ -84,21 +84,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointConsumerBuilder fromBlock(Object fromBlock) {
-            doSetProperty("fromBlock", fromBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -216,21 +202,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointConsumerBuilder toBlock(Object toBlock) {
-            doSetProperty("toBlock", toBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -495,21 +467,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointProducerBuilder fromBlock(Object fromBlock) {
-            doSetProperty("fromBlock", fromBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -627,21 +585,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointProducerBuilder toBlock(Object toBlock) {
-            doSetProperty("toBlock", toBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -713,21 +657,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: producer
-         */
-        default Web3jEndpointProducerBuilder atBlock(Object atBlock) {
-            doSetProperty("atBlock", atBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
@@ -1212,21 +1142,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointBuilder fromBlock(Object fromBlock) {
-            doSetProperty("fromBlock", fromBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
@@ -1344,21 +1260,7 @@ public interface Web3jEndpointBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointBuilder toBlock(Object toBlock) {
-            doSetProperty("toBlock", toBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */

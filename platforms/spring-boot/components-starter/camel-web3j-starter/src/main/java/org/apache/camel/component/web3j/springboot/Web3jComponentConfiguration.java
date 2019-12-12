@@ -22,7 +22,6 @@ import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameter;
 
 /**
  * The web3j component uses the Web3j client API and allows you to add/read
@@ -219,17 +218,17 @@ public class Web3jComponentConfiguration
          * The block number, or the string "latest" for the last mined block or
          * "pending", "earliest" for not yet mined transactions.
          */
-        private DefaultBlockParameter fromBlock;
+        private String fromBlock = "latest";
         /**
          * The block number, or the string "latest" for the last mined block or
          * "pending", "earliest" for not yet mined transactions.
          */
-        private DefaultBlockParameter toBlock;
+        private String toBlock = "latest";
         /**
          * The block number, or the string "latest" for the last mined block or
          * "pending", "earliest" for not yet mined transactions.
          */
-        private DefaultBlockParameter atBlock;
+        private String atBlock = "latest";
         /**
          * Contract address or a list of addresses.
          */
@@ -461,27 +460,27 @@ public class Web3jComponentConfiguration
             this.position = position;
         }
 
-        public DefaultBlockParameter getFromBlock() {
+        public String getFromBlock() {
             return fromBlock;
         }
 
-        public void setFromBlock(DefaultBlockParameter fromBlock) {
+        public void setFromBlock(String fromBlock) {
             this.fromBlock = fromBlock;
         }
 
-        public DefaultBlockParameter getToBlock() {
+        public String getToBlock() {
             return toBlock;
         }
 
-        public void setToBlock(DefaultBlockParameter toBlock) {
+        public void setToBlock(String toBlock) {
             this.toBlock = toBlock;
         }
 
-        public DefaultBlockParameter getAtBlock() {
+        public String getAtBlock() {
             return atBlock;
         }
 
-        public void setAtBlock(DefaultBlockParameter atBlock) {
+        public void setAtBlock(String atBlock) {
             this.atBlock = atBlock;
         }
 

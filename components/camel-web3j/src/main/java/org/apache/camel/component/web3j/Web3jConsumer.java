@@ -28,6 +28,9 @@ import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.Transaction;
 import rx.Subscription;
 
+
+import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParameter;
+
 /**
  * The web3j consumer.
  */
@@ -56,7 +59,7 @@ public class Web3jConsumer extends DefaultConsumer {
         LOG.info("Subscribing to: {}", endpoint.getNodeAddress());
         switch (configuration.getOperation()) {
         case Web3jConstants.ETH_LOG_OBSERVABLE:
-            EthFilter ethFilter = Web3jEndpoint.buildEthFilter(configuration.getFromBlock(), configuration.getToBlock(), configuration.getAddresses(), configuration.getTopics());
+            EthFilter ethFilter = Web3jEndpoint.buildEthFilter(toDefaultBlockParameter(configuration.getFromBlock()), toDefaultBlockParameter(configuration.getToBlock()), configuration.getAddresses(), configuration.getTopics());
             subscription = web3j.ethLogObservable(ethFilter).subscribe(
                 x -> ethLogObservable(x),
                 t -> processError(t, Web3jConstants.ETH_LOG_OBSERVABLE),
@@ -105,7 +108,7 @@ public class Web3jConsumer extends DefaultConsumer {
             break;
 
         case Web3jConstants.REPLAY_BLOCKS_OBSERVABLE:
-            subscription = web3j.replayBlocksObservable(configuration.getFromBlock(), configuration.getToBlock(), configuration.isFullTransactionObjects()).subscribe(
+            subscription = web3j.replayBlocksObservable(toDefaultBlockParameter(configuration.getFromBlock()), toDefaultBlockParameter(configuration.getToBlock()), configuration.isFullTransactionObjects()).subscribe(
                 x -> blockObservable(x),
                 t -> processError(t, Web3jConstants.REPLAY_BLOCKS_OBSERVABLE),
                 () -> processDone(Web3jConstants.REPLAY_BLOCKS_OBSERVABLE)
@@ -113,7 +116,7 @@ public class Web3jConsumer extends DefaultConsumer {
             break;
 
         case Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE:
-            subscription = web3j.replayTransactionsObservable(configuration.getFromBlock(), configuration.getToBlock()).subscribe(
+            subscription = web3j.replayTransactionsObservable(toDefaultBlockParameter(configuration.getFromBlock()), toDefaultBlockParameter(configuration.getToBlock())).subscribe(
                 x -> processTransaction(x),
                 t -> processError(t, Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE),
                 () -> processDone(Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE)
@@ -121,7 +124,7 @@ public class Web3jConsumer extends DefaultConsumer {
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE:
-            subscription = web3j.catchUpToLatestBlockObservable(configuration.getFromBlock(), configuration.isFullTransactionObjects()).subscribe(
+            subscription = web3j.catchUpToLatestBlockObservable(toDefaultBlockParameter(configuration.getFromBlock()), configuration.isFullTransactionObjects()).subscribe(
                 x -> blockObservable(x),
                 t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE),
                 () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE)
@@ -129,7 +132,7 @@ public class Web3jConsumer extends DefaultConsumer {
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE:
-            subscription = web3j.catchUpToLatestTransactionObservable(configuration.getFromBlock()).subscribe(
+            subscription = web3j.catchUpToLatestTransactionObservable(toDefaultBlockParameter(configuration.getFromBlock())).subscribe(
                 x -> processTransaction(x),
                 t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE),
                 () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE)
@@ -137,7 +140,7 @@ public class Web3jConsumer extends DefaultConsumer {
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE:
-            subscription = web3j.catchUpToLatestAndSubscribeToNewBlocksObservable(configuration.getFromBlock(), configuration.isFullTransactionObjects()).subscribe(
+            subscription = web3j.catchUpToLatestAndSubscribeToNewBlocksObservable(toDefaultBlockParameter(configuration.getFromBlock()), configuration.isFullTransactionObjects()).subscribe(
                 x -> blockObservable(x),
                 t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE),
                 () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE)
@@ -145,7 +148,7 @@ public class Web3jConsumer extends DefaultConsumer {
             break;
 
         case Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE:
-            subscription = web3j.catchUpToLatestAndSubscribeToNewTransactionsObservable(configuration.getFromBlock()).subscribe(
+            subscription = web3j.catchUpToLatestAndSubscribeToNewTransactionsObservable(toDefaultBlockParameter(configuration.getFromBlock())).subscribe(
                 x -> processTransaction(x),
                 t -> processError(t, Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE),
                 () -> processDone(Web3jConstants.CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_TRANSACTIONS_OBSERVABLE)
@@ -160,7 +163,7 @@ public class Web3jConsumer extends DefaultConsumer {
     }
 
     private EthFilter buildEthFilter() {
-        EthFilter ethFilter = new EthFilter(configuration.getFromBlock(), configuration.getToBlock(), configuration.getAddresses());
+        EthFilter ethFilter = new EthFilter(toDefaultBlockParameter(configuration.getFromBlock()), toDefaultBlockParameter(configuration.getToBlock()), configuration.getAddresses());
         if (configuration.getTopics() != null) {
             for (String topic : configuration.getTopics()) {
                 if (topic != null && topic.length() > 0) {

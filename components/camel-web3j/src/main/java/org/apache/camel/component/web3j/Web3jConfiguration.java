@@ -24,8 +24,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.DefaultBlockParameterName;
 
 @UriParams
 public class Web3jConfiguration implements Cloneable {
@@ -34,13 +32,13 @@ public class Web3jConfiguration implements Cloneable {
     private String operation = Web3jConstants.TRANSACTION.toLowerCase(); // TODO: Make this an enum
 
     @UriParam(label = "common", defaultValue = "latest")
-    private DefaultBlockParameter fromBlock;
+    private String fromBlock;
 
     @UriParam(label = "common", defaultValue = "latest")
-    private DefaultBlockParameter toBlock;
+    private String toBlock;
 
     @UriParam(label = "producer", defaultValue = "latest")
-    private DefaultBlockParameter atBlock;
+    private String atBlock;
 
     @UriParam(label = "common")
     private List<String> addresses;
@@ -126,11 +124,11 @@ public class Web3jConfiguration implements Cloneable {
     @UriParam(label = "common")
     private boolean fullTransactionObjects;
 
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common")
     private boolean quorumAPI;
 
     @UriParam(label = "common")
-    private List<String>  privateFor;
+    private List<String> privateFor;
 
 
     public List<String> getPrivateFor() {
@@ -418,75 +416,37 @@ public class Web3jConfiguration implements Cloneable {
         this.position = position;
     }
 
-    public DefaultBlockParameter getFromBlock() {
+    public String getFromBlock() {
         return fromBlock;
     }
 
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
      */
-    public void setFromBlock(String block) {
-        this.fromBlock = toDefaultBlockParameter(block);
-    }
-
-    /**
-     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
-     */
-    public void setFromBlock(DefaultBlockParameter fromBlock) {
+    public void setFromBlock(String fromBlock) {
         this.fromBlock = fromBlock;
     }
 
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
      */
-    public void setToBlock(DefaultBlockParameter toBlock) {
+    public void setToBlock(String toBlock) {
         this.toBlock = toBlock;
     }
 
-    /**
-     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
-     */
-    public void setToBlock(String block) {
-        this.toBlock = toDefaultBlockParameter(block);
-    }
-
-    private DefaultBlockParameter toDefaultBlockParameter(String block) {
-        DefaultBlockParameter defaultBlockParameter = null;
-        if (block != null) {
-            for (DefaultBlockParameterName defaultBlockParameterName: DefaultBlockParameterName.values()) {
-                if (block.equalsIgnoreCase(defaultBlockParameterName.getValue())) {
-                    defaultBlockParameter = defaultBlockParameterName;
-                }
-            }
-
-            if (defaultBlockParameter == null) {
-                defaultBlockParameter = DefaultBlockParameter.valueOf(new BigInteger(block));
-            }
-        }
-
-        return defaultBlockParameter;
-    }
-
-    public DefaultBlockParameter getToBlock() {
+    public String getToBlock() {
         return toBlock;
     }
 
-    public DefaultBlockParameter getAtBlock() {
+    public String getAtBlock() {
         return atBlock;
     }
 
     /**
      * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
      */
-    public void setAtBlock(DefaultBlockParameter atBlock) {
+    public void setAtBlock(String atBlock) {
         this.atBlock = atBlock;
-    }
-
-    /**
-     * The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions.
-     */
-    public void setAtBlock(String block) {
-        this.atBlock = toDefaultBlockParameter(block);
     }
 
     public List<String> getAddresses() {
