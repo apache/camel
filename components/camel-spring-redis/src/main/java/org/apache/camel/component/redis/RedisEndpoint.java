@@ -36,8 +36,6 @@ public class RedisEndpoint extends DefaultEndpoint {
     public RedisEndpoint(String uri, RedisComponent component, RedisConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        redisProcessorsCreator = new AllRedisProcessorsCreator(new RedisClient(configuration.getRedisTemplate()),
-                ((RedisComponent)getComponent()).getExchangeConverter());
     }
 
     @Override
@@ -57,6 +55,13 @@ public class RedisEndpoint extends DefaultEndpoint {
         RedisConsumer answer = new RedisConsumer(this, processor, configuration);
         configureConsumer(answer);
         return answer;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        redisProcessorsCreator = new AllRedisProcessorsCreator(new RedisClient(configuration.getRedisTemplate()),
+                ((RedisComponent)getComponent()).getExchangeConverter());
     }
 
     @Override

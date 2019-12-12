@@ -34,12 +34,11 @@ public class RedisComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RedisConfiguration configuration = new RedisConfiguration();
         setHostAndPort(configuration, remaining);
-        setProperties(configuration, parameters);
         RedisEndpoint endpoint = new RedisEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
