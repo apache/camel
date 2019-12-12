@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.web3j.protocol.Web3j;
 
 /**
  * Represents the component that manages {@link Web3jComponent}.
@@ -32,13 +33,6 @@ public class Web3jComponent extends DefaultComponent {
 
     @Metadata(description = "Default configuration")
     private Web3jConfiguration configuration;
-
-    public Web3jComponent() {
-    }
-
-    public Web3jComponent(CamelContext camelContext) {
-        super(camelContext);
-    }
 
     public Web3jConfiguration getConfiguration() {
         return configuration;
@@ -50,9 +44,16 @@ public class Web3jComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        Web3jConfiguration conf =  configuration != null ? configuration.copy() : new Web3jConfiguration();
-        setProperties(conf, parameters);
-        return new Web3jEndpoint(uri, remaining, this, conf);
+        Web3jConfiguration conf = configuration != null ? configuration.copy() : new Web3jConfiguration();
+
+        Web3j web3j = getAndRemoveOrResolveReferenceParameter(parameters, "web3j", Web3j.class);
+        conf.setWeb3j(web3j);
+        boolean quorumAPI = getAndRemoveParameter(parameters, "quorumAPI", boolean.class, false);
+        conf.setQuorumAPI(quorumAPI);
+
+        Web3jEndpoint endpoint = new Web3jEndpoint(uri, remaining, this, conf);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
 }
