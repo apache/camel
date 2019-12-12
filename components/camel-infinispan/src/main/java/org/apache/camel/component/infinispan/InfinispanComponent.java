@@ -63,18 +63,16 @@ public class InfinispanComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         InfinispanConfiguration conf;
         if (configuration != null) {
             conf = configuration.copy();
         } else {
             conf = new InfinispanConfiguration();
         }
-
         conf.setCacheContainer(cacheContainer);
 
-        setProperties(conf, parameters);
-
-        return new InfinispanEndpoint(uri, remaining, this, conf);
+        InfinispanEndpoint endpoint = new InfinispanEndpoint(uri, remaining, this, conf);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 }

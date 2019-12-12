@@ -65,7 +65,9 @@ public class InfinispanEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new InfinispanConsumer(this, processor, cacheName, manager, configuration);
+        InfinispanConsumer consumer = new InfinispanConsumer(this, processor, cacheName, manager, configuration);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public String getCacheName() {
