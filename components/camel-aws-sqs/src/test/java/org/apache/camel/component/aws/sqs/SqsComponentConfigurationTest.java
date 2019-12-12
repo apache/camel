@@ -28,7 +28,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -48,7 +48,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -68,7 +68,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKeyAndRegion() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&region=US_WEST_1");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -91,9 +91,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component
-            .createEndpoint("aws-sqs://arn:aws:sqs:us-east-1:account:MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy");
+            .createEndpoint("aws-sqs://arn:aws:sqs:us-east-1:account:MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy&region=US_EAST_1");
 
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
         assertEquals("account", endpoint.getConfiguration().getQueueOwnerAWSAccountId());
@@ -106,7 +106,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy&attributeNames=foo,bar");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -122,7 +122,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
         context.getRegistry().bind("amazonSQSClient", mock);
 
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -145,11 +145,11 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
 
         SqsEndpoint endpoint = (SqsEndpoint)component
             .createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx" + "&secretKey=yyy&attributeNames=color,size"
-                            + "&messageAttributeNames=msgColor,msgSize&DefaultVisibilityTimeout=1000&visibilityTimeout=2000&maximumMessageSize=65536&messageRetentionPeriod=1209600&policy="
+                            + "&messageAttributeNames=msgColor,msgSize&defaultVisibilityTimeout=1000&visibilityTimeout=2000&maximumMessageSize=65536&messageRetentionPeriod=1209600&policy="
                             + "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyQueue%2FSQSDefaultPolicy%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22"
                             + "Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyQueue%22%7D%5D%7D"
                             + "&delaySeconds=123&receiveMessageWaitTimeSeconds=10&waitTimeSeconds=20" + "&queueOwnerAWSAccountId=111222333&region=us-east-1"
@@ -181,7 +181,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component
             .createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient" + "&accessKey=xxx&secretKey=yyy&initialDelay=300&delay=400&maxMessagesPerPoll=50");
         SqsConsumer consumer = (SqsConsumer)endpoint.createConsumer(null);
@@ -193,13 +193,13 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.createEndpoint("aws-sqs://MyQueue?secretKey=yyy");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx");
     }
 
@@ -207,7 +207,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     // visibilityTimeout compulsory
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithExtendMessageVisibilityAndNoVisibilityTimeoutThrowsException() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&extendMessageVisibility=true");
     }
 
@@ -216,7 +216,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         assertNotNull(component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy&visibilityTimeout=30&extendMessageVisibility=true"));
     }
 
@@ -225,7 +225,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         assertNotNull(component
             .createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&accessKey=xxx&secretKey=yyy&visibilityTimeout=30&extendMessageVisibility=false"));
     }
@@ -236,7 +236,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
         context.getRegistry().bind("amazonSQSClient", mock);
 
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
     }
 
@@ -245,7 +245,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         AmazonSQSClientMock mock = new AmazonSQSClientMock();
 
         context.getRegistry().bind("amazonSQSClient", mock);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
@@ -257,7 +257,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -271,7 +271,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithoutAutoCreation() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -286,7 +286,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());

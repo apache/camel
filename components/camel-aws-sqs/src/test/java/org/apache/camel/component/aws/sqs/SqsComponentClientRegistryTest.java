@@ -26,7 +26,7 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonSQSClientMock awsSQSClient = new AmazonSQSClientMock();
         context.getRegistry().bind("awsSQSClient", awsSQSClient);
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSQSClient());
@@ -35,7 +35,7 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalSQSClientMisconfiguration() throws Exception {
 
-        SqsComponent component = new SqsComponent(context);
+        SqsComponent component = context.getComponent("aws-sqs", SqsComponent.class);
         SqsEndpoint endpoint = (SqsEndpoint)component.createEndpoint("aws-sqs://MyQueue");
     }
 }
