@@ -49,30 +49,22 @@ public class TranslateComponent extends DefaultComponent {
     public TranslateComponent(CamelContext context) {
         super(context);
 
-        this.configuration = new TranslateConfiguration();
         registerExtension(new TranslateComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        TranslateConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
+        TranslateConfiguration configuration = this.configuration != null ? this.configuration.copy() : new TranslateConfiguration();
 
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        TranslateEndpoint endpoint = new TranslateEndpoint(uri, this, configuration);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon translate client or accessKey and secretKey must be specified");
         }
-
-        TranslateEndpoint endpoint = new TranslateEndpoint(uri, this, configuration);
         return endpoint;
     }
 
@@ -88,36 +80,36 @@ public class TranslateComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
 
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
      * The region in which Translate client needs to work
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
 
     private void checkAndSetRegistryClient(TranslateConfiguration configuration) {
