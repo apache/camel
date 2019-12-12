@@ -47,7 +47,7 @@ import org.web3j.quorum.Quorum;
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
-    private final Web3j web3j;
+    private Web3j web3j;
 
     @UriPath @Metadata(required = true)
     private String nodeAddress;
@@ -59,7 +59,12 @@ public class Web3jEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
         this.nodeAddress = remaining;
-        this.web3j = buildService(remaining, configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        this.web3j = buildService(nodeAddress, configuration);
+        super.doStart();
     }
 
     public Web3jConfiguration getConfiguration() {
