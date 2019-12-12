@@ -27,7 +27,7 @@
         <version>3.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-hazelcast-kubernetes-example</artifactId>
+    <artifactId>camel-example-hazelcast-kubernetes</artifactId>
     <name>Camel :: Example :: Hazelcast :: Kubernetes</name>
     <description>An example with Camel and Hazelcast running on Kubernetes</description>
     <packaging>jar</packaging>

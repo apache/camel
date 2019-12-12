@@ -27,7 +27,7 @@
         <version>3.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-cassandra-kubernetes-example</artifactId>
+    <artifactId>camel-example-cassandra-kubernetes</artifactId>
     <name>Camel :: Example :: Cassandra :: Kubernetes</name>
     <description>An example with Camel and Cassandra running on Kubernetes</description>
     <packaging>jar</packaging>
