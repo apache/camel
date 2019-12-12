@@ -24,26 +24,19 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link CordaComponent}.
- */
 @Component("corda")
 public class CordaComponent extends DefaultComponent {
 
-    @Metadata(description = "Default configuration")
+    @Metadata
     private CordaConfiguration configuration;
-
-    public CordaComponent() {
-    }
-
-    public CordaComponent(CamelContext camelContext) {
-        super(camelContext);
-    }
 
     public CordaConfiguration getConfiguration() {
         return configuration;
     }
 
+    /**
+     * To use a shared configuration.
+     */
     public void setConfiguration(CordaConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -51,8 +44,12 @@ public class CordaComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         CordaConfiguration conf =  configuration != null ? configuration.copy() : new CordaConfiguration();
-        setProperties(conf, parameters);
-        return new CordaEndpoint(uri, remaining, this, conf);
+        conf.setNode(remaining);
+
+        CordaEndpoint endpoint = new CordaEndpoint(uri, this, conf);
+        setProperties(endpoint, parameters);
+        conf.configure();
+        return endpoint;
     }
 
 }
