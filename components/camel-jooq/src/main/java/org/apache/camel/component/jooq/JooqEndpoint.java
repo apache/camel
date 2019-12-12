@@ -40,35 +40,6 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
     public JooqEndpoint(String uri, String remaining, JooqComponent component, JooqConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-
-        initConfiguration(remaining);
-    }
-
-    private void initConfiguration(String remaining) {
-        if (remaining == null) {
-            return;
-        }
-
-        String[] parts = remaining.split("/");
-        if (parts.length == 0 || parts.length > 2) {
-            throw new IllegalArgumentException("Unexpected URI format. Expected ... , found '" + remaining + "'");
-        }
-
-        String className = parts[0];
-        Class<?> type = getCamelContext().getClassResolver().resolveClass(className);
-        if (type != null) {
-            configuration.setEntityType(type);
-        }
-
-        if (parts.length > 1) {
-            String op = parts[1];
-            JooqOperation operation = getCamelContext().getTypeConverter().convertTo(JooqOperation.class, op);
-            if (operation != null) {
-                configuration.setOperation(operation);
-            } else {
-                throw new IllegalArgumentException("Wrong operation: " + op);
-            }
-        }
     }
 
     @Override

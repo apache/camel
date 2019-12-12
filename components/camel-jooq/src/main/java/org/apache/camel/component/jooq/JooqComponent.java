@@ -18,6 +18,7 @@ package org.apache.camel.component.jooq;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -29,20 +30,13 @@ public class JooqComponent extends DefaultComponent {
     @Metadata(description = "Component configuration (database connection, database entity type, etc.)")
     private JooqConfiguration configuration;
 
-    public JooqComponent() {
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JooqConfiguration conf = configuration != null ? configuration.copy() : new JooqConfiguration();
-        setProperties(conf, parameters);
 
         JooqEndpoint endpoint = new JooqEndpoint(uri, remaining, this, conf);
+        setProperties(endpoint, parameters);
+        initConfiguration(getCamelContext(), conf, remaining);
         return endpoint;
     }
 
@@ -53,4 +47,32 @@ public class JooqComponent extends DefaultComponent {
     public void setConfiguration(JooqConfiguration jooqConfiguration) {
         this.configuration = jooqConfiguration;
     }
+
+    private static void initConfiguration(CamelContext camelContext, JooqConfiguration configuration, String remaining) {
+        if (remaining == null) {
+            return;
+        }
+
+        String[] parts = remaining.split("/");
+        if (parts.length == 0 || parts.length > 2) {
+            throw new IllegalArgumentException("Unexpected URI format. Expected ... , found '" + remaining + "'");
+        }
+
+        String className = parts[0];
+        Class<?> type = camelContext.getClassResolver().resolveClass(className);
+        if (type != null) {
+            configuration.setEntityType(type);
+        }
+
+        if (parts.length > 1) {
+            String op = parts[1];
+            JooqOperation operation = camelContext.getTypeConverter().convertTo(JooqOperation.class, op);
+            if (operation != null) {
+                configuration.setOperation(operation);
+            } else {
+                throw new IllegalArgumentException("Wrong operation: " + op);
+            }
+        }
+    }
+
 }
