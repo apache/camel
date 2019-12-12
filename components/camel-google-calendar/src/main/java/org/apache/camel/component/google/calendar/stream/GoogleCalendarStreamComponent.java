@@ -87,7 +87,6 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final GoogleCalendarStreamConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
         GoogleCalendarStreamEndpoint endpoint = new GoogleCalendarStreamEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
