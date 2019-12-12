@@ -43,7 +43,7 @@
  ** xref:transformer.adoc[Transformer]
  ** xref:validator.adoc[Validator]
  ** xref:spring-remoting.adoc[Spring Remoting]
- ** xref:hiding-middleware.adoc[Hidding Middleware]
+ ** xref:hiding-middleware.adoc[Hiding Middleware]
  ** xref:health-check.adoc[Health Checks]
 * Domain Specific Languages
  ** xref:dsl.adoc[Camel Domain Specific Language]
@@ -161,4 +161,4 @@
  ** xref:faq/why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
  ** xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
 * xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
-* xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
+* xref:camel-3x-migration-guide.adoc[Camel 3.x Migration Guide]
