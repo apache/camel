@@ -40,23 +40,21 @@ public class TelegramComponent extends DefaultComponent {
         if (remaining.endsWith("/")) {
             remaining = remaining.substring(0, remaining.length() - 1);
         }
-
         configuration.setType(remaining);
 
-        setProperties(configuration, parameters);
-        if (configuration.getAuthorizationToken() == null) {
-            configuration.setAuthorizationToken(authorizationToken);
+        if (!remaining.equals(TelegramConfiguration.ENDPOINT_TYPE_BOTS)) {
+            throw new IllegalArgumentException("Unsupported endpoint type for uri " + uri + ", remaining " + remaining);
         }
 
-        if (configuration.getAuthorizationToken() == null) {
+        TelegramEndpoint endpoint = new TelegramEndpoint(uri, this, configuration);
+        configuration.setAuthorizationToken(authorizationToken);
+        setProperties(endpoint, parameters);
+
+        if (endpoint.getConfiguration().getAuthorizationToken() == null) {
             throw new IllegalArgumentException("AuthorizationToken must be configured on either component or endpoint for telegram: " + uri);
         }
 
-        if (TelegramConfiguration.ENDPOINT_TYPE_BOTS.equals(configuration.getType())) {
-            return new TelegramEndpoint(uri, this, configuration);
-        }
-
-        throw new IllegalArgumentException("Unsupported endpoint type for uri " + uri + ", remaining " + remaining);
+        return endpoint;
     }
 
     public String getAuthorizationToken() {
