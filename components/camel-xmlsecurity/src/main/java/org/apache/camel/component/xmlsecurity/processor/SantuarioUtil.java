@@ -71,9 +71,10 @@ public final class SantuarioUtil {
             public Boolean run() {
                 String providerName = "ApacheXMLDSig";
                 Provider currentProvider = Security.getProvider(providerName);
-                if (currentProvider == null) {
-                    Security.addProvider(new XMLDSigRI());
+                if (currentProvider != null) {
+                    Security.removeProvider(currentProvider.getName());
                 }
+                Security.addProvider(new XMLDSigRI());
                 return true;
             }
         });
