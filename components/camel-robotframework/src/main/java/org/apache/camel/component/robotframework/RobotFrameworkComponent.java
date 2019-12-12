@@ -55,9 +55,9 @@ public class RobotFrameworkComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final RobotFrameworkCamelConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
 
         Endpoint endpoint = new RobotFrameworkEndpoint(uri, this, remaining, configuration);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 }
