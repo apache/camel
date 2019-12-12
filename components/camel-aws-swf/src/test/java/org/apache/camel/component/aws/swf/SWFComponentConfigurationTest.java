@@ -24,7 +24,7 @@ public class SWFComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        SWFComponent component = new SWFComponent(context);
+        SWFComponent component = context.getComponent("aws-swf", SWFComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         SWFEndpoint endpoint = (SWFEndpoint)component.createEndpoint("aws-swf://workflow");
@@ -36,7 +36,7 @@ public class SWFComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        SWFComponent component = new SWFComponent(context);
+        SWFComponent component = context.getComponent("aws-swf", SWFComponent.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
