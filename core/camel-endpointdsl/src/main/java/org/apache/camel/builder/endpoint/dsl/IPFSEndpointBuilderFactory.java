@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.nio.file.Path;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -80,19 +79,7 @@ public interface IPFSEndpointBuilderFactory {
         /**
          * The ipfs output directory.
          * 
-         * The option is a: <code>java.nio.file.Path</code> type.
-         * 
-         * Group: producer
-         */
-        default IPFSEndpointBuilder outdir(Path outdir) {
-            doSetProperty("outdir", outdir);
-            return this;
-        }
-        /**
-         * The ipfs output directory.
-         * 
-         * The option will be converted to a <code>java.nio.file.Path</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
@@ -173,13 +160,13 @@ public interface IPFSEndpointBuilderFactory {
      * 
      * Syntax: <code>ipfs:ipfsHost:ipfsPort/ipfsCmd</code>
      * 
-     * Path parameter: ipfsHost
+     * Path parameter: ipfsHost (required)
      * The ipfs host
      * 
-     * Path parameter: ipfsPort
+     * Path parameter: ipfsPort (required)
      * The ipfs port
      * 
-     * Path parameter: ipfsCmd
+     * Path parameter: ipfsCmd (required)
      * The ipfs command
      * The value can be one of: add, cat, get, version
      */

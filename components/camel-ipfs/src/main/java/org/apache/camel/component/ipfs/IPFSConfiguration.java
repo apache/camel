@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.ipfs;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -32,19 +34,34 @@ public class IPFSConfiguration {
         add, cat, get, version 
     }
 
-    @UriPath(description = "The ipfs host")
-    private String ipfsHost = "127.0.0.1";
-    @UriPath(description = "The ipfs port")
-    private int ipfsPort = 5001;
-    @UriPath(description = "The ipfs command", enums = "add,cat,get,version")
+    @UriPath(description = "The ipfs host") @Metadata(required = true)
+    private String ipfsHost;
+    @UriPath(description = "The ipfs port") @Metadata(required = true)
+    private int ipfsPort;
+    @UriPath(description = "The ipfs command", enums = "add,cat,get,version") @Metadata(required = true)
     private String ipfsCmd;
     @UriParam(description = "The ipfs output directory")
-    private Path outdir;
-    
-    public IPFSConfiguration(IPFSComponent component) {
-        ObjectHelper.notNull(component, "component");
-    }
+    private String outdir;
 
+    public void init(String urispec, String remaining) throws Exception {
+        // Derive host:port and cmd from the give uri
+        URI uri = new URI(urispec);
+        String host = uri.getHost();
+        int port = uri.getPort();
+        String cmd = remaining;
+        if (!cmd.equals(host)) {
+            if (host != null) {
+                setIpfsHost(host);
+            }
+            if (port > 0) {
+                setIpfsPort(port);
+            }
+            int idx = cmd.indexOf('/');
+            cmd = cmd.substring(idx + 1);
+        }
+        setIpfsCmd(cmd);
+    }
+    
     public String getIpfsCmd() {
         return ipfsCmd;
     }
@@ -69,11 +86,11 @@ public class IPFSConfiguration {
         this.ipfsPort = ipfsPort;
     }
 
-    public Path getOutdir() {
+    public String getOutdir() {
         return outdir;
     }
 
     public void setOutdir(String outdir) {
-        this.outdir = Paths.get(outdir);
+        this.outdir = outdir;
     }
 }

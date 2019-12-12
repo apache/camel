@@ -17,16 +17,29 @@
 package org.apache.camel.component.ipfs;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
+import io.ipfs.multihash.Multihash;
+import io.nessus.ipfs.client.DefaultIPFSClient;
+import io.nessus.ipfs.client.IPFSClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.support.DefaultProducer;
 
 public class IPFSProducer extends DefaultProducer {
+
+    private static final long DEFAULT_TIMEOUT = 10000L;
+
+    private IPFSClient client;
 
     public IPFSProducer(IPFSEndpoint endpoint) {
         super(endpoint);
@@ -38,39 +51,44 @@ public class IPFSProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (this.client == null) {
+            this.client = createClient(getEndpoint().getConfiguration());
+        }
+    }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // client has no disconnect api
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
         IPFSEndpoint endpoint = getEndpoint();
-        IPFSCommand cmd = endpoint.getCommand();
+        IPFSCommand cmd = getCommand();
 
         if (IPFSCommand.version == cmd) {
-
-            String resp = endpoint.ipfsVersion();
+            String resp = ipfsVersion();
             exchange.getMessage().setBody(resp);
-
         } else if (IPFSCommand.add == cmd) {
-
             Path path = pathFromBody(exchange);
-            List<String> cids = endpoint.ipfsAdd(path);
+            List<String> cids = ipfsAdd(path);
             Object resp = cids;
             if (path.toFile().isFile()) {
                 resp = cids.size() > 0 ? cids.get(0) : null;
             }
             exchange.getMessage().setBody(resp);
-
         } else if (IPFSCommand.cat == cmd) {
-
             String cid = exchange.getMessage().getBody(String.class);
-            InputStream resp = endpoint.ipfsCat(cid);
+            InputStream resp = ipfsCat(cid);
             exchange.getMessage().setBody(resp);
-
         } else if (IPFSCommand.get == cmd) {
-
-            Path outdir = endpoint.getConfiguration().getOutdir();
+            String outdir = endpoint.getConfiguration().getOutdir();
             String cid = exchange.getMessage().getBody(String.class);
-            Path resp = endpoint.ipfsGet(cid, outdir);
+            Path resp = ipfsGet(cid, new File(outdir).toPath());
             exchange.getMessage().setBody(resp);
-
         } else {
             throw new UnsupportedOperationException(cmd.toString());
         }
@@ -89,4 +107,57 @@ public class IPFSProducer extends DefaultProducer {
         }
         throw new IllegalArgumentException("Invalid path: " + body);
     }
+
+
+    private IPFSClient createClient(IPFSConfiguration config) {
+        IPFSClient ipfsClient = new DefaultIPFSClient(config.getIpfsHost(), config.getIpfsPort());
+        return ipfsClient;
+    }
+
+    public IPFSCommand getCommand() {
+        String cmd = getEndpoint().getConfiguration().getIpfsCmd();
+        try {
+            return IPFSCommand.valueOf(cmd);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Unsupported command: " + cmd);
+        }
+    }
+
+    public String ipfsVersion() throws IOException {
+        return ipfs().version();
+    }
+
+    public List<String> ipfsAdd(Path path) throws IOException {
+        List<Multihash> cids = ipfs().add(path);
+        return cids.stream().map(mh -> mh.toBase58()).collect(Collectors.toList());
+    }
+
+    public InputStream ipfsCat(String cid) throws IOException, TimeoutException {
+        Multihash mhash = Multihash.fromBase58(cid);
+        Future<InputStream> future = ipfs().cat(mhash);
+        try {
+            return future.get(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new IOException("Cannot obtain: " + cid, ex);
+        }
+    }
+
+    public Path ipfsGet(String cid, Path outdir) throws IOException, TimeoutException {
+        Multihash mhash = Multihash.fromBase58(cid);
+        Future<Path> future = ipfs().get(mhash, outdir);
+        try {
+            return future.get(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new IOException("Cannot obtain: " + cid, ex);
+        }
+    }
+
+    private IPFSClient ipfs() {
+        if (!client.hasConnection()) {
+            client.connect();
+        }
+        return client;
+    }
+
+
 }
