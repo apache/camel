@@ -148,7 +148,7 @@ The component supports 27 options, which are listed below.
 | *camel.component.ehcache.configuration.create-cache-if-not-exist* | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | Boolean
 | *camel.component.ehcache.configuration.event-firing* | Set the delivery mode (synchronous, asynchronous) |  | EventFiring
 | *camel.component.ehcache.configuration.event-ordering* | Set the delivery mode (ordered, unordered) |  | EventOrdering
-| *camel.component.ehcache.configuration.event-types* | Set the type of events to listen for |  | Set
+| *camel.component.ehcache.configuration.event-types* | Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple entries separated by comma. |  | String
 | *camel.component.ehcache.configuration.key* | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
 | *camel.component.ehcache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | String
 | *camel.component.ehcache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | String

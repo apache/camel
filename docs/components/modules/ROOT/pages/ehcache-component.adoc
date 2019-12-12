@@ -96,7 +96,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *eventFiring* (consumer) | Set the delivery mode (synchronous, asynchronous) | ASYNCHRONOUS | EventFiring
 | *eventOrdering* (consumer) | Set the delivery mode (ordered, unordered) | ORDERED | EventOrdering
-| *eventTypes* (consumer) | Set the type of events to listen for | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set
+| *eventTypes* (consumer) | Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple entries separated by comma. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
@@ -149,7 +149,7 @@ The component supports 27 options, which are listed below.
 | *camel.component.ehcache.configuration.create-cache-if-not-exist* | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | Boolean
 | *camel.component.ehcache.configuration.event-firing* | Set the delivery mode (synchronous, asynchronous) |  | EventFiring
 | *camel.component.ehcache.configuration.event-ordering* | Set the delivery mode (ordered, unordered) |  | EventOrdering
-| *camel.component.ehcache.configuration.event-types* | Set the type of events to listen for |  | Set
+| *camel.component.ehcache.configuration.event-types* | Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple entries separated by comma. |  | String
 | *camel.component.ehcache.configuration.key* | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
 | *camel.component.ehcache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | String
 | *camel.component.ehcache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | String
