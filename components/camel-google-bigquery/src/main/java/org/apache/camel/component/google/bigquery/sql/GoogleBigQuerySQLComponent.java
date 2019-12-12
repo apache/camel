@@ -52,7 +52,9 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
             configuration.setConnectionFactory(getConnectionFactory());
         }
 
-        return new GoogleBigQuerySQLEndpoint(uri, this, configuration);
+        GoogleBigQuerySQLEndpoint endpoint = new GoogleBigQuerySQLEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     public String getProjectId() {
