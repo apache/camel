@@ -18,7 +18,6 @@ package org.apache.camel.component.google.pubsub;
 
 import java.util.concurrent.ExecutorService;
 
-import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.Pubsub;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -30,6 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -85,7 +85,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (Strings.isNullOrEmpty(loggerId)) {
+        if (ObjectHelper.isEmpty(loggerId)) {
             log = LogManager.getLogger(this.getClass().getName());
         } else {
             log = LogManager.getLogger(loggerId);
