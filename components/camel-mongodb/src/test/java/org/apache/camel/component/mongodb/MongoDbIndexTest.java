@@ -127,7 +127,9 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         b = testCollection.find(eq(MONGO_ID, "testInsertDynamicityEnabledDBOnly")).first();
         assertNull(b, "There is a record with 'testInsertDynamicityEnabledDBAndCollection' _id in the test collection");
 
-        assertFalse(mongo.getUsedDatabases().contains("otherDB"), "The otherDB database should not exist");
+        for (String db : mongo.listDatabaseNames()) {
+            assertFalse(db.contains("otherDB"), "The otherDB database should not exist");
+        }
     }
 
     @Test

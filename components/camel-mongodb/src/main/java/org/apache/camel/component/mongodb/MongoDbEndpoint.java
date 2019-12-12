@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.Consumer;
@@ -76,9 +76,15 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoDbOperation operation;
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
-    private WriteConcern writeConcernRef;
     @UriParam(label = "advanced")
     private boolean dynamicity;
+    @UriParam(label = "advanced", defaultValue = "ACKNOWLEDGED",
+            enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
+    private String writeConcern = "ACKNOWLEDGED";
+    @UriParam(label = "advanced",
+            defaultValue = "PRIMARY",
+            enums = "PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST")
+    private String readPreference = "PRIMARY";
     @UriParam(label = "advanced")
     private boolean writeResultAsHeader;
     @UriParam(label = "consumer")
@@ -211,7 +217,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Initialises the MongoDB connection using the Mongo object provided to the endpoint
-     * 
+     *
      * @throws CamelMongoDbException
      */
     public void initializeConnection() throws CamelMongoDbException {
@@ -229,8 +235,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
             mongoCollection = mongoDatabase.getCollection(collection, Document.class);
 
-            log.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
-                      new Object[] {mongoConnection.getAllAddress().toString(), mongoDatabase.getName(), collection});
+            log.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. "
+                            + "Cluster description: {}, Db: {}, Collection: {}",
+                    new Object[]{mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection});
 
             try {
                 if (ObjectHelper.isNotEmpty(collectionIndex)) {
@@ -301,7 +308,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         message.setBody(dbObj);
         return exchange;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         if (mongoConnection == null) {
@@ -374,7 +381,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the name of the MongoDB database to target
-     * 
+     *
      * @param database name of the MongoDB database
      */
     public void setDatabase(String database) {
@@ -388,7 +395,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Create collection during initialisation if it doesn't exist. Default is
      * true.
-     * 
+     *
      * @param createCollection true or false
      */
     public void setCreateCollection(boolean createCollection) {
@@ -401,7 +408,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the Mongo instance that represents the backing connection
-     * 
+     *
      * @param mongoConnection the connection to the database
      */
     public void setMongoConnection(MongoClient mongoConnection) {
@@ -412,44 +419,13 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         return mongoConnection;
     }
 
-    public WriteConcern getWriteConcern() {
-        return getMongoConnection().getWriteConcern();
-    }
-
-    /**
-     * Set the {@link WriteConcern} for write operations on MongoDB, passing in
-     * the bean ref to a custom WriteConcern which exists in the Registry. You
-     * can also use standard WriteConcerns by passing in their key.
-     * 
-     * @param writeConcernRef the name of the bean in the registry that
-     *            represents the WriteConcern to use
-     */
-    public void setWriteConcernRef(String writeConcernRef) {
-        WriteConcern wc = this.getCamelContext().getRegistry().lookupByNameAndType(writeConcernRef, WriteConcern.class);
-        if (wc == null) {
-            String msg = "Camel MongoDB component could not find the WriteConcern in the Registry. Verify that the " + "provided bean name (" + writeConcernRef
-                         + ")  is correct. Aborting initialization.";
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.writeConcernRef = wc;
-    }
-
-    public WriteConcern getWriteConcernRef() {
-        return writeConcernRef;
-    }
-
-    public ReadPreference getReadPreference() {
-        return getMongoConnection().getReadPreference();
-    }
-
     /**
      * Sets whether this endpoint will attempt to dynamically resolve the target
      * database and collection from the incoming Exchange properties. Can be
      * used to override at runtime the database and collection specified on the
      * otherwise static endpoint URI. It is disabled by default to boost
      * performance. Enabling it will take a minimal performance hit.
-     * 
+     *
      * @see MongoDbConstants#DATABASE
      * @see MongoDbConstants#COLLECTION
      * @param dynamicity true or false indicated whether target database and
@@ -502,7 +478,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * not specified, the current database will be picked by default. Dynamicity
      * will not be taken into account even if enabled, i.e. the tail tracking
      * database will not vary past endpoint initialisation.
-     * 
+     *
      * @param tailTrackDb database name
      */
     public void setTailTrackDb(String tailTrackDb) {
@@ -517,7 +493,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * Collection where tail tracking information will be persisted. If not
      * specified, {@link MongoDbTailTrackingConfig#DEFAULT_COLLECTION} will be
      * used by default.
-     * 
+     *
      * @param tailTrackCollection collection name
      */
     public void setTailTrackCollection(String tailTrackCollection) {
@@ -531,7 +507,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Field where the last tracked value will be placed. If not specified,
      * {@link MongoDbTailTrackingConfig#DEFAULT_FIELD} will be used by default.
-     * 
+     *
      * @param tailTrackField field name
      */
     public void setTailTrackField(String tailTrackField) {
@@ -543,7 +519,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * the last consumed message across system restarts. The next time the
      * system is up, the endpoint will recover the cursor from the point where
      * it last stopped slurping records.
-     * 
+     *
      * @param persistentTailTracking true or false
      */
     public void setPersistentTailTracking(boolean persistentTailTracking) {
@@ -562,7 +538,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * tail tracking). Can be of type Integer, Date, String, etc. NOTE: No
      * support for dot notation at the current time, so the field should be at
      * the top level of the document.
-     * 
+     *
      * @param tailTrackIncreasingField
      */
     public void setTailTrackIncreasingField(String tailTrackIncreasingField) {
@@ -588,7 +564,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * the cursor if needed. This value specifies the time to wait before
      * attempting to fetch a new cursor, and if the attempt fails, how long
      * before the next attempt is made. Default value is 1000ms.
-     * 
+     *
      * @param cursorRegenerationDelay delay specified in milliseconds
      */
     public void setCursorRegenerationDelay(long cursorRegenerationDelay) {
@@ -603,7 +579,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * One tail tracking collection can host many trackers for several tailable
      * consumers. To keep them separate, each tracker should have its own unique
      * persistentId.
-     * 
+     *
      * @param persistentId the value of the persistent ID to use for this
      *            tailable consumer
      */
@@ -623,7 +599,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * In write operations, it determines whether instead of returning
      * {@link WriteResult} as the body of the OUT message, we transfer the IN
      * message to the OUT and attach the WriteResult as a header.
-     * 
+     *
      * @param writeResultAsHeader flag to indicate if this option is enabled
      */
     public void setWriteResultAsHeader(boolean writeResultAsHeader) {
@@ -635,7 +611,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. 
+     * Convert the output of the producer to the selected type : DocumentList Document or MongoIterable.
      * DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations.
      * @param outputType
      */
@@ -661,4 +637,47 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public void setStreamFilter(String streamFilter) {
         this.streamFilter = streamFilter;
     }
+
+    /**
+     * Configure the connection bean with the level of acknowledgment requested
+     * from MongoDB for write operations to a standalone mongod, replicaset or cluster. Possible values are
+     * ACKNOWLEDGED, W1, W2, W3, UNACKNOWLEDGED, JOURNALED or MAJORITY.
+     *
+     * @param writeConcern
+     */
+    public void setWriteConcern(String writeConcern) {
+        this.writeConcern = writeConcern;
+    }
+
+    public String getWriteConcern() {
+        return this.writeConcern;
+    }
+
+    public WriteConcern getWriteConcernBean() {
+        WriteConcern writeConcernBean = WriteConcern.valueOf(getWriteConcern());
+        if (writeConcernBean == null) {
+            throw new IllegalArgumentException(String.format("Unknown WriteConcern configuration %s", getWriteConcern()));
+        }
+        return writeConcernBean;
+    }
+
+    /**
+     * Configure how MongoDB clients route read operations to the members of a replica set. Possible values are
+     * PRIMARY, PRIMARY_PREFERRED, SECONDARY, SECONDARY_PREFERRED or NEAREST
+     *
+     * @param readPreference
+     */
+    public void setReadPreference(String readPreference) {
+        this.readPreference = readPreference;
+    }
+
+    public String getReadPreference() {
+        return this.readPreference;
+    }
+
+    public ReadPreference getReadPreferenceBean() {
+        // will throw an IllegalArgumentException if the input is incorrect
+        return ReadPreference.valueOf(getReadPreference());
+    }
+
 }

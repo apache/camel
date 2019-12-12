@@ -21,7 +21,8 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mongodb.MongoClient;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
@@ -219,8 +220,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
 
         Bson updateObj = combine(set("scientist", "Darwin"), currentTimestamp("lastModified"));
 
-        String updates = "[" + extraField.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toJson() + ","
-                         + updateObj.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toJson() + "]";
+        String updates = "[" + extraField.toBsonDocument(Document.class, MongoClientSettings.getDefaultCodecRegistry()).toJson() + ","
+                         + updateObj.toBsonDocument(Document.class, MongoClientSettings.getDefaultCodecRegistry()).toJson() + "]";
 
         Exchange resultExchange = template.request("direct:update", new Processor() {
             @Override

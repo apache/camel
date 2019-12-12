@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mongodb.meta.MongoDBMetaExtension;

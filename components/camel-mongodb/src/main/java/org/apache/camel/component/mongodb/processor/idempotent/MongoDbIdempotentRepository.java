@@ -17,7 +17,7 @@
 package org.apache.camel.component.mongodb.processor.idempotent;
 
 import com.mongodb.ErrorCategory;
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import org.apache.camel.api.management.ManagedOperation;
