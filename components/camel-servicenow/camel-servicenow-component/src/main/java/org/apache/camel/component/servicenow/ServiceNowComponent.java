@@ -158,7 +158,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
 
     /**
      * The proxy host name
-     * @param proxyHost
      */
     @Metadata(label = "advanced")
     public void setProxyHost(String proxyHost) {
@@ -171,7 +170,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
 
     /**
      * The proxy port number
-     * @param proxyPort
      */
     @Metadata(label = "advanced")
     public void setProxyPort(Integer proxyPort) {
@@ -184,7 +182,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
 
     /**
      * Username for proxy authentication
-     * @param proxyUserName
      */
     @Metadata(label = "advanced,security", secret = true)
     public void setProxyUserName(String proxyUserName) {
@@ -197,7 +194,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
 
     /**
      * Password for proxy authentication
-     * @param proxyPassword
      */
     @Metadata(label = "advanced,security", secret = true)
     public void setProxyPassword(String proxyPassword) {
@@ -251,26 +247,26 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
                 EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
         }
 
-        setProperties(configuration, parameters);
-
         if (ObjectHelper.isEmpty(remaining)) {
-            // If an instance is not set on the endpoint uri, use the one set on
-            // component.
+            // If an instance is not set on the endpoint uri, use the one set on component.
             remaining = instanceName;
         }
 
         String instanceName = getCamelContext().resolvePropertyPlaceholders(remaining);
+        ServiceNowEndpoint endpoint = new ServiceNowEndpoint(uri, this, configuration, instanceName);
+        setProperties(endpoint, parameters);
+
         if (!configuration.hasApiUrl()) {
             configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
         }
         if (!configuration.hasOauthTokenUrl()) {
             configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
         }
-
         if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
-        return new ServiceNowEndpoint(uri, this, configuration, instanceName);
+        return endpoint;
     }
+
 }
