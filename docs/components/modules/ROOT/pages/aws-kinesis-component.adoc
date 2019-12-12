@@ -1,6 +1,6 @@
 [[aws-kinesis-component]]
 = AWS Kinesis Component
-:page-source: components/camel-aws-kinesis/src/main/docs/aws-kinesis-component.adoc
+:page-source: components/camel-aws-kinesis/bin/src/main/docs/aws-kinesis-component.adoc
 
 *Since Camel 2.17*
 
