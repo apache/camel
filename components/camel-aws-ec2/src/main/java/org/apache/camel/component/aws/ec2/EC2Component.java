@@ -54,7 +54,7 @@ public class EC2Component extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-    	EC2Configuration configuration = this.configuration != null ? this.configuration.copy() : new EC2Configuration();
+        EC2Configuration configuration = this.configuration != null ? this.configuration.copy() : new EC2Configuration();
         EC2Endpoint endpoint = new EC2Endpoint(uri, this, configuration);
         endpoint.getConfiguration().setAccessKey(accessKey);
         endpoint.getConfiguration().setSecretKey(secretKey);
