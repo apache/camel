@@ -1,6 +1,6 @@
 [[aws-cw-component]]
 = AWS CloudWatch Component
-:page-source: components/camel-aws-cw/bin/src/main/docs/aws-cw-component.adoc
+:page-source: components/camel-aws-cw/src/main/docs/aws-cw-component.adoc
 
 *Since Camel 2.11*
 

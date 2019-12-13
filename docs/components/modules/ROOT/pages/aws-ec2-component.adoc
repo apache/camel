@@ -1,6 +1,6 @@
 [[aws-ec2-component]]
 = AWS EC2 Component
-:page-source: components/camel-aws-ec2/bin/src/main/docs/aws-ec2-component.adoc
+:page-source: components/camel-aws-ec2/src/main/docs/aws-ec2-component.adoc
 
 *Since Camel 2.16*
 

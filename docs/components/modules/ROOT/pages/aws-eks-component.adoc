@@ -1,6 +1,6 @@
 [[aws-eks-component]]
 = AWS EKS Component
-:page-source: components/camel-aws-eks/bin/src/main/docs/aws-eks-component.adoc
+:page-source: components/camel-aws-eks/src/main/docs/aws-eks-component.adoc
 
 *Since Camel 3.0*
 
