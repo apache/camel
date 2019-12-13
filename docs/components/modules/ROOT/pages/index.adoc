@@ -776,7 +776,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 40 in 40 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 41 in 41 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -805,6 +805,8 @@ Number of Miscellaneous Components: 40 in 40 JAR artifacts (0 deprecated)
 | xref:microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
 
 | xref:microprofile-health.adoc[Microprofile Health] (camel-microprofile-health) | 3.0 | Bridging Eclipse MicroProfile Health with Camel health checks
+
+| xref:openapi-java.adoc[Openapi Java] (camel-openapi-java) | 2.16 | Rest-dsl support for using openapi doc
 
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
