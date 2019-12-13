@@ -53,9 +53,7 @@ public final class ConsulClusteredRoutePolicyFactoryMain {
         main.addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:clustered?delay=1s&period=1s")
-                    .routeId("route-" + id)
-                    .log("Route ${routeId} is running ...");
+                from("timer:clustered?delay=1s&period=1s").routeId("route-" + id).log("Route ${routeId} is running ...");
             }
         });
 

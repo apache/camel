@@ -40,12 +40,7 @@ public class ConsulEventTest extends ConsulTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        fluentTemplate()
-            .withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE)
-            .withHeader(ConsulConstants.CONSUL_KEY, key)
-            .withBody(val)
-            .to("direct:event")
-            .send();
+        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE).withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:event").send();
 
         mock.assertIsSatisfied();
 
@@ -61,9 +56,7 @@ public class ConsulEventTest extends ConsulTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:event")
-                    .to("consul:event")
-                        .to("mock:event");
+                from("direct:event").to("consul:event").to("mock:event");
             }
         };
     }

@@ -44,11 +44,8 @@ public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulSer
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME, SERVICE_PORT)
-                    .routeId(SERVICE_ID)
-                    .routeGroup(SERVICE_NAME)
-                    .noAutoStartup()
-                    .to("log:service-registry?level=INFO");
+                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME, SERVICE_PORT).routeId(SERVICE_ID)
+                    .routeGroup(SERVICE_NAME).noAutoStartup().to("log:service-registry?level=INFO");
             }
         };
     }

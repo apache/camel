@@ -49,20 +49,9 @@ public class ConsulHealthTest extends ConsulTestSupport {
 
         this.service = UUID.randomUUID().toString();
         this.client = getConsul().agentClient();
-        this.registrations = Arrays.asList(
-            ImmutableRegistration.builder()
-                .id(UUID.randomUUID().toString())
-                .name(this.service)
-                .address("127.0.0.1")
-                .port(random.nextInt(10000))
-                .build(),
-            ImmutableRegistration.builder()
-                .id(UUID.randomUUID().toString())
-                .name(this.service)
-                .address("127.0.0.1")
-                .port(random.nextInt(10000))
-                .build()
-        );
+        this.registrations = Arrays
+            .asList(ImmutableRegistration.builder().id(UUID.randomUUID().toString()).name(this.service).address("127.0.0.1").port(random.nextInt(10000)).build(),
+                    ImmutableRegistration.builder().id(UUID.randomUUID().toString()).name(this.service).address("127.0.0.1").port(random.nextInt(10000)).build());
 
         this.registrations.forEach(client::register);
     }
@@ -81,30 +70,24 @@ public class ConsulHealthTest extends ConsulTestSupport {
     @Test
     public void testServiceInstance() {
         List<ServiceHealth> ref = getConsul().healthClient().getAllServiceInstances(this.service).getResponse();
-        List<ServiceHealth> res = fluentTemplate()
-            .withHeader(ConsulConstants.CONSUL_ACTION, ConsulHealthActions.SERVICE_INSTANCES)
-            .withHeader(ConsulConstants.CONSUL_SERVICE, this.service)
-            .to("direct:consul")
-            .request(List.class);
+        List<ServiceHealth> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulHealthActions.SERVICE_INSTANCES)
+            .withHeader(ConsulConstants.CONSUL_SERVICE, this.service).to("direct:consul").request(List.class);
 
         Assertions.assertEquals(2, ref.size());
         Assertions.assertEquals(2, res.size());
         Assertions.assertEquals(ref, res);
 
-        assertTrue(registrations.stream().anyMatch(
-            r -> r.getPort().isPresent() && r.getPort().get() == res.get(0).getService().getPort() && r.getId().equalsIgnoreCase(res.get(0).getService().getId())
-        ));
-        assertTrue(registrations.stream().anyMatch(
-            r -> r.getPort().isPresent() && r.getPort().get() == res.get(1).getService().getPort() && r.getId().equalsIgnoreCase(res.get(1).getService().getId())
-        ));
+        assertTrue(registrations.stream()
+            .anyMatch(r -> r.getPort().isPresent() && r.getPort().get() == res.get(0).getService().getPort() && r.getId().equalsIgnoreCase(res.get(0).getService().getId())));
+        assertTrue(registrations.stream()
+            .anyMatch(r -> r.getPort().isPresent() && r.getPort().get() == res.get(1).getService().getPort() && r.getId().equalsIgnoreCase(res.get(1).getService().getId())));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:consul")
-                    .to("consul:health");
+                from("direct:consul").to("consul:health");
             }
         };
     }

@@ -35,44 +35,29 @@ public class ConsulSessionTest extends ConsulTestSupport {
         final int sessions = getConsul().sessionClient().listSessions().size();
 
         {
-            List<SessionInfo> list = fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                .to("direct:consul")
-                .request(List.class);
+            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST).to("direct:consul").request(List.class);
 
             Assertions.assertEquals(sessions, list.size());
             Assertions.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
 
-        SessionCreatedResponse res = fluentTemplate()
-            .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.CREATE)
-            .withBody(ImmutableSession.builder().name(name).build())
-            .to("direct:consul")
-            .request(SessionCreatedResponse.class);
+        SessionCreatedResponse res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.CREATE).withBody(ImmutableSession.builder().name(name).build())
+            .to("direct:consul").request(SessionCreatedResponse.class);
 
         Assertions.assertNotNull(res.getId());
 
         {
-            List<SessionInfo> list = fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                .to("direct:consul")
-                .request(List.class);
+            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST).to("direct:consul").request(List.class);
 
             Assertions.assertEquals(sessions + 1, list.size());
             Assertions.assertTrue(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
 
         {
-            fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.DESTROY)
-                .withHeader(ConsulConstants.CONSUL_SESSION, res.getId())
-                .to("direct:consul")
+            fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.DESTROY).withHeader(ConsulConstants.CONSUL_SESSION, res.getId()).to("direct:consul")
                 .send();
 
-            List<SessionInfo> list = fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                .to("direct:consul")
-                .request(List.class);
+            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST).to("direct:consul").request(List.class);
 
             Assertions.assertEquals(sessions, list.size());
             Assertions.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
@@ -83,8 +68,7 @@ public class ConsulSessionTest extends ConsulTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:consul")
-                    .to("consul:session");
+                from("direct:consul").to("consul:session");
             }
         };
     }

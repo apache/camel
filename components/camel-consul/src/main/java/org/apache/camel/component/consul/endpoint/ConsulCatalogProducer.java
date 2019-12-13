@@ -51,43 +51,22 @@ public final class ConsulCatalogProducer extends AbstractConsulProducer<CatalogC
 
     @InvokeOnHeader(ConsulCatalogActions.LIST_NODES)
     protected void listNodes(Message message) throws Exception {
-        processConsulResponse(
-            message,
-            getClient().getNodes(
-                buildQueryOptions(message, getConfiguration())
-            )
-        );
+        processConsulResponse(message, getClient().getNodes(buildQueryOptions(message, getConfiguration())));
     }
 
     @InvokeOnHeader(ConsulCatalogActions.LIST_SERVICES)
     protected void listServices(Message message) throws Exception {
-        processConsulResponse(
-            message,
-            getClient().getNodes(
-                buildQueryOptions(message, getConfiguration())
-            )
-        );
+        processConsulResponse(message, getClient().getNodes(buildQueryOptions(message, getConfiguration())));
     }
 
     @InvokeOnHeader(ConsulCatalogActions.GET_SERVICE)
     protected void getService(Message message) throws Exception {
-        processConsulResponse(
-            message,
-            getClient().getService(
-                getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class),
-                buildQueryOptions(message, getConfiguration())
-            )
-        );
+        processConsulResponse(message,
+                              getClient().getService(getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class), buildQueryOptions(message, getConfiguration())));
     }
 
     @InvokeOnHeader(ConsulCatalogActions.GET_NODE)
     protected void getNode(Message message) throws Exception {
-        processConsulResponse(
-            message,
-            getClient().getNode(
-                getMandatoryHeader(message, ConsulConstants.CONSUL_NODE, String.class),
-                buildQueryOptions(message, getConfiguration())
-            )
-        );
+        processConsulResponse(message, getClient().getNode(getMandatoryHeader(message, ConsulConstants.CONSUL_NODE, String.class), buildQueryOptions(message, getConfiguration())));
     }
 }

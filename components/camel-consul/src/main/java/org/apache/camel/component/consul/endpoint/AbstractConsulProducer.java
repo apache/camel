@@ -81,27 +81,13 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
     protected QueryOptions buildQueryOptions(Message message, ConsulConfiguration conf) {
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
 
-        ObjectHelper.ifNotEmpty(
-            message.getHeader(ConsulConstants.CONSUL_INDEX, BigInteger.class),
-            builder::index);
-        ObjectHelper.ifNotEmpty(
-            message.getHeader(ConsulConstants.CONSUL_WAIT, String.class),
-            builder::wait);
-        ObjectHelper.ifNotEmpty(
-            message.getHeader(ConsulConstants.CONSUL_DATACENTER, conf.getDatacenter(), String.class),
-            builder::datacenter);
-        ObjectHelper.ifNotEmpty(
-            message.getHeader(ConsulConstants.CONSUL_NEAR_NODE, conf.getNearNode(), String.class),
-            builder::near);
-        ObjectHelper.ifNotEmpty(
-            conf.getAclToken(),
-            builder::token);
-        ObjectHelper.ifNotEmpty(
-            message.getHeader(ConsulConstants.CONSUL_CONSISTENCY_MODE, conf.getConsistencyMode(), ConsistencyMode.class),
-            builder::consistencyMode);
-        ObjectHelper.ifNotEmpty(
-            message.getHeader(ConsulConstants.CONSUL_NODE_META, conf.getNodeMeta(), List.class),
-            builder::nodeMeta);
+        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_INDEX, BigInteger.class), builder::index);
+        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_WAIT, String.class), builder::wait);
+        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_DATACENTER, conf.getDatacenter(), String.class), builder::datacenter);
+        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_NEAR_NODE, conf.getNearNode(), String.class), builder::near);
+        ObjectHelper.ifNotEmpty(conf.getAclToken(), builder::token);
+        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_CONSISTENCY_MODE, conf.getConsistencyMode(), ConsistencyMode.class), builder::consistencyMode);
+        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_NODE_META, conf.getNodeMeta(), List.class), builder::nodeMeta);
 
         return builder.build();
     }

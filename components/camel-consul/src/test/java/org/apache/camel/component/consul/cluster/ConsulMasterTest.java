@@ -89,10 +89,7 @@ public class ConsulMasterTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("master:my-ns:timer:consul?delay=1s&period=1s")
-                        .routeId("route-" + id)
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                    from("master:my-ns:timer:consul?delay=1s&period=1s").routeId("route-" + id).log("From ${routeId}").process(e -> contextLatch.countDown());
                 }
             });
 
