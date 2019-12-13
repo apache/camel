@@ -68,15 +68,15 @@ public class CMComponent extends DefaultComponent {
     }
 
     public Validator getValidator() {
+        if (validator == null) {
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            validator = factory.getValidator();
+        }
         return validator;
     }
 
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        if (validator == null) {
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            validator = factory.getValidator();
-        }
     }
 }
