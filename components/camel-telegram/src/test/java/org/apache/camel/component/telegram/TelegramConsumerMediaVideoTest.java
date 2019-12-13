@@ -26,9 +26,11 @@ import org.apache.camel.component.telegram.model.IncomingPhotoSize;
 import org.apache.camel.component.telegram.model.IncomingVideo;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +42,7 @@ public class TelegramConsumerMediaVideoTest extends TelegramTestSupport {
     @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
-    @Before
+    @BeforeEach
     public void mockAPIs() {
         TelegramService api = mockTelegramService();
 

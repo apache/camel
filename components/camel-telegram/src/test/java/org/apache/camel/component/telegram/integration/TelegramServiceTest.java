@@ -31,9 +31,11 @@ import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests if the BotAPI are working correctly.
@@ -44,7 +46,7 @@ public class TelegramServiceTest {
 
     private static String chatId;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         authorizationToken = System.getenv("TELEGRAM_AUTHORIZATION_TOKEN");
         chatId = System.getenv("TELEGRAM_CHAT_ID");
@@ -56,8 +58,8 @@ public class TelegramServiceTest {
 
         UpdateResult res = service.getUpdates(authorizationToken, null, null, null);
 
-        Assert.assertNotNull(res);
-        Assert.assertTrue(res.isOk());
+        assertNotNull(res);
+        assertTrue(res.isOk());
     }
 
     @Test

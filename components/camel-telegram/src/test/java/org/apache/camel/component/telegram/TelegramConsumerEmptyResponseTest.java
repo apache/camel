@@ -22,9 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +37,7 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
     @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
-    @Before
+    @BeforeEach
     public void mockAPIs() {
         TelegramService api = mockTelegramService();
 
@@ -45,12 +46,14 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
         when(api.getUpdates(any(), any(), any(), any())).thenAnswer(i -> defaultRes);
     }
 
-    @Test(expected = AssertionError.class)
-    public void testBehaviourWithEmptyUpdates() throws Exception {
-        endpoint.setResultWaitTime(500L);
-        endpoint.expectedMinimumMessageCount(1);
+    @Test
+    public void testBehaviourWithEmptyUpdates() {
+        assertThrows(AssertionError.class, () -> {
+            endpoint.setResultWaitTime(500L);
+            endpoint.expectedMinimumMessageCount(1);
 
-        endpoint.assertIsSatisfied();
+            endpoint.assertIsSatisfied();
+        });
     }
 
     @Override

@@ -25,9 +25,11 @@ import org.apache.camel.component.telegram.model.IncomingDocument;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +41,7 @@ public class TelegramConsumerMediaDocumentTest extends TelegramTestSupport {
     @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
-    @Before
+    @BeforeEach
     public void mockAPIs() {
         TelegramService api = mockTelegramService();
 
