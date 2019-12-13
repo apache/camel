@@ -396,7 +396,7 @@ The following operators are supported:
 
 |<= |less than or equals
 
-|!=~ |not equals
+|!= |not equals
 
 |!=~ |not equals ignore case (will ignore case when comparing String values)
 
