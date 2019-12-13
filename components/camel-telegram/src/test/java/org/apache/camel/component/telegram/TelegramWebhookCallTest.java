@@ -26,7 +26,7 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a producer that sends media information.

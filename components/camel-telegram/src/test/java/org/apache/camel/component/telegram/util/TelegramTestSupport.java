@@ -26,7 +26,7 @@ import org.apache.camel.component.telegram.TelegramServiceProvider;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.mockito.Mockito;
 
 /**

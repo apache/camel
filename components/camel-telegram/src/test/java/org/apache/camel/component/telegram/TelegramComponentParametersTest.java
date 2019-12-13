@@ -17,7 +17,10 @@
 package org.apache.camel.component.telegram;
 
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests the usage of defaults in the component configuration
@@ -38,25 +41,31 @@ public class TelegramComponentParametersTest extends TelegramTestSupport {
         assertEquals("ANOTHER", ep3.getConfiguration().getAuthorizationToken());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNonDefaultConfig() throws Exception {
-        TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
-        component.setAuthorizationToken(null);
-        component.createEndpoint("telegram:bots");
+    @Test
+    public void testNonDefaultConfig() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            component.setAuthorizationToken(null);
+            component.createEndpoint("telegram:bots");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testWrongURI1() throws Exception {
-        TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
-        component.setAuthorizationToken("ANY");
-        component.createEndpoint("telegram:bots/ ");
+    @Test
+    public void testWrongURI1() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            component.setAuthorizationToken("ANY");
+            component.createEndpoint("telegram:bots/ ");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testWrongURI2() throws Exception {
-        TelegramComponent component = (TelegramComponent) context().getComponent("telegram");
-        component.setAuthorizationToken("ANY");
-        component.createEndpoint("telegram:bots/token/s");
+    @Test
+    public void testWrongURI2() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            TelegramComponent component = (TelegramComponent)context().getComponent("telegram");
+            component.setAuthorizationToken("ANY");
+            component.createEndpoint("telegram:bots/token/s");
+        });
     }
 
 }

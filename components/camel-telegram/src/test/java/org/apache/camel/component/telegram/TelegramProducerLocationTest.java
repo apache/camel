@@ -26,12 +26,13 @@ import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.service.RestBotAPI;
 import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -39,7 +40,7 @@ import static org.mockito.Mockito.when;
 /**
  * Tests a producer that sends location information.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TelegramProducerLocationTest extends TelegramTestSupport {
 
     private final double latitude = 59.9386292;
@@ -51,7 +52,7 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
     private RestBotAPI restBotAPI;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() {
         service = new TelegramServiceRestBotAPIAdapter(restBotAPI);
         TelegramServiceProvider.get().setAlternativeService(service);
