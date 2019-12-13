@@ -34,7 +34,7 @@
     <description>Rest-dsl support for using openapi doc</description>
 
     <properties>
-        <firstVersion>2.16.0</firstVersion>
+        <firstVersion>3.1.0</firstVersion>
         <label>rest,api</label>
 
         <camel.osgi.import.before.defaults>

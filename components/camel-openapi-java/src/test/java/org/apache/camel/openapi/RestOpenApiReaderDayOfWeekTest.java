@@ -19,21 +19,14 @@ package org.apache.camel.openapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-
+import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.openapi.BeanConfig;
-import org.apache.camel.openapi.RestOpenApiReader;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
-import org.junit.Ignore;
 import org.junit.Test;
-
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
 
 
 public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
@@ -95,7 +88,6 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
     
     @Test
     public void testReaderReadV3() throws Exception {
-        try {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[] {"http"});
@@ -127,10 +119,6 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
         assertTrue(json.contains("\"description\" : \"The number of allowed requests in the current period\""));
 
         context.stop();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
-
 
 }
