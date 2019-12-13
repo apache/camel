@@ -49,6 +49,7 @@ public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
 
     /**
      * @deprecated, @deprecated replaced by {@link #getDatacenter()} ()}
+     * 
      * @return
      */
     @Deprecated

@@ -57,9 +57,7 @@ public class ConsulKeyValueWatchTest extends ConsulTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("consul:kv?key=%s&valueAsString=true", key)
-                    .to("log:org.apache.camel.component.consul?level=INFO&showAll=true")
-                        .to("mock:kv-watch");
+                fromF("consul:kv?key=%s&valueAsString=true", key).to("log:org.apache.camel.component.consul?level=INFO&showAll=true").to("mock:kv-watch");
             }
         };
     }

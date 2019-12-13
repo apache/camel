@@ -21,7 +21,8 @@ import org.apache.camel.component.consul.ConsulClientConfiguration;
 
 public class ConsulServiceRegistryConfiguration extends ConsulClientConfiguration {
     /**
-     * Should we remove all the registered services know by this registry on stop?
+     * Should we remove all the registered services know by this registry on
+     * stop?
      */
     private boolean deregisterServicesOnStop = true;
 

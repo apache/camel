@@ -91,10 +91,7 @@ public class ConsulClusteredRoutePolicyFactoryTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("timer:consul?delay=1s&period=1s")
-                        .routeId("route-" + id)
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                    from("timer:consul?delay=1s&period=1s").routeId("route-" + id).log("From ${routeId}").process(e -> contextLatch.countDown());
                 }
             });
 

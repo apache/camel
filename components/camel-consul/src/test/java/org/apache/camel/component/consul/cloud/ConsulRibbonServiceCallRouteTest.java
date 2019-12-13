@@ -50,12 +50,7 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
         expectedBodies = new ArrayList<>(SERVICE_COUNT);
 
         for (int i = 0; i < SERVICE_COUNT; i++) {
-            Registration r = ImmutableRegistration.builder()
-                .id("service-" + i)
-                .name(SERVICE_NAME)
-                .address("127.0.0.1")
-                .port(AvailablePortFinder.getNextAvailable())
-                .build();
+            Registration r = ImmutableRegistration.builder().id("service-" + i).name(SERVICE_NAME).address("127.0.0.1").port(AvailablePortFinder.getNextAvailable()).build();
 
             client.register(r);
 
@@ -67,7 +62,7 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
     @Override
     public void doPostTearDown() throws Exception {
         super.doPostTearDown();
-        
+
         registrations.forEach(r -> client.deregister(r.getId()));
     }
 
@@ -94,20 +89,10 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .serviceCall()
-                        .name(SERVICE_NAME)
-                        .component("http")
-                        .consulServiceDiscovery()
-                            .url(consulUrl())
-                        .endParent()
-                    .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
-                    .to("mock:result");
+                from("direct:start").serviceCall().name(SERVICE_NAME).component("http").consulServiceDiscovery().url(consulUrl()).endParent()
+                    .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true").to("mock:result");
 
-                registrations.forEach(r ->
-                    fromF("jetty:http://%s:%d", r.getAddress().get(), r.getPort().get())
-                        .transform().simple("${in.body} on " + r.getPort().get())
-                );
+                registrations.forEach(r -> fromF("jetty:http://%s:%d", r.getAddress().get(), r.getPort().get()).transform().simple("${in.body} on " + r.getPort().get()));
             }
         };
     }

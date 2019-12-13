@@ -67,7 +67,7 @@ public class ConsulRegistryTest implements Serializable {
     @Test
     public void storeString() {
         registry.put("stringTestKey", "stringValue");
-        String result = (String) registry.lookupByName("stringTestKey");
+        String result = (String)registry.lookupByName("stringTestKey");
         registry.remove("stringTestKey");
         assertNotNull(result);
         assertEquals("stringValue", result);
@@ -77,7 +77,7 @@ public class ConsulRegistryTest implements Serializable {
     public void overrideExistingKey() {
         registry.put("uniqueKey", "stringValueOne");
         registry.put("uniqueKey", "stringValueTwo");
-        String result = (String) registry.lookupByName("uniqueKey");
+        String result = (String)registry.lookupByName("uniqueKey");
         registry.remove("uniqueKey");
         assertNotNull(result);
         assertEquals("stringValueTwo", result);
@@ -86,7 +86,7 @@ public class ConsulRegistryTest implements Serializable {
     @Test
     public void checkLookupByName() {
         registry.put("namedKey", "namedValue");
-        String result = (String) registry.lookupByName("namedKey");
+        String result = (String)registry.lookupByName("namedKey");
         registry.remove("namedKey");
         assertNotNull(result);
         assertEquals("namedValue", result);
@@ -96,7 +96,7 @@ public class ConsulRegistryTest implements Serializable {
     public void checkFailedLookupByName() {
         registry.put("namedKey", "namedValue");
         registry.remove("namedKey");
-        String result = (String) registry.lookupByName("namedKey");
+        String result = (String)registry.lookupByName("namedKey");
         assertNull(result);
     }
 
@@ -125,8 +125,7 @@ public class ConsulRegistryTest implements Serializable {
         ConsulTestClass consulTestClassTwo = new ConsulTestClass();
         registry.put("testClassOne", consulTestClassOne);
         registry.put("testClassTwo", consulTestClassTwo);
-        Map<String, ? extends ConsulTestClass> consulTestClassMap = registry
-                .findByTypeWithName(consulTestClassOne.getClass());
+        Map<String, ? extends ConsulTestClass> consulTestClassMap = registry.findByTypeWithName(consulTestClassOne.getClass());
         registry.remove("testClassOne");
         registry.remove("testClassTwo");
         HashMap<String, ConsulTestClass> emptyHashMap = new HashMap<>();
@@ -143,7 +142,7 @@ public class ConsulRegistryTest implements Serializable {
     public void storeObject() {
         ConsulTestClass testObject = new ConsulTestClass();
         registry.put("objectTestClass", testObject);
-        ConsulTestClass clone = (ConsulTestClass) registry.lookupByName("objectTestClass");
+        ConsulTestClass clone = (ConsulTestClass)registry.lookupByName("objectTestClass");
         assertEquals(clone.hello("World"), "Hello World");
         registry.remove("objectTestClass");
     }

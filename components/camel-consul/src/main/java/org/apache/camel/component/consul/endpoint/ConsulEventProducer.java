@@ -34,24 +34,13 @@ public final class ConsulEventProducer extends AbstractConsulProducer<EventClien
 
     @InvokeOnHeader(ConsulEventActions.FIRE)
     protected void fire(Message message) throws Exception {
-        setBodyAndResult(
-            message,
-            getClient().fireEvent(
-                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
-                message.getHeader(ConsulConstants.CONSUL_OPTIONS, EventOptions.BLANK, EventOptions.class),
-                message.getBody(String.class)
-            )
-        );
+        setBodyAndResult(message, getClient().fireEvent(getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                                                        message.getHeader(ConsulConstants.CONSUL_OPTIONS, EventOptions.BLANK, EventOptions.class), message.getBody(String.class)));
     }
 
     @InvokeOnHeader(ConsulEventActions.LIST)
     protected void list(Message message) throws Exception {
-        setBodyAndResult(
-            message,
-            getClient().listEvents(
-                message.getHeader(ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
-                message.getHeader(ConsulConstants.CONSUL_OPTIONS, QueryOptions.BLANK, QueryOptions.class)
-            )
-        );
+        setBodyAndResult(message, getClient().listEvents(message.getHeader(ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                                                         message.getHeader(ConsulConstants.CONSUL_OPTIONS, QueryOptions.BLANK, QueryOptions.class)));
     }
 }

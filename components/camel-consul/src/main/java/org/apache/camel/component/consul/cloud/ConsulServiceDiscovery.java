@@ -41,10 +41,7 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private final QueryOptions queryOptions;
 
     public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
-        this.client = Suppliers.memorize(
-            () -> configuration.createConsulClient(getCamelContext()),
-            e -> RuntimeCamelException.wrapRuntimeCamelException(e)
-        );
+        this.client = Suppliers.memorize(() -> configuration.createConsulClient(getCamelContext()), e -> RuntimeCamelException.wrapRuntimeCamelException(e));
 
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
         ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
@@ -55,16 +52,10 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
 
     @Override
     public List<ServiceDefinition> getServices(String name) {
-        List<CatalogService> services = client.get().catalogClient()
-            .getService(name, queryOptions)
-            .getResponse();
-        List<ServiceHealth> healths = client.get().healthClient()
-            .getAllServiceInstances(name, queryOptions)
-            .getResponse();
+        List<CatalogService> services = client.get().catalogClient().getService(name, queryOptions).getResponse();
+        List<ServiceHealth> healths = client.get().healthClient().getAllServiceInstances(name, queryOptions).getResponse();
 
-        return services.stream()
-            .map(service -> newService(name, service, healths))
-            .collect(Collectors.toList());
+        return services.stream().map(service -> newService(name, service, healths)).collect(Collectors.toList());
     }
 
     // *************************
@@ -72,9 +63,7 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     // *************************
 
     private boolean isHealthy(ServiceHealth serviceHealth) {
-        return serviceHealth.getChecks().stream().allMatch(
-            check -> ObjectHelper.equal(check.getStatus(), "passing", true)
-        );
+        return serviceHealth.getChecks().stream().allMatch(check -> ObjectHelper.equal(check.getStatus(), "passing", true));
     }
 
     private ServiceDefinition newService(String serviceName, CatalogService service, List<ServiceHealth> serviceHealthList) {
@@ -99,20 +88,9 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
 
         // From Consul => 1.0.7, a new meta data attribute has been introduced
         // and it is now taken ito account
-        service.getServiceMeta().ifPresent(
-            serviceMeta -> serviceMeta.forEach(meta::put)
-        );
+        service.getServiceMeta().ifPresent(serviceMeta -> serviceMeta.forEach(meta::put));
 
-        return new DefaultServiceDefinition(
-            serviceName,
-            service.getServiceAddress(),
-            service.getServicePort(),
-            meta,
-            new DefaultServiceHealth(
-                serviceHealthList.stream()
-                    .filter(h -> ObjectHelper.equal(h.getService().getId(), service.getServiceId()))
-                    .allMatch(this::isHealthy)
-            )
-        );
+        return new DefaultServiceDefinition(serviceName, service.getServiceAddress(), service.getServicePort(), meta, new DefaultServiceHealth(serviceHealthList.stream()
+            .filter(h -> ObjectHelper.equal(h.getService().getId(), service.getServiceId())).allMatch(this::isHealthy)));
     }
 }

@@ -31,10 +31,7 @@ public class ConsulCoordinatesTest extends ConsulTestSupport {
     @Test
     public void testDatacenters() {
         List<Datacenter> ref = getConsul().coordinateClient().getDatacenters();
-        List<Datacenter> res = fluentTemplate()
-            .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.DATACENTERS)
-            .to("direct:consul")
-            .request(List.class);
+        List<Datacenter> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.DATACENTERS).to("direct:consul").request(List.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());
@@ -45,10 +42,7 @@ public class ConsulCoordinatesTest extends ConsulTestSupport {
     @Test
     public void testNodes() {
         List<Coordinate> ref = getConsul().coordinateClient().getNodes();
-        List<Coordinate> res = fluentTemplate()
-            .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.NODES)
-            .to("direct:consul")
-            .request(List.class);
+        List<Coordinate> res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.NODES).to("direct:consul").request(List.class);
 
         Assertions.assertFalse(ref.isEmpty());
         Assertions.assertFalse(res.isEmpty());
@@ -59,8 +53,7 @@ public class ConsulCoordinatesTest extends ConsulTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:consul")
-                    .to("consul:coordinates");
+                from("direct:consul").to("consul:coordinates");
             }
         };
     }
