@@ -1,6 +1,6 @@
 [[aws-sns-component]]
 = AWS Simple Notification System Component
-:page-source: components/camel-aws-sns/bin/src/main/docs/aws-sns-component.adoc
+:page-source: components/camel-aws-sns/src/main/docs/aws-sns-component.adoc
 
 *Since Camel 2.8*
 

@@ -1,6 +1,6 @@
 [[aws-ecs-component]]
 = AWS ECS Component
-:page-source: components/camel-aws-ecs/bin/src/main/docs/aws-ecs-component.adoc
+:page-source: components/camel-aws-ecs/src/main/docs/aws-ecs-component.adoc
 
 *Since Camel 3.0*
 

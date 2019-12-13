@@ -1,6 +1,6 @@
 [[aws-ddb-component]]
 = AWS DynamoDB Component
-:page-source: components/camel-aws-ddb/bin/src/main/docs/aws-ddb-component.adoc
+:page-source: components/camel-aws-ddb/src/main/docs/aws-ddb-component.adoc
 
 *Since Camel 2.10*
 

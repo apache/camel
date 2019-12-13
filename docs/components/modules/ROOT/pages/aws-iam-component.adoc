@@ -1,6 +1,6 @@
 [[aws-iam-component]]
 = AWS IAM Component
-:page-source: components/camel-aws-iam/bin/src/main/docs/aws-iam-component.adoc
+:page-source: components/camel-aws-iam/src/main/docs/aws-iam-component.adoc
 
 *Since Camel 2.23*
 

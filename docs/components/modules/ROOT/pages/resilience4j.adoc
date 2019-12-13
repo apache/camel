@@ -1,5 +1,5 @@
 = Resilience4j Component
-:page-source: components/camel-resilience4j/bin/src/main/docs/resilience4j.adoc
+:page-source: components/camel-resilience4j/src/main/docs/resilience4j.adoc
 
 *Since Camel 3.0*
 
