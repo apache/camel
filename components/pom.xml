@@ -164,6 +164,7 @@
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
+        <module>camel-elytron</module>
         <module>camel-etcd</module>
         <module>camel-eventadmin</module>
         <module>camel-exec</module>

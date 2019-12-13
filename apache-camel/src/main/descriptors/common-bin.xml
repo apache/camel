@@ -131,6 +131,7 @@
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-elasticsearch-rest</include>
         <include>org.apache.camel:camel-elsql</include>
+        <include>org.apache.camel:camel-elytron</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>

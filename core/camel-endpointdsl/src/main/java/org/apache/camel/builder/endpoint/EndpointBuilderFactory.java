@@ -101,6 +101,7 @@ public interface EndpointBuilderFactory extends
         EhcacheEndpointBuilderFactory,
         ElasticsearchEndpointBuilderFactory,
         ElsqlEndpointBuilderFactory,
+        ElytronEndpointBuilderFactory,
         EtcdEndpointBuilderFactory,
         EventAdminEndpointBuilderFactory,
         EventEndpointBuilderFactory,
