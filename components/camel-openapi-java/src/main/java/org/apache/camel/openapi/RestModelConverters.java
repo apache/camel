@@ -38,7 +38,7 @@ public class RestModelConverters {
     public List<? extends OasSchema> readClass(OasDocument oasDocument, Class<?> clazz) {
         if (oasDocument instanceof Oas20Document) {
             return readClassOas20((Oas20Document)oasDocument, clazz);
-        } else if (oasDocument instanceof Oas30Document){
+        } else if (oasDocument instanceof Oas30Document) {
             return readClassOas30((Oas30Document)oasDocument, clazz);
         } else {
             return null;

@@ -20,8 +20,6 @@ package org.apache.camel.openapi;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.camel.util.FileUtil;
-
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasPathItem;
@@ -29,6 +27,7 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
+import org.apache.camel.util.FileUtil;
 
 public final class OpenApiHelper {
 

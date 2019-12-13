@@ -19,16 +19,10 @@ package org.apache.camel.openapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.openapi.BeanConfig;
-import org.apache.camel.openapi.RestOpenApiReader;
-
-import org.junit.Test;
-
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
-
+import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.junit.Test;
 
 public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderApiDocsTest {
 

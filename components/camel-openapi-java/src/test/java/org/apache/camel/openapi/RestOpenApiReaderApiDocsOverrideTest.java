@@ -19,20 +19,14 @@ package org.apache.camel.openapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-
+import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.openapi.BeanConfig;
-import org.apache.camel.openapi.RestOpenApiReader;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-
 
 public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
 
@@ -62,8 +56,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
         OasDocument openApi = null;
-        try {
-            openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         
         assertNotNull(openApi);
 
@@ -79,10 +72,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));
         assertFalse(json.contains("\"/hello/hi/{name}\""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
+        
         context.stop();
     }
 
@@ -95,8 +85,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         config.setBasePath("/api");
         RestOpenApiReader reader = new RestOpenApiReader();
         OasDocument openApi = null;
-        try {
-            openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
         
         assertNotNull(openApi);
 
@@ -112,10 +101,7 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         assertFalse(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));
         assertFalse(json.contains("\"/hello/hi/{name}\""));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
+        
         context.stop();
     }
 

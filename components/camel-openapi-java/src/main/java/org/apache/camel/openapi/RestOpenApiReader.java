@@ -30,8 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.lang.invoke.MethodHandles.publicLookup;
-
 import io.apicurio.datamodels.core.models.ExtensibleNode;
 import io.apicurio.datamodels.core.models.Extension;
 import io.apicurio.datamodels.core.models.common.AuthorizationCodeOAuthFlow;
@@ -61,7 +59,6 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
-
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
@@ -79,6 +76,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
 
+import static java.lang.invoke.MethodHandles.publicLookup;
 /**
  * A Camel REST-DSL openApi reader that parse the rest-dsl into a openApi model representation.
  * <p/>
@@ -405,7 +403,7 @@ public class RestOpenApiReader {
             String produces = verb.getProduces() != null ? verb.getProduces() : rest.getProduces();
             if (openApi instanceof Oas20Document) {
                 doParseVerbOas20((Oas20Document)openApi, verb, (Oas20Operation)op, consumes, produces);
-            } else if(openApi instanceof Oas30Document) {
+            } else if (openApi instanceof Oas30Document) {
                 doParseVerbOas30((Oas30Document)openApi, verb, (Oas30Operation)op, consumes, produces);
             }
             // enrich with configured response messages from the rest-dsl

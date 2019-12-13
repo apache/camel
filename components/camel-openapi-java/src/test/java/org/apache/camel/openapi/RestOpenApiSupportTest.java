@@ -25,8 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.camel.openapi.RestOpenApiSupport;
-
+import io.apicurio.datamodels.core.models.common.Server;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -35,11 +36,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-
-import io.apicurio.datamodels.core.models.common.Server;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
@@ -78,10 +74,8 @@ public class RestOpenApiSupportTest {
         RestOpenApiSupport.setupXForwardedHeaders(openApi, headers);
 
         
-        assertEquals(openApi.getServers().get(0).url
-                     , "http://host/prefix/base");
-        assertEquals(openApi.getServers().get(1).url
-                     , "https://host/prefix/base");
+        assertEquals(openApi.getServers().get(0).url, "http://host/prefix/base");
+        assertEquals(openApi.getServers().get(1).url, "https://host/prefix/base");
        
             
     }
@@ -138,13 +132,10 @@ public class RestOpenApiSupportTest {
     @MethodSource("schemeVariations")
     public void shouldAdaptWithVaryingSchemesV3(final String xForwardedScheme, final String[] expected) {
         final Oas30Document openApi = spy(new Oas30Document());
-        try {
-
+        
         RestOpenApiSupport.setupXForwardedHeaders(openApi,
             Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        
         List<String> schemas = new ArrayList<String>();
         if (openApi.servers != null) {
             for (Server server : openApi.servers) {

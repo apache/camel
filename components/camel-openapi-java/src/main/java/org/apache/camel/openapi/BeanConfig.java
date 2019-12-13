@@ -26,44 +26,18 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 
 
 public class BeanConfig {
-    String resourcePackage;
     String[] schemes;
     String title;
     String version;
-    String description;
-    String termsOfServiceUrl;
-    String contact;
-    String license;
     String licenseUrl;
-    String filterClass;
-
+    String license;
+    
     Info info;
     String host;
     String basePath;
 
-    String scannerId;
-    String configId;
-    String contextId;
-
-    boolean expandSuperTypes = true;
-
-    private boolean usePathBasedConfig = false;
-
-    public boolean isUsePathBasedConfig() {
-        return usePathBasedConfig;
-    }
-
-    public void setUsePathBasedConfig(boolean usePathBasedConfig) {
-        this.usePathBasedConfig = usePathBasedConfig;
-    }
-
-    public String getResourcePackage() {
-        return this.resourcePackage;
-    }
-
-    public void setResourcePackage(String resourcePackage) {
-        this.resourcePackage = resourcePackage;
-    }
+    
+    
 
     public String[] getSchemes() {
         return schemes;
@@ -89,44 +63,21 @@ public class BeanConfig {
         this.version = version;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getTermsOfServiceUrl() {
-        return termsOfServiceUrl;
-    }
-
-    public void setTermsOfServiceUrl(String termsOfServiceUrl) {
-        this.termsOfServiceUrl = termsOfServiceUrl;
-    }
-
-    public String getContact() {
-        return contact;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
-
-    public String getLicense() {
-        return license;
-    }
-
-    public void setLicense(String license) {
-        this.license = license;
-    }
-
+    
     public String getLicenseUrl() {
-        return licenseUrl;
+        return this.licenseUrl;
     }
-
+    
     public void setLicenseUrl(String licenseUrl) {
         this.licenseUrl = licenseUrl;
+    }
+    
+    public String getLicense() {
+        return this.license;
+    }
+    
+    public void setLicense(String license) {
+        this.license = license;
     }
 
     public Info getInfo() {
@@ -147,41 +98,8 @@ public class BeanConfig {
 
     
     
-    public String getContextId() {
-        return contextId;
-    }
-
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
-
-    public String getScannerId() {
-        return scannerId;
-    }
-
-    public void setScannerId(String scannerId) {
-        this.scannerId = scannerId;
-    }
-
-    public String getConfigId() {
-        return configId;
-    }
-
-    
-    public void setConfigId(String configId) {
-        this.configId = configId;
-    }
-
     public String getBasePath() {
         return basePath;
-    }
-
-    public boolean getExpandSuperTypes() {
-        return expandSuperTypes;
-    }
-
-    public void setExpandSuperTypes(boolean expandSuperTypes) {
-        this.expandSuperTypes = expandSuperTypes;
     }
 
     public void setBasePath(String basePath) {

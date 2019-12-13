@@ -17,8 +17,6 @@
 package org.apache.camel.openapi;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.openapi.OpenApiRestProducerFactory;
-
 import org.junit.Test;
 
 public class OpenApiRestProducerFactoryTest {

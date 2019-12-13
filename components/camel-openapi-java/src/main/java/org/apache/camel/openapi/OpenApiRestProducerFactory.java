@@ -23,16 +23,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Producer;
-import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.models.OasOperation;
@@ -43,6 +33,15 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Operation;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Operation;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Producer;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.support.ResourceHelper.resolveMandatoryResourceAsInputStream;
 

@@ -22,23 +22,19 @@ import java.util.Properties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
+import io.apicurio.datamodels.Library;
+import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.openapi.BeanConfig;
-import org.apache.camel.openapi.RestOpenApiReader;
-import org.apache.camel.openapi.RestOpenApiSupport;
 import org.apache.camel.openapi.producer.DummyRestProducerFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.openapi.models.OasDocument;
-    
+   
 
 @Ignore("Does not run well on CI due test uses JMX mbeans")
 public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {

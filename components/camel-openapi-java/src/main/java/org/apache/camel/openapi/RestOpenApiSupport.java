@@ -16,7 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -42,7 +42,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-
+import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Contact;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
+import io.apicurio.datamodels.openapi.v2.models.Oas20License;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Contact;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
+import io.apicurio.datamodels.openapi.v3.models.Oas30License;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.model.Model;
@@ -59,15 +67,8 @@ import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Contact;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
-import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
-import io.apicurio.datamodels.openapi.v2.models.Oas20License;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Contact;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
-import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
-import io.apicurio.datamodels.openapi.v3.models.Oas30License;
+
+import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
 
 /**
  * A support class for that allows SPI to plugin and offer OpenApi API service listings as part of the Camel
@@ -113,9 +114,7 @@ public class RestOpenApiSupport {
             openApiConfig.setSchemes(schemes);
         } else {
             // assume http by default
-            openApiConfig.setSchemes(new String[] {
-                                                   "http"
-            });
+            openApiConfig.setSchemes(new String[] {"http"});
         }
 
         String version = (String)config.get("api.version");
@@ -246,11 +245,8 @@ public class RestOpenApiSupport {
         if (found != null) {
             String xml;
             if (supportResolvePlaceholder) {
-                xml = (String)server.invoke(found, "dumpRestsAsXml", new Object[] {
-                                                                                   true
-                }, new String[] {
-                                 "boolean"
-                });
+                xml = (String)server.invoke(found, "dumpRestsAsXml", new Object[] {true}, 
+                                            new String[] {"boolean"});
             } else {
                 xml = (String)server.invoke(found, "dumpRestsAsXml", null, null);
             }
