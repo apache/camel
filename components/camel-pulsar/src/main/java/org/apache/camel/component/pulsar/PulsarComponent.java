@@ -52,7 +52,7 @@ public class PulsarComponent extends DefaultComponent {
         final PulsarConfiguration configuration = new PulsarConfiguration();
         configuration.setAllowManualAcknowledgement(isAllowManualAcknowledgement());
 
-        if (autoConfiguration != null &&autoConfiguration.isAutoConfigurable()) {
+        if (autoConfiguration != null && autoConfiguration.isAutoConfigurable()) {
             autoConfiguration.ensureNameSpaceAndTenant(path);
         }
 
