@@ -247,6 +247,7 @@
         <include>org.apache.camel:camel-olingo2-api</include>
         <include>org.apache.camel:camel-olingo4</include>
         <include>org.apache.camel:camel-olingo4-api</include>
+        <include>org.apache.camel:camel-openapi-java</include>
         <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
@@ -602,6 +603,7 @@
         <include>org.apache.camel.springboot:camel-ognl-starter</include>
         <include>org.apache.camel.springboot:camel-olingo2-starter</include>
         <include>org.apache.camel.springboot:camel-olingo4-starter</include>
+        <include>org.apache.camel.springboot:camel-openapi-java-starter</include>
         <include>org.apache.camel.springboot:camel-openstack-starter</include>
         <include>org.apache.camel.springboot:camel-opentracing-starter</include>
         <include>org.apache.camel.springboot:camel-optaplanner-starter</include>
