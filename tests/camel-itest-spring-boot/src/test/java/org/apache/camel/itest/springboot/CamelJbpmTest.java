@@ -35,12 +35,16 @@ public class CamelJbpmTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJbpmTest.class))
-                .dependency("org.kie:kie-api:7.30.0.Final")
-                .dependency("org.kie:kie-dmn-api:7.30.0.Final")
-                .dependency("org.kie:kie-dmn-model:7.30.0.Final")
-                .dependency("org.kie:kie-internal:7.30.0.Final")
-                .dependency("org.drools:drools-compiler:7.30.0.Final")
-                .dependency("org.drools:drools-core:7.30.0.Final")
+                .dependency("org.kie:kie-api:7.31.0.Final")
+                .dependency("org.kie:kie-dmn-api:7.31.0.Final")
+                .dependency("org.kie:kie-dmn-model:7.31.0.Final")
+                .dependency("org.kie:kie-internal:7.31.0.Final")
+                .dependency("org.drools:drools-compiler:7.31.0.Final")
+                .dependency("org.drools:drools-canonical-model:7.31.0.Final")
+                .dependency("org.drools:drools-model-compiler:7.31.0.Final")
+                .dependency("org.drools:drools-mvel-compiler:7.31.0.Final")
+                .dependency("org.drools:drools-mvel-parser:7.31.0.Final")
+                .dependency("org.drools:drools-core:7.31.0.Final")
                 .unitTestExpectedNumber(0)
                 .build();
     }
