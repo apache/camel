@@ -1414,6 +1414,7 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-core-reflective/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
@@ -1929,6 +1930,7 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-core-reflective/${drools-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
