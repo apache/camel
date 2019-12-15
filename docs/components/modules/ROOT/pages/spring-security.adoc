@@ -7,7 +7,7 @@
 The Camel Spring Security component provides role-based authorization
 for Camel routes. It leverages the authentication and user services
 provided by
-http://static.springsource.org/spring-security/site/index.html[Spring
+https://spring.io/projects/spring-security[Spring
 Security] (formerly Acegi Security) and adds a declarative, role-based
 policy system to control whether a route can be executed by a given
 principal.
