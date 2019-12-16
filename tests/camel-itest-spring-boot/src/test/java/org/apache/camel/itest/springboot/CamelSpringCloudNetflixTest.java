@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-@Ignore("Spring-Cloud referenced in Spring-Boot 2.0.0.RELEASE is not GA")
 public class CamelSpringCloudNetflixTest extends AbstractSpringBootTestSupport {
 
     @Deployment
