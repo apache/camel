@@ -344,12 +344,6 @@ and in XML:
     <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
   </globalOptions>
 
-=== Extended CamelContext
-
-The APIs on `CamelContext` has been reduced a bit to focus on relevant API for Camel end users. The advanced use-cases and for SPI and component developers, then some of the APIs from `CamelContext` has been moved to `ExtendedCamelContext` which you can access via adapt:
-
-  ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-
 === Main class
 
 The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufty code for multiple Camels. The method `getCamelContextMap` has been removed, and there is just a `getCamelContext` method now.
@@ -420,7 +414,20 @@ The methods on `CamelContext` that are related to catalog has been moved into a 
 
 The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has been changed to `addRouteDefinitions` and `addRestDefinitions` to be aligned with the other methods. You can find loader methods on the `ModelHelper` utility class.
 
-==== Checked vs unchecked exceptions
+==== ModelCamelContext
+
+If you need to access the routes model (such as `addRouteDefinitions`, etc), then you need to adapt form CamelContext as shown:
+
+    ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+
+==== Extended CamelContext
+
+The APIs on `CamelContext` has been reduced a bit to focus on relevant API for Camel end users. The advanced use-cases and for SPI and component developers, then some of the APIs from `CamelContext` has been moved to `ExtendedCamelContext` which you can access via adapt:
+
+  ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+
+
+=== Checked vs unchecked exceptions
 
 Most of the Camel exception classes has been migrated to be unchecked (eg extends `RuntimeException`).
 
@@ -487,24 +494,24 @@ The class `FactoryFinder` has changed its API to use `Optional` as return types 
 The option `resolvePropertyPlaceholders` on all the components has been removed,
 as property placeholders is already supported via Camel Main, Camel Spring Boot and other means.
 
-==== camel-test
+=== camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
 you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
 
   context.getRegistry().bind("myId", myBean);
 
-==== Controlling routes
+=== Controlling routes
 
 The `startRoute`, `stopRoute`, `suspendRoute`, `resumeRoute`, `getRouteStatus`, and other related methods on `CamelContext` has been moved to the `RouteController` as shown below:
 
   context.getRouteController().startRoute("myRoute");
 
-==== JMX events
+=== JMX events
 
 All the events from package `org.apache.camel.management.event` has been moved to the class `org.apache.camel.spi.CamelEvent` as sub-classes, for example the event for CamelContext started would be `CamelEvent.CamelContextStartedEvent`.
 
-==== AdviceWith
+=== AdviceWith
 
 Testing using `adviceWith` currently needs to be changed from:
 
@@ -525,27 +532,27 @@ However its even easier using lambda style with `AdviceWithRouteBuilder` directl
     a.replaceFromWith("direct:start");
   }
 
-==== Generic Classes
+=== Generic Classes
 
 The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDIContext` in the camel-core JAR to `org.apache.camel.support.jndi.JNDIContext` and moved to the `camel-support` JAR.
 
-==== EIPs
+=== EIPs
 
 The `circuitBreaker` load-balancer EIP was deprecated in Camel 2.x, and has been removed. Instead use Hystrix EIP as the load-balancer.
 
 The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.ThreadPoolRejectedPolicy` to `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
 
-==== Languages
+=== Languages
 
 The simple language `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
 
 The terser language has been renamed from terser to hl7terser.
 
-==== JSSE
+=== JSSE
 
 The classes from `org.apache.camel.util.jsse` has been moved to `org.apache.camel.support.jsse`.
 
-==== Helpers and support
+=== Helpers and support
 
 The class `AsyncProcessorHelper` has been moved from `org.apache.camel.util.AsyncProcessorHelper` in the camel-core JAR to `org.apache.camel.support.AsyncProcessorHelper` and moved to the `camel-support` JAR.
 
@@ -581,19 +588,19 @@ The class `ServiceHelper` has been moved from `org.apache.camel.util.ServiceHelp
 
 The class `UnitOfWorkHelper` has been moved from `org.apache.camel.util.UnitOfWorkHelper` in the camel-core JAR to `org.apache.camel.support.UnitOfWorkHelper` and moved to the `camel-support` JAR.
 
-==== Idempotent Repositories
+=== Idempotent Repositories
 
 The class `FileIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.FileIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` and moved to the `camel-support` JAR.
 
 The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.MemoryIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository` and moved to the `camel-support` JAR.
 
-==== Route Policies
+=== Route Policies
 
 The class `org.apache.camel.impl.RoutePolicySupport` has been moved to `org.apache.camel.support.RoutePolicySupport`. The return type from `startConsumer` and `stopConsumer` has been changed from `boolean` to `void` as they always returned `true` before.
 
 The class `org.apache.camel.impl.ThrottlingInflightRoutePolicy` has been moved to `org.apache.camel.throttling.ThrottlingInflightRoutePolicy`
 
-==== Aggregation
+=== Aggregation
 
 The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
