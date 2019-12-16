@@ -2408,21 +2408,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds the custom processor to this destination which
-     * could be a final destination, or could be a transformation in a pipeline
-     *
-     * @param processor the custom {@link Processor}
-     * @return the builder
-     *
-     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
-     */
-    @Deprecated
-    public Type process(Supplier<Processor> processor) {
-        return process(processor.get());
-    }
-
-    /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
      * Translator EIP:</a> Adds the custom processor reference to this
      * destination which could be a final destination, or could be a
      * transformation in a pipeline
@@ -2657,28 +2642,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type setBody(Expression expression) {
         SetBodyDefinition answer = new SetBodyDefinition(expression);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
-     * <a href="http://camel.apache.org/message-translator.html">Message
-     * Translator EIP:</a> Adds a processor which sets the body on the IN
-     * message
-     *
-     * @param supplier the supplier that provides a value to the IN message body
-     * @return the builder
-     *
-     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
-     */
-    @Deprecated
-    public <Result> Type setBody(Supplier<Result> supplier) {
-        SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
-            @Override
-            public Result evaluate(Exchange exchange) {
-                return supplier.get();
-            }
-        });
         addOutput(answer);
         return asType();
     }

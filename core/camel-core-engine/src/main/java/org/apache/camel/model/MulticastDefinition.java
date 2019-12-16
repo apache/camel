@@ -311,23 +311,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * deep-clone messages that should be send, or any custom logic needed
      * before the exchange is send.
      *
-     * @param onPrepare the processor
-     * @return the builder
-     *
-     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
-     */
-    @Deprecated
-    public MulticastDefinition onPrepare(Supplier<Processor> onPrepare) {
-        setOnPrepare(onPrepare.get());
-        return this;
-    }
-
-    /**
-     * Uses the {@link Processor} when preparing the
-     * {@link org.apache.camel.Exchange} to be send. This can be used to
-     * deep-clone messages that should be send, or any custom logic needed
-     * before the exchange is send.
-     *
      * @param onPrepareRef reference to the processor to lookup in the
      *            {@link org.apache.camel.spi.Registry}
      * @return the builder

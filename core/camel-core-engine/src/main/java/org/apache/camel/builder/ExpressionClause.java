@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -124,20 +123,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return function.apply(exchange.getIn().getBody());
-            }
-        });
-    }
-
-    /**
-     * A functional expression of an inbound message body
-     *
-     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
-     */
-    @Deprecated
-    public T body(final Supplier<Object> supplier) {
-        return delegate.expression(new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return supplier.get();
             }
         });
     }
