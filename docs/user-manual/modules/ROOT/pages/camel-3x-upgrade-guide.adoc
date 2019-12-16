@@ -46,3 +46,19 @@ nsq:myTopic?servers=myserver:4161
 
 This change is motivated by allowing to configure servers on component level,
 and also for Spring Boot auto-configuration etc.
+
+
+=== Java DSL
+
+The Java DSL has been revisited and the following methods have been removed:
+
+* ExpressionClause::body(Supplier<Object>)
+* MulticastDefinition::onPrepare(Supplier<Processor>)
+* ProcessorDefinition::process(Supplier<Processor>)
+* ProcessorDefinition::setBody(Supplier<Result>)
+* RecipientListDefinition::onPrepare(Supplier<Processor>)
+* SplitDefinition::onPrepare(Supplier<Processor>)
+* WireTapDefinition::newExchange(Supplier<Processor>)
+* WireTapDefinition::onPrepare(Supplier<Processor>)
+
+This change is motivated by the need to remove method ambiguity for untyped languages such as Groovy and JavaScript, for more info see https://issues.apache.org/jira/browse/CAMEL-14300
