@@ -129,52 +129,66 @@ public class RestOpenApiSupport {
         
         if (!openApiConfig.isOpenApi3()) {
 
-            Oas20Info info = new Oas20Info();
-            info.version = version;
-            info.title = title;
-            info.description = description;
-            info.termsOfService = termsOfService;
-
-            if (licenseName != null || licenseUrl != null) {
-                Oas20License license = new Oas20License();
-                license.name = licenseName;
-                license.url = licenseUrl;
-                info.license = license;
-            }
-
-            if (contactName != null || contactUrl != null || contactEmail != null) {
-                Oas20Contact contact = new Oas20Contact();
-                contact.name = contactName;
-                contact.url = contactUrl;
-                contact.email = contactEmail;
-                info.contact = contact;
-            }
-            openApiConfig.setInfo(info);
+            setInfoOas20(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
+                         contactName, contactUrl, contactEmail);
         } else {
-            Oas30Info info = new Oas30Info();
-            info.version = version;
-            info.title = title;
-            info.description = description;
-            info.termsOfService = termsOfService;
-
-            if (licenseName != null || licenseUrl != null) {
-                Oas30License license = new Oas30License();
-                license.name = licenseName;
-                license.url = licenseUrl;
-                info.license = license;
-            }
-
-            if (contactName != null || contactUrl != null || contactEmail != null) {
-                Oas30Contact contact = new Oas30Contact();
-                contact.name = contactName;
-                contact.url = contactUrl;
-                contact.email = contactEmail;
-                info.contact = contact;
-            }
-            openApiConfig.setInfo(info);
+            setInfoOas30(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
+                         contactName, contactUrl, contactEmail);
         }
 
         
+    }
+
+    private void setInfoOas30(BeanConfig openApiConfig, String version, String title, String description,
+                              String termsOfService, String licenseName, String licenseUrl,
+                              String contactName, String contactUrl, String contactEmail) {
+        Oas30Info info = new Oas30Info();
+        info.version = version;
+        info.title = title;
+        info.description = description;
+        info.termsOfService = termsOfService;
+
+        if (licenseName != null || licenseUrl != null) {
+            Oas30License license = new Oas30License();
+            license.name = licenseName;
+            license.url = licenseUrl;
+            info.license = license;
+        }
+
+        if (contactName != null || contactUrl != null || contactEmail != null) {
+            Oas30Contact contact = new Oas30Contact();
+            contact.name = contactName;
+            contact.url = contactUrl;
+            contact.email = contactEmail;
+            info.contact = contact;
+        }
+        openApiConfig.setInfo(info);
+    }
+
+    private void setInfoOas20(BeanConfig openApiConfig, String version, String title, String description,
+                              String termsOfService, String licenseName, String licenseUrl,
+                              String contactName, String contactUrl, String contactEmail) {
+        Oas20Info info = new Oas20Info();
+        info.version = version;
+        info.title = title;
+        info.description = description;
+        info.termsOfService = termsOfService;
+
+        if (licenseName != null || licenseUrl != null) {
+            Oas20License license = new Oas20License();
+            license.name = licenseName;
+            license.url = licenseUrl;
+            info.license = license;
+        }
+
+        if (contactName != null || contactUrl != null || contactEmail != null) {
+            Oas20Contact contact = new Oas20Contact();
+            contact.name = contactName;
+            contact.url = contactUrl;
+            contact.email = contactEmail;
+            info.contact = contact;
+        }
+        openApiConfig.setInfo(info);
     }
 
     public List<RestDefinition> getRestDefinitions(CamelContext camelContext) throws Exception {

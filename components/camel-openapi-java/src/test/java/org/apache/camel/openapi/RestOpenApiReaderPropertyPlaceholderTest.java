@@ -90,8 +90,7 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
         
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
-        
+                
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));

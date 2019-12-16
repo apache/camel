@@ -55,8 +55,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
-
+        
         log.info(json);
 
         assertTrue(json.contains("\"securityDefinitions\" : {"));
@@ -100,8 +99,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
-
+        
         log.info(json);
 
         assertTrue(json.contains("\"securitySchemes\" : {"));

@@ -75,8 +75,7 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
-
+        
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
@@ -109,8 +108,7 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
-
+        
         log.info(json);
 
         assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
