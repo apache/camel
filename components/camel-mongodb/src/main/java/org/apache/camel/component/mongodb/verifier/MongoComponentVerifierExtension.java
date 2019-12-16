@@ -18,11 +18,12 @@ package org.apache.camel.component.mongodb.verifier;
 
 import java.util.Map;
 
-import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoSecurityException;
 import com.mongodb.MongoTimeoutException;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
@@ -69,7 +70,7 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
         MongoClientURI connectionURI = new MongoClientURI(mongoConf.getMongoClientURI(), optionsBuilder);
 
         LOG.info("Testing connection against {}", connectionURI);
-        try (MongoClient mongoClient = new MongoClient(connectionURI)) {
+        try (MongoClient mongoClient = MongoClients.create(connectionURI.getURI())) {
             // Just ping the server
             mongoClient.getDatabase(connectionURI.getDatabase()).runCommand(Document.parse("{ ping: 1 }"));
             LOG.info("Testing connection successful!");

@@ -23,8 +23,9 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.model.Filters;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.extension.metadata.AbstractMetaDataExtension;
@@ -59,7 +60,7 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
         MongoClientURI connectionURI = new MongoClientURI(mongoConf.getMongoClientURI());
 
         JsonNode collectionInfoRoot;
-        try (MongoClient mongoConnection = new MongoClient(connectionURI)) {
+        try (MongoClient mongoConnection = MongoClients.create(connectionURI.getURI())) {
             Document collectionInfo = mongoConnection.getDatabase(textParameters.get("database"))
                     .listCollections()
                     .filter(Filters.eq("name", textParameters.get("collection")))

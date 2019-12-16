@@ -32,61 +32,54 @@ public class MongoDbReadPreferenceOptionTest extends AbstractMongoDbTest {
     @Test
     public void testInvalidReadPreferenceOptionValue() throws Exception {
         try {
-            createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=foo");
+            endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=foo");
+            endpoint.getReadPreferenceBean();
             fail("Should have thrown exception");
-        } catch (ResolveEndpointFailedException refe) {
-            assertTrue(refe.getMessage().endsWith("Unknown parameters=[{readPreference=foo}]"), refe.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("No match for read preference"));
         }
     }
 
     @Test
     public void testNoReadPreferenceOptionValue() throws Exception {
         endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}");
-        assertSame(ReadPreference.primary(), endpoint.getReadPreference());
-        assertSame(ReadPreference.primary(), endpoint.getMongoConnection().getReadPreference());
+        assertSame(ReadPreference.primary(), endpoint.getReadPreferenceBean());
         // the default is primary
     }
 
     @Test
     public void testPrimaryReadPreferenceOptionValue() throws Exception {
-        endpoint = createMongoDbEndpoint("mongodb:myDbP?database={{mongodb.testDb}}");
-        assertSame(ReadPreference.primary(), endpoint.getReadPreference());
-        assertSame(ReadPreference.primary(), endpoint.getMongoConnection().getReadPreference());
+        endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=primary");
+        assertSame(ReadPreference.primary(), endpoint.getReadPreferenceBean());
     }
 
     @Test
     public void testPrimaryPreferredReadPreferenceOptionValue() throws Exception {
-        endpoint = createMongoDbEndpoint("mongodb:myDbPP?database={{mongodb.testDb}}");
-        assertSame(ReadPreference.primaryPreferred(), endpoint.getReadPreference());
-        assertSame(ReadPreference.primaryPreferred(), endpoint.getMongoConnection().getReadPreference());
+        endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=primaryPreferred");
+        assertSame(ReadPreference.primaryPreferred(), endpoint.getReadPreferenceBean());
     }
 
     @Test
     public void testSecondaryReadPreferenceOptionValue() throws Exception {
-        endpoint = createMongoDbEndpoint("mongodb:myDbS?database={{mongodb.testDb}}");
-        assertSame(ReadPreference.secondary(), endpoint.getReadPreference());
-        assertSame(ReadPreference.secondary(), endpoint.getMongoConnection().getReadPreference());
+        endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=secondary");
+        assertSame(ReadPreference.secondary(), endpoint.getReadPreferenceBean());
     }
 
     @Test
     public void testSecondaryPreferredReadPreferenceOptionValue() throws Exception {
-        endpoint = createMongoDbEndpoint("mongodb:myDbSP?database={{mongodb.testDb}}");
-        assertSame(ReadPreference.secondaryPreferred(), endpoint.getReadPreference());
-        assertSame(ReadPreference.secondaryPreferred(), endpoint.getMongoConnection().getReadPreference());
+        endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=secondaryPreferred");
+        assertSame(ReadPreference.secondaryPreferred(), endpoint.getReadPreferenceBean());
     }
 
     @Test
     public void testNearestReadPreferenceOptionValue() throws Exception {
-        endpoint = createMongoDbEndpoint("mongodb:myDbN?database={{mongodb.testDb}}");
-        assertSame(ReadPreference.nearest(), endpoint.getReadPreference());
-        assertSame(ReadPreference.nearest(), endpoint.getMongoConnection().getReadPreference());
+        endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=nearest");
+        assertSame(ReadPreference.nearest(), endpoint.getReadPreferenceBean());
     }
 
     private MongoDbEndpoint createMongoDbEndpoint(String uri) throws Exception {
         Endpoint mongoEndpoint = context().getComponent("mongodb").createEndpoint(uri);
         mongoEndpoint.start();
         return MongoDbEndpoint.class.cast(mongoEndpoint);
-
     }
-
 }
