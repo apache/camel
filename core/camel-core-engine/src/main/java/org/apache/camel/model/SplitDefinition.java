@@ -304,7 +304,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      *
      * @param onPrepare the processor
      * @return the builder
+     *
+     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
      */
+    @Deprecated
     public SplitDefinition onPrepare(Supplier<Processor> onPrepare) {
         setOnPrepare(onPrepare.get());
         return this;
