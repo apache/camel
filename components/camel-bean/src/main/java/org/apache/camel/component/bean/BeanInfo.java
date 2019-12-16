@@ -76,6 +76,7 @@ public class BeanInfo {
     private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<>();
     private Map<Method, MethodInfo> methodMap = new HashMap<>();
     private boolean publicConstructors;
+    private boolean publicNoArgConstructors;
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -125,6 +126,7 @@ public class BeanInfo {
             operationsWithHandlerAnnotation = beanInfo.operationsWithHandlerAnnotation;
             methodMap = beanInfo.methodMap;
             publicConstructors = beanInfo.publicConstructors;
+            publicNoArgConstructors = beanInfo.publicNoArgConstructors;
             return;
         }
 
@@ -306,6 +308,7 @@ public class BeanInfo {
 
         // does the class have any public constructors?
         publicConstructors = clazz.getConstructors().length > 0;
+        publicNoArgConstructors = org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(clazz);
 
         MethodsFilter methods = new MethodsFilter(getType());
         introspect(clazz, methods);
@@ -1171,6 +1174,13 @@ public class BeanInfo {
      */
     public boolean hasPublicConstructors() {
         return publicConstructors;
+    }
+
+    /**
+     * Returns whether the bean class has any public no-arg constructors.
+     */
+    public boolean hasPublicNoArgConstructors() {
+        return publicNoArgConstructors;
     }
 
     /**
