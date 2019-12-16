@@ -215,7 +215,10 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @param processor processor preparing the new exchange to send
      * @return the builder
      * @see #newExchangeHeader(String, org.apache.camel.Expression)
+     *
+     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
      */
+    @Deprecated
     public WireTapDefinition<Type> newExchange(Supplier<Processor> processor) {
         setNewExchangeProcessor(processor.get());
         return this;
@@ -260,7 +263,10 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      *
      * @param onPrepare the processor
      * @return the builder
+     *
+     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
      */
+    @Deprecated
     public WireTapDefinition<Type> onPrepare(Supplier<Processor> onPrepare) {
         setOnPrepare(onPrepare.get());
         return this;
