@@ -393,15 +393,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         // allow HTTP Options as we want to handle CORS in rest-dsl
         boolean cors = config.isEnableCORS();
+        
+        if(api) {
+            map.put("matchOnUriPrefix", "true");
+        }
 
         String query = URISupport.createQueryString(map);
 
-        String url;
-        if (api) {
-            url = "netty-http:%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
-        } else {
-            url = "netty-http:%s://%s:%s/%s?httpMethodRestrict=%s";
-        }
+        String url = "netty-http:%s://%s:%s/%s?httpMethodRestrict=%s";
+        
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
         if (cors) {
