@@ -45,8 +45,7 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
-
+        
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"http:mycoolserver:8888/myapi\""));
@@ -78,8 +77,7 @@ public class RestOpenApiReaderOverrideHostApiDocsTest extends RestOpenApiReaderA
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
-
+        
         log.info(json);
 
         assertTrue(json.contains("\"url\" : \"http://http:mycoolserver:8888/myapi/api\""));

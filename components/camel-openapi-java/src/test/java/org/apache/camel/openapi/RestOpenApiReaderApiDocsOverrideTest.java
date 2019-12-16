@@ -65,7 +65,6 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
         log.info(json);
 
         assertFalse(json.contains("\"/hello/bye\""));
@@ -94,7 +93,6 @@ public class RestOpenApiReaderApiDocsOverrideTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        System.out.println("the json is =====>" + json);
         log.info(json);
 
         assertFalse(json.contains("\"/hello/bye\""));
