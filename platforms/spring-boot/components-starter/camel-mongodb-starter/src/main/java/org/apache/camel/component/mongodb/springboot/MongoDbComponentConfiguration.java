@@ -39,7 +39,7 @@ public class MongoDbComponentConfiguration
     /**
      * Set a client used for connection: all endpoints generated from the
      * component will share this connection bean. The option is a
-     * com.mongodb.MongoClient type.
+     * com.mongodb.client.MongoClient type.
      */
     private String mongoConnection;
     /**
