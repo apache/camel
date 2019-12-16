@@ -585,7 +585,7 @@
         <spring-batch-version>4.1.2.RELEASE</spring-batch-version>
         <spring-batch-bundle-version>4.1.2.RELEASE_1</spring-batch-bundle-version>
         <spring-boot-version>2.2.2.RELEASE</spring-boot-version>
-        <spring-cloud-commons-version>2.1.4.RELEASE</spring-cloud-commons-version>
+        <spring-cloud-commons-version>2.2.0.RELEASE</spring-cloud-commons-version>
         <spring-cloud-consul-version>2.1.4.RELEASE</spring-cloud-consul-version>
         <spring-cloud-netflix-version>2.1.4.RELEASE</spring-cloud-netflix-version>
         <spring-cloud-zookeeper-version>2.1.4.RELEASE</spring-cloud-zookeeper-version>
