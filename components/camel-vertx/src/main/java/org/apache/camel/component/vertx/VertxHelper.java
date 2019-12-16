@@ -21,6 +21,7 @@ import io.vertx.core.json.JsonObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
+@Deprecated
 public final class VertxHelper {
 
     private VertxHelper() {
