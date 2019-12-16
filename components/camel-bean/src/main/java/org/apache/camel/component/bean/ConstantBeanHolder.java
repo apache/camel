@@ -44,13 +44,6 @@ public class ConstantBeanHolder implements BeanHolder {
         this.beanInfo = new BeanInfo(context, bean.getClass());
     }
 
-    public ConstantBeanHolder(Object bean, CamelContext context, ParameterMappingStrategy parameterMappingStrategy) {
-        ObjectHelper.notNull(bean, "bean");
-
-        this.bean = bean;
-        this.beanInfo = new BeanInfo(context, bean.getClass(), parameterMappingStrategy);
-    }
-
     @Override
     public String toString() {
         // avoid invoke toString on bean as it may be a remote proxy
