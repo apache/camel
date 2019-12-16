@@ -191,7 +191,7 @@ public class MongoDbProducer extends DefaultProducer {
         // resolution logic on every Exchange if they won't be using this
         // functionality at all
         if (!endpoint.isDynamicity()) {
-            return endpoint.getMongoCollection().withWriteConcern(endpoint.getWriteConcern());
+            return endpoint.getMongoCollection().withWriteConcern(endpoint.getWriteConcernBean());
         }
 
         String dynamicDB = exchange.getIn().getHeader(DATABASE, String.class);
@@ -203,7 +203,7 @@ public class MongoDbProducer extends DefaultProducer {
         MongoCollection<Document> dbCol;
 
         if (dynamicDB == null && dynamicCollection == null) {
-            dbCol = endpoint.getMongoCollection().withWriteConcern(endpoint.getWriteConcern());
+            dbCol = endpoint.getMongoCollection().withWriteConcern(endpoint.getWriteConcernBean());
         } else {
             MongoDatabase db = calculateDb(exchange);
 
