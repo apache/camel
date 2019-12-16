@@ -394,7 +394,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // allow HTTP Options as we want to handle CORS in rest-dsl
         boolean cors = config.isEnableCORS();
         
-        if(api) {
+        if (api) {
             map.put("matchOnUriPrefix", "true");
         }
 
