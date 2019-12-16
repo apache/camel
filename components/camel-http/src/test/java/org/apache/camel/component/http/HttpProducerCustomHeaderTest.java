@@ -23,8 +23,7 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
-        expectedHeaders.put(HOST,
-                            CUSTOM_HOST);
+        expectedHeaders.put(HOST, CUSTOM_HOST);
 
         localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
@@ -33,17 +32,17 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
                 registerHandler("*",
-                                new HeaderValidationHandler("GET",
-                                                            "customHostHeader=test",
-                                                            null,
-                                                            getExpectedContent(),
-                                                            expectedHeaders))
+                        new HeaderValidationHandler("GET",
+                                "customHostHeader=" + CUSTOM_HOST,
+                                null,
+                                getExpectedContent(),
+                                expectedHeaders))
                 .registerHandler("*",
-                                 new HeaderValidationHandler("GET",
-                                                             null,
-                                                             null,
-                                                             getExpectedContent(),
-                                                             null))
+                        new HeaderValidationHandler("GET",
+                                null,
+                                null,
+                                getExpectedContent(),
+                                null))
                 .create();
 
         localServer.start();
@@ -62,14 +61,13 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
     }
 
     @Test
-    public void testHttpProducer_GivenCustomHostHeaderQuery_SetCustomHost() throws Exception {
+    public void testHttpProducerGivenCustomHostHeaderQuerySetCustomHost() throws Exception {
 
-        HttpComponent component = context.getComponent("http",
-                                                       HttpComponent.class);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
 
         HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-                                                                                + localServer.getLocalPort() + "/myget?customHostHeader=test");
+                + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
         HttpProducer producer = new HttpProducer(endpoint);
 
         Exchange exchange = producer.createExchange();
@@ -83,14 +81,13 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
     }
 
     @Test
-    public void testHttpProducer_GivenEmptyQuery_ShouldNotSetCustomHost() throws Exception {
+    public void testHttpProducerGivenEmptyQueryShouldNotSetCustomHost() throws Exception {
 
-        HttpComponent component = context.getComponent("http",
-                                                       HttpComponent.class);
+        HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
 
         HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-                                                                                + localServer.getLocalPort() + "/myget");
+                + localServer.getLocalPort() + "/myget");
         HttpProducer producer = new HttpProducer(endpoint);
 
         Exchange exchange = producer.createExchange();
