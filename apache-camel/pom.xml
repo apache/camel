@@ -39,6 +39,7 @@
         <createSourcesJar>false</createSourcesJar>
         <!-- we do not need remote resources in assembly -->
         <remoteresources.skip>true</remoteresources.skip>
+        <tarLongFileMode>gnu</tarLongFileMode>
     </properties>
 
     <dependencies>
@@ -3312,7 +3313,7 @@
                             </descriptors>
                             <finalName>${project.artifactId}-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
-                            <tarLongFileMode>gnu</tarLongFileMode>
+                            <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
                             <recompressZippedFiles>false</recompressZippedFiles>
                         </configuration>
                     </execution>
@@ -3326,7 +3327,7 @@
                             <descriptors>
                                 <descriptor>src/main/descriptors/src.xml</descriptor>
                             </descriptors>
-                            <tarLongFileMode>gnu</tarLongFileMode>
+                            <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
                         </configuration>
                     </execution>
                 </executions>
