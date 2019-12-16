@@ -2413,7 +2413,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param processor the custom {@link Processor}
      * @return the builder
+     *
+     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
      */
+    @Deprecated
     public Type process(Supplier<Processor> processor) {
         return process(processor.get());
     }
@@ -2665,7 +2668,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param supplier the supplier that provides a value to the IN message body
      * @return the builder
+     *
+     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
      */
+    @Deprecated
     public <Result> Type setBody(Supplier<Result> supplier) {
         SetBodyDefinition answer = new SetBodyDefinition(new ExpressionAdapter() {
             @Override
@@ -3088,7 +3094,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Enricher EIP</a> enriches an exchange with additional data obtained from
      * a <code>resourceUri</code> and with an aggregation strategy created using
      * a fluent builder. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * fom("direct:start")
@@ -3096,7 +3102,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *         .body(String.class, (o, n) -> n + o);
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      *
      * @param resourceUri URI of resource endpoint for obtaining additional
@@ -3139,7 +3145,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Enricher EIP</a> enriches an exchange with additional data obtained from
      * a <code>resourceUri</code> and with an aggregation strategy created using
      * a fluent builder. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * fom("direct:start")
@@ -3147,7 +3153,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *         .body(String.class, (o, n) -> n + o);
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      *
      * @param resourceUri URI of resource endpoint for obtaining additional

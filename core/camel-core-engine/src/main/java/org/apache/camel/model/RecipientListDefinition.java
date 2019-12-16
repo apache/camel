@@ -330,7 +330,10 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      *
      * @param onPrepare the processor
      * @return the builder
+     *
+     * @deprecated see https://issues.apache.org/jira/browse/CAMEL-14300
      */
+    @Deprecated
     public RecipientListDefinition<Type> onPrepare(Supplier<Processor> onPrepare) {
         setOnPrepare(onPrepare.get());
         return this;
