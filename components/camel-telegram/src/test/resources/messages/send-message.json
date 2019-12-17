@@ -1,0 +1,20 @@
+{
+    "ok": true,
+    "result": {
+        "message_id": 937,
+        "from": {
+            "id": 770882310,
+            "is_bot": true,
+            "first_name": "camelDemoBot",
+            "username": "camelDemoBot"
+        },
+        "chat": {
+            "id": 434822960,
+            "first_name": "Peter",
+            "last_name": "Palaga",
+            "type": "private"
+        },
+        "date": 1576249600,
+        "text": "A message from camel-quarkus-telegram ffdcc8ef72a34053a3e75daec74676a9"
+    }
+}

@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.camel.component.telegram.TelegramParseMode;
-import org.apache.camel.component.telegram.TelegramService;
-import org.apache.camel.component.telegram.TelegramServiceProvider;
+import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
@@ -29,97 +28,78 @@ import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
-import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.component.telegram.util.TelegramApiConfig;
+import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Tests if the BotAPI are working correctly.
- */
-public class TelegramServiceTest {
+public class TelegramServiceTest extends TelegramTestSupport {
 
-    private static String authorizationToken;
-
-    private static String chatId;
-
-    @BeforeAll
-    public static void init() {
-        authorizationToken = System.getenv("TELEGRAM_AUTHORIZATION_TOKEN");
-        chatId = System.getenv("TELEGRAM_CHAT_ID");
+    protected TelegramApiConfig getTelegramApiConfig() {
+        return TelegramApiConfig.fromEnv();
     }
 
     @Test
     public void testGetUpdates() {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
-        UpdateResult res = service.getUpdates(authorizationToken, null, null, null);
-
+        /* Telegram bots by design see neither their own messages nor other bots' messages.
+         * So, for this test to succeed a human should have sent some messages to the bot manually
+         * before running the test */
+        IncomingMessage res = consumer.receiveBody("telegram://bots", 5000, IncomingMessage.class);
         assertNotNull(res);
-        assertTrue(res.isOk());
     }
 
     @Test
     public void testSendMessage() {
-        TelegramService service = TelegramServiceProvider.get().getService();
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
-
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendMessageHtml() {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is a <b>HTML</b> <i>auto-generated</i> message from the Bot");
         msg.setParseMode(TelegramParseMode.HTML.getCode());
 
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendMessageMarkdown() {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is a *Markdown* _auto-generated_ message from the Bot");
         msg.setParseMode(TelegramParseMode.MARKDOWN.getCode());
 
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
-    
+
     @Test
     public void testSendMessageWithKeyboard() {
-        TelegramService service = TelegramServiceProvider.get().getService();
-        
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("Choose one option!");
-        
+
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
                 .text("Option One - I").build();
-        
+
         InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
                 .text("Option One - II").build();
-        
+
         InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
                 .text("Option Two - I").build();
-        
+
         InlineKeyboardButton buttonOptionThreeI = InlineKeyboardButton.builder()
                 .text("Option Three - I").build();
-        
+
         InlineKeyboardButton buttonOptionThreeII = InlineKeyboardButton.builder()
                 .text("Option Three - II").build();
-        
+
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .keyboard()
                     .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
@@ -128,33 +108,29 @@ public class TelegramServiceTest {
                     .close()
                 .oneTimeKeyboard(true)
                 .build();
-        
+
         msg.setReplyKeyboardMarkup(replyMarkup);
-        
-        service.sendMessage(authorizationToken, msg);        
+
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
-    
+
     @Test
     public void testSendMessageDisablingCustomKeyboard() {
-        TelegramService service = TelegramServiceProvider.get().getService();
-        
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("Your answer was accepted!");
-        
+
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .removeKeyboard(true)
                 .build();
-        
+
         msg.setReplyKeyboardMarkup(replyMarkup);
-        
-        service.sendMessage(authorizationToken, msg);        
-    }    
+
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+    }
 
     @Test
     public void testSendFull() {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is an *auto-generated* message from the Bot");
@@ -162,13 +138,11 @@ public class TelegramServiceTest {
         msg.setParseMode("Markdown");
         msg.setDisableNotification(false);
 
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendPhoto() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] image = TelegramTestUtil.createSampleImage("PNG");
 
         OutgoingPhotoMessage msg = new OutgoingPhotoMessage();
@@ -176,14 +150,11 @@ public class TelegramServiceTest {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.png");
 
-
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendPhotoFull() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] image = TelegramTestUtil.createSampleImage("PNG");
 
         OutgoingPhotoMessage msg = new OutgoingPhotoMessage();
@@ -193,14 +164,11 @@ public class TelegramServiceTest {
         msg.setCaption("Photo");
         msg.setDisableNotification(false);
 
-
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendAudio() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] audio = TelegramTestUtil.createSampleAudio();
 
         OutgoingAudioMessage msg = new OutgoingAudioMessage();
@@ -208,14 +176,11 @@ public class TelegramServiceTest {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("audio.mp3");
 
-
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendAudioFull() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] audio = TelegramTestUtil.createSampleAudio();
 
         OutgoingAudioMessage msg = new OutgoingAudioMessage();
@@ -226,13 +191,11 @@ public class TelegramServiceTest {
         msg.setDurationSeconds(5);
         msg.setPerformer("Myself");
 
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendVideo() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] video = TelegramTestUtil.createSampleVideo();
 
         OutgoingVideoMessage msg = new OutgoingVideoMessage();
@@ -240,14 +203,11 @@ public class TelegramServiceTest {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("video.mp4");
 
-
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendVideoFull() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] video = TelegramTestUtil.createSampleVideo();
 
         OutgoingVideoMessage msg = new OutgoingVideoMessage();
@@ -259,13 +219,11 @@ public class TelegramServiceTest {
         msg.setWidth(90);
         msg.setHeight(50);
 
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendDocument() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] document = TelegramTestUtil.createSampleDocument();
 
         OutgoingDocumentMessage msg = new OutgoingDocumentMessage();
@@ -273,13 +231,11 @@ public class TelegramServiceTest {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.txt");
 
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
     @Test
     public void testSendDocumentFull() throws IOException {
-        TelegramService service = TelegramServiceProvider.get().getService();
-
         byte[] document = TelegramTestUtil.createSampleDocument();
 
         OutgoingDocumentMessage msg = new OutgoingDocumentMessage();
@@ -288,7 +244,7 @@ public class TelegramServiceTest {
         msg.setFilenameWithExtension("file.png");
         msg.setCaption("A document");
 
-        service.sendMessage(authorizationToken, msg);
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
 
 }

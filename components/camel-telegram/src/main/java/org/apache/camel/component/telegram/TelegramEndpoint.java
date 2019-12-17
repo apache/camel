@@ -26,12 +26,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.model.Update;
+import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.proxy.ProxyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +52,63 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @UriParam
     private TelegramConfiguration configuration;
+    @UriParam(label = "advanced")
+    private AsyncHttpClientConfig clientConfig;
+    @UriParam(label = "advanced", defaultValue = "" + (4 * 1024))
+    private int bufferSize = 4 * 1024;
 
     private WebhookConfiguration webhookConfiguration;
 
-    public TelegramEndpoint(String endpointUri, Component component, TelegramConfiguration configuration) {
+    private AsyncHttpClient client;
+    private TelegramService telegramService;
+
+    public TelegramEndpoint(
+            String endpointUri,
+            Component component,
+            TelegramConfiguration configuration,
+            AsyncHttpClient client,
+            AsyncHttpClientConfig clientConfig) {
         super(endpointUri, component);
         this.configuration = configuration;
-        // setup the proxy setting here
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            LOG.debug("Setup http proxy host:{} port:{} for TelegramService", configuration.getProxyHost(), configuration.getProxyPort());
-            TelegramServiceProvider.get().getService().setHttpProxy(configuration.getProxyHost(), configuration.getProxyPort());
+        this.client = client;
+        this.clientConfig = clientConfig;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (client == null) {
+            DefaultAsyncHttpClientConfig.Builder builder = clientConfig != null
+                    ? new DefaultAsyncHttpClientConfig.Builder(clientConfig)
+                    : new DefaultAsyncHttpClientConfig.Builder();
+
+            if (configuration != null && ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                    && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+                LOG.debug("Setup http proxy host:{} port:{} for TelegramService", configuration.getProxyHost(),
+                        configuration.getProxyPort());
+                builder.setProxyServer(
+                        new ProxyServer.Builder(configuration.getProxyHost(), configuration.getProxyPort()).build());
+            }
+            final AsyncHttpClientConfig config = builder.build();
+            client = new DefaultAsyncHttpClient(config);
         }
+        if (telegramService == null) {
+            telegramService = new TelegramServiceRestBotAPIAdapter(
+                    client,
+                    bufferSize,
+                    configuration.getBaseUri(),
+                    configuration.getAuthorizationToken());
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // ensure client is closed when stopping
+        if (client != null && !client.isClosed()) {
+            client.close();
+        }
+        client = null;
     }
 
     @Override
@@ -84,16 +136,14 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @Override
     public void registerWebhook() throws Exception {
-        TelegramService service = TelegramServiceProvider.get().getService();
-        if (!service.setWebhook(configuration.getAuthorizationToken(), webhookConfiguration.computeFullExternalUrl())) {
+        if (!telegramService.setWebhook(webhookConfiguration.computeFullExternalUrl())) {
             throw new RuntimeCamelException("The Telegram API refused to register a webhook");
         }
     }
 
     @Override
     public void unregisterWebhook() throws Exception {
-        TelegramService service = TelegramServiceProvider.get().getService();
-        if (!service.removeWebhook(configuration.getAuthorizationToken())) {
+        if (!telegramService.removeWebhook()) {
             throw new RuntimeCamelException("The Telegram API refused to unregister the webhook");
         }
     }
@@ -118,6 +168,43 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     public void setConfiguration(TelegramConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public TelegramService getTelegramService() {
+        return telegramService;
+    }
+
+    public AsyncHttpClient getClient() {
+        return client;
+    }
+
+    /**
+     * To use a custom {@link AsyncHttpClient}
+     */
+    public void setClient(AsyncHttpClient client) {
+        this.client = client;
+    }
+
+    public AsyncHttpClientConfig getClientConfig() {
+        return clientConfig;
+    }
+
+    /**
+     * To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
+     */
+    public void setClientConfig(AsyncHttpClientConfig clientConfig) {
+        this.clientConfig = clientConfig;
+    }
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    /**
+     * The initial in-memory buffer size used when transferring data between Camel and AHC Client.
+     */
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
     }
 
 }

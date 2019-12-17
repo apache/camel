@@ -22,12 +22,23 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
 
 @Component("telegram")
 public class TelegramComponent extends DefaultComponent {
+    public static final String BOT_API_DEFAULT_URL = "https://api.telegram.org";
 
     @Metadata(label = "security", secret = true)
     private String authorizationToken;
+
+    @Metadata(label = "advanced")
+    private AsyncHttpClient client;
+    @Metadata(label = "advanced")
+    private AsyncHttpClientConfig clientConfig;
+
+    @Metadata(label = "advanced", defaultValue = BOT_API_DEFAULT_URL, description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
+    private String baseUri = BOT_API_DEFAULT_URL;
 
     public TelegramComponent() {
     }
@@ -45,8 +56,11 @@ public class TelegramComponent extends DefaultComponent {
         if (!remaining.equals(TelegramConfiguration.ENDPOINT_TYPE_BOTS)) {
             throw new IllegalArgumentException("Unsupported endpoint type for uri " + uri + ", remaining " + remaining);
         }
+        if (configuration.getBaseUri() == null) {
+            configuration.setBaseUri(baseUri);
+        }
 
-        TelegramEndpoint endpoint = new TelegramEndpoint(uri, this, configuration);
+        TelegramEndpoint endpoint = new TelegramEndpoint(uri, this, configuration, client, clientConfig);
         configuration.setAuthorizationToken(authorizationToken);
         setProperties(endpoint, parameters);
 
@@ -66,6 +80,39 @@ public class TelegramComponent extends DefaultComponent {
      */
     public void setAuthorizationToken(String authorizationToken) {
         this.authorizationToken = authorizationToken;
+    }
+
+    public AsyncHttpClient getClient() {
+        return client;
+    }
+
+    /**
+     * To use a custom {@link AsyncHttpClient}
+     */
+    public void setClient(AsyncHttpClient client) {
+        this.client = client;
+    }
+
+    public AsyncHttpClientConfig getClientConfig() {
+        return clientConfig;
+    }
+
+    /**
+     * To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
+     */
+    public void setClientConfig(AsyncHttpClientConfig clientConfig) {
+        this.clientConfig = clientConfig;
+    }
+
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    /**
+     * Set an alternative base URI, e.g. when you want to test the component against a mock Telegram API.
+     */
+    public void setBaseUri(String telegramBaseUri) {
+        this.baseUri = telegramBaseUri;
     }
 
 }

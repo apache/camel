@@ -16,9 +16,17 @@
  */
 package org.apache.camel.component.telegram.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.cxf.helpers.IOUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Utility functions for telegram tests.
@@ -38,9 +46,9 @@ public final class TelegramTestUtil {
     public static byte[] createSampleImage(String imageIOType) throws IOException {
         byte[] img;
         if (imageIOType.equalsIgnoreCase("png")) {
-            img = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.png"));
+            img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.png"));
         } else if (imageIOType.equalsIgnoreCase("jpg")) {
-            img = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.jpg"));
+            img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.jpg"));
         } else {
             throw new IllegalArgumentException("Unknown format " + imageIOType);
         }
@@ -48,18 +56,40 @@ public final class TelegramTestUtil {
     }
 
 
+    private static byte[] readBytesFromStream(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE);
+        IOHelper.copy(in, out, IOHelper.DEFAULT_BUFFER_SIZE);
+        return out.toByteArray();
+    }
+
     public static byte[] createSampleAudio() throws IOException {
-        byte[] audio = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp3"));
+        byte[] audio = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp3"));
         return audio;
     }
 
     public static byte[] createSampleVideo() throws IOException {
-        byte[] video = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp4"));
+        byte[] video = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp4"));
         return video;
     }
 
     public static byte[] createSampleDocument() throws IOException {
-        byte[] document = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.txt"));
+        byte[] document = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.txt"));
         return document;
+    }
+
+    public static String stringResource(String path) {
+        try (Reader r = new InputStreamReader(TelegramTestUtil.class.getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8)) {
+            return IOHelper.toString(r);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String serialize(Object result) {
+        try {
+            return new ObjectMapper().writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

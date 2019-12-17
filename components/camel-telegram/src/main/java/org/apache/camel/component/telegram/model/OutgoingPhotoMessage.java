@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import java.util.Arrays;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * An outgoing photo message.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OutgoingPhotoMessage extends OutgoingMessage {
 
     private static final long serialVersionUID = -6730785675407947090L;

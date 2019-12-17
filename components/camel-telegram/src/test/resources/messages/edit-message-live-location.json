@@ -1,0 +1,24 @@
+{
+    "ok": true,
+    "result": {
+        "message_id": 938,
+        "from": {
+            "id": 770882310,
+            "is_bot": true,
+            "first_name": "camelDemoBot",
+            "username": "camelDemoBot"
+        },
+        "chat": {
+            "id": 434822960,
+            "first_name": "Peter",
+            "last_name": "Palaga",
+            "type": "private"
+        },
+        "date": 1576249600,
+        "edit_date": 1576249601,
+        "location": {
+            "latitude": 29.974934,
+            "longitude": 31.131109
+        }
+    }
+}

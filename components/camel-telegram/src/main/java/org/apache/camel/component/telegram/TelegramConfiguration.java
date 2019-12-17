@@ -56,6 +56,9 @@ public class TelegramConfiguration {
             optionalPrefix = "consumer.", defaultValue = "100", label = "consumer")
     private Integer limit = 100;
 
+    @UriParam(label = "advanced", description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
+    private String baseUri;
+
     public TelegramConfiguration() {
     }
 
@@ -113,6 +116,17 @@ public class TelegramConfiguration {
 
     public void setLimit(Integer limit) {
         this.limit = limit;
+    }
+
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    /**
+     * Set an alternative base URI, e.g. when you want to test the component against a mock Telegram API.
+     */
+    public void setBaseUri(String telegramBaseUri) {
+        this.baseUri = telegramBaseUri;
     }
 
     @Override
