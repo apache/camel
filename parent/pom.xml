@@ -470,7 +470,7 @@
         <mustache-java-version>0.9.6</mustache-java-version>
         <mustache-guava-version>20.0</mustache-guava-version>
         <mustache-bundle-version>0.9.6_1</mustache-bundle-version>
-        <mvel-version>2.4.4.Final</mvel-version>
+        <mvel-version>2.4.5.Final</mvel-version>
         <mybatis-version>3.5.3</mybatis-version>
         <narayana-version>5.10.1.Final</narayana-version>
         <nessus-version>1.0.0.Beta4</nessus-version>
