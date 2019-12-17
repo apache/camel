@@ -326,6 +326,7 @@
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-swagger-java</module>
+        <module>camel-openapi-java</module>
         <module>camel-syslog</module>
         <module>camel-tagsoup</module>
         <module>camel-tarfile</module>
