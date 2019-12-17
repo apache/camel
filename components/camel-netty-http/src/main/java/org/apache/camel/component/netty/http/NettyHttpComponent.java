@@ -42,6 +42,7 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -373,23 +374,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
-                host = "0.0.0.0";
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
-                host = HostUtils.getLocalHostName();
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
-                host = HostUtils.getLocalIp();
-            }
+            host = RestComponentHelper.resolveRestHostName(host, config);
         }
 
-        Map<String, Object> map = new HashMap<>();
-        // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("netty-http")) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties("netty-http", config);
 
         // allow HTTP Options as we want to handle CORS in rest-dsl
         boolean cors = config.isEnableCORS();
@@ -398,21 +386,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             map.put("matchOnUriPrefix", "true");
         }
 
-        String query = URISupport.createQueryString(map);
-
-        String url = "netty-http:%s://%s:%s/%s?httpMethodRestrict=%s";
-        
-        // must use upper case for restrict
-        String restrict = verb.toUpperCase(Locale.US);
-        if (cors) {
-            restrict += ",OPTIONS";
-        }
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
-
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }
+        String url = RestComponentHelper.createRestConsumerUrl("netty-http", verb, scheme, host, port, path, cors, map);
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
