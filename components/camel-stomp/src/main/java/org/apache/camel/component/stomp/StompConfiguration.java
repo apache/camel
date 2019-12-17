@@ -121,13 +121,13 @@ public class StompConfiguration implements Cloneable {
     }
 
     public Properties getCustomHeaders() {
-	return customHeaders;
+        return customHeaders;
     }
 
     /**
      * To set custom headers
      */
     public void setCustomHeaders(Properties customHeaders) {
-	this.customHeaders = customHeaders;
+        this.customHeaders = customHeaders;
     }
 }
