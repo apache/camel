@@ -806,6 +806,8 @@ Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 
 | xref:microprofile-health.adoc[Microprofile Health] (camel-microprofile-health) | 3.0 | Bridging Eclipse MicroProfile Health with Camel health checks
 
+| xref:openapi-java.adoc[Openapi Java] (camel-openapi-java) | 2.16 | Rest-dsl support for using openapi doc
+
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
 | xref:osgi-activator.adoc[Osgi Activator] (camel-osgi-activator) | 3.1 | Camel OSGi Activator for running Camel routes from other bundles

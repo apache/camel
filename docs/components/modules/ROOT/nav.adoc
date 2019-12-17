@@ -263,6 +263,7 @@
 * xref:ognl-language.adoc[OGNL Language]
 * xref:olingo2-component.adoc[Olingo2 Component]
 * xref:olingo4-component.adoc[Olingo4 Component]
+* xref:openapi-java.adoc[OpenApi Java Component]
 * xref:openstack-cinder-component.adoc[OpenStack Cinder Component]
 * xref:openstack-glance-component.adoc[OpenStack Glance Component]
 * xref:openstack-keystone-component.adoc[OpenStack Keystone Component]
