@@ -41,15 +41,14 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/content",
-                                (request, response, context) -> {
-                                    String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
+                registerHandler("/content", (request, response, context) -> {
+                    String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
 
-                                    assertEquals(CONTENT_TYPE, contentType);
+                    assertEquals(CONTENT_TYPE, contentType);
 
-                                    response.setEntity(new StringEntity(contentType, "ASCII"));
-                                    response.setStatusCode(HttpStatus.SC_OK);
-                                }).create();
+                    response.setEntity(new StringEntity(contentType, "ASCII"));
+                    response.setStatusCode(HttpStatus.SC_OK);
+                }).create();
         localServer.start();
 
         super.setUp();
