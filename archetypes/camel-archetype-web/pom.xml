@@ -29,8 +29,8 @@
 
     <groupId>org.apache.camel.archetypes</groupId>
     <artifactId>camel-archetype-web</artifactId>
-    <name>Camel :: Archetypes :: Camel Routes WAR</name>
-    <description>Creates a new Camel web project that deploys the Camel routes as a WAR</description>
+    <name>Camel :: Archetypes :: WAR with Spring XML Based Router</name>
+    <description>Creates a new Camel web project that deploys the Camel routes as a WAR application</description>
     <packaging>maven-archetype</packaging>
 
     <build>

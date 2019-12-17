@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>camel-example-cdi-xml</artifactId>
-    <name>Camel :: Example :: CDI :: Camel XML</name>
+    <name>Camel :: Example :: CDI :: XML</name>
     <description>CDI and Camel XML example</description>
     <packaging>jar</packaging>
 
