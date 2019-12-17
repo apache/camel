@@ -1,0 +1,195 @@
+= OpenApi Java Component
+:page-source: components/camel-openapi-java/src/main/docs/openapi-java.adoc
+
+*Available as of Camel 3.1.0*
+
+The  Rest DSL can be integrated with
+the `camel-openapi-java` module which is used for exposing the REST
+services and their APIs using https://www.openapis.org/[OpenApi].
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openapi-java</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+The camel-openapi-java module can be used from
+the REST components (without the need for servlet)
+
+== Using OpenApi in rest-dsl
+
+You can enable the OpenApi api from the rest-dsl by configuring the
+`apiContextPath` dsl as shown below:
+
+[source,java]
+----
+public class UserRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        // configure we want to use servlet as the component for the rest DSL
+        // and we enable json binding mode
+        restConfiguration().component("netty-http").bindingMode(RestBindingMode.json)
+            // and output using pretty print
+            .dataFormatProperty("prettyPrint", "true")
+            // setup context path and port number that netty will use
+            .contextPath("/").port(8080)
+            // add OpenApi api-doc out of the box
+            .apiContextPath("/api-doc")
+                .apiProperty("api.title", "User API").apiProperty("api.version", "1.2.3")
+                // and enable CORS
+                .apiProperty("cors", "true");
+
+        // this user REST service is json only
+        rest("/user").description("User rest service")
+            .consumes("application/json").produces("application/json")
+            .get("/{id}").description("Find user by id").outType(User.class)
+                .param().name("id").type(path).description("The id of the user to get").dataType("int").endParam()
+                .to("bean:userService?method=getUser(${header.id})")
+            .put().description("Updates or create a user").type(User.class)
+                .param().name("body").type(body).description("The user to update or create").endParam()
+                .to("bean:userService?method=updateUser")
+            .get("/findAll").description("Find all users").outType(User[].class)
+                .to("bean:userService?method=listUsers");
+    }
+}
+----
+ 
+
+== Options
+
+The OpenApi module can be configured using the following options. To
+configure using a servlet you use the init-param as shown above. When
+configuring directly in the rest-dsl, you use the appropriate method,
+such as `enableCORS`, `host,contextPath`, dsl. The options
+with `api.xxx` is configured using `apiProperty` dsl.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Option |Type |Description
+
+|cors |Boolean |Whether to enable CORS. Notice this only enables CORS for the api
+browser, and not the actual access to the REST services. Is default
+false.
+
+|openapi.version |String |OpenApi spec version. Is default 3.0.
+
+|host |String |To setup the hostname. If not configured camel-openapi-java will
+calculate the name as localhost based.
+
+|schemes |String |The protocol schemes to use. Multiple values can be
+separated by comma such as "http,https". The default value is "http".
+
+|base.path |String |*Required*: To setup the base path where the REST services is available.
+The path is relative (eg do not start with http/https) and
+camel-openapi-java will calculate the absolute base path at runtime,
+which will be `protocol://host:port/context-path/base.path`
+
+|api.path |String |To setup the path where the API is available (eg /api-docs). The path is
+relative (eg do not start with http/https) and camel-openapi-java will
+calculate the absolute base path at runtime, which will be `protocol://host:port/context-path/api.path`
+So using relative paths is much easier. See above for an example.
+
+|api.version |String |The version of the api. Is default 0.0.0.
+
+|api.title |String |The title of the application.
+
+|api.description |String |A short description of the application.
+
+|api.termsOfService |String |A URL to the Terms of Service of the API.
+
+|api.contact.name |String |Name of person or organization to contact
+
+|api.contact.email |String |An email to be used for API-related correspondence.
+
+|api.contact.url |String |A URL to a website for more contact information.
+
+|api.license.name |String |The license name used for the API.
+
+|api.license.url |String |A URL to the license used for the API.
+
+|apiContextIdListing |boolean |Whether to allow listing all the CamelContext names in the JVM that has
+REST services. When enabled then the root path of the api-doc will list
+all the contexts. When disabled then no context ids is listed and the
+root path of the api-doc lists the current CamelContext. Is default
+false.
+
+|apiContextIdPattern |String |A pattern that allows to filter which CamelContext names is shown in the
+context listing. The pattern is using regular expression and * as
+wildcard. Its the same pattern matching as used by
+Intercept
+|===
+
+== Adding Security Definitions in API doc
+
+*Available as of Camel 3.1.0*
+
+The Rest DSL now supports declaring OpenApi `securityDefinitions` in the generated API document.
+For example as shown below:
+
+[source,java]
+----
+rest("/user").tag("dude").description("User rest service")
+    // setup security definitions
+    .securityDefinitions()
+        .oauth2("petstore_auth").authorizationUrl("http://petstore.swagger.io/oauth/dialog").end()
+        .apiKey("api_key").withHeader("myHeader").end()
+    .end()
+    .consumes("application/json").produces("application/json")
+----
+
+Here we have setup two security definitions
+
+- OAuth2 - with implicit authorization with the provided url
+- Api Key - using an api key that comes from HTTP header named _myHeader_
+
+Then you need to specify on the rest operations which security to use by referring to
+their key (petstore_auth or api_key).
+
+[source,java]
+----
+.get("/{id}/{date}").description("Find user by id and date").outType(User.class)
+    .security("api_key")
+
+...
+
+.put().description("Updates or create a user").type(User.class)
+    .security("petstore_auth", "write:pets,read:pets")
+----
+
+Here the get operation is using the Api Key security and the put operation
+is using OAuth security with permitted scopes of read and write pets.
+
+
+
+== ContextIdListing enabled
+
+When contextIdListing is enabled then its detecting all the running
+CamelContexts in the same JVM. These contexts are listed in the root
+path, eg `/api-docs` as a simple list of names in json format. To access
+the OpenApi documentation then the context-path must be appended with
+the Camel context id, such as `api-docs/myCamel`. The
+option apiContextIdPattern can be used to filter the names in this list.
+
+== JSon or Yaml
+
+*Available as of Camel 3.1.0
+
+The camel-openapi-java module supports both JSon and Yaml out of the
+box. You can specify in the request url what you want returned by using
+/openapi.json or /openapi.yaml for either one. If none is specified then
+the HTTP Accept header is used to detect if json or yaml can be
+accepted. If either both is accepted or none was set as accepted then
+json is returned as the default format.
+
+== Examples
+
+In the Apache Camel distribution we ship
+the `camel-example-openapi-cdi` and `camel-example-openapi-java` which
+demonstrates using this OpenApi component.

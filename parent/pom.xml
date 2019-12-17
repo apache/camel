@@ -1871,6 +1871,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-openapi-java</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-openstack</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3741,6 +3746,14 @@
               <artifactId>pulsar-client-admin</artifactId>
               <version>${pulsar-version}</version>
             </dependency>
+            
+            <!-- apicurio -->
+            <dependency>
+                <groupId>io.apicurio</groupId>
+                <artifactId>apicurio-data-models</artifactId>
+                <version>${apicurio-version}</version>
+            </dependency>
+
 
             <!-- Optional grok -->
             <dependency>
