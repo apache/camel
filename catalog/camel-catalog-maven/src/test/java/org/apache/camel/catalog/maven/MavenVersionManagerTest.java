@@ -87,7 +87,7 @@ public class MavenVersionManagerTest extends Assert {
     public void testRuntimeProviderLoadVersion() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog(false);
         catalog.setVersionManager(new MavenVersionManager());
-        catalog.setRuntimeProvider(new DefaultRuntimeProvider                                                                                                       ());
+        catalog.setRuntimeProvider(new DefaultRuntimeProvider());
 
         String version = "2.18.2";
 
