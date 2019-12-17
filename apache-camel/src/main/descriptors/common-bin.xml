@@ -395,17 +395,6 @@
       </includes>
     </dependencySet>
 
-    <dependencySet>
-      <outputDirectory>/lib/spring-boot</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <!-- NOTE: auto-generated list of components when building camel catalog -->
-        <!-- camel starters: START -->
-        <include>org.apache.camel.springboot:camel-jaxp-starter</include>
-        <!-- camel starters: END -->
-      </includes>
-    </dependencySet>
   </dependencySets>
 
 </component>
