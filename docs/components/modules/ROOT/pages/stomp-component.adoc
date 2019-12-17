@@ -86,13 +86,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *brokerURL* (common) | *Required* The URI of the Stomp broker to connect to | tcp://localhost:61613 | String
+| *customHeaders* (common) | To set custom headers |  | Properties
 | *host* (common) | The virtual host name |  | String
 | *version* (common) | The stomp version (1.1, or 1.2) |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
