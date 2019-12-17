@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Properties;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -53,6 +54,30 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointConsumerBuilder brokerURL(String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
+            return this;
+        }
+        /**
+         * To set custom headers.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: common
+         */
+        default StompEndpointConsumerBuilder customHeaders(
+                Properties customHeaders) {
+            doSetProperty("customHeaders", customHeaders);
+            return this;
+        }
+        /**
+         * To set custom headers.
+         * 
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default StompEndpointConsumerBuilder customHeaders(String customHeaders) {
+            doSetProperty("customHeaders", customHeaders);
             return this;
         }
         /**
@@ -333,6 +358,30 @@ public interface StompEndpointBuilderFactory {
             return this;
         }
         /**
+         * To set custom headers.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: common
+         */
+        default StompEndpointProducerBuilder customHeaders(
+                Properties customHeaders) {
+            doSetProperty("customHeaders", customHeaders);
+            return this;
+        }
+        /**
+         * To set custom headers.
+         * 
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default StompEndpointProducerBuilder customHeaders(String customHeaders) {
+            doSetProperty("customHeaders", customHeaders);
+            return this;
+        }
+        /**
          * The virtual host name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -554,6 +603,29 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointBuilder brokerURL(String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
+            return this;
+        }
+        /**
+         * To set custom headers.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: common
+         */
+        default StompEndpointBuilder customHeaders(Properties customHeaders) {
+            doSetProperty("customHeaders", customHeaders);
+            return this;
+        }
+        /**
+         * To set custom headers.
+         * 
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default StompEndpointBuilder customHeaders(String customHeaders) {
+            doSetProperty("customHeaders", customHeaders);
             return this;
         }
         /**
