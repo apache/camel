@@ -104,9 +104,9 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         if (configuration.getVersion() != null && !configuration.getVersion().isEmpty()) {
             stomp.setVersion(configuration.getVersion());
         }
-	if (configuration.getCustomHeaders() != null && !configuration.getCustomHeaders().isEmpty()) {
-	    stomp.setCustomHeaders(configuration.getCustomHeaders());
-	}
+        if (configuration.getCustomHeaders() != null && !configuration.getCustomHeaders().isEmpty()) {
+            stomp.setCustomHeaders(configuration.getCustomHeaders());
+        }
         stomp.connectCallback(promise);
         if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
             stomp.setHost(configuration.getHost());
