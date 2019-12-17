@@ -247,6 +247,7 @@
         <include>org.apache.camel:camel-olingo2-api</include>
         <include>org.apache.camel:camel-olingo4</include>
         <include>org.apache.camel:camel-olingo4-api</include>
+        <include>org.apache.camel:camel-openapi-java</include>
         <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
