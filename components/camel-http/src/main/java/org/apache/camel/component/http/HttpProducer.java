@@ -16,25 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -71,6 +52,27 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import static org.apache.http.HttpHeaders.HOST;
 
 public class HttpProducer extends DefaultProducer {
 
@@ -118,6 +120,10 @@ public class HttpProducer extends DefaultProducer {
         }
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
+        if(getEndpoint().getCustomHostHeader() != null) {
+            httpRequest.setHeader(HOST, getEndpoint().getCustomHostHeader());
+        }
+
         // propagate headers as HTTP headers
         for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
             String key = entry.getKey();
@@ -146,7 +152,7 @@ public class HttpProducer extends DefaultProducer {
                 }
 
                 // add the value(s) as a http request header
-                if (values.size() > 0) {
+                if (!values.isEmpty()) {
                     // use the default toString of a ArrayList to create in the form [xxx, yyy]
                     // if multi valued, for a single value, then just output the value as is
                     String s =  values.size() > 1 ? values.toString() : values.get(0);
@@ -159,7 +165,7 @@ public class HttpProducer extends DefaultProducer {
             Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getURI());
             for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                 String key = entry.getKey();
-                if (entry.getValue().size() > 0) {
+                if (!entry.getValue().isEmpty()) {
                     // join multi-values separated by semi-colon
                     httpRequest.addHeader(key, entry.getValue().stream().collect(Collectors.joining(";")));
                 }
