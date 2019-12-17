@@ -107,7 +107,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (51 parameters):
+=== Query Parameters (52 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -132,6 +132,7 @@ with the following path and query parameters:
 | *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *getWithBody* (producer) | Whether the HTTP GET should include the message body or not. By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
+| *customHostHeader* (producer) | When set will override host header to the value provided. Works only with Java >= 12. In order to use this feature set -Djdk.httpclient.allowRestrictedHeaders=host. |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
 | *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnectionManager

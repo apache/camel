@@ -16,19 +16,12 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,17 +41,15 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/content", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
+                registerHandler("/content",
+                                (request, response, context) -> {
+                                    String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
 
-                        assertEquals(CONTENT_TYPE, contentType);
+                                    assertEquals(CONTENT_TYPE, contentType);
 
-                        response.setEntity(new StringEntity(contentType, "ASCII"));
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
-                }).create();
+                                    response.setEntity(new StringEntity(contentType, "ASCII"));
+                                    response.setStatusCode(HttpStatus.SC_OK);
+                                }).create();
         localServer.start();
 
         super.setUp();
@@ -75,11 +66,11 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
     }
 
     @Test
-    public void testContentTypeWithBoundary() throws Exception {
+    public void testContentTypeWithBoundary() {
         Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
                 exchange.getIn().setBody("This is content");
             }
@@ -93,11 +84,11 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
     }
 
     @Test
-    public void testContentTypeWithBoundaryWithIgnoreResponseBody() throws Exception {
+    public void testContentTypeWithBoundaryWithIgnoreResponseBody() {
         Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content?ignoreResponseBody=true", new Processor() {
 
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
                 exchange.getIn().setBody("This is content");
             }
