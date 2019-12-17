@@ -29,7 +29,7 @@
 
     <artifactId>camel-example-main-xml</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Example :: Main XML</name>
+    <name>Camel :: Example :: Main :: XML</name>
     <description>An example for showing standalone Camel using XML</description>
 
     <properties>

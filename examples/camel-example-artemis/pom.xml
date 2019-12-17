@@ -28,13 +28,13 @@
     </parent>
 
     <artifactId>camel-example-artemis</artifactId>
-    <name>Camel :: Example :: Artemis</name>
-    <description>The widget and gadget example from the EIP book using Apache Artemis</description>
+    <name>Camel :: Example :: ActiveMQ Artemis</name>
+    <description>The widget and gadget example from the EIP book using Apache ActiveMQ Artemis</description>
     <packaging>jar</packaging>
 
     <properties>
         <category>EIP</category>
-        <title>Widget Gadget using Apache Artemis</title>
+        <title>Widget Gadget using Apache ActiveMQ Artemis</title>
     </properties>
 
     <dependencies>

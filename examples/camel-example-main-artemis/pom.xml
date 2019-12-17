@@ -29,8 +29,8 @@
 
     <artifactId>camel-example-main-artemis</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Example :: Main :: Artemis</name>
-    <description>An example for showing standalone Camel with Artemis (autowiring JMS client via classpath scanning)</description>
+    <name>Camel :: Example :: Main :: ActiveMQ Artemis</name>
+    <description>An example for showing standalone Camel with ActiveMQ Artemis</description>
 
     <properties>
         <category>Messaging</category>

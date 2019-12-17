@@ -29,7 +29,7 @@
 
     <artifactId>camel-example-netty-custom-correlation</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Example :: Netty Custom Correlation</name>
+    <name>Camel :: Example :: Netty :: Custom Correlation</name>
     <description>An example for showing Camel Netty with custom codec and correlation id</description>
 
     <properties>

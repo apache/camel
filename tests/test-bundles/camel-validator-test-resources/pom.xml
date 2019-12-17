@@ -29,11 +29,8 @@
     <groupId>org.apache.camel.tests</groupId>
     <artifactId>camel-validator-test-resources</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Integration Tests :: camel validator test resources</name>
-    <description>
-        This bundle is just test source.jar.
-    </description>
-
+    <name>Camel :: Integration Tests :: Camel Validator Test Resources</name>
+    <description>This bundle is just test source.jar.</description>
 
     <profiles>
         <profile>
