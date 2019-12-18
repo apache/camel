@@ -33,49 +33,49 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF\/services\/org\/apache\/camel\/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-configuration-environment-variables-enabled",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-configuration-fail-fast",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-configuration-log-summary",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration should log a summary with the configured properties. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-startup",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.autowire-component-properties",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.autowire-component-properties-allow-private-setter",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether autowiring components allows to use private setter method when setting the value. This may be needed in some rare situations when some configuration classes may configure via constructors over setters. But constructor configuration is more cumbersome to use via .properties files etc.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.autowire-component-properties-deep",
@@ -112,7 +112,7 @@
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Consumer template endpoints cache size.",
-			"defaultValue":"1000"
+			"defaultValue":1000
 		},
 		{
 			"name":"camel.main.duration-hit-exit-code",
@@ -173,7 +173,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether to use graceful hangup when Camel is stopping or when the JVM terminates.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.java-routes-exclude-pattern",
@@ -198,7 +198,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Enable JMX in your Camel application.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.jmx-management-name-pattern",
@@ -219,7 +219,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x. Its recommended to migrate to use fast type converter loading by setting Converter(loader = true) on your custom type converter classes.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.log-debug-max-chars",
@@ -250,7 +250,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether message history is enabled or not. Default is true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.name",
@@ -269,7 +269,7 @@
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Producer template endpoints cache size.",
-			"defaultValue":"1000"
+			"defaultValue":1000
 		},
 		{
 			"name":"camel.main.route-filter-exclude-pattern",
@@ -288,28 +288,28 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Whether the routes collector is enabled or not. When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional XML routes from the file system. The routes collector is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.shutdown-log-inflight-exchanges-on-timeout",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.shutdown-now-on-timeout",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.shutdown-routes-in-reverse-order",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether routes should be shutdown in reverse or the same order as they where started.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.shutdown-suppress-logging-on-timeout",
@@ -322,7 +322,7 @@
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Timeout in seconds to graceful shutdown Camel.",
-			"defaultValue":"300"
+			"defaultValue":300
 		},
 		{
 			"name":"camel.main.stream-caching-any-spool-rules",
@@ -347,7 +347,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Whether to remove stream caching temporary directory when stopping. This option is default true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.stream-caching-spool-cipher",
@@ -892,14 +892,14 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.spi.RestConfiguration",
 			"description":"Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.rest.use-x-forward-headers",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.spi.RestConfiguration",
 			"description":"WWhether to use X-Forward headers to set host etc. for Swagger. This option is default true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.rest.xml-data-format",
