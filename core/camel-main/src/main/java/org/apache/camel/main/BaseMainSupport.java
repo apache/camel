@@ -384,7 +384,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
     }
 
     public void setRoutesBuilders(List<RoutesBuilder> routesBuilders) {
-        this.routeBuilders = routeBuilders;
+        this.routeBuilders = routesBuilders;
     }
 
     public List<Object> getConfigurations() {
