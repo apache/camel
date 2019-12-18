@@ -67,16 +67,11 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:input")
-                        .to("cql://localhost/camel_ks?cql=" + CQL);
-                from("direct:inputNoParameter")
-                        .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL);
-                from("direct:loadBalancingPolicy")
-                        .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL + "&loadBalancingPolicy=RoundRobinPolicy");
-                from("direct:inputNotConsistent")
-                        .to(NOT_CONSISTENT_URI);
-                from("direct:inputNoEndpointCql")
-                        .to("cql://localhost/camel_ks");
+                from("direct:input").to("cql://localhost/camel_ks?cql=" + CQL);
+                from("direct:inputNoParameter").to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL);
+                from("direct:loadBalancingPolicy").to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL + "&loadBalancingPolicy=RoundRobinPolicy");
+                from("direct:inputNotConsistent").to(NOT_CONSISTENT_URI);
+                from("direct:inputNoEndpointCql").to("cql://localhost/camel_ks");
             }
         };
     }
@@ -173,10 +168,7 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
             return;
         }
 
-        Update.Where update = update("camel_user")
-                .with(set("first_name", bindMarker()))
-                .and(set("last_name", bindMarker()))
-                .where(eq("login", bindMarker()));
+        Update.Where update = update("camel_user").with(set("first_name", bindMarker())).and(set("last_name", bindMarker())).where(eq("login", bindMarker()));
         producerTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY, update);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
@@ -191,7 +183,9 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
     }
 
     /**
-     * Simulate different CQL statements in the incoming message containing a header with RegularStatement, justifying the cassandracql endpoint not containing a "cql" Uri parameter
+     * Simulate different CQL statements in the incoming message containing a
+     * header with RegularStatement, justifying the cassandracql endpoint not
+     * containing a "cql" Uri parameter
      */
     @Test
     public void testEndpointNoCqlParameter() throws Exception {
@@ -199,11 +193,8 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
             return;
         }
 
-        Update.Where updateFirstName = update("camel_user")
-                .with(set("first_name", bindMarker()))
-                .where(eq("login", bindMarker()));
-        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[]{"Claus 2", "c_ibsen"},
-                CassandraConstants.CQL_QUERY, updateFirstName);
+        Update.Where updateFirstName = update("camel_user").with(set("first_name", bindMarker())).where(eq("login", bindMarker()));
+        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[] {"Claus 2", "c_ibsen"}, CassandraConstants.CQL_QUERY, updateFirstName);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -213,11 +204,8 @@ public class CassandraComponentProducerTest extends BaseCassandraTest {
         assertEquals("Claus 2", row1.getString("first_name"));
         assertEquals("Ibsen", row1.getString("last_name"));
 
-        Update.Where updateLastName = update("camel_user")
-                .with(set("last_name", bindMarker()))
-                .where(eq("login", bindMarker()));
-        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[]{"Ibsen 2", "c_ibsen"},
-                CassandraConstants.CQL_QUERY, updateLastName);
+        Update.Where updateLastName = update("camel_user").with(set("last_name", bindMarker())).where(eq("login", bindMarker()));
+        producerTemplateNoEndpointCql.sendBodyAndHeader(new Object[] {"Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY, updateLastName);
 
         ResultSet resultSet2 = session.execute("select login, first_name, last_name from camel_user where login = ?", "c_ibsen");
         Row row2 = resultSet2.one();

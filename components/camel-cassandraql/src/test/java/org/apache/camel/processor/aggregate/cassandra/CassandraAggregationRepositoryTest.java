@@ -69,9 +69,7 @@ public class CassandraAggregationRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return session.execute(
-                "select KEY from CAMEL_AGGREGATION where KEY=?", key)
-                .one() != null;
+        return session.execute("select KEY from CAMEL_AGGREGATION where KEY=?", key).one() != null;
     }
 
     @Test

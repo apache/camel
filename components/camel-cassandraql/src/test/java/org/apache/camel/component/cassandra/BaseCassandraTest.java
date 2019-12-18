@@ -45,5 +45,4 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
         }
     }
 
-
 }

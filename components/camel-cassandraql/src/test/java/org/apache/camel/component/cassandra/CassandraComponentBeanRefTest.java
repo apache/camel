@@ -41,9 +41,7 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         if (canTest()) {
-            Cluster cluster = Cluster.builder()
-                    .addContactPoint("localhost")
-                    .build();
+            Cluster cluster = Cluster.builder().addContactPoint("localhost").build();
             registry.bind("cassandraCluster", cluster);
             registry.bind("cassandraSession", cluster.connect("camel_ks"));
             registry.bind("insertCql", CQL);
@@ -55,10 +53,8 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:inputSession")
-                        .to(SESSION_URI);
-                from("direct:inputCluster")
-                        .to(CLUSTER_URI);
+                from("direct:inputSession").to(SESSION_URI);
+                from("direct:inputCluster").to(CLUSTER_URI);
             }
         };
     }

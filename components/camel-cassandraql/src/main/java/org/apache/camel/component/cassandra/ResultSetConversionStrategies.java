@@ -50,16 +50,14 @@ public final class ResultSetConversionStrategies {
     }
 
     /**
-     * Retrieve all rows.
-     * Message body contains a big list of {@link Row}s
+     * Retrieve all rows. Message body contains a big list of {@link Row}s
      */
     public static ResultSetConversionStrategy all() {
         return ALL;
     }
 
     /**
-     * Retrieve a single row.
-     * Message body contains a single {@link Row}
+     * Retrieve a single row. Message body contains a single {@link Row}
      */
     public static ResultSetConversionStrategy one() {
         return ONE;
@@ -86,8 +84,8 @@ public final class ResultSetConversionStrategies {
     }
 
     /**
-     * Retrieve a limited list of rows.
-     * Message body contains a list of {@link Row} containing at most rowMax rows.
+     * Retrieve a limited list of rows. Message body contains a list of
+     * {@link Row} containing at most rowMax rows.
      */
     public static ResultSetConversionStrategy limit(int rowMax) {
         return new LimitResultSetConversionStrategy(rowMax);

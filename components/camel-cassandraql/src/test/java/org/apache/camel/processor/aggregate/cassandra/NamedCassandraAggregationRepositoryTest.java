@@ -69,9 +69,7 @@ public class NamedCassandraAggregationRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return session.execute(
-                "select KEY from NAMED_CAMEL_AGGREGATION where NAME=? and KEY=?", "ID", key)
-                .one() != null;
+        return session.execute("select KEY from NAMED_CAMEL_AGGREGATION where NAME=? and KEY=?", "ID", key).one() != null;
     }
 
     @Test

@@ -40,7 +40,7 @@ public class CassandraConsumer extends ScheduledPollConsumer {
 
     @Override
     public CassandraEndpoint getEndpoint() {
-        return (CassandraEndpoint) super.getEndpoint();
+        return (CassandraEndpoint)super.getEndpoint();
     }
 
     @Override

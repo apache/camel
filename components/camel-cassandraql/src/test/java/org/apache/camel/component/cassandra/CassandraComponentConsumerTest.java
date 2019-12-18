@@ -97,12 +97,9 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cql://localhost/camel_ks?cql=" + CQL)
-                        .to("mock:resultAll");
-                from("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false")
-                        .to("mock:resultUnprepared");
-                from("cql://localhost/camel_ks?cql=" + CQL + "&resultSetConversionStrategy=ONE")
-                        .to("mock:resultOne");
+                from("cql://localhost/camel_ks?cql=" + CQL).to("mock:resultAll");
+                from("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false").to("mock:resultUnprepared");
+                from("cql://localhost/camel_ks?cql=" + CQL + "&resultSetConversionStrategy=ONE").to("mock:resultOne");
             }
         };
     }

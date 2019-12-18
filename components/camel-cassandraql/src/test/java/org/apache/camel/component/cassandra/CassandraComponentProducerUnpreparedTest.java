@@ -54,10 +54,8 @@ public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest 
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:input")
-                        .to("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false");
-                from("direct:inputNoParameter")
-                        .to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL + "&prepareStatements=false");
+                from("direct:input").to("cql://localhost/camel_ks?cql=" + CQL + "&prepareStatements=false");
+                from("direct:inputNoParameter").to("cql://localhost/camel_ks?cql=" + NO_PARAMETER_CQL + "&prepareStatements=false");
             }
         };
     }
@@ -114,10 +112,7 @@ public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest 
      */
     @Test
     public void testRequestMessageStatement() throws Exception {
-        Update.Where update = update("camel_user")
-                .with(set("first_name", "Claus 2"))
-                .and(set("last_name", "Ibsen 2"))
-                .where(eq("login", "c_ibsen"));
+        Update.Where update = update("camel_user").with(set("first_name", "Claus 2")).and(set("last_name", "Ibsen 2")).where(eq("login", "c_ibsen"));
         producerTemplate.requestBodyAndHeader(null, CassandraConstants.CQL_QUERY, update);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();

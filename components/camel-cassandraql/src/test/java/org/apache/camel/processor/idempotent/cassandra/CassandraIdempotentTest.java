@@ -61,9 +61,7 @@ public class CassandraIdempotentTest extends BaseCassandraTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:input")
-                        .idempotentConsumer(header("idempotentId"), idempotentRepository)
-                        .to("mock:output");
+                from("direct:input").idempotentConsumer(header("idempotentId"), idempotentRepository).to("mock:output");
             }
         };
     }

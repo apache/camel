@@ -20,7 +20,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 /**
- * Concrete implementation of {@link  CassandraAggregationRepository} using 2
+ * Concrete implementation of {@link CassandraAggregationRepository} using 2
  * columns as primary key: name (partition key) and key (clustering key).
  */
 public class NamedCassandraAggregationRepository extends CassandraAggregationRepository {
@@ -42,7 +42,7 @@ public class NamedCassandraAggregationRepository extends CassandraAggregationRep
     }
 
     public String getName() {
-        return (String) getPrefixPKValues()[0];
+        return (String)getPrefixPKValues()[0];
     }
 
     public final void setName(String name) {

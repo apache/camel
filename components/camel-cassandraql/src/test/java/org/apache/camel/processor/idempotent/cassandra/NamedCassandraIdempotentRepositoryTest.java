@@ -61,9 +61,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return session.execute(
-                "select KEY from NAMED_CAMEL_IDEMPOTENT where NAME=? and KEY=?", "ID", key)
-                .one() != null;
+        return session.execute("select KEY from NAMED_CAMEL_IDEMPOTENT where NAME=? and KEY=?", "ID", key).one() != null;
     }
 
     @Test
@@ -157,7 +155,7 @@ public class NamedCassandraIdempotentRepositoryTest extends BaseCassandraTest {
         // Then
         assertTrue(result);
     }
-    
+
     @Test
     public void testClear() {
         if (!canTest()) {
