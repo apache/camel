@@ -24,7 +24,9 @@ import org.apache.camel.Exchange;
  */
 public class CassandraAggregationException extends CamelExecutionException {
 
-    public CassandraAggregationException(String message, Exchange exchange, Throwable cause) {
+    private static final long serialVersionUID = 3847101273513627461L;
+
+	public CassandraAggregationException(String message, Exchange exchange, Throwable cause) {
         super(message, exchange, cause);
     }
 

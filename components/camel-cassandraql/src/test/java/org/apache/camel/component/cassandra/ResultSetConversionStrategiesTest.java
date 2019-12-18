@@ -70,6 +70,6 @@ public class ResultSetConversionStrategiesTest {
 
         Object body = strategy.getBody(resultSet);
         assertTrue(body instanceof List);
-        assertEquals(10, ((List) body).size());
+        assertEquals(10, ((List<?>) body).size());
     }
 }
