@@ -82,7 +82,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             return Collections.emptyList();
         }
 
-        return sessionClient.listSessions().stream().filter(i -> i.getName().equals(getNamespace())).map(ConsulClusterMember::new).collect(Collectors.toList());
+        return sessionClient.listSessions().stream().filter(i -> i.getName().orElse("").equals(getNamespace())).map(ConsulClusterMember::new).collect(Collectors.toList());
     }
 
     @Override
@@ -196,7 +196,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                 return false;
             }
 
-            return id.equals(keyValueClient.getSession(path));
+            return id.equals(keyValueClient.getSession(path).orElse(""));
         }
 
         @Override

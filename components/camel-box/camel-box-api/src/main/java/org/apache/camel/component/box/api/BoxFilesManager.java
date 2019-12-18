@@ -188,13 +188,15 @@ public class BoxFilesManager {
                         boolean exists = false;
 
                         BoxItem.Info existingFile = null;
-                        // returns only the name and type fields of each folder item
-                        for (BoxItem.Info itemInfo : folder.getChildren("name", BoxFolder.SortDirection.ASC, "name", "type")) {
-                            // check if the filename exists
-                            exists = "file".equals(itemInfo.getType()) && fileName.equals(itemInfo.getName());
-                            if (exists) {
-                                existingFile = itemInfo;
-                                break;
+                        if (folder != null) {
+                            // returns only the name and type fields of each folder item
+                            for (BoxItem.Info itemInfo : folder.getChildren("name", BoxFolder.SortDirection.ASC, "name", "type")) {
+                                // check if the filename exists
+                                exists = "file".equals(itemInfo.getType()) && fileName.equals(itemInfo.getName());
+                                if (exists) {
+                                    existingFile = itemInfo;
+                                    break;
+                                }
                             }
                         }
                         long end = System.currentTimeMillis();

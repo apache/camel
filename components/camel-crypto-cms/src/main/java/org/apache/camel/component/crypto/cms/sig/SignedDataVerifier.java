@@ -272,7 +272,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
         for (Attribute attr : attributes.values()) {
             sb.append(attr.getAttrType());
             if (CMSAttributes.signingTime.equals(attr.getAttrType()) || CMSAttributes.messageDigest.equals(attr.getAttrType())
-                || CMSAttributes.cmsAlgorithmProtect.equals(attr.getAttrType()) || CMSAttributeTableGenerator.CONTENT_TYPE.equals(attr.getAttrType())) {
+                || CMSAttributes.cmsAlgorithmProtect.equals(attr.getAttrType())) {
                 // for these attributes we can print the value because we know
                 // they do not contain confidential or personal data
                 sb.append("=");

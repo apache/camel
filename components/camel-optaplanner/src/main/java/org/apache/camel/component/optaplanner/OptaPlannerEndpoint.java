@@ -50,7 +50,7 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
-    protected Solver<Object> getOrCreateSolver(String solverId) throws Exception {
+    protected Solver<Object> getOrCreateSolver(String solverId) {
         synchronized (SOLVERS) {
             Solver<Object> solver = SOLVERS.get(solverId);
             if (solver == null) {
@@ -72,7 +72,7 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new OptaPlannerProducer(this, configuration);
     }
 
@@ -94,9 +94,9 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         synchronized (SOLVERS) {
-            for (Solver<Object> solver : SOLVERS.values()) {
-                solver.terminateEarly();
-                SOLVERS.remove(solver);
+            for (Map.Entry<String, Solver<Object>> solver: SOLVERS.entrySet()) {
+                solver.getValue().terminateEarly();
+                SOLVERS.remove(solver.getKey());
             }
         }
         super.doStop();

@@ -63,7 +63,7 @@ public class CamelServerItem {
         this.item = new UaVariableNode(nodeManager, nodeId, qname, displayName) {
 
             @Override
-            public DataValue getValue() {
+            public synchronized DataValue getValue() {
                 return getDataValue();
             }
 

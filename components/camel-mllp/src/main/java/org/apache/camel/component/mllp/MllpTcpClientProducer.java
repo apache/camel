@@ -218,7 +218,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         }
 
                         if (exchange.getException() == null) {
-                            log.trace("process({}) [{}] - resend succeeded - reading acknowledgement from {}", exchange.getExchangeId(), socket);
+                            log.trace("process({}) [{}] - resend succeeded - reading acknowledgement from external system", exchange.getExchangeId(), socket);
                             try {
                                 mllpBuffer.reset();
                                 mllpBuffer.readFrom(socket);

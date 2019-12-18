@@ -64,7 +64,7 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
         });
 
         // remove me from the route so I am not invoked in a regular route path
-        ((RouteDefinition)routeContext.getRoute()).getOutputs().remove(this);
+        ((RouteDefinition)routeContext.getRoute()).getOutputs().remove(definition);
         // and return no processor to invoke next from me
         return null;
     }
