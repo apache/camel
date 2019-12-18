@@ -232,24 +232,28 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
                     log.trace("Loading from directory using file: {}", file);
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
-                    InputStream stream;
-                    if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
-                            || urlPath.startsWith("sonicfs:")
-                            || isAcceptableScheme(urlPath)) {                        
-                        // load resources using http/https, sonicfs and other acceptable scheme
-                        // sonic ESB requires to be loaded using a regular URLConnection
-                        log.trace("Loading from jar using url: {}", urlPath);
-                        URL urlStream = new URL(urlPath);
-                        URLConnection con = urlStream.openConnection();
-                        // disable cache mainly to avoid jar file locking on Windows
-                        con.setUseCaches(false);
-                        stream = con.getInputStream();
-                    } else {
-                        log.trace("Loading from jar using file: {}", file);
-                        stream = new FileInputStream(file);
-                    }
+                    InputStream stream = null;
+                    try {
+                        if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
+                                || urlPath.startsWith("sonicfs:")
+                                || isAcceptableScheme(urlPath)) {
+                            // load resources using http/https, sonicfs and other acceptable scheme
+                            // sonic ESB requires to be loaded using a regular URLConnection
+                            log.trace("Loading from jar using url: {}", urlPath);
+                            URL urlStream = new URL(urlPath);
+                            URLConnection con = urlStream.openConnection();
+                            // disable cache mainly to avoid jar file locking on Windows
+                            con.setUseCaches(false);
+                            stream = con.getInputStream();
+                        } else {
+                            log.trace("Loading from jar using file: {}", file);
+                            stream = new FileInputStream(file);
+                        }
 
-                    loadImplementationsInJar(test, packageName, stream, urlPath, classes, jarCache);
+                        loadImplementationsInJar(test, packageName, stream, urlPath, classes, jarCache);
+                    } finally {
+                        IOHelper.close(stream);
+                    }
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs

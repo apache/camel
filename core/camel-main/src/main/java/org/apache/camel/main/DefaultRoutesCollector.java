@@ -32,6 +32,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.util.AntPathMatcher;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +109,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
                     log.debug("Found XML route: {}", is);
                     RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, is);
                     answer.add(routes);
+                    IOHelper.close(is);
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML routes found in {}. Skipping XML routes detection.", part);
@@ -134,6 +136,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
                     log.debug("Found XML rest: {}", is);
                     RestsDefinition rests = ModelHelper.loadRestsDefinition(camelContext, is);
                     answer.add(rests);
+                    IOHelper.close(is);
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML rests found in {}. Skipping XML rests detection.", part);
