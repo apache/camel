@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.camel.main.parser.ConfigurationModel;
 import org.apache.camel.main.parser.MainConfigurationParser;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -126,7 +127,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 p.put("sourceType", sourceType);
                 p.put("description", desc);
                 if (defaultValue != null) {
-                    p.put("defaultValue", defaultValue);
+                    p.put("defaultValue", asDefaultValue(javaType, defaultValue));
                 }
                 if (row.isDeprecated()) {
                     p.put("deprecated", true);
@@ -175,6 +176,17 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 throw new MojoFailureException("Cannot write to file " + file + " due " + e.getMessage(), e);
             }
         }
+    }
+
+    private static Object asDefaultValue(String javaType, String defaultValue) {
+        if ("java.lang.Boolean".equals(javaType) || "boolean".equals(javaType)) {
+            return Boolean.valueOf(defaultValue);
+        } else if ("java.lang.Integer".equals(javaType) || "int".equals(javaType)) {
+            return Integer.valueOf(defaultValue);
+        } else if ("java.lang.Long".equals(javaType) || "long".equals(javaType)) {
+            return Long.valueOf(defaultValue);
+        }
+        return defaultValue;
     }
 
 }
