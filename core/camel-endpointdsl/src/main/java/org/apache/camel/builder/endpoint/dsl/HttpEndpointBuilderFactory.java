@@ -253,6 +253,19 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Defines a custom host header which will be sent when producing http
+         * request. When not set in query will be ignored. When set will
+         * override host header derived from url. Default: null.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder customHostHeader(String customHostHeader) {
+            doSetProperty("customHostHeader", customHostHeader);
+            return this;
+        }
+        /**
          * Configure the HTTP method to use. The HttpMethod header cannot
          * override this option if set.
          * 
