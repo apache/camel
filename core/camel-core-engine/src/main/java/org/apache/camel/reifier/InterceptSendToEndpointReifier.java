@@ -89,7 +89,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         // an exchange to the endpoint, see InterceptSendToEndpoint for details.
         RouteDefinition route = (RouteDefinition)routeContext.getRoute();
         List<ProcessorDefinition<?>> outputs = route.getOutputs();
-        outputs.remove(this);
+        outputs.remove(definition);
 
         return new InterceptEndpointProcessor(matchURI, before);
     }

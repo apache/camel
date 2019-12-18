@@ -492,7 +492,7 @@ public class DefaultHttpBinding implements HttpBinding {
     protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         // if content type is serialized Java object, then serialize and write it to the response
         String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
-        if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+        if (HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
             if (allowJavaSerializedObject || isTransferException()) {
                 try {
                     Object object = message.getMandatoryBody(Serializable.class);
@@ -530,7 +530,7 @@ public class DefaultHttpBinding implements HttpBinding {
                     OutputStream current = stream.getCurrentStream();
                     if (current instanceof ByteArrayOutputStream) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Streaming (direct) response in non-chunked mode with content-length {}");
+                            LOG.debug("Streaming (direct) response in non-chunked mode with content-length {}", len);
                         }
                         ByteArrayOutputStream bos = (ByteArrayOutputStream) current;
                         bos.writeTo(os);

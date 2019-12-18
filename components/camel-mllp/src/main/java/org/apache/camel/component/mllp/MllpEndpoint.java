@@ -408,7 +408,7 @@ public class MllpEndpoint extends DefaultEndpoint {
                     final boolean on = true;
                     final int linger = 0;
                     if (log != null) {
-                        log.trace("Setting SO_LINGER to {} on Socket: localAddress={} remoteAddress={}", localSocketAddress, remoteSocketAddress);
+                        log.trace("Setting SO_LINGER to {} on Socket: localAddress={} remoteAddress={}", linger, localSocketAddress, remoteSocketAddress);
                     }
                     try {
                         socket.setSoLinger(on, linger);
