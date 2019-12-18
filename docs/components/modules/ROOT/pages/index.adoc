@@ -108,7 +108,7 @@ Number of Components: 306 in 244 JAR artifacts (1 deprecated)
 
 | xref:caffeine-loadcache-component.adoc[Caffeine LoadCache] (camel-caffeine) | 2.20 | The caffeine-loadcache component is used for integration with Caffeine Load Cache.
 
-| xref:cql-component.adoc[Cassandra CQL] (camel-cassandraql) | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
+| xref:cql-component.adoc[Cassandra CQL] (camel-cassandraql) | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API). It's based on Cassandra Java Driver provided by DataStax.
 
 | xref:chatscript-component.adoc[ChatScript] (camel-chatscript) | 3.0 | Represents a ChatScript endpoint.
 
