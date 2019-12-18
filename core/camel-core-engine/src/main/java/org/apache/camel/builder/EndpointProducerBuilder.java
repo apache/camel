@@ -55,4 +55,10 @@ public interface EndpointProducerBuilder {
      */
     Expression expr();
 
+    /**
+     * Builds a dynamic expression of this endpoint url. This API is only intended for
+     * Camel internally.
+     */
+    Expression expr(CamelContext camelContext);
+
 }
