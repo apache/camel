@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EditMessageLiveLocationMessage extends OutgoingMessage {
 
     @JsonProperty("latitude")
@@ -34,6 +36,9 @@ public class EditMessageLiveLocationMessage extends OutgoingMessage {
 
     @JsonProperty("reply_markup")
     private ReplyKeyboardMarkup replyKeyboardMarkup;
+
+    public EditMessageLiveLocationMessage() {
+    }
 
     public EditMessageLiveLocationMessage(double latitude, double longitude) {
         this.setLatitude(latitude);

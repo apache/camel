@@ -48,11 +48,11 @@ public class TelegramConsumer extends ScheduledPollConsumer {
 
         TelegramConfiguration config = endpoint.getConfiguration();
 
-        TelegramService service = TelegramServiceProvider.get().getService();
+        TelegramService service = endpoint.getTelegramService();
 
         log.debug("Polling Telegram service to get updates");
 
-        UpdateResult updateResult = service.getUpdates(config.getAuthorizationToken(), offset, config.getLimit(), config.getTimeout());
+        UpdateResult updateResult = service.getUpdates(offset, config.getLimit(), config.getTimeout());
         if (updateResult.getUpdates() == null) {
             // to simplify processing
             updateResult.setUpdates(Collections.emptyList());

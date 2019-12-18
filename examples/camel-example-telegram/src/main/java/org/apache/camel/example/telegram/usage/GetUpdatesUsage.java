@@ -17,17 +17,16 @@
 package org.apache.camel.example.telegram.usage;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.telegram.TelegramService;
-import org.apache.camel.component.telegram.TelegramServiceProvider;
-import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.example.telegram.Application;
 
 public class GetUpdatesUsage implements TelegramMethodUsage {
 
     @Override
     public void run(CamelContext context) {
-        TelegramService service = TelegramServiceProvider.get().getService();
-        UpdateResult message = service.getUpdates(Application.AUTHORIZATION_TOKEN, (long) 10, 10, 10);
+        ConsumerTemplate template = context.createConsumerTemplate();
+        Update message = template.receiveBodyNoWait(String.format("telegram:bots/?authorizationToken=%s&chatId=%s", Application.AUTHORIZATION_TOKEN, Application.CHAT_ID), Update.class);
         System.out.println(message);
     }
 }

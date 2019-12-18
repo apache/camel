@@ -16,19 +16,26 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.telegram.model.WebhookInfo;
+import org.apache.camel.component.telegram.model.WebhookResult;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
+import org.apache.camel.component.telegram.util.TelegramTestUtil;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.asynchttpclient.Dsl;
+import org.asynchttpclient.Response;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.waitAtMost;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Tests a producer that sends media information.
@@ -37,39 +44,103 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
 
     @Test
     public void testAutomaticRegistration() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("webhook:telegram:bots?authorizationToken=mock-token").to("mock:endpoint");
+        final MockProcessor<WebhookInfo> mockProcessor = getMockRoutes().getMock("setWebhook");
+        mockProcessor.clearRecordedMessages();
+        try (final DefaultCamelContext mockContext = new DefaultCamelContext()) {
+            mockContext.addRoutes(getMockRoutes());
+            mockContext.start();
+
+            /* Make sure the Telegram mock API is up and running */
+            Awaitility.await()
+                    .atMost(5, TimeUnit.SECONDS)
+                    .until(() -> {
+                        final Response testResponse = Dsl.asyncHttpClient()
+                                .prepareGet("http://localhost:" + port + "/botmock-token/getTest")
+                                .execute().get();
+                        return testResponse.getStatusCode() == 200;
+                    });
+
+            context().addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token");
+                    from("webhook:telegram:bots?authorizationToken=mock-token").to("mock:endpoint");
+                }
+            });
+            context().start();
+            {
+                final List<WebhookInfo> recordedMessages = mockProcessor.awaitRecordedMessages(1, 5000);
+                assertEquals(1, recordedMessages.size());
+                assertNotEquals("", recordedMessages.get(0).getUrl());
             }
-        });
-        context().start();
-        verify(this.currentMockService()).setWebhook(eq("mock-token"), anyString());
-        context().stop();
-        waitAtMost(5, TimeUnit.SECONDS).until(() -> context().getStatus() == ServiceStatus.Stopped);
-        verify(this.currentMockService()).removeWebhook("mock-token");
+
+            mockProcessor.clearRecordedMessages();
+            context().stop();
+            {
+                final List<WebhookInfo> recordedMessages = mockProcessor.awaitRecordedMessages(1, 5000);
+                assertEquals(1, recordedMessages.size());
+                assertEquals("", recordedMessages.get(0).getUrl());
+            }
+        }
     }
 
     @Test
     public void testNoRegistration() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false").to("mock:endpoint");
-            }
-        });
-        context().start();
-        verify(this.currentMockService(), never()).setWebhook(eq("mock-token"), anyString());
-        context().stop();
-        waitAtMost(5, TimeUnit.SECONDS).until(() -> context().getStatus() == ServiceStatus.Stopped);
-        verify(this.currentMockService(),  never()).removeWebhook("mock-token");
+        final MockProcessor<WebhookInfo> mockProcessor = getMockRoutes().getMock("setWebhook");
+        mockProcessor.clearRecordedMessages();
+        try (final DefaultCamelContext mockContext = new DefaultCamelContext()) {
+            mockContext.addRoutes(getMockRoutes());
+            mockContext.start();
+
+            /* Make sure the Telegram mock API is up and running */
+            Awaitility.await()
+                    .atMost(5, TimeUnit.SECONDS)
+                    .until(() -> {
+                        final Response testResponse = Dsl.asyncHttpClient()
+                                .prepareGet("http://localhost:" + port + "/botmock-token/getTest")
+                                .execute().get();
+                        return testResponse.getStatusCode() == 200;
+                    });
+
+            context().addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false").to("mock:endpoint");
+                }
+            });
+            context().start();
+
+            Awaitility.await()
+                    .pollDelay(500, TimeUnit.MILLISECONDS)
+                    .until(() -> mockProcessor.getRecordedMessages().size() == 0);
+
+            context().stop();
+
+            waitAtMost(5, TimeUnit.SECONDS).until(() -> context().getStatus() == ServiceStatus.Stopped);
+
+            Awaitility.await()
+                    .pollDelay(500, TimeUnit.MILLISECONDS)
+                    .until(() -> mockProcessor.getRecordedMessages().size() == 0);
+
+        }
     }
 
     @Override
-    protected void doPreSetup() throws Exception {
-        TelegramService api = mockTelegramService();
-        when(api.setWebhook(anyString(), anyString())).thenReturn(true);
-        when(api.removeWebhook(anyString())).thenReturn(true);
+    protected TelegramMockRoutes createMockRoutes() {
+        final WebhookResult result = new WebhookResult();
+        result.setOk(true);
+        result.setResult(true);
+        return new TelegramMockRoutes(port)
+                .addEndpoint(
+                        "getTest",
+                        "GET",
+                        String.class,
+                        "running")
+                .addEndpoint(
+                        "setWebhook",
+                        "POST",
+                        WebhookInfo.class,
+                        TelegramTestUtil.serialize(result));
     }
 
     @Override

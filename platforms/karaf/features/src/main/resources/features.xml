@@ -2493,13 +2493,26 @@
   <feature name='camel-telegram' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-webhook</feature>
-    <feature version='${cxf-version-range}'>cxf-core</feature>
-    <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client/${ahc-version}$Export-Package=org.asynchttpclient.*;version=${ahc-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client-netty-utils/${ahc-version}$Export-Package=org.asynchttpclient.netty.util.*;version=${ahc-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-dns/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-socks/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler-proxy/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-kqueue/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.typesafe.netty/netty-reactive-streams/${netty-reactive-streams-version}</bundle>
+    <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-telegram/${project.version}</bundle>
   </feature>
   <feature name='camel-test' version='${project.version}' start-level='50'>

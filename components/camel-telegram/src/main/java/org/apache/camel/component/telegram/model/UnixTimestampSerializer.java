@@ -14,24 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.telegram;
+package org.apache.camel.component.telegram.model;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.component.telegram.model.OutgoingMessage;
-import org.apache.camel.component.telegram.model.UpdateResult;
+import java.io.IOException;
+import java.time.Instant;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * Allows interacting with the Telegram server to exchange messages.
+ * A serializer for {@link Instant} compatible with {@link UnixTimestampDeserializer}.
  */
-public interface TelegramService {
+public class UnixTimestampSerializer extends JsonSerializer<Instant> {
 
-    UpdateResult getUpdates(Long offset, Integer limit, Integer timeoutSeconds);
-
-    void sendMessage(Exchange exchange, AsyncCallback callback, OutgoingMessage message);
-
-    boolean setWebhook(String url);
-
-    boolean removeWebhook();
+    @Override
+    public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        gen.writeNumber(value.getEpochSecond());
+    }
 
 }

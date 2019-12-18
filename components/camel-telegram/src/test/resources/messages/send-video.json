@@ -1,0 +1,33 @@
+{
+    "ok": true,
+    "result": {
+        "message_id": 933,
+        "from": {
+            "id": 770882310,
+            "is_bot": true,
+            "first_name": "camelDemoBot",
+            "username": "camelDemoBot"
+        },
+        "chat": {
+            "id": 434822960,
+            "first_name": "Peter",
+            "last_name": "Palaga",
+            "type": "private"
+        },
+        "date": 1576249600,
+        "video": {
+            "duration": 4,
+            "width": 108,
+            "height": 10,
+            "mime_type": "video/mp4",
+            "thumb": {
+                "file_id": "AAQEAAPmBQACZxqhU8LAVawXPI5dMWO3GwAEAQAHbQADcxQAAhYE",
+                "file_size": 991,
+                "width": 108,
+                "height": 10
+            },
+            "file_id": "BAADBAAD5gUAAmcaoVPCwFWsFzyOXRYE",
+            "file_size": 27845
+        }
+    }
+}
