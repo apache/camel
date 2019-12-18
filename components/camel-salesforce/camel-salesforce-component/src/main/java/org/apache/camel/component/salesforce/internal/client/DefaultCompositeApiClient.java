@@ -67,10 +67,6 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     private ObjectMapper mapper;
 
-    private final Map<Class<?>, ObjectReader> readers = new HashMap<>();
-
-    private final Map<Class<?>, ObjectWriter> writers = new HashMap<>();
-
     private final XStream xStreamCompositeBatch;
 
     private final XStream xStreamCompositeTree;
@@ -168,13 +164,13 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     }
 
     ObjectReader jsonReaderFor(final Class<?> type) {
-        return Optional.ofNullable(readers.get(type)).orElseGet(() -> mapper.readerFor(type));
+        return mapper.readerFor(type);
     }
 
     ObjectWriter jsonWriterFor(final Object obj) {
         final Class<?> type = obj.getClass();
 
-        return Optional.ofNullable(writers.get(type)).orElseGet(() -> mapper.writerFor(type));
+        return mapper.writerFor(type);
     }
 
     ContentProvider serialize(final XStream xstream, final Object body, final Class<?>... additionalTypes) throws SalesforceException {

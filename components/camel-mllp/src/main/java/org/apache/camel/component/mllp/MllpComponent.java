@@ -93,7 +93,7 @@ public class MllpComponent extends DefaultComponent {
         String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY);
 
         if (logPhiProperty != null) {
-            answer = Boolean.valueOf(logPhiProperty);
+            answer = Boolean.parseBoolean(logPhiProperty);
         }
 
         return answer;
@@ -122,9 +122,9 @@ public class MllpComponent extends DefaultComponent {
 
         if (logPhiProperty != null && !logPhiProperty.isEmpty()) {
             try {
-                answer = Integer.valueOf(logPhiProperty);
+                answer = Integer.parseInt(logPhiProperty);
             } catch (NumberFormatException numberFormatException) {
-                log.warn("Invalid Interger value '{}' for system property {} - using default value of {}", logPhiProperty, MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY, answer);
+                log.warn("Invalid Integer value '{}' for system property {} - using default value of {}", logPhiProperty, MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY, answer);
                 // use DEFAULT_LOG_PHI_MAX_BYTES for a invalid entry
             }
         }
@@ -186,7 +186,7 @@ public class MllpComponent extends DefaultComponent {
                     MllpComponent.defaultCharset = Charset.forName(defaultCharacterSetName);
                 } else {
                     log.warn("Unsupported character set name '{}' in system property {} - continuing to use character set {} as default",
-                        defaultCharacterSetName, defaultCharset);
+                        defaultCharacterSetName, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
                 }
             } catch (Exception charsetEx) {
                 MllpComponent.defaultCharset = StandardCharsets.ISO_8859_1;
