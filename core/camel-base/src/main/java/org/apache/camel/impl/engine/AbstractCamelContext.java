@@ -168,7 +168,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         Eager, Default, Lazy
     }
 
-    private String version;
     private final AtomicBoolean vetoStarted = new AtomicBoolean();
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -213,12 +212,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
-    private PropertiesComponent propertiesComponent;
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private final Map<String, BaseRouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, BaseRouteService> suspendedRouteServices = new LinkedHashMap<>();
 
     private final Object lock = new Object();
+    private volatile String version;
+    private volatile PropertiesComponent propertiesComponent;
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ReactiveExecutor reactiveExecutor;
     private volatile ManagementNameStrategy managementNameStrategy;
@@ -258,6 +258,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile RouteController routeController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private volatile BeanIntrospection beanIntrospection;
+    private volatile Tracer tracer;
     private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
     private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory = new DefaultAnnotationBasedProcessorFactory();
 
@@ -272,7 +273,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
-    private Tracer tracer;
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 

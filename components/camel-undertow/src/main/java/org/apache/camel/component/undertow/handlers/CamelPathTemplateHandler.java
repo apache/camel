@@ -64,7 +64,7 @@ public class CamelPathTemplateHandler implements HttpHandler {
         return handlers.isEmpty();
     }
 
-    public CamelMethodHandler getDefault() {
+    public synchronized CamelMethodHandler getDefault() {
         return this.defaultHandlerWrapper.get();
     }
 

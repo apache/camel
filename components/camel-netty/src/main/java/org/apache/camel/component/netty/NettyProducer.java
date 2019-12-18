@@ -469,7 +469,7 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             if (log.isDebugEnabled()) {
                 log.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
-                       new Object[]{configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap});
+                        configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap);
             }
             return answer;
         }
@@ -597,15 +597,15 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         @Override
-        public void activateObject(ChannelFuture channelFuture) throws Exception {
+        public void activateObject(ChannelFuture channelFuture) {
             // noop
-            log.trace("activateObject channel request: {} -> {}", channelFuture);
+            log.trace("activateObject channel request: {}", channelFuture);
         }
 
         @Override
-        public void passivateObject(ChannelFuture channelFuture) throws Exception {
+        public void passivateObject(ChannelFuture channelFuture) {
             // noop
-            log.trace("passivateObject channel request: {} -> {}", channelFuture);
+            log.trace("passivateObject channel request: {}", channelFuture);
         }
     }
 

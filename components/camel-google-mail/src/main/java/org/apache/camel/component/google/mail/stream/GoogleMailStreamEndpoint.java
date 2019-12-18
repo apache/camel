@@ -66,7 +66,7 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         String unreadLabelId = null;
-        List labelsIds = new ArrayList<>();
+        List<String> labelsIds = new ArrayList<>();
         ListLabelsResponse listResponse = getClient().users().labels().list("me").execute();
         for (Label label : listResponse.getLabels()) {
             Label countLabel = getClient().users().labels().get("me", label.getId()).execute();

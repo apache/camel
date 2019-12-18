@@ -74,7 +74,7 @@ public class XsltBuilder implements Processor {
     private ErrorListener errorListener;
     private EntityResolver entityResolver;
 
-    private volatile Object sourceHandlerFactoryLock = new Object();
+    private final Object sourceHandlerFactoryLock = new Object();
 
     public XsltBuilder() {
     }

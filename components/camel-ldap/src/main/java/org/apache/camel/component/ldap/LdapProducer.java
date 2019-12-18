@@ -107,7 +107,7 @@ public class LdapProducer extends DefaultProducer {
         } else if (context instanceof DirContext) {
             answer = (DirContext) context;
         } else if (context != null) {
-            String msg = "Found bean: " + remaining + " in Registry of type: " + answer.getClass().getName() + " expected type was: " + DirContext.class.getName();
+            String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName() + " expected type was: " + DirContext.class.getName();
             throw new NoSuchBeanException(msg);
         }
         return answer;

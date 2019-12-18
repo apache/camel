@@ -191,7 +191,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public void populateCamelHeaders(HttpServerExchange httpExchange, Map<String, Object> headersMap, Exchange exchange) throws Exception {
-        LOG.trace("populateCamelHeaders: {}");
+        LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
         String path = httpExchange.getRequestPath();
         UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
@@ -284,8 +284,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     @Override
-    public void populateCamelHeaders(ClientResponse response, Map<String, Object> headersMap, Exchange exchange) throws Exception {
-        LOG.trace("populateCamelHeaders: {}");
+    public void populateCamelHeaders(ClientResponse response, Map<String, Object> headersMap, Exchange exchange) {
+        LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
         headersMap.put(Exchange.HTTP_RESPONSE_CODE, response.getResponseCode());
 
@@ -308,9 +308,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
 
             // add the headers one by one, and use the header filter strategy
-            Iterator<?> it = response.getResponseHeaders().get(name).iterator();
-            while (it.hasNext()) {
-                Object value = it.next();
+            for (Object value : response.getResponseHeaders().get(name)) {
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
@@ -466,7 +464,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         }
     }
 
-    class FilePartDataSource extends FileDataSource {
+    static class FilePartDataSource extends FileDataSource {
         private String name;
         private String contentType;
 

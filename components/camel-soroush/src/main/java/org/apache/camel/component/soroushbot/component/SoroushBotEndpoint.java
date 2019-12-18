@@ -124,11 +124,12 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     /**
      * lazy instance of {@link WebTarget} to used for uploading file to soroush Server, since the url is always the same, we reuse this WebTarget for all requests
      */
-    private WebTarget uploadFileTarget;
+    private volatile WebTarget uploadFileTarget;
     /**
      * lazy instance of webTarget to used for send message to soroush Server, since the url is always the same, we reuse this WebTarget for all requests
      */
-    private WebTarget sendMessageTarget;
+    private volatile WebTarget sendMessageTarget;
+
     private BackOffStrategy backOffStrategyHelper;
 
     public SoroushBotEndpoint(String endpointUri, SoroushBotComponent component) {
@@ -284,28 +285,34 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * return the lazily created instance of {@link SoroushBotEndpoint#uploadFileTarget} to used for uploading file to soroush.
      */
     private WebTarget getUploadFileTarget() {
-        if (uploadFileTarget == null) {
+        WebTarget result = uploadFileTarget;
+        if (result == null) {
             synchronized (this) {
-                if (uploadFileTarget == null) {
-                    uploadFileTarget = SoroushService.get().createUploadFileTarget(authorizationToken, connectionTimeout);
+                result = uploadFileTarget;
+                if (result == null) {
+                    result = SoroushService.get().createUploadFileTarget(authorizationToken, connectionTimeout);
+                    uploadFileTarget = result;
                 }
             }
         }
-        return uploadFileTarget;
+        return result;
     }
 
     /**
      * return the lazily created instance of {@link SoroushBotEndpoint#sendMessageTarget} to used for sending message to soroush.
      */
     WebTarget getSendMessageTarget() {
-        if (sendMessageTarget == null) {
+        WebTarget result = sendMessageTarget;
+        if (result == null) {
             synchronized (this) {
-                if (sendMessageTarget == null) {
-                    sendMessageTarget = SoroushService.get().createSendMessageTarget(authorizationToken, connectionTimeout);
+                result = sendMessageTarget;
+                if (result == null) {
+                    result = SoroushService.get().createSendMessageTarget(authorizationToken, connectionTimeout);
+                    sendMessageTarget = result;
                 }
             }
         }
-        return sendMessageTarget;
+        return result;
     }
 
     public SoroushAction getAction() {
