@@ -162,7 +162,7 @@ public final class CassandraUtils {
     private static boolean isWhereClause(String[] whereColumns, int whereColumnsMaxIndex) {
         return !isEmpty(whereColumns) && whereColumnsMaxIndex > 0;
     }
-    
+
     /**
      * Generate delete where columns = ? CQL.
      */

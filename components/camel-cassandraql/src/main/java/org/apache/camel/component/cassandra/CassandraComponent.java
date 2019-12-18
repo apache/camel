@@ -45,7 +45,7 @@ public class CassandraComponent extends DefaultComponent {
     public CassandraComponent() {
         this(null);
     }
-    
+
     public CassandraComponent(CamelContext context) {
         super(context);
     }
