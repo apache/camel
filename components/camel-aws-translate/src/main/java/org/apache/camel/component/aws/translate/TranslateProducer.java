@@ -20,6 +20,9 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.translate.AmazonTranslate;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
+
+import java.util.Collection;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -93,6 +96,10 @@ public class TranslateProducer extends DefaultProducer {
             }
             request.setSourceLanguageCode(source);
             request.setTargetLanguageCode(target);
+        }
+        if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class))) {
+        	Collection<String> terminologies = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
+        	request.setTerminologyNames(terminologies);
         }
         request.setText(exchange.getMessage().getBody(String.class));
         TranslateTextResult result;

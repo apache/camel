@@ -22,5 +22,6 @@ package org.apache.camel.component.aws.translate;
 public interface TranslateConstants {
     String SOURCE_LANGUAGE = "CamelAwsTranslateSourceLanguage";
     String TARGET_LANGUAGE = "CamelAwsTranslateTargetLanguage";
+    String TERMINOLOGY_NAMES = "CamelAwsTranslateTerminologyNames";
     String OPERATION = "CamelAwsTranslateOperation";
 }
