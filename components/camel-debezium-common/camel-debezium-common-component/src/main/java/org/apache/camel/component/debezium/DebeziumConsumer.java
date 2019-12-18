@@ -32,6 +32,8 @@ public class DebeziumConsumer extends DefaultConsumer {
 
     private ExecutorService executorService;
     private EmbeddedEngine dbzEngine;
+    
+    private Integer testNum = 12;
 
     public DebeziumConsumer(DebeziumEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
