@@ -47,6 +47,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private static final String DOC_DIR = "org/apache/camel/catalog/docs";
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
+    private static final String MAIN_DIR = "org/apache/camel/catalog/main";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -1143,6 +1144,32 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public String blueprintSchemaAsXml() {
         String file = SCHEMAS_XML + "/camel-blueprint.xsd";
+
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get(file);
+        }
+
+        if (answer == null) {
+            InputStream is = versionManager.getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put(file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String mainJsonSchema() {
+        String file = MAIN_DIR + "/camel-main-configuration-metadata.json";
 
         String answer = null;
         if (caching) {

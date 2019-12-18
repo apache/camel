@@ -130,6 +130,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File schemasOutDir;
 
     /**
+     * The output directory for main
+     */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/main")
+    protected File mainOutDir;
+
+    /**
      * The components directory where all the Apache Camel components are
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../components")
@@ -172,6 +178,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File blueprintSchemaDir;
 
     /**
+     * The directory where the camel-main metadata are
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-main/target/classes/META-INF")
+    protected File mainDir;
+
+    /**
      * Maven ProjectHelper.
      */
     @Component
@@ -194,6 +206,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         executeDocuments(components, dataformats, languages, others);
         executeArchetypes();
         executeXmlSchemas();
+        executeMain();
     }
 
     protected void executeModel() throws MojoExecutionException, MojoFailureException {
@@ -1003,6 +1016,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
         file = new File(blueprintSchemaDir, "camel-blueprint.xsd");
         if (file.exists() && file.isFile()) {
             File to = new File(schemasOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
+    }
+
+    protected void executeMain() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying camel-main metadata");
+
+        mainOutDir.mkdirs();
+
+        File file = new File(mainDir, "camel-main-configuration-metadata.json");
+        if (file.exists() && file.isFile()) {
+            File to = new File(mainOutDir, file.getName());
             try {
                 copyFile(file, to);
             } catch (IOException e) {
