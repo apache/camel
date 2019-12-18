@@ -53,7 +53,7 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
         String resultGet = (String)exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
-    
+
     @Test
     public void translateTextAutodetectSourceTest() throws Exception {
 
@@ -79,7 +79,8 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:translateText").to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText").to("mock:result");
-                from("direct:translateTextAuto").to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText&autodetectSourceLanguage=true").to("mock:result");
+                from("direct:translateTextAuto")
+                    .to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText&autodetectSourceLanguage=true").to("mock:result");
             }
         };
     }

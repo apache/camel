@@ -93,8 +93,7 @@ public class TranslateConfiguration implements Cloneable {
     public void setOperation(TranslateOperations operation) {
         this.operation = operation;
     }
-    
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -141,7 +140,7 @@ public class TranslateConfiguration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     public boolean isAutodetectSourceLanguage() {
         return autodetectSourceLanguage;
     }

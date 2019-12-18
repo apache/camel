@@ -98,8 +98,8 @@ public class TranslateProducer extends DefaultProducer {
             request.setTargetLanguageCode(target);
         }
         if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class))) {
-        	Collection<String> terminologies = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
-        	request.setTerminologyNames(terminologies);
+            Collection<String> terminologies = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
+            request.setTerminologyNames(terminologies);
         }
         request.setText(exchange.getMessage().getBody(String.class));
         TranslateTextResult result;
