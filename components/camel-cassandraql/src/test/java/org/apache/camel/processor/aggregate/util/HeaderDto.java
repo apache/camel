@@ -19,7 +19,9 @@ package org.apache.camel.processor.aggregate.util;
 import java.io.Serializable;
 
 public class HeaderDto implements Cloneable, Serializable {
-    private String org;
+	
+	private static final long serialVersionUID = -5004840651888298047L;
+	private String org;
     private String type;
     private int key;
    
