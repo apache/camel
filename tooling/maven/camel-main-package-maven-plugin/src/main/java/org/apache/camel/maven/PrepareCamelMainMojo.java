@@ -180,11 +180,11 @@ public class PrepareCamelMainMojo extends AbstractMojo {
 
     private static Object asDefaultValue(String javaType, String defaultValue) {
         if ("java.lang.Boolean".equals(javaType) || "boolean".equals(javaType)) {
-            return Boolean.valueOf(defaultValue);
+            return Boolean.parseBoolean(defaultValue);
         } else if ("java.lang.Integer".equals(javaType) || "int".equals(javaType)) {
-            return Integer.valueOf(defaultValue);
+            return Integer.parseInt(defaultValue);
         } else if ("java.lang.Long".equals(javaType) || "long".equals(javaType)) {
-            return Long.valueOf(defaultValue);
+            return Long.parseLong(defaultValue);
         }
         return defaultValue;
     }
