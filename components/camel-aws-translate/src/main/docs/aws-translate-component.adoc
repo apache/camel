@@ -152,6 +152,8 @@ the https://aws.amazon.com/translate/[Amazon Translate] service.
 
 |`CamelAwsTranslateTargetLanguage` |`String` |The text target language
 
+|`CamelAwsTranslateTerminologyNames` |`String` |The terminologies to use
+
 |`CamelAwsTranslateOperation` |`String` |The operation to perform
 |=======================================================================
 
