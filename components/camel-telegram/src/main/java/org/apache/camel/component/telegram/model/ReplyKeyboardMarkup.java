@@ -22,30 +22,32 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReplyKeyboardMarkup implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("one_time_keyboard")
     private Boolean oneTimeKeyboard;
-    
+
     @JsonProperty("remove_keyboard")
     private Boolean removeKeyboard;
-    
+
     private List<List<InlineKeyboardButton>> keyboard;
-    
+
     public ReplyKeyboardMarkup() {
-        
+
     }
-    
+
     public ReplyKeyboardMarkup(Boolean oneTimeKeyboard, Boolean removeKeyboard, List<List<InlineKeyboardButton>> keyboard) {
         this.oneTimeKeyboard = oneTimeKeyboard;
         this.removeKeyboard = removeKeyboard;
         this.keyboard = keyboard;
     }
-    
+
     public Boolean getOneTimeKeyboard() {
         return oneTimeKeyboard;
     }
@@ -86,7 +88,7 @@ public class ReplyKeyboardMarkup implements Serializable {
 
     public static class Builder {
 
-        private Boolean oneTimeKeyboard;        
+        private Boolean oneTimeKeyboard;
         private Boolean removeKeyboard;
         private List<List<InlineKeyboardButton>> keyboard;
 
@@ -95,30 +97,30 @@ public class ReplyKeyboardMarkup implements Serializable {
             this.oneTimeKeyboard = oneTimeKeyboard;
             return this;
         }
-        
+
         public Builder removeKeyboard(Boolean removeKeyboard) {
-            
+
             this.removeKeyboard = removeKeyboard;
             return this;
         }
 
         public ReplyKeyboardMarkup build() {
-            
+
             return new ReplyKeyboardMarkup(oneTimeKeyboard, removeKeyboard, keyboard);
         }
 
         public KeyboardBuilder keyboard() {
-            
+
             return new KeyboardBuilder(this);
         }
-        
+
         public static class KeyboardBuilder {
-            
+
             private Builder builder;
             private List<List<InlineKeyboardButton>> keyboard;
-            
+
             public KeyboardBuilder(Builder builder) {
-                
+
                 this.builder = builder;
                 this.keyboard = new ArrayList<>();
             }
@@ -128,11 +130,11 @@ public class ReplyKeyboardMarkup implements Serializable {
                 keyboard.add(inlineKeyboardButtons);
                 return this;
             }
-            
+
             public KeyboardBuilder addOneRowByEachButton(List<InlineKeyboardButton> inlineKeyboardButtons) {
-                
+
                 for (Iterator<InlineKeyboardButton> iterator = inlineKeyboardButtons.iterator(); iterator.hasNext();) {
-                    
+
                     keyboard.add(Arrays.asList(iterator.next()));
                 }
 

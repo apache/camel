@@ -16,25 +16,23 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
-import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
-import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
-import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests a producer that sends media information.
@@ -47,7 +45,8 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     @Test
     public void testRouteWithPngImage() throws Exception {
 
-        TelegramService service = mockTelegramService();
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendPhoto");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Photo");
@@ -55,43 +54,42 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         byte[] image = TelegramTestUtil.createSampleImage("PNG");
         ex.getIn().setBody(image);
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingPhotoMessage> captor = ArgumentCaptor.forClass(OutgoingPhotoMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals(image, captor.getValue().getPhoto());
-        assertEquals("photo.png", captor.getValue().getFilenameWithExtension());
-        assertEquals("Photo", captor.getValue().getCaption());
+        /* message contains a multipart body */
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertMultipartText(message, "chat_id", "my-id");
+        assertTrue(contains(message, image));
+        assertMultipartFilename(message, "photo", "photo.png");
+        assertMultipartText(message, "caption", "Photo");
     }
 
     @Test
     public void testRouteWithJpgImage() throws Exception {
 
-        TelegramService service = mockTelegramService();
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendPhoto");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Photo");
-        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.PHOTO_JPG); // without using .name()
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.PHOTO_JPG); // without using
+                                                                                                  // .name()
         byte[] image = TelegramTestUtil.createSampleImage("JPG");
         ex.getIn().setBody(image);
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingPhotoMessage> captor = ArgumentCaptor.forClass(OutgoingPhotoMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals(image, captor.getValue().getPhoto());
-        assertEquals("photo.jpg", captor.getValue().getFilenameWithExtension());
-        assertEquals("Photo", captor.getValue().getCaption());
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertMultipartText(message, "chat_id", "my-id");
+        assertTrue(contains(message, image));
+        assertMultipartFilename(message, "photo", "photo.jpg");
+        assertMultipartText(message, "caption", "Photo");
     }
 
     @Test
     public void testRouteWithAudio() throws Exception {
-
-        TelegramService service = mockTelegramService();
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendAudio");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Audio");
@@ -99,21 +97,20 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         byte[] audio = TelegramTestUtil.createSampleAudio();
         ex.getIn().setBody(audio);
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingAudioMessage> captor = ArgumentCaptor.forClass(OutgoingAudioMessage.class);
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
 
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals(audio, captor.getValue().getAudio());
-        assertEquals("audio.mp3", captor.getValue().getFilenameWithExtension());
-        assertEquals("Audio", captor.getValue().getTitle());
+        assertMultipartText(message, "chat_id", "my-id");
+        assertTrue(contains(message, audio));
+        assertMultipartFilename(message, "audio", "audio.mp3");
+        assertMultipartText(message, "title", "Audio");
     }
 
     @Test
     public void testRouteWithVideo() throws Exception {
-
-        TelegramService service = mockTelegramService();
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendVideo");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Video");
@@ -121,21 +118,19 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         byte[] video = TelegramTestUtil.createSampleVideo();
         ex.getIn().setBody(video);
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingVideoMessage> captor = ArgumentCaptor.forClass(OutgoingVideoMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals(video, captor.getValue().getVideo());
-        assertEquals("video.mp4", captor.getValue().getFilenameWithExtension());
-        assertEquals("Video", captor.getValue().getCaption());
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertMultipartText(message, "chat_id", "my-id");
+        assertTrue(contains(message, video));
+        assertMultipartFilename(message, "video", "video.mp4");
+        assertMultipartText(message, "caption", "Video");
     }
 
     @Test
     public void testRouteWithDocument() throws Exception {
-
-        TelegramService service = mockTelegramService();
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendDocument");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Document");
@@ -143,108 +138,151 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         byte[] document = TelegramTestUtil.createSampleDocument();
         ex.getIn().setBody(document);
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingDocumentMessage> captor = ArgumentCaptor.forClass(OutgoingDocumentMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals(document, captor.getValue().getDocument());
-        assertEquals("file", captor.getValue().getFilenameWithExtension());
-        assertEquals("Document", captor.getValue().getCaption());
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertMultipartText(message, "chat_id", "my-id");
+        assertTrue(contains(message, document));
+        assertMultipartFilename(message, "document", "file");
+        assertMultipartText(message, "caption", "Document");
     }
 
     @Test
     public void testRouteWithText() throws Exception {
-
-        TelegramService service = mockTelegramService();
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
         ex.getIn().setBody("Hello");
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals("Hello", captor.getValue().getText());
-        assertNull(captor.getValue().getParseMode());
+        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertEquals("my-id", message.getChatId());
+        assertEquals("Hello", message.getText());
+        assertNull(message.getParseMode());
     }
-    
+
     @Test
     public void testRouteWithTextAndCustomKeyBoard() throws Exception {
-
-        TelegramService service = mockTelegramService();
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
 
         OutgoingTextMessage msg = new OutgoingTextMessage.Builder().text("Hello").build();
         withInlineKeyboardContainingTwoRows(msg);
-        
+
         ex.getIn().setBody(msg);
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals("Hello", captor.getValue().getText());
-        assertEquals(2, captor.getValue().getReplyKeyboardMarkup().getKeyboard().size());
-        assertEquals(true, captor.getValue().getReplyKeyboardMarkup().getOneTimeKeyboard());
-        assertNull(captor.getValue().getParseMode());
-    }    
+        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertEquals("my-id", message.getChatId());
+        assertEquals("Hello", message.getText());
+        assertEquals(2, message.getReplyKeyboardMarkup().getKeyboard().size());
+        assertEquals(true, message.getReplyKeyboardMarkup().getOneTimeKeyboard());
+        assertNull(message.getParseMode());
+    }
 
     @Test
     public void testRouteWithTextHtml() throws Exception {
-
-        TelegramService service = mockTelegramService();
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, TelegramParseMode.HTML.name());
         ex.getIn().setBody("Hello");
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals("Hello", captor.getValue().getText());
-        assertEquals("HTML", captor.getValue().getParseMode());
+        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertEquals("my-id", message.getChatId());
+        assertEquals("Hello", message.getText());
+        assertEquals("HTML", message.getParseMode());
     }
 
     @Test
     public void testRouteWithTextMarkdown() throws Exception {
-
-        TelegramService service = mockTelegramService();
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, TelegramParseMode.MARKDOWN);
         ex.getIn().setBody("Hello");
 
-        context().createProducerTemplate().send(endpoint, ex);
+        template.send(endpoint, ex);
 
-        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
-
-        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals("Hello", captor.getValue().getText());
-        assertEquals("Markdown", captor.getValue().getParseMode());
+        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertEquals("my-id", message.getChatId());
+        assertEquals("Hello", message.getText());
+        assertEquals("Markdown", message.getParseMode());
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
-            }
-        };
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
+                }
+            }};
     }
 
+    @Override
+    protected TelegramMockRoutes createMockRoutes() {
+        return new TelegramMockRoutes(port)
+                .addEndpoint(
+                        "sendPhoto",
+                        "POST",
+                        byte[].class,
+                        TelegramTestUtil.stringResource("messages/send-photo.json"))
+                .addEndpoint(
+                        "sendAudio",
+                        "POST",
+                        byte[].class,
+                        TelegramTestUtil.stringResource("messages/send-audio.json"))
+                .addEndpoint(
+                        "sendVideo",
+                        "POST",
+                        byte[].class,
+                        TelegramTestUtil.stringResource("messages/send-video.json"))
+                .addEndpoint(
+                        "sendDocument",
+                        "POST",
+                        byte[].class,
+                        TelegramTestUtil.stringResource("messages/send-document.json"))
+                .addEndpoint(
+                        "sendMessage",
+                        "POST",
+                        OutgoingTextMessage.class,
+                        TelegramTestUtil.stringResource("messages/send-message.json"));
+    }
+
+    static void assertMultipartFilename(byte[] message, String name, String filename) {
+        assertTrue(contains(message, ("name=\"" + name + "\"; filename=\"" + filename + "\"").getBytes(StandardCharsets.UTF_8)));
+    }
+    static void assertMultipartText(byte[] message, String key, String value) {
+        assertTrue(contains(message, ("name=\"" + key + "\"\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" + value)
+                .getBytes(StandardCharsets.UTF_8)));
+    }
+    static boolean contains(byte[] array, byte[] target) {
+        if (target.length == 0) {
+            return true;
+        }
+        OUTER_FOR: for (int i = 0; i < array.length - target.length + 1; i++) {
+            for (int j = 0; j < target.length; j++) {
+                if (array[i + j] != target[j]) {
+                    continue OUTER_FOR;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }

@@ -667,6 +667,18 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set an alternative base URI, e.g. when you want to test the component
+         * against a mock Telegram API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointConsumerBuilder baseUri(String baseUri) {
+            doSetProperty("baseUri", baseUri);
+            return this;
+        }
+        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -690,6 +702,60 @@ public interface TelegramEndpointBuilderFactory {
         default AdvancedTelegramEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointConsumerBuilder bufferSize(
+                int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointConsumerBuilder bufferSize(
+                String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
+         * The option is a:
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointConsumerBuilder clientConfig(
+                Object clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
+         * The option will be converted to a
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointConsumerBuilder clientConfig(
+                String clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -844,6 +910,18 @@ public interface TelegramEndpointBuilderFactory {
             return (TelegramEndpointProducerBuilder) this;
         }
         /**
+         * Set an alternative base URI, e.g. when you want to test the component
+         * against a mock Telegram API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointProducerBuilder baseUri(String baseUri) {
+            doSetProperty("baseUri", baseUri);
+            return this;
+        }
+        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -867,6 +945,60 @@ public interface TelegramEndpointBuilderFactory {
         default AdvancedTelegramEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointProducerBuilder bufferSize(
+                int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointProducerBuilder bufferSize(
+                String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
+         * The option is a:
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointProducerBuilder clientConfig(
+                Object clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
+         * The option will be converted to a
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointProducerBuilder clientConfig(
+                String clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -965,6 +1097,18 @@ public interface TelegramEndpointBuilderFactory {
             return (TelegramEndpointBuilder) this;
         }
         /**
+         * Set an alternative base URI, e.g. when you want to test the component
+         * against a mock Telegram API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointBuilder baseUri(String baseUri) {
+            doSetProperty("baseUri", baseUri);
+            return this;
+        }
+        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -988,6 +1132,56 @@ public interface TelegramEndpointBuilderFactory {
         default AdvancedTelegramEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointBuilder bufferSize(int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointBuilder bufferSize(String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
+         * The option is a:
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointBuilder clientConfig(Object clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
+         * The option will be converted to a
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedTelegramEndpointBuilder clientConfig(String clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**

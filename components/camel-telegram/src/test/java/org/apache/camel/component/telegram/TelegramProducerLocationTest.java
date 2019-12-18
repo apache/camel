@@ -23,96 +23,101 @@ import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
 import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
-import org.apache.camel.component.telegram.service.RestBotAPI;
-import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests a producer that sends location information.
  */
-@ExtendWith(MockitoExtension.class)
 public class TelegramProducerLocationTest extends TelegramTestSupport {
 
     private final double latitude = 59.9386292;
     private final double longitude = 30.3141308;
 
-    private TelegramService service;
-
-    @Mock
-    private RestBotAPI restBotAPI;
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        service = new TelegramServiceRestBotAPIAdapter(restBotAPI);
-        TelegramServiceProvider.get().setAlternativeService(service);
-    }
-
     @Test
     public void testSendLocation() {
-        MessageResult expected = new MessageResult();
-        expected.setOk(true);
-        when(restBotAPI.sendLocation(anyString(), any(SendLocationMessage.class))).thenReturn(expected);
-
         SendLocationMessage msg = new SendLocationMessage(latitude, longitude);
-        MessageResult actual = (MessageResult) service.sendMessage("mock-token", msg);
+        template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        assertEquals(expected, actual);
+        final MockProcessor<SendLocationMessage> mockProcessor = getMockRoutes().getMock("sendLocation");
+        assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(msg);
     }
 
     @Test
     public void testSendVenue() {
-        MessageResult expected = new MessageResult();
-        expected.setOk(true);
-        when(restBotAPI.sendVenue(anyString(), any(SendVenueMessage.class))).thenReturn(expected);
-
         SendVenueMessage msg = new SendVenueMessage(latitude, longitude, "title", "address");
-        MessageResult actual = (MessageResult) service.sendMessage("mock-token", msg);
+        template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        assertEquals(expected, actual);
+        final MockProcessor<SendLocationMessage> mockProcessor = getMockRoutes().getMock("sendVenue");
+        assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(msg);
     }
 
     @Test
     public void testEditMessageLiveLocation() {
-        MessageResult expected = new MessageResult();
-        expected.setOk(true);
-        when(restBotAPI.editMessageLiveLocation(anyString(), any(EditMessageLiveLocationMessage.class))).thenReturn(expected);
-
         EditMessageLiveLocationMessage msg = new EditMessageLiveLocationMessage(latitude, longitude);
-        MessageResult actual = (MessageResult) service.sendMessage("mock-token", msg);
+        template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        assertEquals(expected, actual);
+        final MockProcessor<SendLocationMessage> mockProcessor = getMockRoutes().getMock("editMessageLiveLocation");
+        assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(msg);
     }
 
     @Test
     public void testStopMessageLiveLocation() {
-        MessageResult expected = new MessageResult();
-        expected.setOk(true);
-        when(restBotAPI.stopMessageLiveLocation(anyString(), any(StopMessageLiveLocationMessage.class))).thenReturn(expected);
-
         StopMessageLiveLocationMessage msg = new StopMessageLiveLocationMessage();
-        MessageResult actual = (MessageResult) service.sendMessage("mock-token", msg);
+        template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        assertEquals(expected, actual);
+        final MockProcessor<SendLocationMessage> mockProcessor = getMockRoutes().getMock("stopMessageLiveLocation");
+        assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(msg);
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
-            }
-        };
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=" + chatId);
+                }
+            }};
     }
+
+    @Override
+    protected TelegramMockRoutes createMockRoutes() {
+        return new TelegramMockRoutes(port)
+                .addEndpoint(
+                        "sendLocation",
+                        "POST",
+                        SendLocationMessage.class,
+                        TelegramTestUtil.stringResource("messages/send-location.json"))
+                .addEndpoint(
+                        "sendVenue",
+                        "POST",
+                        SendVenueMessage.class,
+                        TelegramTestUtil.stringResource("messages/send-venue.json"))
+                .addEndpoint(
+                        "editMessageLiveLocation",
+                        "POST",
+                        EditMessageLiveLocationMessage.class,
+                        TelegramTestUtil.stringResource("messages/edit-message-live-location.json"))
+                .addEndpoint(
+                        "stopMessageLiveLocation",
+                        "POST",
+                        StopMessageLiveLocationMessage.class,
+                        TelegramTestUtil.stringResource("messages/stop-message-live-location.json"));
+    }
+
 }

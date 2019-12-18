@@ -16,36 +16,39 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineKeyboardButton {
 
     private String text;
 
     public InlineKeyboardButton() {
-        
+
     }
-    
+
     public InlineKeyboardButton(String text) {
 
         this.text = text;
     }
 
     public String getText() {
-        
+
         return text;
     }
 
     public void setText(String text) {
-        
+
         this.text = text;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("InlineKeyboardButton{");
         sb.append("text='").append(text);
         sb.append('}');
         return sb.toString();
-    }        
+    }
 
     public static Builder builder() {
 
