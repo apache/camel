@@ -1,5 +1,25 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.rabbitmq;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -16,29 +36,44 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIntTest.class);
 
+    private static final String CONSUMER = "rabbitmq:ex9?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest"
+            + "&skipExchangeDeclare=false"
+            + "&skipQueueDeclare=false"
+            + "&autoDelete=false"
+            + "&durable=true"
+            + "&autoAck=false"
+            + "&queue=q9"
+            + "&routingKey=rk1"
+            + "&deadLetterExchange=dlx"
+            + "&deadLetterQueue=dlq"
+            + "&deadLetterExchangeType=fanout";
+    
+    private static final String CONSUMER_WITH_DEADLETTER_ROUTING_KEY = "rabbitmq:ex10?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest"
+            + "&skipExchangeDeclare=false"
+            + "&skipQueueDeclare=false"
+            + "&autoDelete=false&durable=true"
+            + "&autoAck=false&queue=q10"
+            + "&routingKey=rk1"
+            + "&deadLetterExchange=dlx"
+            + "&deadLetterQueue=dlq"
+            + "&deadLetterExchangeType=fanout"
+            + "&deadLetterRoutingKey=rk2";
+
     private Connection connection;
     private Channel channel;
     private Channel deadLetterChannel;
-
-    private static final String CONSUMER = "rabbitmq:ex9?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest&skipExchangeDeclare=false&skipQueueDeclare=false&autoDelete=false&durable=true&autoAck=false&queue=q9&routingKey=rk1&deadLetterExchange=dlx&deadLetterQueue=dlq&deadLetterExchangeType=fanout";
-    private static final String CONSUMER_WITH_DEADLETTER_ROUTING_KEY = "rabbitmq:ex10?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest&skipExchangeDeclare=false&skipQueueDeclare=false&autoDelete=false&durable=true&autoAck=false&queue=q10&routingKey=rk1&deadLetterExchange=dlx&deadLetterQueue=dlq&deadLetterExchangeType=fanout&deadLetterRoutingKey=rk2";
 
     @EndpointInject(uri = "mock:received")
     private MockEndpoint receivedEndpoint;
 
     @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
+    private ProducerTemplate template;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -75,9 +110,11 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
                 .contentType("text/plain")
                 .contentEncoding(StandardCharsets.UTF_8.toString()).build();
 
-        receivedEndpoint.whenAnyExchangeReceived(exchange -> { throw new Exception("Simulated exception"); });
+        receivedEndpoint.whenAnyExchangeReceived(exchange -> { 
+            throw new Exception("Simulated exception"); 
+        });
 
-        channel.basicPublish("ex9", "rk1",properties, "new message".getBytes(StandardCharsets.UTF_8));
+        channel.basicPublish("ex9", "rk1", properties, "new message".getBytes(StandardCharsets.UTF_8));
 
         deadLetterChannel.basicConsume("dlq", true, new DeadLetterRoutingKeyConsumer(received, routingKey));
 
@@ -96,9 +133,11 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
                 .contentType("text/plain")
                 .contentEncoding(StandardCharsets.UTF_8.toString()).build();
 
-        receivedEndpoint.whenAnyExchangeReceived(exchange -> { throw new Exception("Simulated exception"); });
+        receivedEndpoint.whenAnyExchangeReceived(exchange -> { 
+            throw new Exception("Simulated exception"); 
+        });
 
-        channel.basicPublish("ex10", "rk1",properties, "new message".getBytes(StandardCharsets.UTF_8));
+        channel.basicPublish("ex10", "rk1", properties, "new message".getBytes(StandardCharsets.UTF_8));
 
         deadLetterChannel.basicConsume("dlq", true, new DeadLetterRoutingKeyConsumer(received, routingKey));
 
