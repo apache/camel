@@ -66,7 +66,7 @@ public class XsltBuilder implements Processor {
     private XMLConverterHelper converter = new XMLConverterHelper();
     private Templates template;
     private volatile BlockingQueue<Transformer> transformers;
-    private SourceHandlerFactory sourceHandlerFactory;
+    private volatile SourceHandlerFactory sourceHandlerFactory;
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;

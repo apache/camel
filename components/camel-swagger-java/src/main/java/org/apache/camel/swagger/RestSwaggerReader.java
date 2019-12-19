@@ -230,9 +230,6 @@ public class RestSwaggerReader {
     }
 
     private void doParseVerbs(Swagger swagger, RestDefinition rest, String camelContextId, List<VerbDefinition> verbs, String pathAsTag) {
-        // used during gathering of apis
-        List<Path> paths = new ArrayList<>();
-
         String basePath = rest.getPath();
 
         for (VerbDefinition verb : verbs) {
@@ -269,7 +266,6 @@ public class RestSwaggerReader {
             Path path = swagger.getPath(opPath);
             if (path == null) {
                 path = new Path();
-                paths.add(path);
             }
             path = path.set(method, op);
 
