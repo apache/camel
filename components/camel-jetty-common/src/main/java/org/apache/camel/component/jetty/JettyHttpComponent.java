@@ -58,6 +58,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -1071,50 +1072,22 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
-                host = "0.0.0.0";
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
-                host = HostUtils.getLocalHostName();
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
-                host = HostUtils.getLocalIp();
-            }
+            host = RestComponentHelper.resolveRestHostName(host, config);
         }
 
-        Map<String, Object> map = new HashMap<>();
-        // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("jetty")) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties("jetty", config);
 
         boolean cors = config.isEnableCORS();
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
-
-        String query = URISupport.createQueryString(map);
-
-        String url;
+        
         if (api) {
-            url = "jetty:%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
-        } else {
-            url = "jetty:%s://%s:%s/%s?httpMethodRestrict=%s";
+            map.put("matchOnUriPrefix", "true");
         }
 
-        // must use upper case for restrict
-        String restrict = verb.toUpperCase(Locale.US);
-        if (cors) {
-            restrict += ",OPTIONS";
-        }
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
-
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }
+        String url = RestComponentHelper.createRestConsumerUrl("jetty", verb, scheme, host, port, path, cors, map);
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
