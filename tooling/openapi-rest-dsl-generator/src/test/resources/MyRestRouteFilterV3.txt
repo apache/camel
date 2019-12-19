@@ -1,0 +1,76 @@
+package com.example;
+
+import javax.annotation.Generated;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.CollectionFormat;
+import org.apache.camel.model.rest.RestParamType;
+
+/**
+ * Generated from OpenApi specification by Camel REST DSL generator.
+ */
+@Generated(
+		value = "org.apache.camel.generator.openapi.AppendableGenerator",
+		date = "2017-10-17T00:00:00Z"
+)
+public final class MyRestRoute extends RouteBuilder {
+	/**
+	 * Defines Apache Camel routes using REST DSL fluent API.
+	 */
+	public void configure() {
+		rest("/api/v3")
+			.put("/pet")
+				.id("updatePet")
+				.consumes("application/json,application/xml")
+				.param()
+					.name("body")
+					.type(RestParamType.body)
+					.required(true)
+					.description("Pet object that needs to be added to the store")
+				.endParam()
+				.to("direct:rest-updatePet")
+			.get("/pet/findByStatus")
+				.id("findPetsByStatus")
+				.description("Multiple status values can be provided with comma separated strings")
+				.produces("application/xml,application/json")
+				.param()
+					.name("status")
+					.type(RestParamType.query)
+					.dataType("array")
+					.collectionFormat(CollectionFormat.multi)
+					.arrayType("string")
+					.required(true)
+					.description("Status values that need to be considered for filter")
+				.endParam()
+				.to("direct:rest-findPetsByStatus")
+			.get("/pet/findByTags")
+				.id("findPetsByTags")
+				.description("Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.")
+				.produces("application/xml,application/json")
+				.param()
+					.name("tags")
+					.type(RestParamType.query)
+					.dataType("array")
+					.collectionFormat(CollectionFormat.multi)
+					.arrayType("string")
+					.required(true)
+					.description("Tags to filter by")
+				.endParam()
+				.to("direct:rest-findPetsByTags")
+			.delete("/pet/{petId}")
+				.id("deletePet")
+				.param()
+					.name("api_key")
+					.type(RestParamType.header)
+					.dataType("string")
+					.required(false)
+				.endParam()
+				.param()
+					.name("petId")
+					.type(RestParamType.path)
+					.dataType("integer")
+					.required(true)
+					.description("Pet id to delete")
+				.endParam()
+				.to("direct:rest-deletePet");
+	}
+}
