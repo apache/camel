@@ -35,6 +35,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -279,43 +280,19 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             config = camelContext.getRestConfiguration("servlet", true);
         }
 
-        Map<String, Object> map = new HashMap<>();
-        // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("servlet")) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties("servlet", config);
 
         boolean cors = config.isEnableCORS();
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
-
-        // do not append with context-path as the servlet path should be without context-path
-
-        String query = URISupport.createQueryString(map);
-
-        String url;
-        if (api) {
-            url = "servlet:///%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
-        } else {
-            url = "servlet:///%s?httpMethodRestrict=%s";
-        }
-
-        // must use upper case for restrict
-        String restrict = verb.toUpperCase(Locale.US);
-        if (cors) {
-            restrict += ",OPTIONS";
-        }
-        // get the endpoint
-        url = String.format(url, path, restrict);
         
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }       
+        if (api) {
+            map.put("matchOnUriPrefix", "true");
+        } 
+
+        String url = RestComponentHelper.createRestConsumerUrl("servlet", verb, path, cors, map);  
 
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
