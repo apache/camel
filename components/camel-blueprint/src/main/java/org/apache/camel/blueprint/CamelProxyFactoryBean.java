@@ -36,7 +36,7 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * A factory to create a Proxy to a a Camel Pojo Endpoint.
  */
-@XmlRootElement(name = "proxyFactoryBean")
+@XmlRootElement(name = "proxy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
 
