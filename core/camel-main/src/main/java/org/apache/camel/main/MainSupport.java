@@ -17,9 +17,12 @@
 package org.apache.camel.main;
 
 import java.util.LinkedList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
@@ -34,7 +37,9 @@ public abstract class MainSupport extends BaseMainSupport {
 
     protected static final int UNINITIALIZED_EXIT_CODE = Integer.MIN_VALUE;
     protected static final int DEFAULT_EXIT_CODE = 0;
+
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
+    protected final CountDownLatch latch = new CountDownLatch(1);
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -259,6 +264,27 @@ public abstract class MainSupport extends BaseMainSupport {
 
     @Override
     protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void configureLifecycle(CamelContext camelContext) throws Exception {
+        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
+            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+            EventNotifier notifier = new MainDurationEventNotifier(
+                camelContext,
+                mainConfigurationProperties.getDurationMaxMessages(),
+                mainConfigurationProperties.getDurationMaxIdleSeconds(),
+                completed,
+                latch,
+                true);
+
+            // register our event notifier
+            ServiceHelper.startService(notifier);
+            camelContext.getManagementStrategy().addEventNotifier(notifier);
+        }
+
+        // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
+        camelContext.addLifecycleStrategy(new MainLifecycleStrategy(completed, latch));
     }
 
     protected void waitUntilCompleted() {
