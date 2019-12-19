@@ -41,6 +41,7 @@
         <module>camel-util-json</module>
         <module>camel-bundle-plugin</module>
         <module>swagger-rest-dsl-generator</module>
+        <module>openapi-rest-dsl-generator</module>
         <module>maven</module>
     </modules>
 
