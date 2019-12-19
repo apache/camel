@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -47,7 +46,6 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -76,7 +74,6 @@ public abstract class BaseMainSupport extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
     protected final AtomicBoolean completed = new AtomicBoolean(false);
-    protected final CountDownLatch latch = new CountDownLatch(1);
     protected volatile CamelContext camelContext;
     protected volatile ProducerTemplate camelTemplate;
 
@@ -488,7 +485,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         }
     }
 
-    protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+    protected void configurePropertiesService(CamelContext camelContext) throws Exception {
         if (propertyPlaceholderLocations != null) {
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             pc.addLocation(propertyPlaceholderLocations);
@@ -510,16 +507,12 @@ public abstract class BaseMainSupport extends ServiceSupport {
         if (overrideProperties != null) {
             pc.setOverrideProperties(overrideProperties);
         }
+    }
 
-        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
-            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
-            EventNotifier notifier = new MainDurationEventNotifier(camelContext, mainConfigurationProperties.getDurationMaxMessages(),
-                    mainConfigurationProperties.getDurationMaxIdleSeconds(), completed, latch, true);
-            // register our event notifier
-            ServiceHelper.startService(notifier);
-            camelContext.getManagementStrategy().addEventNotifier(notifier);
-        }
+    protected void configureLifecycle(CamelContext camelContext) throws Exception {
+    }
 
+    protected void autoconfigure(CamelContext camelContext) throws Exception {
         // gathers the properties (key=value) that was auto-configured
         final Map<String, String> autoConfiguredProperties = new LinkedHashMap<>();
 
@@ -539,7 +532,10 @@ public abstract class BaseMainSupport extends ServiceSupport {
         // conventional configuration via properties to allow configuring options on
         // component, dataformat, and languages (like spring-boot auto-configuration)
         if (mainConfigurationProperties.isAutowireComponentProperties() || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
-            autowireConfigurationFromRegistry(camelContext, mainConfigurationProperties.isAutowireComponentPropertiesNonNullOnly(), mainConfigurationProperties.isAutowireComponentPropertiesDeep());
+            autowireConfigurationFromRegistry(
+                camelContext,
+                mainConfigurationProperties.isAutowireComponentPropertiesNonNullOnly(),
+                mainConfigurationProperties.isAutowireComponentPropertiesDeep());
         }
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
@@ -562,14 +558,23 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 }
             });
         }
+    }
 
+    protected void configureRoutes(CamelContext camelContext) throws Exception {
         // try to load the route builders
         loadRouteBuilders(camelContext);
+
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, routeBuilders);
         configurer.configureRoutes(camelContext, mainConfigurationProperties);
-        // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
-        camelContext.addLifecycleStrategy(new MainLifecycleStrategy(completed, latch));
+    }
+
+    protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        configurePropertiesService(camelContext);
+        configureLifecycle(camelContext);
+        autoconfigure(camelContext);
+        configureRoutes(camelContext);
+
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
             listener.configure(camelContext);
