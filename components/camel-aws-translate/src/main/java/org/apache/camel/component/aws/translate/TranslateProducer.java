@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.aws.translate;
 
+import java.util.Collection;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.translate.AmazonTranslate;
 import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
-
-import java.util.Collection;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
