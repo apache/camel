@@ -49,12 +49,12 @@ public class ExchangeAckTransaction extends PubsubAcknowledgement implements Syn
             try {
                 deadline = Integer.valueOf((String) configuredDeadline);
             } catch (Exception e) {
-                logger.warn("Unable to parse ACK Deadline header value", e);
+                LOG.warn("Unable to parse ACK Deadline header value", e);
             }
         }
 
         if (deadline != 0) {
-            logger.trace(" Exchange {} : Ack deadline : {}", exchange.getExchangeId(), deadline);
+            LOG.trace(" Exchange {} : Ack deadline : {}", exchange.getExchangeId(), deadline);
         }
 
         resetAckDeadline(getAckIdList(exchange), deadline);

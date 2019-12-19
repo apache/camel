@@ -30,8 +30,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -86,9 +86,9 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void afterPropertiesSet() throws Exception {
         if (ObjectHelper.isEmpty(loggerId)) {
-            log = LogManager.getLogger(this.getClass().getName());
+            log = LoggerFactory.getLogger(this.getClass().getName());
         } else {
-            log = LogManager.getLogger(loggerId);
+            log = LoggerFactory.getLogger(loggerId);
         }
 
         // Default pubsub connection.
