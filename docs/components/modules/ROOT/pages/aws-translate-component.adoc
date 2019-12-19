@@ -1,6 +1,6 @@
 [[aws-translate-component]]
 = AWS Translate Component
-:page-source: components/camel-aws-translate/src/main/docs/aws-translate-component.adoc
+:page-source: components/camel-aws-translate/bin/src/main/docs/aws-translate-component.adoc
 
 *Since Camel 3.0*
 
@@ -152,8 +152,6 @@ the https://aws.amazon.com/translate/[Amazon Translate] service.
 |`CamelAwsTranslateSourceLanguage` |`String` |The text source language
 
 |`CamelAwsTranslateTargetLanguage` |`String` |The text target language
-
-|`CamelAwsTranslateTerminologyNames` |`String` |The terminologies to use
 
 |`CamelAwsTranslateOperation` |`String` |The operation to perform
 |=======================================================================
