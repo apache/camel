@@ -26,10 +26,21 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.URISupport;
 
+/**
+ * Helper class for rest-dsl components.
+ */
 public final class RestComponentHelper {
+    
     private RestComponentHelper() {
     }
     
+    /**
+     * 
+     * @param queryMap the map of Endpoint options to apply the HTTP restrict settings to
+     * @param verb the HTTP verb for the route
+     * @param cors is cors enabled/disabled
+     * @return the map of Endpoint Properties with HTTP Restrict Options set
+     */
     public static Map<String, Object> addHttpRestrictParam(Map<String, Object> queryMap, String verb, Boolean cors) {
         String restrict = verb.toUpperCase(Locale.US);
         if (cors) {
@@ -39,6 +50,14 @@ public final class RestComponentHelper {
         return queryMap;
     }
     
+    /**
+     * 
+     * Creates an Endpoint Property Map based on properies set in the component's RestConfiguration.
+     * 
+     * @param componentName the Rest Component name
+     * @param config the RestConfiguration
+     * @return the map of Endpoint Properties set in the RestConfiguration
+     */
     public static Map<String, Object> initRestEndpointProperties(String componentName, RestConfiguration config) {
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
@@ -51,6 +70,15 @@ public final class RestComponentHelper {
         return map;
     }
     
+    /**
+     * 
+     * Sets the Rest consumer host based on RestConfiguration
+     * 
+     * @param host the existing host configuration
+     * @param config the RestConfiguration
+     * @return the host based on RestConfiguration
+     * @throws UnknownHostException thrown when local host or local ip can't be resolved via network interfaces.
+     */
     public static String resolveRestHostName(String host, RestConfiguration config) throws UnknownHostException {
         if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
             host = "0.0.0.0";
@@ -62,33 +90,60 @@ public final class RestComponentHelper {
         return host;
     }
     
+    /**
+     * 
+     * Creates the Rest consumers url based on component and url options.
+     * 
+     * @param componentName the name of the rest component
+     * @param verb the HTTP verb for the route
+     * @param path the HTTP path of the route
+     * @param cors is cors enabled/disabled
+     * @param queryMap the endpoint query options
+     * @return a string of the component route url
+     * @throws URISyntaxException - is thrown if uri has invalid syntax.
+     */
     public static String createRestConsumerUrl(String componentName, String verb, String path, Boolean cors, Map<String, Object> queryMap) throws URISyntaxException {
         String query = generateComponentQueryString(verb, cors, queryMap);
-        return applyFormatAndQuery("%s:/%s?", query, componentName, path);
+        return applyFormatAndQuery("%s:/%s", query, componentName, path);
     }
     
+    /**
+     * 
+     * Creates the Rest consumers url based on component and url options.
+     * 
+     * @param componentName the name of the rest component
+     * @param verb the HTTP verb for the route
+     * @param scheme the scheme of the HTTP route http/https
+     * @param host the host of the HTTP route
+     * @param port the port the route will be exposed through
+     * @param path the HTTP path of the route
+     * @param cors is cors enabled/disabled
+     * @param queryMap the endpoint query options
+     * @return a string of the component route url
+     * @throws URISyntaxException - is thrown if uri has invalid syntax.
+     */
     public static String createRestConsumerUrl(String componentName, String verb, String scheme, String host, int port, String path, Boolean cors, Map<String, Object> queryMap) throws URISyntaxException {
         
         String query = generateComponentQueryString(verb, cors, queryMap);
         
-        return applyFormatAndQuery("%s:%s://%s:%s/%s?", query, componentName, scheme, host, port, path);
+        return applyFormatAndQuery("%s:%s://%s:%s/%s", query, componentName, scheme, host, port, path);
     }
 
     private static String generateComponentQueryString(String verb, Boolean cors, Map<String, Object> queryMap)
             throws URISyntaxException {
         addHttpRestrictParam(queryMap, verb, cors);
         
-        String query = URISupport.createQueryString(queryMap);
-        return query;
+        return URISupport.createQueryString(queryMap);
     }
     
     private static String applyFormatAndQuery(String format, String query, Object... formatOptions) {
-     // get the endpoint
-        String url = String.format(format, formatOptions);
+        // get the endpoint
+        StringBuilder urlBuilder = new StringBuilder(String.format(format, formatOptions));
 
         if (!query.isEmpty()) {
-            url = url + query;
+            urlBuilder.append("?");
+            urlBuilder.append(query);
         }
-        return url;
+        return urlBuilder.toString();
     }
 }
