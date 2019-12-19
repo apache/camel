@@ -55,6 +55,8 @@ configured in the registry, or to a remote cache using the HotRod
 protocol. The consumer allows listening for events from local infinispan cache
 accessible from the registry.
 
+If no cache configuration is provided, embedded cacheContainer is created directly in the component.
+
 
 // component options: START
 The Infinispan component supports 5 options, which are listed below.
@@ -461,7 +463,7 @@ from("direct:start")
 ----
 
 
-* Retrieve a specific key from a named cache:
+* Put a key/value into a named cache:
 +
 [source,java]
 ----
