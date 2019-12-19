@@ -136,7 +136,6 @@ public class HBaseProducer extends DefaultProducer {
      */
     private HBaseRow getCells(Table table, HBaseRow hRow) throws Exception {
         HBaseRow resultRow = new HBaseRow();
-        List<HBaseCell> resultCells = new LinkedList<>();
         ObjectHelper.notNull(hRow, "HBase row");
         ObjectHelper.notNull(hRow.getId(), "HBase row id");
         ObjectHelper.notNull(hRow.getCells(), "HBase cells");
@@ -172,7 +171,6 @@ public class HBaseProducer extends DefaultProducer {
                 resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(cellModel.getValueType(), CellUtil.cloneValue(kvs.get(0))));
                 resultCell.setTimestamp(kvs.get(0).getTimestamp());
             }
-            resultCells.add(resultCell);
             resultRow.getCells().add(resultCell);
         }
         return resultRow;
