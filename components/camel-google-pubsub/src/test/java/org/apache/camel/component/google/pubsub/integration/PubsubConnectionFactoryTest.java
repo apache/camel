@@ -26,17 +26,11 @@ import org.junit.Test;
 public class PubsubConnectionFactoryTest extends PubsubTestSupport {
 
     /**
-     * Testing Credentials File only,
-     * the explicitly set Service Account and Key are tested everywhere else.
-     *
-     * A section of the test is disabled by default as it relies on
-     *
-     *  - a valid credentials file
-     *  - a valid project
-     *
-     * and therefore can not be tested with the PubSub Emulator
-     *
-     * Defaults Option is not tested.
+     * Testing Credentials File only, the explicitly set Service Account and Key
+     * are tested everywhere else. A section of the test is disabled by default
+     * as it relies on - a valid credentials file - a valid project and
+     * therefore can not be tested with the PubSub Emulator Defaults Option is
+     * not tested.
      *
      * @throws Exception
      */
@@ -46,20 +40,14 @@ public class PubsubConnectionFactoryTest extends PubsubTestSupport {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("camel-pubsub-component.json").getFile());
 
-        GooglePubsubConnectionFactory cf = new GooglePubsubConnectionFactory()
-                .setCredentialsFileLocation(file.getAbsolutePath())
-                .setServiceURL(SERVICE_URL);
+        GooglePubsubConnectionFactory cf = new GooglePubsubConnectionFactory().setCredentialsFileLocation(file.getAbsolutePath()).setServiceURL(SERVICE_URL);
 
         Pubsub pubsub = cf.getDefaultClient();
 
         String query = String.format("projects/%s", PROJECT_ID);
         // [ DEPENDS on actual project being available]
         /*
-        pubsub.projects()
-              .topics()
-              .list(query)
-              .execute();
-
-        */
+         * pubsub.projects() .topics() .list(query) .execute();
+         */
     }
 }

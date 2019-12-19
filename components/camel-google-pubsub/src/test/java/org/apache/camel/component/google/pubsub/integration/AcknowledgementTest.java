@@ -59,42 +59,30 @@ public class AcknowledgementTest extends PubsubTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn)
-                        .routeId("Send_to_Fail")
-                        .to(pubsubTopic);
+                from(directIn).routeId("Send_to_Fail").to(pubsubTopic);
 
-                from(pubsubSubscription)
-                        .routeId("Fail_Receive")
-                        .autoStartup(true)
-                        .process(
-                                new Processor() {
-                                    @Override
-                                    public void process(Exchange exchange) throws Exception {
-                                        if (AcknowledgementTest.fail) {
-                                            Thread.sleep(750);
-                                            throw new Exception("fail");
-                                        }
-                                    }
-                                }
-                        )
-                        .to(receiveResult);
+                from(pubsubSubscription).routeId("Fail_Receive").autoStartup(true).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        if (AcknowledgementTest.fail) {
+                            Thread.sleep(750);
+                            throw new Exception("fail");
+                        }
+                    }
+                }).to(receiveResult);
             }
         };
     }
 
     /**
-     * Testing acknowledgements.
-     * Three checks to be performed.
-     *
-     * Check 1 : Successful round trip.
-     * Message received and acknowledged.
-     * If the ACK fails for the first message, it will be delivered again for the second check and the body comparison will fail.
-     *
-     * Check 2 : Failure. As the route throws and exception and the message is NACK'ed.
-     * The message should remain in the PubSub Subscription for the third check.
-     *
-     * Check 3 : Success for the second message.
-     * The message received should match the second message sent.
+     * Testing acknowledgements. Three checks to be performed. Check 1 :
+     * Successful round trip. Message received and acknowledged. If the ACK
+     * fails for the first message, it will be delivered again for the second
+     * check and the body comparison will fail. Check 2 : Failure. As the route
+     * throws and exception and the message is NACK'ed. The message should
+     * remain in the PubSub Subscription for the third check. Check 3 : Success
+     * for the second message. The message received should match the second
+     * message sent.
      *
      * @throws Exception
      */

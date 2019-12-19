@@ -68,17 +68,11 @@ public class BodyTypesTest extends PubsubTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn)
-                        .routeId("Single_Send")
-                        .to(pubsubTopic)
-                        .to(sendResult);
+                from(directIn).routeId("Single_Send").to(pubsubTopic).to(sendResult);
 
-                from(pubsubSubscription)
-                        .routeId("Single_Receive")
-                        .to("direct:one");
+                from(pubsubSubscription).routeId("Single_Receive").to("direct:one");
 
-                from("direct:one")
-                        .to(receiveResult);
+                from("direct:one").to(receiveResult);
             }
         };
     }
@@ -101,11 +95,9 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertTrue("Sent body type is byte[]",
-                   sentExchange.getIn().getBody() instanceof byte[]);
+        assertTrue("Sent body type is byte[]", sentExchange.getIn().getBody() instanceof byte[]);
 
-        assertTrue("Sent body type is the one sent",
-                   sentExchange.getIn().getBody() == body);
+        assertTrue("Sent body type is the one sent", sentExchange.getIn().getBody() == body);
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -115,11 +107,9 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertTrue("Received body is of byte[] type",
-                   receivedExchange.getIn().getBody() instanceof byte[]);
+        assertTrue("Received body is of byte[] type", receivedExchange.getIn().getBody() instanceof byte[]);
 
-        assertTrue("Received body equals sent",
-                   Arrays.equals(body, (byte[]) receivedExchange.getIn().getBody()));
+        assertTrue("Received body equals sent", Arrays.equals(body, (byte[])receivedExchange.getIn().getBody()));
 
     }
 
@@ -142,8 +132,7 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertTrue("Sent body type is byte[]",
-                   sentExchange.getIn().getBody() instanceof Map);
+        assertTrue("Sent body type is byte[]", sentExchange.getIn().getBody() instanceof Map);
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -153,13 +142,11 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertTrue("Received body is of byte[] type",
-                   receivedExchange.getIn().getBody() instanceof byte[]);
+        assertTrue("Received body is of byte[] type", receivedExchange.getIn().getBody() instanceof byte[]);
 
-        Object bodyReceived = deserialize((byte[]) receivedExchange.getIn().getBody());
+        Object bodyReceived = deserialize((byte[])receivedExchange.getIn().getBody());
 
-        assertTrue("Received body is a Map ",
-                   ((Map) bodyReceived).get("KEY").equals("VALUE1212"));
+        assertTrue("Received body is a Map ", ((Map)bodyReceived).get("KEY").equals("VALUE1212"));
 
     }
 

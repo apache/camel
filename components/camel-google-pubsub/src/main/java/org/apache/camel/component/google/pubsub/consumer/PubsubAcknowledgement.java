@@ -25,11 +25,10 @@ import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public abstract class PubsubAcknowledgement {
 
-    protected Logger LOG;
-    
+    protected Logger log;
+
     private final String subscriptionFullName;
     private final GooglePubsubEndpoint endpoint;
 
@@ -43,18 +42,13 @@ public abstract class PubsubAcknowledgement {
             loggerId = this.getClass().getName();
         }
 
-        LOG = LoggerFactory.getLogger(PubsubAcknowledgement.class);
+        log = LoggerFactory.getLogger(PubsubAcknowledgement.class);
     }
 
     void acknowledge(List<String> ackIdList) {
-        AcknowledgeRequest ackRequest = new AcknowledgeRequest()
-                .setAckIds(ackIdList);
+        AcknowledgeRequest ackRequest = new AcknowledgeRequest().setAckIds(ackIdList);
         try {
-            endpoint.getPubsub()
-                    .projects()
-                    .subscriptions()
-                    .acknowledge(subscriptionFullName, ackRequest)
-                    .execute();
+            endpoint.getPubsub().projects().subscriptions().acknowledge(subscriptionFullName, ackRequest).execute();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -62,21 +56,13 @@ public abstract class PubsubAcknowledgement {
 
     void resetAckDeadline(List<String> ackIdList, Integer seconds) {
 
-        ModifyAckDeadlineRequest nackRequest = new ModifyAckDeadlineRequest()
-                .setAckIds(ackIdList)
-                .setAckDeadlineSeconds(seconds);
+        ModifyAckDeadlineRequest nackRequest = new ModifyAckDeadlineRequest().setAckIds(ackIdList).setAckDeadlineSeconds(seconds);
 
         try {
-            endpoint.getPubsub()
-                    .projects()
-                    .subscriptions()
-                    .modifyAckDeadline(subscriptionFullName, nackRequest)
-                    .execute();
+            endpoint.getPubsub().projects().subscriptions().modifyAckDeadline(subscriptionFullName, nackRequest).execute();
         } catch (Exception e) {
             // It will timeout automatically on the channel
-        	LOG.warn("Unable to reset ack deadline " + ackIdList, e);
+            log.warn("Unable to reset ack deadline " + ackIdList, e);
         }
     }
 }
-
-

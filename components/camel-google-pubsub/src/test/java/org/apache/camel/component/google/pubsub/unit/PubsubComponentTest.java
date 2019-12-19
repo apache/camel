@@ -31,13 +31,11 @@ public class PubsubComponentTest extends PubsubTestSupport {
         assertNotNull(contextComponent);
         assertTrue(contextComponent instanceof GooglePubsubComponent);
 
-        GooglePubsubComponent pubsubComponent = (GooglePubsubComponent) contextComponent;
+        GooglePubsubComponent pubsubComponent = (GooglePubsubComponent)contextComponent;
 
-        assertEquals(SERVICE_ACCOUNT,
-                     pubsubComponent.getConnectionFactory().getServiceAccount());
+        assertEquals(SERVICE_ACCOUNT, pubsubComponent.getConnectionFactory().getServiceAccount());
 
-        assertEquals(SERVICE_KEY,
-                     pubsubComponent.getConnectionFactory().getServiceAccountKey());
+        assertEquals(SERVICE_KEY, pubsubComponent.getConnectionFactory().getServiceAccountKey());
     }
 
 }

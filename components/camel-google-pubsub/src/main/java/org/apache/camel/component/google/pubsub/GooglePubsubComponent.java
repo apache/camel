@@ -52,10 +52,9 @@ public class GooglePubsubComponent extends DefaultComponent {
     }
 
     /**
-     * Sets the connection factory to use:
-     * provides the ability to explicitly manage connection credentials:
-     * - the path to the key file
-     * - the Service Account Key / Email pair
+     * Sets the connection factory to use: provides the ability to explicitly
+     * manage connection credentials: - the path to the key file - the Service
+     * Account Key / Email pair
      */
     public GooglePubsubConnectionFactory getConnectionFactory() {
         if (connectionFactory == null) {
@@ -68,4 +67,3 @@ public class GooglePubsubComponent extends DefaultComponent {
         this.connectionFactory = connectionFactory;
     }
 }
-
