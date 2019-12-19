@@ -358,6 +358,7 @@
                       <fileset dir="${basedir}/../camel-core-xml/src/main/java">
                         <include name="org/apache/camel/core/xml/*.java" />
                         <include name="org/apache/camel/core/xml/util/**/*.java" />
+                        <exclude name="org/apache/camel/core/xml/CamelProxyFactoryDefinition.java" />
                       </fileset>
                       <fileset dir="${basedir}/../../camel-core/src/main/java">
                         <include name="org/apache/camel/model/**/*.java" />
