@@ -29,8 +29,8 @@ import com.google.api.services.pubsub.model.PublishResponse;
 import com.google.api.services.pubsub.model.PubsubMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -38,7 +38,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class GooglePubsubProducer extends DefaultProducer {
 
-    private Logger logger;
+    public Logger logger;
 
     public GooglePubsubProducer(GooglePubsubEndpoint endpoint) throws Exception {
         super(endpoint);
@@ -49,7 +49,7 @@ public class GooglePubsubProducer extends DefaultProducer {
             loggerId = this.getClass().getName();
         }
 
-        logger = LogManager.getLogger(loggerId);
+        logger = LoggerFactory.getLogger(loggerId);
     }
 
     /**

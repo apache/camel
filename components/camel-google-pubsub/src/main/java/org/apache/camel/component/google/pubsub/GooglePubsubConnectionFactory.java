@@ -36,15 +36,15 @@ import com.google.api.services.pubsub.PubsubScopes;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class GooglePubsubConnectionFactory {
 
     private static JsonFactory jsonFactory = new JacksonFactory();
 
-    private final Logger logger = LogManager.getLogger(GooglePubsubConnectionFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GooglePubsubConnectionFactory.class);
 
     private String serviceAccount;
     private String serviceAccountKey;
@@ -82,22 +82,22 @@ public class GooglePubsubConnectionFactory {
         GoogleCredential credential = null;
 
         if (!Strings.isNullOrEmpty(serviceAccount) && !Strings.isNullOrEmpty(serviceAccountKey)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Service Account and Key have been set explicitly. Initialising PubSub using Service Account " + serviceAccount);
+            if (LOG.isDebugEnabled()) {
+            	LOG.debug("Service Account and Key have been set explicitly. Initialising PubSub using Service Account " + serviceAccount);
             }
             credential = createFromAccountKeyPair(httpTransport);
         }
 
         if (credential == null && !Strings.isNullOrEmpty(credentialsFileLocation)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Key File Name has been set explicitly. Initialising PubSub using Key File " + credentialsFileLocation);
+            if (LOG.isDebugEnabled()) {
+            	LOG.debug("Key File Name has been set explicitly. Initialising PubSub using Key File " + credentialsFileLocation);
             }
             credential = createFromFile();
         }
 
         if (credential == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No explicit Service Account or Key File Name have been provided. Initialising PubSub using defaults ");
+            if (LOG.isDebugEnabled()) {
+            	LOG.debug("No explicit Service Account or Key File Name have been provided. Initialising PubSub using defaults ");
             }
             credential = createDefault();
         }
@@ -167,7 +167,7 @@ public class GooglePubsubConnectionFactory {
                                    .generatePrivate(keySpec);
         } catch (Exception e) {
             String error = "Constructing Private Key from PEM string failed: " + e.getMessage();
-            logger.error(error, e);
+            LOG.error(error, e);
             throw new RuntimeException(e);
         }
         return privateKey;

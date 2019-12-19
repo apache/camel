@@ -22,13 +22,13 @@ import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.model.AcknowledgeRequest;
 import com.google.api.services.pubsub.model.ModifyAckDeadlineRequest;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public abstract class PubsubAcknowledgement {
 
-    protected Logger logger;
+    protected Logger LOG;
     
     private final String subscriptionFullName;
     private final GooglePubsubEndpoint endpoint;
@@ -43,7 +43,7 @@ public abstract class PubsubAcknowledgement {
             loggerId = this.getClass().getName();
         }
 
-        logger = LogManager.getRootLogger();
+        LOG = LoggerFactory.getLogger(PubsubAcknowledgement.class);
     }
 
     void acknowledge(List<String> ackIdList) {
@@ -74,7 +74,7 @@ public abstract class PubsubAcknowledgement {
                     .execute();
         } catch (Exception e) {
             // It will timeout automatically on the channel
-            logger.warn("Unable to reset ack deadline " + ackIdList, e);
+        	LOG.warn("Unable to reset ack deadline " + ackIdList, e);
         }
     }
 }
