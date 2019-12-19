@@ -39,7 +39,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class GooglePubsubConnectionFactory {
 
     private static JsonFactory jsonFactory = new JacksonFactory();
@@ -83,27 +82,26 @@ public class GooglePubsubConnectionFactory {
 
         if (!Strings.isNullOrEmpty(serviceAccount) && !Strings.isNullOrEmpty(serviceAccountKey)) {
             if (LOG.isDebugEnabled()) {
-            	LOG.debug("Service Account and Key have been set explicitly. Initialising PubSub using Service Account " + serviceAccount);
+                LOG.debug("Service Account and Key have been set explicitly. Initialising PubSub using Service Account " + serviceAccount);
             }
             credential = createFromAccountKeyPair(httpTransport);
         }
 
         if (credential == null && !Strings.isNullOrEmpty(credentialsFileLocation)) {
             if (LOG.isDebugEnabled()) {
-            	LOG.debug("Key File Name has been set explicitly. Initialising PubSub using Key File " + credentialsFileLocation);
+                LOG.debug("Key File Name has been set explicitly. Initialising PubSub using Key File " + credentialsFileLocation);
             }
             credential = createFromFile();
         }
 
         if (credential == null) {
             if (LOG.isDebugEnabled()) {
-            	LOG.debug("No explicit Service Account or Key File Name have been provided. Initialising PubSub using defaults ");
+                LOG.debug("No explicit Service Account or Key File Name have been provided. Initialising PubSub using defaults ");
             }
             credential = createDefault();
         }
 
-        Pubsub.Builder builder = new Pubsub.Builder(httpTransport, jsonFactory, credential)
-                .setApplicationName("camel-google-pubsub");
+        Pubsub.Builder builder = new Pubsub.Builder(httpTransport, jsonFactory, credential).setApplicationName("camel-google-pubsub");
 
         // Local emulator, SOCKS proxy, etc.
         if (serviceURL != null) {
@@ -138,13 +136,8 @@ public class GooglePubsubConnectionFactory {
 
     private GoogleCredential createFromAccountKeyPair(HttpTransport httpTransport) {
         try {
-            GoogleCredential credential = new GoogleCredential.Builder()
-                    .setTransport(httpTransport)
-                    .setJsonFactory(jsonFactory)
-                    .setServiceAccountId(serviceAccount)
-                    .setServiceAccountScopes(PubsubScopes.all())
-                    .setServiceAccountPrivateKey(getPrivateKeyFromString(serviceAccountKey))
-                    .build();
+            GoogleCredential credential = new GoogleCredential.Builder().setTransport(httpTransport).setJsonFactory(jsonFactory).setServiceAccountId(serviceAccount)
+                .setServiceAccountScopes(PubsubScopes.all()).setServiceAccountPrivateKey(getPrivateKeyFromString(serviceAccountKey)).build();
 
             return credential;
         } catch (Exception e) {
@@ -155,16 +148,12 @@ public class GooglePubsubConnectionFactory {
     private PrivateKey getPrivateKeyFromString(String serviceKeyPem) {
         PrivateKey privateKey = null;
         try {
-            String privKeyPEM = serviceKeyPem.replace("-----BEGIN PRIVATE KEY-----", "")
-                                             .replace("-----END PRIVATE KEY-----", "")
-                                             .replace("\r", "")
-                                             .replace("\n", "");
+            String privKeyPEM = serviceKeyPem.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replace("\r", "").replace("\n", "");
 
             byte[] encoded = Base64.decodeBase64(privKeyPEM);
 
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
-            privateKey = KeyFactory.getInstance("RSA")
-                                   .generatePrivate(keySpec);
+            privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
         } catch (Exception e) {
             String error = "Constructing Private Key from PEM string failed: " + e.getMessage();
             LOG.error(error, e);

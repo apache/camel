@@ -29,11 +29,9 @@ public class PubsubEndpointTest extends PubsubTestSupport {
 
     private static final String TEST_SUBSCRIPTION_NAME = "test-sub-name";
 
-    // For testing purposes the URI params need to be aligned in alphabetical order
-    private static final String SUBSCRIPTION_URI = TEST_SUBSCRIPTION_NAME
-            + "?ackMode=NONE"
-            + "&concurrentConsumers=5"
-            + "&maxMessagesPerPoll=2";
+    // For testing purposes the URI params need to be aligned in alphabetical
+    // order
+    private static final String SUBSCRIPTION_URI = TEST_SUBSCRIPTION_NAME + "?ackMode=NONE" + "&concurrentConsumers=5" + "&maxMessagesPerPoll=2";
 
     @EndpointInject("google-pubsub://{{project.id}}:" + SUBSCRIPTION_URI)
     private Endpoint from;
@@ -46,11 +44,10 @@ public class PubsubEndpointTest extends PubsubTestSupport {
 
         // :1 identifies the first registered endpoint fo a type in the context
         Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s:1", PROJECT_ID, SUBSCRIPTION_URI));
-        assertNotNull(String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context",
-                                    PROJECT_ID, SUBSCRIPTION_URI), endpoint);
+        assertNotNull(String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, SUBSCRIPTION_URI), endpoint);
 
         assertTrue(endpoint instanceof GooglePubsubEndpoint);
-        GooglePubsubEndpoint pubsubEndpoint = (GooglePubsubEndpoint) endpoint;
+        GooglePubsubEndpoint pubsubEndpoint = (GooglePubsubEndpoint)endpoint;
 
         assertEquals(ExchangePattern.InOnly, pubsubEndpoint.createExchange().getPattern());
         assertEquals("google-pubsub://" + PROJECT_ID + ":" + SUBSCRIPTION_URI, pubsubEndpoint.getEndpointUri());

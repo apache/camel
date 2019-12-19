@@ -42,19 +42,19 @@ public class ExchangeAckTransaction extends PubsubAcknowledgement implements Syn
         Object configuredDeadline = exchange.getIn().getHeader(GooglePubsubConstants.ACK_DEADLINE);
 
         if (configuredDeadline != null && Integer.class.isInstance(configuredDeadline)) {
-            deadline = (Integer) configuredDeadline;
+            deadline = (Integer)configuredDeadline;
         }
 
         if (configuredDeadline != null && String.class.isInstance(configuredDeadline)) {
             try {
-                deadline = Integer.valueOf((String) configuredDeadline);
+                deadline = Integer.valueOf((String)configuredDeadline);
             } catch (Exception e) {
-                LOG.warn("Unable to parse ACK Deadline header value", e);
+                log.warn("Unable to parse ACK Deadline header value", e);
             }
         }
 
         if (deadline != 0) {
-            LOG.trace(" Exchange {} : Ack deadline : {}", exchange.getExchangeId(), deadline);
+            log.trace(" Exchange {} : Ack deadline : {}", exchange.getExchangeId(), deadline);
         }
 
         resetAckDeadline(getAckIdList(exchange), deadline);
@@ -64,18 +64,16 @@ public class ExchangeAckTransaction extends PubsubAcknowledgement implements Syn
         List<String> ackList = new ArrayList<>();
 
         if (null != exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
-            for (Exchange ex : (List<Exchange>) exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
-                String ackId = (String) ex.getIn().getHeader(GooglePubsubConstants.ACK_ID);
+            for (Exchange ex : (List<Exchange>)exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
+                String ackId = (String)ex.getIn().getHeader(GooglePubsubConstants.ACK_ID);
                 if (null != ackId) {
                     ackList.add(ackId);
                 }
             }
         } else {
-            ackList.add((String) exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
+            ackList.add((String)exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
         }
 
         return ackList;
     }
 }
-
-

@@ -65,17 +65,11 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn)
-                        .routeId("Single_Send")
-                        .to(pubsubTopic)
-                        .to(sendResult);
+                from(directIn).routeId("Single_Send").to(pubsubTopic).to(sendResult);
 
-                from(pubsubSubscription)
-                        .routeId("Single_Receive")
-                        .to("direct:one");
+                from(pubsubSubscription).routeId("Single_Receive").to("direct:one");
 
-                from("direct:one")
-                        .to(receiveResult);
+                from("direct:one").to(receiveResult);
             }
         };
     }
@@ -104,9 +98,7 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertEquals("Sent ID",
-                     exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
-                     sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
+        assertEquals("Sent ID", exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -116,17 +108,12 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertNotNull("PUBSUB Message ID Property",
-                      receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
-        assertNotNull("PUBSUB Ack ID Property",
-                      receivedExchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
-        assertNotNull("PUBSUB Published Time",
-                      receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME));
+        assertNotNull("PUBSUB Message ID Property", receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
+        assertNotNull("PUBSUB Ack ID Property", receivedExchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
+        assertNotNull("PUBSUB Published Time", receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME));
 
-        assertEquals("PUBSUB Header Attribute", attributeValue,
-                     ((Map) receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey));
+        assertEquals("PUBSUB Header Attribute", attributeValue, ((Map)receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey));
 
-        assertEquals(sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
-                     receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
+        assertEquals(sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
     }
 }
