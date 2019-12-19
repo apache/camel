@@ -941,7 +941,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         if (method.getReturnType() instanceof DeclaredType) {
             final DeclaredType returnType = (DeclaredType) method.getReturnType();
 
-            return "groovy.lang.MetaClass".equals(returnType.asElement().getSimpleName());
+            return "groovy.lang.MetaClass".equals(returnType.asElement().getSimpleName().toString());
         } else {
             // Eclipse (Groovy?) compiler returns javax.lang.model.type.NoType, no other way to check but to look at toString output
             return method.toString().contains("(groovy.lang.MetaClass)");
