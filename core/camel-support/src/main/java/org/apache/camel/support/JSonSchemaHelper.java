@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -33,6 +34,69 @@ import org.apache.camel.util.json.Jsoner;
 public final class JSonSchemaHelper {
 
     private JSonSchemaHelper() {
+    }
+
+    /**
+     * Parses the camel-main json schema to split it into a list or rows, where each row contains key value pairs with the metadata
+     *
+     * @param json the main configuration json
+     * @return a list of all the rows, where each row is a set of key value pairs with metadata
+     * @throws RuntimeException is thrown if error parsing the json data
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Map<String, String>> parseMainJsonSchema(String json) {
+        List<Map<String, String>> answer = new ArrayList<>();
+        if (json == null) {
+            return answer;
+        }
+
+        // convert into a List<Map<String, String>> structure which is expected as output from this parser
+        try {
+            JsonObject output = (JsonObject) Jsoner.deserialize(json);
+            for (String key : output.keySet()) {
+                JsonArray array = (JsonArray) output.get(key);
+                if (key.equals("properties")) {
+                    // flattern each entry in the row with name as they key, and its value as the content (its a map also)
+                    for (Object obj : array) {
+                        Map entry = (Map) obj;
+                        Map<String, String> newRow = new LinkedHashMap();
+                        newRow.putAll(entry);
+                        answer.add(newRow);
+                        String name = ((Map) obj).get("name").toString();
+                        // use naming style with camel case
+                        String lookupKey = dashToCamelCase(name);
+                        newRow.put("name", lookupKey);
+                        // its the java type
+                        String type = newRow.get("type");
+                        newRow.put("javaType", type);
+                        newRow.put("type", fromMainToType(type));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // wrap parsing exceptions as runtime
+            throw new RuntimeException("Cannot parse json", e);
+        }
+
+        return answer;
+    }
+
+    private static String fromMainToType(String type) {
+        if ("boolean".equals(type) || "java.lang.Boolean".equals(type)) {
+            return "boolean";
+        } else if ("int".equals(type) || "java.lang.Integer".equals(type)) {
+            return "integer";
+        } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
+            return "integer";
+        } else if ("float".equals(type) || "java.lang.Float".equals(type)) {
+            return "number";
+        } else if ("double".equals(type) || "java.lang.Double".equals(type)) {
+            return "number";
+        } else if ("string".equals(type) || "java.lang.String".equals(type)) {
+            return "string";
+        } else {
+            return "object";
+        }
     }
 
     /**
@@ -150,7 +214,7 @@ public final class JSonSchemaHelper {
             String labels = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("label")) {
                 labels = row.get("label");
@@ -167,7 +231,7 @@ public final class JSonSchemaHelper {
             String labels = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("label")) {
                 labels = row.get("label");
@@ -184,7 +248,7 @@ public final class JSonSchemaHelper {
             boolean required = false;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("required")) {
                 required = "true".equals(row.get("required"));
@@ -201,7 +265,7 @@ public final class JSonSchemaHelper {
             boolean deprecated = false;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("deprecated")) {
                 deprecated = "true".equals(row.get("deprecated"));
@@ -218,7 +282,7 @@ public final class JSonSchemaHelper {
             String kind = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("kind")) {
                 kind = row.get("kind");
@@ -230,12 +294,29 @@ public final class JSonSchemaHelper {
         return null;
     }
 
+    public static String getPropertyJavaType(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String javaType = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equalsIgnoreCase(row.get("name"));
+            }
+            if (row.containsKey("javaType")) {
+                javaType = row.get("javaType");
+            }
+            if (found) {
+                return javaType;
+            }
+        }
+        return null;
+    }
+
     public static boolean isPropertyBoolean(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String type = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("type")) {
                 type = row.get("type");
@@ -252,7 +333,7 @@ public final class JSonSchemaHelper {
             String type = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("type")) {
                 type = row.get("type");
@@ -264,12 +345,29 @@ public final class JSonSchemaHelper {
         return false;
     }
 
+    public static boolean isPropertyArray(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equalsIgnoreCase(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return "array".equals(type);
+            }
+        }
+        return false;
+    }
+
     public static boolean isPropertyNumber(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String type = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("type")) {
                 type = row.get("type");
@@ -286,7 +384,7 @@ public final class JSonSchemaHelper {
             String type = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("type")) {
                 type = row.get("type");
@@ -303,7 +401,7 @@ public final class JSonSchemaHelper {
             String defaultValue = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("defaultValue")) {
                 defaultValue = row.get("defaultValue");
@@ -328,7 +426,7 @@ public final class JSonSchemaHelper {
                     // try again
                     return stripOptionalPrefixFromName(rows, name);
                 } else {
-                    found = name.equals(row.get("name"));
+                    found = name.equalsIgnoreCase(row.get("name"));
                 }
             }
             if (found) {
@@ -343,7 +441,7 @@ public final class JSonSchemaHelper {
             String enums = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("enum")) {
                 enums = row.get("enum");
@@ -360,7 +458,7 @@ public final class JSonSchemaHelper {
             String prefix = null;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("prefix")) {
                 prefix = row.get("prefix");
@@ -377,7 +475,7 @@ public final class JSonSchemaHelper {
             boolean multiValue = false;
             boolean found = false;
             if (row.containsKey("name")) {
-                found = name.equals(row.get("name"));
+                found = name.equalsIgnoreCase(row.get("name"));
             }
             if (row.containsKey("multiValue")) {
                 multiValue = "true".equals(row.get("multiValue"));
@@ -426,4 +524,35 @@ public final class JSonSchemaHelper {
         return answer;
     }
 
+    /**
+     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
+     *
+     * @param text  the string
+     * @return the string camel cased
+     */
+    private static String dashToCamelCase(String text) {
+        if (text == null) {
+            return null;
+        }
+        int length = text.length();
+        if (length == 0) {
+            return text;
+        }
+        if (text.indexOf('-') == -1) {
+            return text;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '-') {
+                i++;
+                sb.append(Character.toUpperCase(text.charAt(i)));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 }

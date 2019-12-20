@@ -51,6 +51,8 @@ public class EndpointValidationResult implements Serializable {
     private Map<String, String> invalidEnum;
     private Map<String, String[]> invalidEnumChoices;
     private Map<String, String[]> invalidEnumSuggestions;
+    private Map<String, String> invalidMap;
+    private Map<String, String> invalidArray;
     private Map<String, String> invalidReference;
     private Map<String, String> invalidBoolean;
     private Map<String, String> invalidInteger;
@@ -93,6 +95,9 @@ public class EndpointValidationResult implements Serializable {
         if (ok) {
             ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
                 && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
+        }
+        if (ok) {
+           ok = invalidMap == null && invalidArray == null;
         }
         return ok;
     }
@@ -187,6 +192,26 @@ public class EndpointValidationResult implements Serializable {
         }
         if (!invalidReference.containsKey(name)) {
             invalidReference.put(name, value);
+            errors++;
+        }
+    }
+
+    public void addInvalidMap(String name, String value) {
+        if (invalidMap == null) {
+            invalidMap = new LinkedHashMap<>();
+        }
+        if (!invalidMap.containsKey(name)) {
+            invalidMap.put(name, value);
+            errors++;
+        }
+    }
+
+    public void addInvalidArray(String name, String value) {
+        if (invalidArray == null) {
+            invalidArray = new LinkedHashMap<>();
+        }
+        if (!invalidArray.containsKey(name)) {
+            invalidArray.put(name, value);
             errors++;
         }
     }
@@ -301,6 +326,14 @@ public class EndpointValidationResult implements Serializable {
 
     public Map<String, String> getInvalidReference() {
         return invalidReference;
+    }
+
+    public Map<String, String> getInvalidMap() {
+        return invalidMap;
+    }
+
+    public Map<String, String> getInvalidArray() {
+        return invalidArray;
     }
 
     public Map<String, String> getInvalidBoolean() {

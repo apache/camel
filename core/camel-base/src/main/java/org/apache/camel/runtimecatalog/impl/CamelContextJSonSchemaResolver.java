@@ -17,10 +17,13 @@
 package org.apache.camel.runtimecatalog.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Uses runtime {@link CamelContext} to resolve the JSon schema files.
@@ -79,4 +82,20 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
         return null;
     }
 
+    @Override
+    public String getMainJsonSchema() {
+        String path = "META-INF/camel-main-configuration-metadata.json";
+        ClassResolver resolver = camelContext.getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        if (inputStream != null) {
+            try {
+                return IOHelper.loadText(inputStream);
+            } catch (IOException e) {
+                // ignore
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        return null;
+    }
 }

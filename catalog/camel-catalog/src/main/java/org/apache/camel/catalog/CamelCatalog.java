@@ -474,6 +474,14 @@ public interface CamelCatalog {
     LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text);
 
     /**
+     * Parses and validates the configuration property
+     *
+     * @param text  the configuration text
+     * @return validation result
+     */
+    ConfigurationPropertiesValidationResult validateConfigurationProperty(String text);
+
+    /**
      * Returns the component name from the given endpoint uri
      *
      * @param uri  the endpoint uri
