@@ -1301,4 +1301,238 @@ public class CamelCatalogTest {
         assertEquals("Kerberos Renew Jitter", row.get("displayName"));
     }
 
+    @Test
+    public void testValidateConfigurationPropertyComponent() throws Exception {
+        String text = "camel.component.seda.queueSize=1234";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queue-size=1234";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queuesize=1234";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queueSize=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidInteger().get("camel.component.seda.queueSize"));
+
+        text = "camel.component.seda.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.component.seda.foo"));
+
+        text = "camel.component.jms.acknowledgementModeName=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidEnum().get("camel.component.jms.acknowledgementModeName"));
+        List<String> list = result.getEnumChoices("camel.component.jms.acknowledgementModeName");
+        assertEquals(4, list.size());
+        assertEquals("SESSION_TRANSACTED", list.get(0));
+        assertEquals("CLIENT_ACKNOWLEDGE", list.get(1));
+        assertEquals("AUTO_ACKNOWLEDGE", list.get(2));
+        assertEquals("DUPS_OK_ACKNOWLEDGE", list.get(3));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyLanguage() throws Exception {
+        String text = "camel.language.tokenize.token=;";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.tokenize.regex=true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.tokenize.regex=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidBoolean().get("camel.language.tokenize.regex"));
+
+        text = "camel.language.tokenize.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.language.tokenize.foo"));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyDataformat() throws Exception {
+        String text = "camel.dataformat.bindy-csv.type=csv";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.dataformat.bindy-csv.locale=us";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.dataformat.bindy-csv.allowEmptyStream=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidBoolean().get("camel.dataformat.bindy-csv.allowEmptyStream"));
+
+        text = "camel.dataformat.bindy-csv.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.dataformat.bindy-csv.foo"));
+
+        text = "camel.dataformat.bindy-csv.type=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidEnum().get("camel.dataformat.bindy-csv.type"));
+        List<String> list = result.getEnumChoices("camel.dataformat.bindy-csv.type");
+        assertEquals(3, list.size());
+        assertEquals("Csv", list.get(0));
+        assertEquals("Fixed", list.get(1));
+        assertEquals("KeyValue", list.get(2));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyComponentQuartz() throws Exception {
+        String text = "camel.component.quartz.auto-start-scheduler=true";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties=#myProp";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties=123";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+
+        text = "camel.component.quartz.properties.foo=123";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties.bar=true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties[0]=yes";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties[1]=no";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties[foo]=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties[foo].beer=yes";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.quartz.properties[foo].drink=no";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyComponentJClouds() throws Exception {
+        String text = "camel.component.jclouds.basicPropertyBinding=true";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.jclouds.blobStores=#myStores";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.jclouds.blobStores=foo";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getInvalidArray().containsKey("camel.component.jclouds.blobStores"));
+
+        text = "camel.component.jclouds.blobStores[0]=foo";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.jclouds.blobStores[1]=bar";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.jclouds.blobStores[foo]=123";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo]"));
+
+        text = "camel.component.jclouds.blobStores[0].beer=yes";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.jclouds.blobStores[1].drink=no";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.jclouds.blobStores[foo].beer=yes";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo].beer"));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyMain() throws Exception {
+        String text = "camel.main.allow-use-original-message=true";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.main.allow-use-original-message=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidBoolean().get("camel.main.allow-use-original-message"));
+
+        text = "camel.main.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.main.foo"));
+
+        text = "camel.resilience4j.minimum-number-of-calls=123";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.resilience4j.minimum-number-of-calls=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidInteger().get("camel.resilience4j.minimum-number-of-calls"));
+
+        text = "camel.resilience4j.slow-call-rate-threshold=12.5";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.resilience4j.slow-call-rate-threshold=12x5";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("12x5", result.getInvalidNumber().get("camel.resilience4j.slow-call-rate-threshold"));
+
+        text = "camel.rest.api-properties=#foo";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.rest.api-properties=bar";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("bar", result.getInvalidMap().get("camel.rest.api-properties"));
+
+        text = "camel.rest.api-properties.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.rest.api-properties.bar=123";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.rest.api-properties.beer=yes";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        // TODO: add support for [] maps for main
+//        text = "camel.rest.api-properties[drink]=no";
+//        result = catalog.validateConfigurationProperty(text);
+//        assertTrue(result.isSuccess());
+    }
+
 }

@@ -713,7 +713,7 @@ public final class PropertyBindingSupport {
         } else if (answer instanceof List) {
             List list = (List) answer;
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.valueOf(lookupKey);
+                int idx = Integer.parseInt(lookupKey);
                 answer = list.get(idx);
             } else {
                 if (list.isEmpty()) {

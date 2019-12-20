@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -34,36 +35,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.camel.runtimecatalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 import org.apache.camel.runtimecatalog.LanguageValidationResult;
 
 import static org.apache.camel.runtimecatalog.impl.CatalogHelper.after;
+import static org.apache.camel.runtimecatalog.impl.CatalogHelper.before;
 import static org.apache.camel.runtimecatalog.impl.URISupport.createQueryString;
 import static org.apache.camel.runtimecatalog.impl.URISupport.isEmpty;
 import static org.apache.camel.runtimecatalog.impl.URISupport.normalizeUri;
 import static org.apache.camel.runtimecatalog.impl.URISupport.stripQuery;
-import static org.apache.camel.support.JSonSchemaHelper.getNames;
-import static org.apache.camel.support.JSonSchemaHelper.getPropertyDefaultValue;
-import static org.apache.camel.support.JSonSchemaHelper.getPropertyEnum;
-import static org.apache.camel.support.JSonSchemaHelper.getPropertyKind;
-import static org.apache.camel.support.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
-import static org.apache.camel.support.JSonSchemaHelper.getPropertyPrefix;
-import static org.apache.camel.support.JSonSchemaHelper.getRow;
-import static org.apache.camel.support.JSonSchemaHelper.isComponentConsumerOnly;
-import static org.apache.camel.support.JSonSchemaHelper.isComponentLenientProperties;
-import static org.apache.camel.support.JSonSchemaHelper.isComponentProducerOnly;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyBoolean;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyConsumerOnly;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyDeprecated;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyInteger;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyMultiValue;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyNumber;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyObject;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyProducerOnly;
-import static org.apache.camel.support.JSonSchemaHelper.isPropertyRequired;
-import static org.apache.camel.support.JSonSchemaHelper.parseJsonSchema;
-import static org.apache.camel.support.JSonSchemaHelper.stripOptionalPrefixFromName;
+import static org.apache.camel.support.JSonSchemaHelper.*;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
@@ -1036,6 +1019,228 @@ public abstract class AbstractCamelCatalog {
         return tokens.toArray(new String[tokens.size()]);
     }
 
+    public ConfigurationPropertiesValidationResult validateConfigurationProperty(String text) {
+        String longKey = before(text, "=");
+        String key = longKey;
+        String value = after(text, "=");
+
+        ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult(key, value);
+        boolean accept = acceptConfigurationPropertyKey(key);
+        if (!accept) {
+            result.addUnknown(key);
+            return result;
+        }
+
+        boolean component = key.startsWith("camel.component.");
+        boolean dataformat = key.startsWith("camel.dataformat.");
+        boolean language = key.startsWith("camel.language.");
+        boolean main = key.startsWith("camel.main.") || key.startsWith("camel.hystrix.") | key.startsWith("camel.resilience4j.") || key.startsWith("camel.rest.");
+        if (component || dataformat || language) {
+            String group;
+            if (component) {
+                key = key.substring(16);
+                group = "componentProperties";
+            } else if (dataformat) {
+                key = key.substring(17);
+                group = "properties";
+            } else {
+                key = key.substring(15);
+                group = "properties";
+            }
+            if (!key.contains(".")) {
+                result.addIncapable(key);
+                return result;
+            }
+            String name = before(key, ".");
+            String option = after(key, ".");
+            if (name != null && option != null && value != null) {
+                String json;
+                if (component) {
+                    json = jsonSchemaResolver.getComponentJSonSchema(name);
+                } else if (dataformat) {
+                    json = jsonSchemaResolver.getDataFormatJSonSchema(name);
+                } else {
+                    json = jsonSchemaResolver.getLanguageJSonSchema(name);
+                }
+                if (json == null) {
+                    result.addUnknownComponent(name);
+                    return result;
+                }
+                List<Map<String, String>> rows = parseJsonSchema(group, json, true);
+
+                // lower case option and remove dash
+                String nOption = option.replaceAll("-", "").toLowerCase(Locale.US);
+                String suffix = null;
+                int posDot = nOption.indexOf('.');
+                int posBracket = nOption.indexOf('[');
+                if (posDot > 0 && posBracket > 0) {
+                    int first = Math.min(posDot, posBracket);
+                    suffix = nOption.substring(first);
+                    nOption = nOption.substring(0, first);
+                } else if (posDot > 0) {
+                    suffix = nOption.substring(posDot);
+                    nOption = nOption.substring(0, posDot);
+                } else if (posBracket > 0) {
+                    suffix = nOption.substring(posBracket);
+                    nOption = nOption.substring(0, posBracket);
+                }
+                doValidateConfigurationProperty(result, rows, name, value, longKey, nOption, suffix);
+            }
+        } else if (main) {
+            // skip camel.
+            key = key.substring(6);
+            String name = before(key, ".");
+            String option = after(key, ".");
+            if (name != null && option != null && value != null) {
+                String json = jsonSchemaResolver.getMainJsonSchema();
+                if (json == null) {
+                    result.addIncapable("camel-main not detected on classpath");
+                    return result;
+                }
+                List<Map<String, String>> rows = parseMainJsonSchema(json);
+
+                // lower case option and remove dash
+                String lookupKey = longKey.replaceAll("-", "").toLowerCase(Locale.US);
+                String suffix = null;
+                int pos = option.indexOf('.');
+                // TODO: add support for [] maps for main
+                if (pos > 0 && option.length() > pos) {
+                    suffix = option.substring(pos + 1);
+                    // remove .suffix from lookup key
+                    int len = lookupKey.length() - suffix.length() - 1;
+                    lookupKey = lookupKey.substring(0, len);
+                }
+                doValidateConfigurationProperty(result, rows, name, value, longKey, lookupKey, suffix);
+            }
+        }
+
+        return result;
+    }
+
+    private void doValidateConfigurationProperty(ConfigurationPropertiesValidationResult result, List<Map<String, String>> rows,
+                                                 String name, String value, String longKey,
+                                                 String lookupKey, String suffix) {
+
+        // find option
+        String rowKey = rows.stream()
+                .map(e -> e.get("name"))
+                .filter(n -> n.toLowerCase(Locale.US).equals(lookupKey)).findFirst().orElse(null);
+        if (rowKey == null) {
+            // unknown option
+            result.addUnknown(longKey);
+            if (suggestionStrategy != null) {
+                String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                if (suggestions != null) {
+                    result.addUnknownSuggestions(name, suggestions);
+                }
+            }
+        } else {
+            boolean optionPlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+            boolean lookup = value.startsWith("#") && value.length() > 1;
+
+            // deprecated
+            if (!optionPlaceholder && !lookup && isPropertyDeprecated(rows, rowKey)) {
+                result.addDeprecated(longKey);
+            }
+
+            // is boolean
+            if (!optionPlaceholder && !lookup && isPropertyBoolean(rows, rowKey)) {
+                // value must be a boolean
+                boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
+                if (!bool) {
+                    result.addInvalidBoolean(longKey, value);
+                }
+            }
+
+            // is integer
+            if (!optionPlaceholder && !lookup && isPropertyInteger(rows, rowKey)) {
+                // value must be an integer
+                boolean valid = validateInteger(value);
+                if (!valid) {
+                    result.addInvalidInteger(longKey, value);
+                }
+            }
+
+            // is number
+            if (!optionPlaceholder && !lookup && isPropertyNumber(rows, rowKey)) {
+                // value must be an number
+                boolean valid = false;
+                try {
+                    valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
+                } catch (Exception e) {
+                    // ignore
+                }
+                if (!valid) {
+                    result.addInvalidNumber(longKey, value);
+                }
+            }
+
+            // is enum
+            String enums = getPropertyEnum(rows, rowKey);
+            if (!optionPlaceholder && !lookup && enums != null) {
+                String[] choices = enums.split(",");
+                boolean found = false;
+                for (String s : choices) {
+                    if (value.equalsIgnoreCase(s)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    result.addInvalidEnum(longKey, value);
+                    result.addInvalidEnumChoices(longKey, choices);
+                    if (suggestionStrategy != null) {
+                        Set<String> names = new LinkedHashSet<>();
+                        names.addAll(Arrays.asList(choices));
+                        String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
+                        if (suggestions != null) {
+                            result.addInvalidEnumSuggestions(longKey, suggestions);
+                        }
+                    }
+                }
+            }
+
+            String javaType = getPropertyJavaType(rows, rowKey);
+            if (!optionPlaceholder && !lookup && javaType != null
+                    && (javaType.startsWith("java.util.Map") || javaType.startsWith("java.util.Properties"))) {
+                // there must be a valid suffix
+                if (suffix == null || suffix.isEmpty() || suffix.equals(".")) {
+                    result.addInvalidMap(longKey, value);
+                } else if (suffix.startsWith("[") && !suffix.contains("]")) {
+                    result.addInvalidMap(longKey, value);
+                }
+            }
+            if (!optionPlaceholder && !lookup && javaType != null && isPropertyArray(rows, rowKey)) {
+                // there must be a suffix and it must be using [] style
+                if (suffix == null || suffix.isEmpty() || suffix.equals(".")) {
+                    result.addInvalidArray(longKey, value);
+                } else if (!suffix.startsWith("[") && !suffix.contains("]")) {
+                    result.addInvalidArray(longKey, value);
+                } else {
+                    String index = before(suffix.substring(1), "]");
+                    // value must be an integer
+                    boolean valid = validateInteger(index);
+                    if (!valid) {
+                        result.addInvalidInteger(longKey, index);
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean acceptConfigurationPropertyKey(String key) {
+        if (key == null) {
+            return false;
+        }
+        return key.startsWith("camel.component.")
+                || key.startsWith("camel.dataformat.")
+                || key.startsWith("camel.language.")
+                || key.startsWith("camel.main.")
+                || key.startsWith("camel.hystrix.")
+                || key.startsWith("camel.resilience4j.")
+                || key.startsWith("camel.rest.");
+    }
+
     private LanguageValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
         if (classLoader == null) {
             classLoader = getClass().getClassLoader();
@@ -1225,7 +1430,8 @@ public abstract class AbstractCamelCatalog {
     private static boolean validateInteger(String value) {
         boolean valid = false;
         try {
-            valid = Integer.valueOf(value) != null;
+            Integer.parseInt(value);
+            valid = true;
         } catch (Exception e) {
             // ignore
         }

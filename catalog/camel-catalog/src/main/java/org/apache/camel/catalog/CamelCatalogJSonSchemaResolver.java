@@ -105,6 +105,13 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getMainJsonSchema() {
+        final String file = "META-INF/camel-main-configuration-metadata.json";
+
+        return loadResourceFromVersionManager(file);
+    }
+
+    @Override
     public String getOtherJSonSchema(String name) {
         final String file = camelCatalog.getRuntimeProvider().getOtherJSonSchemaDirectory() + "/" + name + ".json";
 

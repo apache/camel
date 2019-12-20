@@ -61,4 +61,11 @@ public interface JSonSchemaResolver {
      */
     String getModelJSonSchema(String name);
 
+    /**
+     * Returns the camel-main json schema
+     *
+     * @return the camel-main json schema
+     */
+    String getMainJsonSchema();
+
 }

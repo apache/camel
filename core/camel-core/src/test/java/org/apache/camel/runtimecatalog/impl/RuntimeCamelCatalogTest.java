@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.runtimecatalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.LanguageValidationResult;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
@@ -28,10 +29,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 public class RuntimeCamelCatalogTest {
 
@@ -374,6 +373,52 @@ public class RuntimeCamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyComponent() throws Exception {
+        String text = "camel.component.seda.queueSize=1234";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queue-size=1234";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queuesize=1234";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queueSize=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidInteger().get("camel.component.seda.queueSize"));
+
+        text = "camel.component.seda.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.component.seda.foo"));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyLanguage() throws Exception {
+        String text = "camel.language.tokenize.token=;";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.tokenize.regex=true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.tokenize.regex=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidBoolean().get("camel.language.tokenize.regex"));
+
+        text = "camel.language.tokenize.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.language.tokenize.foo"));
     }
 
 }
