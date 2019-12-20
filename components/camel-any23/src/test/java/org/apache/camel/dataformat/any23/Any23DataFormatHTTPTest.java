@@ -38,7 +38,7 @@ public class Any23DataFormatHTTPTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             Model resultingRDF = in.getBody(Model.class);
-            assertEquals(resultingRDF.size(), 1761);
+            assertEquals(resultingRDF.size(), 1762);
         }
     }
 
