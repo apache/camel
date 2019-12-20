@@ -36,7 +36,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 import spark.Service;
 
 @Component("spark-rest")

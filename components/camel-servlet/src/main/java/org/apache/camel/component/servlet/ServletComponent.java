@@ -17,8 +17,6 @@
 package org.apache.camel.component.servlet;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
