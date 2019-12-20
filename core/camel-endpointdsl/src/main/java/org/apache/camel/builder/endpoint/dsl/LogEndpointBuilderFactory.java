@@ -332,7 +332,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If the exchange has a caught exception, show the exception message
          * (no stack trace). A caught exception is stored as a property on the
-         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
+         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
          * The option is a: <code>boolean</code> type.
@@ -347,7 +347,7 @@ public interface LogEndpointBuilderFactory {
         /**
          * If the exchange has a caught exception, show the exception message
          * (no stack trace). A caught exception is stored as a property on the
-         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
+         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
          * The option will be converted to a <code>boolean</code> type.
