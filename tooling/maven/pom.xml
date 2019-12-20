@@ -41,6 +41,7 @@
         <module>camel-api-component-maven-plugin</module>
         <module>bom-generator-maven-plugin</module>
         <module>camel-restdsl-swagger-plugin</module>
+        <module>camel-restdsl-openapi-plugin</module>
         <module>camel-javadoc-plugin</module>
     </modules>
 
