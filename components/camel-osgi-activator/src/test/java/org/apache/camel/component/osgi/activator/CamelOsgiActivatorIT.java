@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +30,8 @@ import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.osgi.activator.CamelRoutesActivator;
+import org.apache.camel.osgi.activator.CamelRoutesActivatorConstants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -106,6 +111,86 @@ public class CamelOsgiActivatorIT {
         assertEquals("There should be one route in the context.", 1, camelContext.getRoutes().size());
 
         testServiceRegistration.unregister();
+
+        assertEquals("There should be no routes in the context.", 0, camelContext.getRoutes().size());
+
+    }
+    
+    @Test
+    public void testPreStartupLoadAndRemoved() throws Exception {
+        CountDownLatch preStartLatch = new CountDownLatch(1);
+        
+        CountDownLatch postStartLatch = new CountDownLatch(1);
+        
+        CamelContext camelContext = bc.getService(bc.getServiceReference(CamelContext.class));
+        
+        Date originalCamelStartTime = camelContext.getStartDate(); 
+        
+        ServiceRegistration<RouteBuilder> testRegularServiceRegistration = bc.registerService(RouteBuilder.class,
+                new RouteBuilder() {
+
+                    @Override
+                    public void configure() throws Exception {
+                        from("timer:test1?fixedRate=true&period=300")
+                            .description("PostStartRoute")
+                            .process(exchange -> {
+                                postStartLatch.countDown();
+                            });
+                    }
+                }, null);
+        
+        postStartLatch.await(10, TimeUnit.SECONDS);
+        
+        Date regularRouteAddCamelContextStartTime = camelContext.getStartDate();
+        
+        assertEquals("Camel Context Should NOT be restarted when removing regular RouteBuilder", originalCamelStartTime, regularRouteAddCamelContextStartTime);
+        
+        assertEquals("There should be one route in the context.", 1, camelContext.getRoutes().size());
+        
+        assertEquals("The PostStartRoute should be first.", "PostStartRoute", camelContext.getRoutes().get(0).getDescription());
+
+        
+        Dictionary<String, String> preStartUpProperties = new Hashtable<>();
+        preStartUpProperties.put(CamelRoutesActivatorConstants.PRE_START_UP_PROP_NAME, "true");
+        ServiceRegistration<RouteBuilder> testPreStartupServiceRegistration = bc.registerService(RouteBuilder.class, 
+                new RouteBuilder() {
+                    
+                    @Override
+                    public void configure() throws Exception {
+                        getContext().setStreamCaching(true);
+                        
+                        from("timer:test2?fixedRate=true&period=300")
+                            .description("PreStartRoute")
+                            .process(exchange -> {
+                                preStartLatch.countDown();
+                            });
+                        
+                    }
+                }, preStartUpProperties);
+
+        preStartLatch.await(10, TimeUnit.SECONDS);
+
+        Date preStartCamelContextStartTime = camelContext.getStartDate();
+        
+        assertTrue("Camel Context Should be restarted when adding startup RouteBuilder", preStartCamelContextStartTime.after(originalCamelStartTime));
+
+        assertEquals("There should be two route in the context.", 2, camelContext.getRoutes().size());
+        
+        assertEquals("The PreStartRoute should be first.", "PreStartRoute", camelContext.getRoutes().get(0).getDescription());
+
+        testPreStartupServiceRegistration.unregister();
+
+        Date preStartRemovedCamelContextStartTime = camelContext.getStartDate();
+        
+        assertEquals("There should be one routes in the context.", 1, camelContext.getRoutes().size());
+        
+        assertTrue("Camel Context Should be restarted when removing startup RouteBuilder", preStartRemovedCamelContextStartTime.after(preStartCamelContextStartTime));
+        
+        testRegularServiceRegistration.unregister();
+        
+        Date regularRouteRemovedCamelContextStartTime = camelContext.getStartDate();
+        
+        assertEquals("Camel Context Should NOT be restarted when removing regular RouteBuilder", preStartRemovedCamelContextStartTime, regularRouteRemovedCamelContextStartTime);
 
         assertEquals("There should be no routes in the context.", 0, camelContext.getRoutes().size());
 
