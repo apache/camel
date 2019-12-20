@@ -42,6 +42,7 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
@@ -191,35 +192,19 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
-                host = "0.0.0.0";
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
-                host = HostUtils.getLocalHostName();
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
-                host = HostUtils.getLocalIp();
-            }
+            host = RestComponentHelper.resolveRestHostName(host, config);
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(getComponentName(), config);
         // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals(getComponentName())) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
 
-        boolean explicitOptions = true;
+        
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-        // allow OPTIONS in rest-dsl to allow clients to call the API and have responses with ALLOW headers
-        if (!restrict.contains("OPTIONS")) {
-            restrict += ",OPTIONS";
-            // this is not an explicit OPTIONS path in the rest-dsl
-            explicitOptions = false;
-        }
-
+        
+        boolean explicitOptions = restrict.contains("OPTIONS");
         boolean cors = config.isEnableCORS();
+
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
@@ -227,22 +212,14 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             // the rest-dsl is using OPTIONS
             map.put("optionsEnabled", "true");
         }
-
-        String query = URISupport.createQueryString(map);
-
-        String url;
+        
         if (api) {
-            url = getComponentName() + ":%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
-        } else {
-            url = getComponentName() + ":%s://%s:%s/%s?matchOnUriPrefix=false&httpMethodRestrict=%s";
+            map.put("matchOnUriPrefix", "true");
         }
+        
+        RestComponentHelper.addHttpRestrictParam(map, verb, !explicitOptions);
 
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
-
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }
+        String url = RestComponentHelper.createRestConsumerUrl(getComponentName(), scheme, host, port, path, map);
 
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
