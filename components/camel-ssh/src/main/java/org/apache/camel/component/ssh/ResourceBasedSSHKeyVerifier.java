@@ -61,7 +61,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
 
     @Override
     public boolean verifyServerKey(ClientSession sshClientSession, SocketAddress remoteAddress, PublicKey serverKey) {
-        log.debug("Trying to find known_hosts file %s", knownHostsResource);
+        log.debug("Trying to find known_hosts file {}", knownHostsResource);
         InputStream knownHostsInputStream = null;
         try {
             knownHostsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext,

@@ -218,7 +218,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         String newEndpointPath = FileUtil.normalizePath(endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
-        LOG.trace("Normalized newFileName: ()", newFileName);
+        LOG.trace("Normalized newFileName: {}", newFileName);
 
         File file = new File(newFileName);
         if (!absolute) {

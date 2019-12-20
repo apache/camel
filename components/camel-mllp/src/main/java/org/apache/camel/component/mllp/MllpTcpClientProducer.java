@@ -381,7 +381,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     void checkConnection() throws IOException {
         if (null == socket || socket.isClosed() || !socket.isConnected()) {
             if (socket == null) {
-                log.debug("checkConnection() - Socket is null - attempting to establish connection", socket);
+                log.debug("checkConnection() - Socket is null - attempting to establish connection");
             } else if (socket.isClosed()) {
                 log.info("checkConnection() - Socket {} is closed - attempting to establish new connection", socket);
             } else if (!socket.isConnected()) {

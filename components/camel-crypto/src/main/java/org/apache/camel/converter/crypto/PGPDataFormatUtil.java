@@ -390,14 +390,14 @@ public final class PGPDataFormatUtil {
             for (String userid : allowedUserIds) {
                 if (keyUserId != null && keyUserId.contains(userid)) {
                     LOG.debug(
-                            "Public key with  user ID {} fulfills the User ID restriction.",
+                            "Public key with User ID {} fulfills the User ID restriction {}.",
                             keyUserId, allowedUserIds);
                     return true;
                 }
             }
         }
         LOG.warn(
-                "Public key with User ID {} does not fulfill the User ID restriction.",
+                "Public key with User ID {} does not fulfill the User ID restriction {}.",
                 keyUserId, allowedUserIds);
         return false;
     }

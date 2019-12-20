@@ -234,7 +234,7 @@ public class MllpSocketBuffer {
                     }
                     socketOutputStream.flush();
                 } catch (IOException ioEx) {
-                    final String exceptionMessage = String.format("writeTo({}) - IOException encountered", socket);
+                    final String exceptionMessage = String.format("writeTo(%s) - IOException encountered", socket);
                     resetSocket(socket, exceptionMessage);
                     throw new MllpSocketException(exceptionMessage, ioEx);
                 }

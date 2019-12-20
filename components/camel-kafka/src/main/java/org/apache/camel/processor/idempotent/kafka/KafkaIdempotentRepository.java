@@ -299,7 +299,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                     + "Duplicate records may not be detected.", topic);
             }
         } catch (InterruptedException e) {
-            log.warn("Interrupted while warming up cache. This exception is ignored.", e.getMessage());
+            log.warn("Interrupted while warming up cache. This exception is ignored.", e);
         }
     }
 
