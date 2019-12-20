@@ -18,6 +18,7 @@ package org.apache.camel.tools.apt.helper;
 
 import java.util.Comparator;
 
+import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tools.apt.model.EndpointOption;
 import org.apache.camel.tools.apt.model.EndpointPath;
 

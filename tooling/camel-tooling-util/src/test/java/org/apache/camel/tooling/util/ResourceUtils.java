@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt;
+package org.apache.camel.tooling.util;
 
-import org.junit.Test;
+import java.io.File;
 
-import static org.apache.camel.tools.apt.helper.Strings.asTitle;
-import static org.apache.camel.tools.apt.helper.Strings.between;
-import static org.junit.Assert.assertEquals;
+public final class ResourceUtils {
 
-public class StringsTest {
-
-    @Test
-    public void testBetween() {
-        assertEquals("org.apache.camel.model.OnCompletionDefinition", between("java.util.List<org.apache.camel.model.OnCompletionDefinition>", "<", ">"));
+    private ResourceUtils() {
+        // noop
     }
 
-    @Test
-    public void testAsTitle() {
-        assertEquals("Broker URL", asTitle("brokerURL"));
-        assertEquals("Expose All Queues", asTitle("exposeAllQueues"));
-        assertEquals("Reply To Concurrent Consumers", asTitle("replyToConcurrentConsumers"));
+    public static File getResourceAsFile(String pathToFile) throws Exception {
+        return new File(ResourceUtils.class.getClassLoader().getResource(pathToFile).getFile());
     }
+
 }

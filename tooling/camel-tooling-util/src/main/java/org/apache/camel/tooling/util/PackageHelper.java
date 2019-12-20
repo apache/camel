@@ -14,50 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging;
+package org.apache.camel.tooling.util;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.sonatype.plexus.build.incremental.BuildContext;
-
+/**
+ * Utility class to find, read json files.
+ */
 public final class PackageHelper {
 
+    public static final String JSON_SUFIX = ".json";
+
     private PackageHelper() {
-    }
-    
-    public static boolean haveResourcesChanged(Log log, MavenProject project, BuildContext buildContext, String suffix) {
-        String baseDir = project.getBasedir().getAbsolutePath();
-        for (Resource r : project.getBuild().getResources()) {
-            File file = new File(r.getDirectory());
-            if (file.isAbsolute()) {
-                file = new File(r.getDirectory().substring(baseDir.length() + 1));
-            }
-            String path = file.getPath() + "/" + suffix;
-            if (log.isDebugEnabled()) {
-                log.debug("Checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
-            }
-            if (buildContext.hasDelta(path)) {
-                log.debug("Indeed " + suffix + " has changed.");
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -89,13 +72,12 @@ public final class PackageHelper {
         }
     }
 
+    public static String loadText(File file) throws IOException {
+        return loadText(new FileInputStream(file));
+    }
+
     public static void writeText(File file, String text) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file, false);
-        try {
-            fos.write(text.getBytes());
-        } finally {
-            fos.close();
-        }
+        FileUtil.updateFile(file.toPath(), text);
     }
 
     public static String after(String text, String after) {
@@ -128,33 +110,48 @@ public final class PackageHelper {
         return answer;
     }
 
-    public static Set<File> findJsonFiles(File dir, FileFilter filter) {
-        Set<File> files = new TreeSet<>();
-        findJsonFiles(dir, files, filter);
-
-        return files;
+    public static String fileToString(File file) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(file.toURI()));
+        return new String(encoded, Charset.defaultCharset());
     }
 
-    public static void findJsonFiles(File dir, Set<File> found, FileFilter filter) {
+    public static Map<String, File> findJsonFiles(File rootDir) {
+        Map<String, File> results = new HashMap<>();
+        findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
+        return results;
+    }
+
+    public static void findJsonFiles(File rootDir, Set<File> files, FileFilter filter) {
+        Map<String, File> results = new HashMap<>();
+        findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
+        files.addAll(results.values());
+    }
+
+    public static Map<String, File> findJsonFiles(File rootDir, FileFilter filter) {
+        Map<String, File> results = new HashMap<>();
+        findJsonFiles0(rootDir, results, filter);
+        return results;
+    }
+
+    private static void findJsonFiles0(File dir, Map<String, File> result, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
                 // skip files in root dirs as Camel does not store information there but others may do
-                boolean jsonFile = file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = file.isFile() && file.getName().endsWith(JSON_SUFIX);
                 if (jsonFile) {
-                    found.add(file);
+                    result.put(file.getName().replaceAll("\\" + JSON_SUFIX, ""), file);
                 } else if (file.isDirectory()) {
-                    findJsonFiles(file, found, filter);
+                    findJsonFiles0(file, result, filter);
                 }
             }
         }
     }
 
     public static class CamelComponentsModelFilter implements FileFilter {
-
         @Override
         public boolean accept(File pathname) {
-            return pathname.isDirectory() || pathname.getName().endsWith(".json");
+            return pathname.isDirectory() || pathname.getName().endsWith(JSON_SUFIX);
         }
     }
 
@@ -164,16 +161,16 @@ public final class PackageHelper {
         public boolean accept(File pathname) {
             String name = pathname.getName();
             boolean special = "camel-core-osgi".equals(name)
-                || "camel-core-xml".equals(name)
-                || "camel-http-base".equals(name)
-                || "camel-http-common".equals(name)
-                || "camel-jetty-common".equals(name);
+                    || "camel-core-xml".equals(name)
+                    || "camel-http-base".equals(name)
+                    || "camel-http-common".equals(name)
+                    || "camel-jetty-common".equals(name);
             boolean special2 = "camel-as2".equals(name)
-                || "camel-box".equals(name)
-                || "camel-olingo2".equals(name)
-                || "camel-olingo4".equals(name)
-                || "camel-salesforce".equals(name)
-                || "camel-debezium-common".equals(name);
+                    || "camel-box".equals(name)
+                    || "camel-olingo2".equals(name)
+                    || "camel-olingo4".equals(name)
+                    || "camel-salesforce".equals(name)
+                    || "camel-debezium-common".equals(name);
             if (special || special2) {
                 return false;
             }

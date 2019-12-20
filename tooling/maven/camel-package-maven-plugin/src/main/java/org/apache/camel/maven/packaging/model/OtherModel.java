@@ -19,9 +19,9 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.maven.packaging.StringHelper;
+import org.apache.camel.tooling.util.Strings;
 
-import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
+import static org.apache.camel.tooling.util.Strings.cutLastZeroDigit;
 
 public class OtherModel {
 
@@ -148,6 +148,6 @@ public class OtherModel {
     }
 
     public String getShortJavaType() {
-        return StringHelper.getClassShortName(javaType);
+        return Strings.getClassShortName(javaType);
     }
 }

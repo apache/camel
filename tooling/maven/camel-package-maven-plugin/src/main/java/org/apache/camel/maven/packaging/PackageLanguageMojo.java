@@ -17,15 +17,15 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -35,10 +35,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.PackageHelper.after;
-import static org.apache.camel.maven.packaging.PackageHelper.findCamelCoreDirectory;
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
+import static org.apache.camel.tooling.util.PackageHelper.after;
+import static org.apache.camel.tooling.util.PackageHelper.findCamelCoreDirectory;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.parseAsMap;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
@@ -87,7 +87,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
             projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/language.properties"), Collections.emptyList());
         }
 
-        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
+        if (!haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
             return 0;
         }
 
@@ -140,8 +140,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         languageModel.setArtifactId(project.getArtifactId());
                         languageModel.setVersion(project.getVersion());
 
-                        InputStream is = new FileInputStream(new File(core, "src/main/schema/" + modelName + ".json"));
-                        String json = loadText(is);
+                        String json = loadText(new File(core, "src/main/schema/" + modelName + ".json"));
                         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
                         for (Map<String, String> row : rows) {
                             if (row.containsKey("title")) {
@@ -237,7 +236,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
         // find out the javaType for each data format
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = loadText(file);
             Map<String, String> map = parseAsMap(text);
             return map.get("class");
         } catch (IOException e) {

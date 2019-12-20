@@ -16,9 +16,9 @@
  */
 package org.apache.camel.maven.packaging.model;
 
-import org.apache.camel.maven.packaging.StringHelper;
+import org.apache.camel.tooling.util.Strings;
 
-import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
+import static org.apache.camel.tooling.util.Strings.wrapCamelCaseWords;
 
 public class EndpointOptionModel {
 
@@ -188,13 +188,13 @@ public class EndpointOptionModel {
     }
 
     public String getShortJavaType() {
-        return StringHelper.getClassShortName(javaType);
+        return Strings.getClassShortName(javaType);
     }
 
     @Deprecated
     public String getShortJavaType(int watermark) {
 
-        String text = StringHelper.getClassShortName(javaType);
+        String text = Strings.getClassShortName(javaType);
 
         // if its some kind of java object then lets wrap it as its long
         if ("object".equals(type)) {

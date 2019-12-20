@@ -17,13 +17,14 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -33,7 +34,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
@@ -75,7 +76,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
             projectHelper.addResource(project, componentOutDir.getPath(), Collections.singletonList("**/component.properties"), Collections.emptyList());
         }
 
-        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")) {
+        if (!haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")) {
             return 0;
         }
 
@@ -125,15 +126,15 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
     }
 
     private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Set<String> components) throws MojoExecutionException {
-        final Set<File> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"));
+        final Map<String, File> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"));
 
-        for (File file : files) {
+        for (File file : files.values()) {
             // clip the .json suffix
             String name = file.getName().substring(0, file.getName().length() - 5);
             if (components.contains(name)) {
                 log.debug("Enriching component: " + name);
                 try {
-                    String text = loadText(new FileInputStream(file));
+                    String text = loadText(file);
                     text = text.replace("@@@DESCRIPTION@@@", project.getDescription());
                     text = text.replace("@@@GROUPID@@@", project.getGroupId());
                     text = text.replace("@@@ARTIFACTID@@@", project.getArtifactId());

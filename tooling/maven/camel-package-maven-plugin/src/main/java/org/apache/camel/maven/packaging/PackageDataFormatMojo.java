@@ -17,15 +17,14 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -35,10 +34,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.PackageHelper.after;
-import static org.apache.camel.maven.packaging.PackageHelper.findCamelCoreDirectory;
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
+import static org.apache.camel.tooling.util.PackageHelper.after;
+import static org.apache.camel.tooling.util.PackageHelper.findCamelCoreDirectory;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.parseAsMap;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
@@ -81,7 +80,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             projectHelper.addResource(project, dataFormatOutDir.getPath(), Collections.singletonList("**/dataformat.properties"), Collections.emptyList());
         }
 
-        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")) {
+        if (!haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")) {
             return 0;
         }
 
@@ -122,8 +121,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         String javaType = entry.getValue();
                         String modelName = asModelName(name);
 
-                        InputStream is = new FileInputStream(new File(core, "target/classes/org/apache/camel/model/dataformat/" + modelName + ".json"));
-                        String json = loadText(is);
+                        String json = loadText(new File(core, "target/classes/org/apache/camel/model/dataformat/" + modelName + ".json"));
 
                         DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
                         if (log.isDebugEnabled()) {
@@ -173,7 +171,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return count;
     }
 
-    private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String modelName, String name, String javaType) throws Exception {
+    private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String modelName, String name, String javaType) {
         DataFormatModel dataFormatModel = new DataFormatModel();
         dataFormatModel.setName(name);
         dataFormatModel.setTitle("");
@@ -243,7 +241,6 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         String jsonGson = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\", \"Fastjson\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Gson\"";
         String jsonJackson = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\", \"Fastjson\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Jackson\"";
         String jsonJohnzon = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\", \"Fastjson\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Johnzon\"";
-        String jsonXStream = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\", \"Fastjson\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"XStream\"";
         String jsonFastjson = "\"enum\": [ \"Gson\", \"Jackson\", \"Johnzon\", \"XStream\", \"Fastjson\" ], \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"Fastjson\"";
 
         if ("json-gson".equals(name)) {
@@ -252,8 +249,6 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             properties = properties.replace(json, jsonJackson);
         } else if ("json-johnzon".equals(name)) {
             properties = properties.replace(json, jsonJohnzon);
-        } else if ("json-xstream".equals(name)) {
-            properties = properties.replace(json, jsonXStream);
         } else if ("json-fastjson".equals(name)) {
             properties = properties.replace(json, jsonFastjson);
         }
@@ -300,7 +295,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
         // find out the javaType for each data format
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = loadText(file);
             Map<String, String> map = parseAsMap(text);
             return map.get("class");
         } catch (IOException e) {
