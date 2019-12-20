@@ -440,7 +440,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * Enables or disables transaction. If enabled then if processing an
-         * exchange failed then the consumerbreak out processing any further
+         * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
          * The option is a: <code>boolean</code> type.
@@ -453,7 +453,7 @@ public interface ElsqlEndpointBuilderFactory {
         }
         /**
          * Enables or disables transaction. If enabled then if processing an
-         * exchange failed then the consumerbreak out processing any further
+         * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
          * The option will be converted to a <code>boolean</code> type.

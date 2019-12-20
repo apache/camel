@@ -330,8 +330,8 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * f the exchange has a caught exception, show the exception message (no
-         * stack trace).A caught exception is stored as a property on the
+         * If the exchange has a caught exception, show the exception message
+         * (no stack trace). A caught exception is stored as a property on the
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
          * and for instance a doCatch can catch exceptions.
          * 
@@ -345,8 +345,8 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * f the exchange has a caught exception, show the exception message (no
-         * stack trace).A caught exception is stored as a property on the
+         * If the exchange has a caught exception, show the exception message
+         * (no stack trace). A caught exception is stored as a property on the
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
          * and for instance a doCatch can catch exceptions.
          * 
@@ -574,7 +574,7 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to skip line separators when logging the message body.This
+         * Whether to skip line separators when logging the message body. This
          * allows to log the message body in one line, setting this option to
          * false will preserve any line separators from the body, which then
          * will log the body as is.
@@ -589,7 +589,7 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to skip line separators when logging the message body.This
+         * Whether to skip line separators when logging the message body. This
          * allows to log the message body in one line, setting this option to
          * false will preserve any line separators from the body, which then
          * will log the body as is.
