@@ -120,7 +120,7 @@ public class FastjsonDataFormat extends ServiceSupport implements DataFormat, Da
                 serializerFeatureList.add(SerializerFeature.WriteDateUseDateFormat);
                 config.setDateFormat(this.dateFormatPattern);
             }
-
+            config.setSerializerFeatures(serializerFeatureList.toArray(SerializerFeature[]::new));
         }
     }
 
