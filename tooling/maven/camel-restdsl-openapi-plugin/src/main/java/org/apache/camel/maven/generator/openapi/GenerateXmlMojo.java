@@ -19,6 +19,7 @@ package org.apache.camel.maven.generator.openapi;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
@@ -31,7 +32,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
+
 
 @Mojo(name = "generate-xml", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
     requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)

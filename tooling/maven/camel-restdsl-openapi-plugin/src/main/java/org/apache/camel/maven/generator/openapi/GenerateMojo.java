@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-
+import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.generator.openapi.RestDslSourceCodeGenerator;
@@ -32,7 +32,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import io.apicurio.datamodels.openapi.models.OasDocument;
 
 @Mojo(name = "generate", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
     requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
