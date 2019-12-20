@@ -95,6 +95,22 @@ public final class RestComponentHelper {
      * Creates the Rest consumers url based on component and url options.
      * 
      * @param componentName the name of the rest component
+     * @param verb the HTTP verb
+     * @param path the HTTP path of the route
+     * @param queryMap the endpoint query options
+     * @return a string of the component route url
+     * @throws URISyntaxException - is thrown if uri has invalid syntax.
+     */
+    public static String createRestConsumerUrl(String componentName, String verb, String path, Map<String, Object> queryMap) throws URISyntaxException {
+        String query = URISupport.createQueryString(queryMap);
+        return applyFormatAndQuery("%s:%s:%s", query, componentName, verb, path);
+    }
+    
+    /**
+     * 
+     * Creates the Rest consumers url based on component and url options.
+     * 
+     * @param componentName the name of the rest component
      * @param path the HTTP path of the route
      * @param queryMap the endpoint query options
      * @return a string of the component route url
