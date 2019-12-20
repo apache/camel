@@ -17,7 +17,6 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -26,7 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.main.parser.ConfigurationModel;
 import org.apache.camel.main.parser.MainConfigurationParser;
-import org.apache.camel.util.StringHelper;
+import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -83,7 +82,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                     prefix = "camel.main.";
                 }
                 final String namePrefix = prefix;
-                model.stream().forEach(m -> m.setName(namePrefix + m.getName()));
+                model.forEach(m -> m.setName(namePrefix + m.getName()));
                 data.addAll(model);
             } catch (Exception e) {
                 throw new MojoFailureException("Error parsing file " + file + " due " + e.getMessage(), e);
@@ -94,7 +93,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
         File restConfig = new File(buildDir, "../../camel-api/src/main/java/org/apache/camel/spi/RestConfiguration.java");
         try {
             List<ConfigurationModel> model = parser.parseConfigurationSource(restConfig);
-            model.stream().forEach(m -> m.setName("camel.rest." + m.getName()));
+            model.forEach(m -> m.setName("camel.rest." + m.getName()));
             data.addAll(model);
         } catch (Exception e) {
             throw new MojoFailureException("Error parsing file " + restConfig + " due " + e.getMessage(), e);
@@ -112,16 +111,15 @@ public class PrepareCamelMainMojo extends AbstractMojo {
         });
 
         if (!data.isEmpty()) {
-            List list = new ArrayList();
-            for (int i = 0; i < data.size(); i++) {
-                ConfigurationModel row = data.get(i);
+            List<Object> list = new ArrayList<>();
+            for (ConfigurationModel row : data) {
                 String name = camelCaseToDash(row.getName());
                 String javaType = row.getJavaType();
                 String desc = sanitizeDescription(row.getDescription(), false);
                 String sourceType = row.getSourceType();
                 String defaultValue = row.getDefaultValue();
 
-                Map p = new LinkedHashMap();
+                Map<String, Object> p = new LinkedHashMap<>();
                 p.put("name", name);
                 p.put("type", javaType);
                 p.put("sourceType", sourceType);
@@ -136,20 +134,20 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 list.add(p);
             }
 
-            List groups = new ArrayList();
-            Map group1 = new LinkedHashMap();
+            List<Object> groups = new ArrayList<>();
+            Map<String, Object> group1 = new LinkedHashMap<>();
             group1.put("name", "camel.main");
             group1.put("description", "camel-main configurations.");
             group1.put("sourceType", "org.apache.camel.main.DefaultConfigurationProperties");
-            Map group2 = new LinkedHashMap();
+            Map<String, Object> group2 = new LinkedHashMap<>();
             group2.put("name", "camel.hystrix");
             group2.put("description", "camel-hystrix configurations.");
             group2.put("sourceType", "org.apache.camel.main.HystrixConfigurationProperties");
-            Map group3 = new LinkedHashMap();
+            Map<String, Object> group3 = new LinkedHashMap<>();
             group3.put("name", "camel.resilience4j");
             group3.put("description", "camel-resilience4j configurations.");
             group3.put("sourceType", "org.apache.camel.main.Resilience4jConfigurationProperties");
-            Map group4 = new LinkedHashMap();
+            Map<String, Object> group4 = new LinkedHashMap<>();
             group4.put("name", "camel.rest");
             group4.put("description", "camel-rest configurations.");
             group4.put("sourceType", "org.apache.camel.spi.RestConfiguration");
@@ -158,20 +156,16 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             groups.add(group3);
             groups.add(group4);
 
-            Map map = new LinkedHashMap();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("groups", groups);
             map.put("properties", list);
 
             String json = Jsoner.serialize(map);
             json = Jsoner.prettyPrint(json);
 
-            outFolder.mkdirs();
             File file = new File(outFolder, "camel-main-configuration-metadata.json");
             try {
-                FileOutputStream fos = new FileOutputStream(file, false);
-                fos.write(json.getBytes());
-                fos.close();
-                getLog().info("Created file: " + file);
+                FileUtil.updateFile(file.toPath(), json);
             } catch (Throwable e) {
                 throw new MojoFailureException("Cannot write to file " + file + " due " + e.getMessage(), e);
             }

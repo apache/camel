@@ -30,7 +30,7 @@ import javax.tools.StandardLocation;
 import org.apache.camel.spi.annotations.ServiceFactory;
 import org.apache.camel.spi.annotations.SubServiceFactory;
 
-import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
+import static org.apache.camel.tooling.util.Strings.canonicalClassName;
 
 @SupportedAnnotationTypes({"org.apache.camel.spi.annotations.*"})
 public class SpiProcessor extends AbstractCamelAnnotationProcessor {

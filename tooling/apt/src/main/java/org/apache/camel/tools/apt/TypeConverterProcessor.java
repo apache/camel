@@ -32,7 +32,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
+import static org.apache.camel.tooling.util.Strings.canonicalClassName;
 
 @SupportedAnnotationTypes({"org.apache.camel.Converter"})
 public class TypeConverterProcessor extends AbstractCamelAnnotationProcessor {

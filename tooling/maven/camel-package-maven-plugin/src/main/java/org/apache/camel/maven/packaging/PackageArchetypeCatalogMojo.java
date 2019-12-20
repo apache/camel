@@ -35,8 +35,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import static org.apache.camel.maven.packaging.PackageHelper.findCamelDirectory;
-import static org.apache.camel.maven.packaging.StringHelper.between;
+import static org.apache.camel.tooling.util.Strings.between;
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
  * Creates the Maven catalog for the Camel archetypes
@@ -192,7 +192,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
 
                     List<String> includes = new ArrayList<>();
                     includes.add("archetype-catalog.xml");
-                    projectHelper.addResource(project, outDir.getPath(), includes, new ArrayList<String>());
+                    projectHelper.addResource(project, outDir.getPath(), includes, new ArrayList<>());
                     projectHelper.attachArtifact(project, "xml", "archetype-catalog", out);
                 }
             } catch (Exception e) {

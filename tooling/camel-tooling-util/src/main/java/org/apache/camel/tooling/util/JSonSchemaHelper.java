@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt.helper;
+package org.apache.camel.tooling.util;
 
 import java.io.File;
 import java.net.URI;
@@ -33,18 +33,18 @@ import org.apache.camel.util.json.Jsoner;
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.
  */
-public final class JsonSchemaHelper {
+public final class JSonSchemaHelper {
 
     private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
 
-    private JsonSchemaHelper() {
+    private JSonSchemaHelper() {
     }
 
     public static String toJson(String name, String displayName, String kind, Boolean required, String type, String defaultValue, String description,
                                 Boolean deprecated, String deprecationNote, Boolean secret, String group, String label, boolean enumType, Set<String> enums,
                                 boolean oneOfType, Set<String> oneOffTypes, boolean asPredicate, String optionalPrefix, String prefix, boolean multiValue,
                                 String configurationClass, String configurationField) {
-        String typeName = JsonSchemaHelper.getType(type, enumType);
+        String typeName = JSonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
         sb.append(Strings.doubleQuote(name));
@@ -79,7 +79,7 @@ public final class JsonSchemaHelper {
 
         sb.append(", \"type\": ");
         if ("enum".equals(typeName)) {
-            String actualType = JsonSchemaHelper.getType(type, false);
+            String actualType = JSonSchemaHelper.getType(type, false);
             sb.append(Strings.doubleQuote(actualType));
             sb.append(", \"javaType\": \"").append(type).append("\"");
             sb.append(", \"enum\": [ ");
@@ -349,24 +349,24 @@ public final class JsonSchemaHelper {
         try {
             JsonObject output = (JsonObject) Jsoner.deserialize(json);
             for (String key : output.keySet()) {
-                Map row = output.getMap(key);
+                Map<?, ?> row = output.getMap(key);
                 if (key.equals(group)) {
                     if (parseProperties) {
                         // flattern each entry in the row with name as they key, and its value as the content (its a map also)
                         for (Object obj : row.entrySet()) {
-                            Map.Entry entry = (Map.Entry) obj;
-                            Map<String, String> newRow = new LinkedHashMap();
+                            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                            Map<String, String> newRow = new LinkedHashMap<>();
                             newRow.put("name", entry.getKey().toString());
 
-                            Map newData = transformMap((Map) entry.getValue());
+                            Map<String, String> newData = transformMap((Map<?, ?>) entry.getValue());
                             newRow.putAll(newData);
                             answer.add(newRow);
                         }
                     } else {
                         // flattern each entry in the row as a list of single Map<key, value> elements
-                        Map newData = transformMap(row);
+                        Map<?, ?> newData = transformMap(row);
                         for (Object obj : newData.entrySet()) {
-                            Map.Entry entry = (Map.Entry) obj;
+                            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
                             Map<String, String> newRow = new LinkedHashMap<>();
                             newRow.put(entry.getKey().toString(), entry.getValue().toString());
                             answer.add(newRow);
@@ -377,26 +377,6 @@ public final class JsonSchemaHelper {
         } catch (Exception e) {
             // wrap parsing exceptions as runtime
             throw new RuntimeException("Cannot parse json", e);
-        }
-
-        return answer;
-    }
-
-    private static Map<String, String> transformMap(Map jsonMap) {
-        Map<String, String> answer = new LinkedHashMap<>();
-
-        for (Object rowObj : jsonMap.entrySet()) {
-            Map.Entry rowEntry = (Map.Entry) rowObj;
-            // if its a list type then its an enum, and we need to parse it as a single line separated with comma
-            // to be backwards compatible
-            Object newValue = rowEntry.getValue();
-            if (newValue instanceof List) {
-                List<Object> list = (List) newValue;
-                newValue = list.stream().map(String::valueOf).collect(Collectors.joining(","));
-            }
-            // ensure value is escaped
-            String value = escapeJson(newValue.toString());
-            answer.put(rowEntry.getKey().toString(), value);
         }
 
         return answer;
@@ -423,6 +403,119 @@ public final class JsonSchemaHelper {
         } else {
             return value;
         }
+    }
+
+    private static Map<String, String> transformMap(Map<?, ?> jsonMap) {
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        for (Object rowObj : jsonMap.entrySet()) {
+            Map.Entry<?, ?> rowEntry = (Map.Entry<?, ?>) rowObj;
+            // if its a list type then its an enum, and we need to parse it as a single line separated with comma
+            // to be backwards compatible
+            Object newValue = rowEntry.getValue();
+            if (newValue instanceof List) {
+                List<?> list = (List<?>) newValue;
+                newValue = list.stream().map(Object::toString)
+                        .collect(Collectors.joining(","));
+            }
+            // ensure value is escaped
+            String value = escapeJson(newValue.toString());
+            answer.put(rowEntry.getKey().toString(), value);
+        }
+
+        return answer;
+    }
+
+    /**
+     * Gets the value with the key in a safe way, eg returning an empty string if there was no value for the key.
+     */
+    public static String getSafeValue(String key, List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            String value = row.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Gets the value with the key in a safe way, eg returning an empty string if there was no value for the key.
+     */
+    public static String getSafeValue(String key, Map<String, String> rows) {
+        String value = rows.get(key);
+        if (value != null) {
+            return value;
+        }
+        return "";
+    }
+
+    public static String getPropertyDefaultValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String defaultValue = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("defaultValue")) {
+                defaultValue = row.get("defaultValue");
+            }
+            if (found) {
+                return defaultValue;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyDescriptionValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String description = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("description")) {
+                description = row.get("description");
+            }
+            if (found) {
+                return description;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyJavaType(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String javaType = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("javaType")) {
+                javaType = row.get("javaType");
+            }
+            if (found) {
+                return javaType;
+            }
+        }
+        return null;
+    }
+
+    public static String getPropertyType(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String type = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("type")) {
+                type = row.get("type");
+            }
+            if (found) {
+                return type;
+            }
+        }
+        return null;
     }
 
 }

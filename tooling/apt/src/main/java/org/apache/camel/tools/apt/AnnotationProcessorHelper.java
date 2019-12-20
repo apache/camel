@@ -18,7 +18,6 @@ package org.apache.camel.tools.apt;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -46,9 +45,8 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import static org.apache.camel.tools.apt.helper.IOHelper.loadText;
-import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
+import static org.apache.camel.tooling.util.Strings.canonicalClassName;
+import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 /**
  * Abstract class for Camel apt plugins.
@@ -338,10 +336,6 @@ public final class AnnotationProcessorHelper {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
     }
 
-    public static void warning(ProcessingEnvironment processingEnv, String message) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, message);
-    }
-
     public static void error(ProcessingEnvironment processingEnv, String message) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
     }
@@ -353,31 +347,6 @@ public final class AnnotationProcessorHelper {
         e.printStackTrace(writer);
         writer.close();
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, buffer.toString());
-    }
-
-    public static String loadResource(ProcessingEnvironment processingEnv, String packageName, String fileName) {
-        Filer filer = processingEnv.getFiler();
-
-        FileObject resource;
-        String relativeName = packageName + "/" + fileName;
-        try {
-            resource = filer.getResource(StandardLocation.CLASS_OUTPUT, "", relativeName);
-        } catch (Throwable e) {
-            return "Cannot load classpath resource: " + relativeName + " due: " + e.getMessage();
-        }
-
-        if (resource == null) {
-            return null;
-        }
-
-        try {
-            InputStream is = resource.openInputStream();
-            return loadText(is, true);
-        } catch (Exception e) {
-            warning(processingEnv, "APT cannot load file: " + packageName + "/" + fileName);
-        }
-
-        return null;
     }
 
     public static void dumpExceptionToErrorFile(String fileName, String message, Throwable e) {
