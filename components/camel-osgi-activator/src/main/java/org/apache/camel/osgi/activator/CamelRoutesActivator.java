@@ -17,6 +17,7 @@
 package org.apache.camel.osgi.activator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -45,30 +46,109 @@ public class CamelRoutesActivator implements BundleActivator, ServiceTrackerCust
     @SuppressWarnings("unchecked")
     public void start(BundleContext context) throws Exception {
         this.bundleContext = context;
-        this.camelContext = new OsgiDefaultCamelContext(context);
-
-        this.routeServiceTracker = new ServiceTracker<RouteBuilder, RouteBuilder>(context, RouteBuilder.class, this);
-
+        
+        this.camelContext = new OsgiDefaultCamelContext(this.bundleContext);
+        
+        camelContextRef = this.bundleContext.registerService(CamelContext.class, camelContext, null);
+        
         camelContext.start();
 
-        camelContextRef = context.registerService(CamelContext.class, camelContext, null);
-
-        ServiceReference<RouteBuilder>[] existingRouteBuildersReferences = (ServiceReference<RouteBuilder>[]) context
-                .getAllServiceReferences(RouteBuilder.class.getName(), null);
-
-        if (existingRouteBuildersReferences != null) {
-            for (ServiceReference<RouteBuilder> currentRouteBuilderReference : existingRouteBuildersReferences) {
-                addingService(currentRouteBuilderReference);
-            }
-        }
-
+        this.routeServiceTracker = new ServiceTracker<RouteBuilder, RouteBuilder>(context, RouteBuilder.class, this);
+        
         this.routeServiceTracker.open();
+
         LOG.info("Camel OSGi Activator RouteBuilder ServiceTracker Tracker Open");
     }
 
     @Override
     public RouteBuilder addingService(ServiceReference<RouteBuilder> reference) {
         RouteBuilder builder = this.bundleContext.getService(reference);
+        if (isPreStartRouteBuilder(reference)) {
+            reloadTrackedServices(reference);
+        } else {
+            addRoute(builder);
+        }
+        return builder;
+    }
+    
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        this.routeServiceTracker.close();
+        stopAndClearCamelRoutes();
+        this.bundleContext.ungetService(camelContextRef.getReference());
+    }
+    
+    @Override
+    public void modifiedService(ServiceReference<RouteBuilder> reference, RouteBuilder service) {
+        removedService(reference, service);
+        addingService(reference);
+    }
+
+    @Override
+    public void removedService(ServiceReference<RouteBuilder> reference, RouteBuilder service) {
+        if (isPreStartRouteBuilder(reference)) {
+            reloadTrackedServices();
+        } else {
+            removeRoute(service);
+        }
+    }
+    
+    private boolean isPreStartRouteBuilder(ServiceReference<RouteBuilder> reference) {
+        
+        boolean result = false;
+        
+        Object preStartProperty = reference.getProperty(CamelRoutesActivatorConstants.PRE_START_UP_PROP_NAME);
+        
+        if (preStartProperty instanceof Boolean) {
+            result = (Boolean)preStartProperty;
+        } else if (preStartProperty instanceof String) {
+            result = Boolean.parseBoolean((String) preStartProperty);
+        }
+                
+        return result;
+    }
+    
+    private void loadAndRestartCamelContext(List<ServiceReference<RouteBuilder>> existingRouteBuildersReferences) {
+        if (existingRouteBuildersReferences != null) {
+            List<RouteBuilder> postStartUpRoutes = new ArrayList<>();
+            for (ServiceReference<RouteBuilder> currentRouteBuilderReference : existingRouteBuildersReferences) {
+                RouteBuilder builder = this.bundleContext.getService(currentRouteBuilderReference);
+                if (isPreStartRouteBuilder(currentRouteBuilderReference)) {
+                    addRoute(builder);
+                } else {
+                    postStartUpRoutes.add(builder);
+                }
+            }
+            camelContext.start();
+            postStartUpRoutes.forEach(this::addRoute);
+        }
+    }
+    
+    private void reloadTrackedServices(ServiceReference<RouteBuilder> reference) {
+        LOG.info("Reload Camel Context Routes Triggered");
+        try {
+            synchronized (camelContext) {
+                stopAndClearCamelRoutes();
+                List<ServiceReference<RouteBuilder>> routeServiceReferenceArrayList = new ArrayList<>();
+                if (reference != null) {
+                    routeServiceReferenceArrayList.add(reference);
+                }
+                ServiceReference<RouteBuilder>[] existingTrackedRoutes = this.routeServiceTracker.getServiceReferences();
+                if (existingTrackedRoutes != null) {
+                    routeServiceReferenceArrayList.addAll(Arrays.asList(existingTrackedRoutes));
+                }
+                loadAndRestartCamelContext(routeServiceReferenceArrayList);
+            }
+        } catch (Exception e) {
+            LOG.error("Error Reloading Camel Context Routes", e);
+        }
+    }
+    
+    private void reloadTrackedServices() {
+        reloadTrackedServices(null);
+    }
+
+    private void addRoute(RouteBuilder builder) {
         try {
             // need to synchronize here since adding routes is not synchronized
             synchronized (camelContext) {
@@ -78,27 +158,14 @@ public class CamelRoutesActivator implements BundleActivator, ServiceTrackerCust
         } catch (Exception e) {
             LOG.error("Error Adding Camel RouteBuilder", e);
         }
-
-        return builder;
     }
 
-    @Override
-    public void stop(BundleContext context) throws Exception {
-        this.routeServiceTracker.close();
+    private void stopAndClearCamelRoutes() throws Exception {
         camelContext.stop();
         camelContext.removeRouteDefinitions(new ArrayList<RouteDefinition>(this.camelContext.getRouteDefinitions()));
-
-        context.ungetService(camelContextRef.getReference());
     }
 
-    @Override
-    public void modifiedService(ServiceReference<RouteBuilder> reference, RouteBuilder service) {
-        removedService(reference, service);
-        addingService(reference);
-    }
-
-    @Override
-    public void removedService(ServiceReference<RouteBuilder> reference, RouteBuilder service) {
+    private void removeRoute(RouteBuilder service) {
         List<RouteDefinition> routesToBeRemoved = service.getRouteCollection().getRoutes();
         try {
             synchronized (camelContext) {
@@ -109,7 +176,6 @@ public class CamelRoutesActivator implements BundleActivator, ServiceTrackerCust
         } catch (Exception e) {
             LOG.error("Error Removing Camel Route Builder", e);
         }
-
     }
 
 }
