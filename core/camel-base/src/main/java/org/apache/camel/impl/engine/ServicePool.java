@@ -230,8 +230,9 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
             if (s == null) {
                 synchronized (this) {
                     if (s == null) {
-                        s = producer.apply(endpoint);
-                        endpoint.getCamelContext().addService(s, true, true);
+                        S tempS = producer.apply(endpoint);
+                        endpoint.getCamelContext().addService(tempS, true, true);
+                        s = tempS;
                     }
                 }
             }
