@@ -18,7 +18,7 @@ package org.apache.camel.maven.packaging.model;
 
 import java.util.stream.Stream;
 
-import org.apache.camel.maven.packaging.StringHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -46,6 +46,6 @@ public class StringHelperTest {
     @ParameterizedTest
     @MethodSource("getClassShortNameTypeVarations")
     public void getClassShortName(String expectedBaseClassName, String className) {
-        Assertions.assertEquals(expectedBaseClassName, StringHelper.getClassShortName(className));
+        Assertions.assertEquals(expectedBaseClassName, Strings.getClassShortName(className));
     }
 }

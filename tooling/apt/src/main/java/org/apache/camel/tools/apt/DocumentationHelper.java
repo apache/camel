@@ -22,7 +22,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.parseJsonSchema;
+import static org.apache.camel.tooling.util.JSonSchemaHelper.parseJsonSchema;
 
 /**
  * Helper to find documentation for inherited options when a component extends another.

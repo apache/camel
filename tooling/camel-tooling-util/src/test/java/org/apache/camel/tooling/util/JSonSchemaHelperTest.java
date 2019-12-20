@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt;
+package org.apache.camel.tooling.util;
 
-import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
+import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class JsonSchemaHelperTest {
+public class JSonSchemaHelperTest {
 
     private static final String JAVADOC = ""
         + "     * When in streaming mode, then the splitter splits the original message on-demand, and each splitted\n"
@@ -72,13 +72,13 @@ public class JsonSchemaHelperTest {
     @Test
     public void testSanitizeJavaDoc() throws Exception {
         String s = "* more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.";
-        String s2 = JsonSchemaHelper.sanitizeDescription(s, false);
+        String s2 = JSonSchemaHelper.sanitizeDescription(s, false);
         Assert.assertEquals("more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header.", s2);
 
-        String out = JsonSchemaHelper.sanitizeDescription(JAVADOC, false);
+        String out = JSonSchemaHelper.sanitizeDescription(JAVADOC, false);
         Assert.assertEquals(EXPECTED_OUT, out);
 
-        String out2 = JsonSchemaHelper.sanitizeDescription(JAVADOC2, false);
+        String out2 = JSonSchemaHelper.sanitizeDescription(JAVADOC2, false);
         Assert.assertEquals(EXPECTED_OUT2, out2);
     }
 }

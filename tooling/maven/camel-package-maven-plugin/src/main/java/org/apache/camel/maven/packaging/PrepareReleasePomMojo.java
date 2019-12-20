@@ -17,13 +17,13 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,10 +33,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import static org.apache.camel.maven.packaging.PackageHelper.after;
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.writeText;
-import static org.apache.camel.maven.packaging.StringHelper.between;
+import static org.apache.camel.tooling.util.PackageHelper.after;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.writeText;
+import static org.apache.camel.tooling.util.Strings.between;
 
 /**
  * Prepares the apache-camel/pom.xml and common-bin to keep the Camel artifacts up-to-date.
@@ -153,10 +153,10 @@ public class PrepareReleasePomMojo extends AbstractMojo {
     }
 
     private String asArtifactId(File pom) throws IOException {
-        String text = loadText(new FileInputStream(pom));
+        String text = loadText(pom);
         text = after(text, "</parent>");
         if (text != null) {
-            return between(text, "<artifactId>", "</artifactId>");
+            return Strings.between(text, "<artifactId>", "</artifactId>");
         }
         return null;
     }
@@ -174,7 +174,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = loadText(file);
 
             String existing = between(text, start, end);
             if (existing != null) {
@@ -184,8 +184,8 @@ public class PrepareReleasePomMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, start);
-                    String after = StringHelper.after(text, end);
+                    String before = Strings.before(text, start);
+                    String after = Strings.after(text, end);
                     text = before + start + "\n" + spaces + changed + "\n" + spaces + end + after;
                     writeText(file, text);
                     return true;

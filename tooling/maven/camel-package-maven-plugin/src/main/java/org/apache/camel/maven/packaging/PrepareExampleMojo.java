@@ -17,7 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
@@ -32,6 +31,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.maven.packaging.model.ExampleModel;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,8 +43,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
 
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.writeText;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.writeText;
 
 /**
  * Prepares the readme.md files content up to date with all the examples that Apache Camel ships.
@@ -104,10 +104,10 @@ public class PrepareExampleMojo extends AbstractMojo {
                         ExampleModel model = new ExampleModel();
                         model.setFileName(file.getName());
 
-                        String name = StringHelper.between(existing, "<name>", "</name>");
-                        String title = StringHelper.between(existing, "<title>", "</title>");
-                        String description = StringHelper.between(existing, "<description>", "</description>");
-                        String category = StringHelper.between(existing, "<category>", "</category>");
+                        String name = Strings.between(existing, "<name>", "</name>");
+                        String title = Strings.between(existing, "<title>", "</title>");
+                        String description = Strings.between(existing, "<description>", "</description>");
+                        String category = Strings.between(existing, "<category>", "</category>");
 
                         if (title != null) {
                             model.setTitle(title);
@@ -139,7 +139,7 @@ public class PrepareExampleMojo extends AbstractMojo {
             }
 
             // sort the models
-            Collections.sort(models, new ExampleComparator());
+            models.sort(new ExampleComparator());
 
             // how many deprecated
             long deprecated = models.stream()
@@ -186,9 +186,9 @@ public class PrepareExampleMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = loadText(file);
 
-            String existing = StringHelper.between(text, "// examples: START", "// examples: END");
+            String existing = Strings.between(text, "// examples: START", "// examples: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -196,8 +196,8 @@ public class PrepareExampleMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "// examples: START");
-                    String after = StringHelper.after(text, "// examples: END");
+                    String before = Strings.before(text, "// examples: START");
+                    String after = Strings.after(text, "// examples: END");
                     text = before + "// examples: START\n" + changed + "\n// examples: END" + after;
                     writeText(file, text);
                     return true;
@@ -234,7 +234,7 @@ public class PrepareExampleMojo extends AbstractMojo {
         if (answer.startsWith("camel-example-")) {
             answer = answer.substring(14);
         }
-        answer = StringHelper.camelDashToTitle(answer);
+        answer = Strings.camelDashToTitle(answer);
         return answer;
     }
 
