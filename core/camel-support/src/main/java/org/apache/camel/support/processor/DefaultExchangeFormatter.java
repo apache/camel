@@ -50,8 +50,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
-    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body." 
-    + "This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
+    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body."
+    + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
     private boolean skipBodyLineSeparator = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
     private boolean showBody = true;
@@ -59,8 +59,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showBodyType = true;
     @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
-    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)." 
-    + "A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions.")
+    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)."
+    + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions.")
     private boolean showCaughtException;
     @UriParam(label = "formatting", description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
     private boolean showStackTrace;

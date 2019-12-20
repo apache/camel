@@ -172,7 +172,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
                     doStart();
                 } catch (Exception e) {
                     log.error("An unrecoverable exception has occurred while starting the JMX consumer"
-                                + "for endpoint {}", URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
+                                + " for endpoint {}", URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
                 }
             }
         };

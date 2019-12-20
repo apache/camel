@@ -898,7 +898,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                 this.keyOrTrustStoreParameters = (KeyStoreParameters)parametersObj;
             } else {
                 throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext."
-                        + "The id for the keyOrTrustStoreParameters specified [ " + keyOrTrustStoreParametersRef
+                        + " The id for the keyOrTrustStoreParameters specified [ " + keyOrTrustStoreParametersRef
                         + " ] does not identify a KeyStoreParameters bean.");
             }
         }
