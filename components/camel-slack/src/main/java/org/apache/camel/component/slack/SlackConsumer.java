@@ -18,6 +18,7 @@ package org.apache.camel.component.slack;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -136,8 +137,8 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
         String jsonString = readResponse(response);
         JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
-        JsonArray list = (JsonArray) c.getCollection("channels");
-        for (JsonObject singleChannel : (List<JsonObject>)(List) list) {
+        Collection<JsonObject> channels = c.getCollection("channels");
+        for (JsonObject singleChannel : channels) {
             if (singleChannel.get("name") != null) {
                 if (singleChannel.get("name").equals(channel)) {
                     if (singleChannel.get("id") != null) {
