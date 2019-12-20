@@ -85,7 +85,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
     @UriParam(label = "formatting", description = "If the exchange has a caught exception, show the exception message (no stack trace)."
-            + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions.")
+            + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
     private boolean showCaughtException;
     @UriParam(label = "formatting", description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
     private boolean showStackTrace;
