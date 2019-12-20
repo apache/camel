@@ -54,3 +54,20 @@ And it's automatically added or removed to the context from any bundle!
 ----
 Route: route1 started and consuming from: timer://test?fixedRate=true&period=1000
 ----
+
+For routes that need to be started before the CamelContext the "camel.osgi.activator.pre-startup" service property may be added.  
+
+[source,java]
+----
+@Component(service = RouteBuilder.class, property = {CamelRoutesActivatorConstants.PRE_START_UP_PROP_NAME + "=true"})
+public class MyStartupRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        getContext().setStreamCaching(true);
+
+        restConfiguration().component("netty-http").port(8080);
+    }
+}
+----
+
+If this RouteBuilder is added after other non pre startup RouteBuilders then CamelContext will automatically restart.  This allows pre start up RouteBuilder to run their configure methods before other RouteBuilders.
