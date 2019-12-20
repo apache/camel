@@ -16,7 +16,7 @@
  */
 package org.apache.camel.osgi.activator;
 
-public class CamelRoutesActivatorConstants {
+public final class CamelRoutesActivatorConstants {
 
     public static final String PRE_START_UP_PROP_NAME = "camel.osgi.activator.pre-startup";
     
