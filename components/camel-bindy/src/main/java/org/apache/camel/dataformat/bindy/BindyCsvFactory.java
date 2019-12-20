@@ -399,7 +399,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         TreeMap<Integer, List<String>> sortValues = new TreeMap<>(values);
 
         List<List<String>> product = new ArrayList<>();
-        Map<Integer, Integer> index = new HashMap<>();
 
         int idx = 0;
         int idxSize = 0;
@@ -417,13 +416,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 if (l.size() >= idx + 1) {
                     v.add(l.get(idx));
-                    index.put(ii, idx);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Value: {}, pos: {}, at: {}", l.get(idx), ii, idx);
                     }
                 } else {
                     v.add(l.get(0));
-                    index.put(ii, 0);
                     ++idxSize;
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Value: {}, pos: {}, at index: {}", l.get(0), ii, 0);
