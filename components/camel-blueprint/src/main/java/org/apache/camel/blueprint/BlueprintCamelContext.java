@@ -173,7 +173,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
                 break;
             }
 
-            log.debug("Received BlueprintEvent[replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
+            log.debug("Received BlueprintEvent[replay={} type={} bundle={}] {}", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
         }
 
         if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {

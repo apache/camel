@@ -262,7 +262,7 @@ public final class AtmosAPIFacade {
         }
         if (content != null) {
             resultEntries.put(path, baos);
-            LOG.debug("Downloaded path: {} size:", path, baos.size());
+            LOG.debug("Downloaded path: {} size: {}", path, baos.size());
         }
 
     }

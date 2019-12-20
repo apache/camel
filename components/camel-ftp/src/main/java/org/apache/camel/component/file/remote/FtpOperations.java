@@ -578,7 +578,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             log.trace("Error occurred during retrieving file: {} to local directory.", name);
             // if we do not attempt to resume download, then attempt to delete the temporary file
             if (!resumeDownload) {
-                log.trace("Deleting local work file: {}", name, temp);
+                log.trace("Deleting local work file: {}", name);
                 // failed to retrieve the file so we need to close streams and delete in progress file
                 // must close stream before deleting file
                 IOHelper.close(os, "retrieve: " + name, log);

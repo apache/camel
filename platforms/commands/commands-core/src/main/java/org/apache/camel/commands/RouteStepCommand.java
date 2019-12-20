@@ -67,7 +67,7 @@ public class RouteStepCommand extends AbstractRouteCommand {
 
             long count = route.getExchangesCompleted() + route.getExchangesFailed();
             out.println(String.format(OUTPUT_FORMAT, route.getId(), count, route.getLastProcessingTime(), route.getDeltaProcessingTime(),
-                    route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), route.getSelfProcessingTime()));
+                    route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime()));
 
             for (StepStatDump ss : route.getStepStats()) {
                 count = ss.getExchangesCompleted() + ss.getExchangesFailed();

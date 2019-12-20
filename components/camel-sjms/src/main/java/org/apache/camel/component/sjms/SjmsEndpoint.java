@@ -258,7 +258,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
         }
 
         try {
-            logger.debug("Creating ConnectionResource with connectionCount: {} using ConnectionFactory", getConnectionCount(), getConnectionFactory());
+            logger.debug("Creating ConnectionResource with connectionCount: {} using ConnectionFactory: {}", getConnectionCount(), getConnectionFactory());
             // We always use a connection pool, even for a pool of 1
             ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory(),
                 getComponent().getConnectionUsername(), getComponent().getConnectionPassword(), getComponent().getConnectionClientId(),

@@ -389,7 +389,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         // lets inject the namespaces into any namespace aware POJOs
         injectNamespaces(element, binder);
 
-        LOG.trace("Parsing RouteContext done, returning {}", element, ctx);
+        LOG.trace("Parsing RouteContext {} done, returning {}", element, ctx);
         return ctx;
     }
 
@@ -430,7 +430,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         // lets inject the namespaces into any namespace aware POJOs
         injectNamespaces(element, binder);
 
-        LOG.trace("Parsing RestContext done, returning {}", element, ctx);
+        LOG.trace("Parsing RestContext {} done, returning {}", element, ctx);
         return ctx;
     }
 
@@ -471,7 +471,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         // must be lazy as we want CamelContext to be activated first
         ctx.setActivation(ACTIVATION_LAZY);
 
-        LOG.trace("Parsing endpoint done, returning {}", element, ctx);
+        LOG.trace("Parsing endpoint {} done, returning {}", element, ctx);
         return ctx;
     }
 

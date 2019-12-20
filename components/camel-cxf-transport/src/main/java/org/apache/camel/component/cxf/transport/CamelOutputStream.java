@@ -96,7 +96,7 @@ class CamelOutputStream extends CachedOutputStream {
 
         // TODO support different encoding
         exchange.getIn().setBody(outputStream.getInputStream());
-        LOG.debug("template sending request: ", exchange.getIn());
+        LOG.debug("template sending request: {}", exchange.getIn());
         
         if (outMessage.getExchange().isSynchronous()) {
             syncInvoke(exchange);
