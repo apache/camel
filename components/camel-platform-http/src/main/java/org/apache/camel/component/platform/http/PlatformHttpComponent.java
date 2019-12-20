@@ -31,6 +31,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 
@@ -108,43 +109,23 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             config = camelContext.getRestConfiguration(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, true);
         }
 
-        Map<String, Object> map = new HashMap<>();
-        // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME)) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, config);
 
         boolean cors = config.isEnableCORS();
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
+        
+        if (api) {
+            map.put("matchOnUriPrefix", "true");
+        }
+        
+        RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
         // do not append with context-path as the servlet path should be without context-path
 
-        String query = URISupport.createQueryString(map);
-
-        String url;
-        if (api) {
-            url = "platform-http:/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
-        } else {
-            url = "platform-http:/%s?httpMethodRestrict=%s";
-        }
-
-        // must use upper case for restrict
-        String restrict = verb.toUpperCase(Locale.US);
-        if (cors) {
-            restrict += ",OPTIONS";
-        }
-        // get the endpoint
-        url = String.format(url, path, restrict);
-
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }
+        String url = RestComponentHelper.createRestConsumerUrl("platform-http", path, map);
 
         PlatformHttpEndpoint endpoint = camelContext.getEndpoint(url, PlatformHttpEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
