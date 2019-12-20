@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.platform.http;
 
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +31,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.URISupport;
 
 /**
  * Exposes HTTP endpoints leveraging the given platform's (SpringBoot, WildFly, Quarkus, ...) HTTP server.
