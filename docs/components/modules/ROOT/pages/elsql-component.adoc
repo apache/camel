@@ -117,7 +117,7 @@ with the following path and query parameters:
 | *onConsumeFailed* (consumer) | After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter. |  | String
 | *routeEmptyResultSet* (consumer) | Sets whether empty resultset should be allowed to be sent to the next hop. Defaults to false. So the empty resultset will be filtered out. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumerbreak out processing any further exchanges to cause a rollback eager. | false | boolean
+| *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumer breaks out processing any further exchanges to cause a rollback eager. | false | boolean
 | *useIterator* (consumer) | Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
