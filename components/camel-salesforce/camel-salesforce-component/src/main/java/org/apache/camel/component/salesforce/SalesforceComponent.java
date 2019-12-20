@@ -194,7 +194,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private String httpProxyRealm;
 
     @Metadata(description = "If set to true Digest authentication will be used when authenticating to the HTTP proxy,"
-                            + "otherwise Basic authorization method will be used", defaultValue = "false", label = "common,proxy,security")
+                            + " otherwise Basic authorization method will be used", defaultValue = "false", label = "common,proxy,security")
     private boolean httpProxyUseDigestAuth;
 
     @Metadata(description = "In what packages are the generated DTO classes. Typically the classes would be generated"

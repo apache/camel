@@ -37,7 +37,7 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
     @UriParam(label = "producer")
     private StatementType statementType;
     @UriParam(label = "consumer", description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
-        + "break out processing any further exchanges to cause a rollback eager.")
+        + " breaks out processing any further exchanges to cause a rollback eager.")
     private boolean transacted;
     @UriParam(label = "consumer", defaultValue = "0")
     private int maxMessagesPerPoll;

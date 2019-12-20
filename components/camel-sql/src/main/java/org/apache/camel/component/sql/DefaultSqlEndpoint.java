@@ -47,7 +47,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     @UriParam(description = "Sets the DataSource to use to communicate with the database.")
     private DataSource dataSource;
     @UriParam(label = "consumer", description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
-            + "break out processing any further exchanges to cause a rollback eager.")
+            + " breaks out processing any further exchanges to cause a rollback eager.")
     private boolean transacted;
     @UriParam(label = "producer", description = "Enables or disables batch mode")
     private boolean batch;
