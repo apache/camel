@@ -385,8 +385,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
+        
+        RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
-        String url = RestComponentHelper.createRestConsumerUrl("netty-http", verb, scheme, host, port, path, cors, map);
+        String url = RestComponentHelper.createRestConsumerUrl("netty-http", scheme, host, port, path, map);
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         setProperties(camelContext, endpoint, parameters);

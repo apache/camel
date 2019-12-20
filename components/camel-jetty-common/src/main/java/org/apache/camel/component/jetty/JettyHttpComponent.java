@@ -1086,8 +1086,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
+        
+        RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
-        String url = RestComponentHelper.createRestConsumerUrl("jetty", verb, scheme, host, port, path, cors, map);
+        String url = RestComponentHelper.createRestConsumerUrl("jetty", scheme, host, port, path, map);
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(camelContext, endpoint, parameters);

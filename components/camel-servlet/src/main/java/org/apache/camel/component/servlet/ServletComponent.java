@@ -290,9 +290,11 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         
         if (api) {
             map.put("matchOnUriPrefix", "true");
-        } 
+        }
+        
+        RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
-        String url = RestComponentHelper.createRestConsumerUrl("servlet", verb, path, cors, map);  
+        String url = RestComponentHelper.createRestConsumerUrl("servlet", path, map);  
 
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
