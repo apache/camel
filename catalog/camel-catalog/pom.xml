@@ -129,6 +129,7 @@
                                         <include>EndpointValidationResult.java</include>
                                         <include>JSonSchemaResolver.java</include>
                                         <include>LanguageValidationResult.java</include>
+                                        <include>PropertiesValidationResult.java</include>
                                     </includes>
                                 </resource>
                                 <resource>
