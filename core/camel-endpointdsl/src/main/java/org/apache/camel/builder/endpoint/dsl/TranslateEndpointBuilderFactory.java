@@ -221,6 +221,28 @@ public interface TranslateEndpointBuilderFactory {
             return this;
         }
         /**
+         * Source language to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default TranslateEndpointBuilder sourceLanguage(String sourceLanguage) {
+            doSetProperty("sourceLanguage", sourceLanguage);
+            return this;
+        }
+        /**
+         * Target language to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default TranslateEndpointBuilder targetLanguage(String targetLanguage) {
+            doSetProperty("targetLanguage", targetLanguage);
+            return this;
+        }
+        /**
          * To use a existing configured AWS Translate as client.
          * 
          * The option is a:
