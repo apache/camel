@@ -44,6 +44,10 @@ public class TranslateConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String proxyHost;
     @UriParam(label = "producer")
+    private String sourceLanguage;
+    @UriParam(label = "producer")
+    private String targetLanguage;
+    @UriParam(label = "producer")
     private Integer proxyPort;
     @UriParam
     private String region;
@@ -151,12 +155,34 @@ public class TranslateConfiguration implements Cloneable {
     public void setAutodetectSourceLanguage(boolean autodetectSourceLanguage) {
         this.autodetectSourceLanguage = autodetectSourceLanguage;
     }
+    
+    public String getSourceLanguage() {
+		return sourceLanguage;
+	}
+
+    /**
+     * Source language to use
+     */
+	public void setSourceLanguage(String sourceLanguage) {
+		this.sourceLanguage = sourceLanguage;
+	}
+
+	public String getTargetLanguage() {
+		return targetLanguage;
+	}
+	
+    /**
+     * Target language to use
+     */
+	public void setTargetLanguage(String targetLanguage) {
+		this.targetLanguage = targetLanguage;
+	}
 
     // *************************************************
     //
     // *************************************************
 
-    public TranslateConfiguration copy() {
+	public TranslateConfiguration copy() {
         try {
             return (TranslateConfiguration)super.clone();
         } catch (CloneNotSupportedException e) {
