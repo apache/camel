@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 307 in 245 JAR artifacts (0 deprecated)
+Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -84,7 +84,7 @@ Number of Components: 307 in 245 JAR artifacts (0 deprecated)
 
 | xref:aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
-| xref:aws-translate-component.adoc[AWS Translate] (camel-aws-translate) | 3.0 | The aws-kms is used for managing Amazon Translate
+| xref:aws-translate-component.adoc[AWS Translate] (camel-aws-translate) | 3.0 | The aws-translate component is used for managing Amazon Translate
 
 | xref:azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
@@ -108,7 +108,7 @@ Number of Components: 307 in 245 JAR artifacts (0 deprecated)
 
 | xref:caffeine-loadcache-component.adoc[Caffeine LoadCache] (camel-caffeine) | 2.20 | The caffeine-loadcache component is used for integration with Caffeine Load Cache.
 
-| xref:cql-component.adoc[Cassandra CQL] (camel-cassandraql) | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
+| xref:cql-component.adoc[Cassandra CQL] (camel-cassandraql) | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API). It's based on Cassandra Java Driver provided by DataStax.
 
 | xref:chatscript-component.adoc[ChatScript] (camel-chatscript) | 3.0 | Represents a ChatScript endpoint.
 
@@ -128,7 +128,7 @@ Number of Components: 307 in 245 JAR artifacts (0 deprecated)
 
 | xref:controlbus-component.adoc[Control Bus] (camel-controlbus) | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
 
-| xref:corda-component.adoc[Corda] (camel-corda) | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
+| xref:corda-component.adoc[Corda] (camel-corda) | 2.23 | The corda component uses corda-rpc to interact with corda nodes.
 
 | xref:couchbase-component.adoc[Couchbase] (camel-couchbase) | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
@@ -136,7 +136,7 @@ Number of Components: 307 in 245 JAR artifacts (0 deprecated)
 
 | xref:crypto-component.adoc[Crypto (JCE)] (camel-crypto) | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 
-| xref:crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) | 2.20 | The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
+| xref:crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) | 2.20 | *deprecated* The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
 
 | xref:cxf-component.adoc[CXF] (camel-cxf) | 1.0 | The cxf component is used for SOAP WebServices using Apache CXF.
 
@@ -262,7 +262,7 @@ Number of Components: 307 in 245 JAR artifacts (0 deprecated)
 
 | xref:hazelcast-seda-component.adoc[Hazelcast SEDA] (camel-hazelcast) | 2.7 | The hazelcast-seda component is used to access Hazelcast BlockingQueue.
 
-| xref:hazelcast-set-component.adoc[Hazelcast Set] (camel-hazelcast) | 2.7 | The camel Endpoint to access Hazelcast distributed set.
+| xref:hazelcast-set-component.adoc[Hazelcast Set] (camel-hazelcast) | 2.7 | The hazelcast-set component is used to access Hazelcast distributed set.
 
 | xref:hazelcast-topic-component.adoc[Hazelcast Topic] (camel-hazelcast) | 2.15 | The hazelcast-topic component is used to access Hazelcast distributed topic.
 
@@ -370,7 +370,7 @@ Number of Components: 307 in 245 JAR artifacts (0 deprecated)
 
 | xref:kubernetes-service-accounts-component.adoc[Kubernetes Service Account] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
 
-| xref:kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
+| xref:kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) | 2.17 | The Kubernetes Services component provides a producer to execute service operations and a consumer to consume service events.
 
 | xref:kudu-component.adoc[Kudu] (camel-kudu) | 3.0 | Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
