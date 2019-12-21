@@ -33,18 +33,6 @@ public class DirectProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        endpoint.addProducer(this);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        endpoint.removeProducer(this);
-        super.doStop();
-    }
-
-    @Override
     public void process(Exchange exchange) throws Exception {
         DirectConsumer consumer = endpoint.getConsumer();
         if (consumer == null) {
