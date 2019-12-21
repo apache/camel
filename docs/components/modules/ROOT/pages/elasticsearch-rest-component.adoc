@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (14 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,6 +91,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *connectionTimeout* (producer) | The time in ms to wait before connection will timeout. | 30000 | int
 | *disconnect* (producer) | Disconnect after it finish calling the producer | false | boolean
+| *enableSniffer* (producer) | Enable automatically discover nodes from a running Elasticsearch cluster | false | boolean
 | *enableSSL* (producer) | Enable SSL | false | boolean
 | *hostAddresses* (producer) | *Required* Comma separated list with ip:port formatted remote transport addresses to use. |  | String
 | *indexName* (producer) | The name of the index to act against |  | String
@@ -98,6 +99,8 @@ with the following path and query parameters:
 | *maxRetryTimeout* (producer) | The time in ms before retry | 30000 | int
 | *operation* (producer) | What operation to perform |  | ElasticsearchOperation
 | *scrollKeepAliveMs* (producer) | Time in ms during which elasticsearch will keep search context alive | 60000 | int
+| *sniffAfterFailureDelay* (producer) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
+| *snifferInterval* (producer) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int
 | *socketTimeout* (producer) | The timeout in ms to wait before the socket will timeout. | 30000 | int
 | *useScroll* (producer) | Enable scroll usage | false | boolean
 | *waitForActiveShards* (producer) | Index creation waits for the write consistency number of shards to be available | 1 | int
