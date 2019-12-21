@@ -52,7 +52,7 @@ public class TranslateProducerTest extends CamelTestSupport {
         assertEquals("Hello", resultGet);
 
     }
-    
+
     @Test
     public void translateTextTestOptions() throws Exception {
 
@@ -77,7 +77,8 @@ public class TranslateProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:translateText").to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText").to("mock:result");
-                from("direct:translateTextOptions").to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en").to("mock:result");
+                from("direct:translateTextOptions").to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
+                    .to("mock:result");
             }
         };
     }

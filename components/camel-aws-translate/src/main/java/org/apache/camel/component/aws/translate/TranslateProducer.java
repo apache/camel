@@ -80,29 +80,29 @@ public class TranslateProducer extends DefaultProducer {
     private void translateText(AmazonTranslate translateClient, Exchange exchange) {
         TranslateTextRequest request = new TranslateTextRequest();
         if (!getConfiguration().isAutodetectSourceLanguage()) {
-        	if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage()) && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-            String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
-            String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
-            if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                throw new IllegalArgumentException("Source and target language must be specified as headers or endpoint options");
-            }
-            request.setSourceLanguageCode(source);
-            request.setTargetLanguageCode(target);
-        	} else {
+            if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage()) && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
+                String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
+                String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
+                if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
+                    throw new IllegalArgumentException("Source and target language must be specified as headers or endpoint options");
+                }
+                request.setSourceLanguageCode(source);
+                request.setTargetLanguageCode(target);
+            } else {
                 request.setSourceLanguageCode(getConfiguration().getSourceLanguage());
                 request.setTargetLanguageCode(getConfiguration().getTargetLanguage());
-        	}
+            }
         } else {
             String source = "auto";
             if (ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-            String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
-            if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
-            }
-            request.setSourceLanguageCode(source);
-            request.setTargetLanguageCode(target);
+                String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
+                if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
+                    throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
+                }
+                request.setSourceLanguageCode(source);
+                request.setTargetLanguageCode(target);
             } else {
-            	request.setSourceLanguageCode(source);
+                request.setSourceLanguageCode(source);
                 request.setTargetLanguageCode(getConfiguration().getTargetLanguage());
             }
         }
