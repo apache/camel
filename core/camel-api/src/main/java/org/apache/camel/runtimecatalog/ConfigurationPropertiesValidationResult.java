@@ -16,12 +16,12 @@
  */
 package org.apache.camel.runtimecatalog;
 
+import java.io.Serializable;
+
 /**
  * Details result of validating configuration properties (eg application.properties for camel-main).
  */
-public class ConfigurationPropertiesValidationResult extends EndpointValidationResult {
-
-    // TODO: Move stuff to base class for EndpointValidationResult so they can share code
+public class ConfigurationPropertiesValidationResult extends PropertiesValidationResult implements Serializable {
 
     private String key;
     private String value;
