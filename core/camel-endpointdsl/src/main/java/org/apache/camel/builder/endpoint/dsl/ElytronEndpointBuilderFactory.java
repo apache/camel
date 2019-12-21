@@ -49,7 +49,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: allowedRoles
+         * Group: common
          */
         default ElytronEndpointConsumerBuilder allowedRoles(String allowedRoles) {
             doSetProperty("allowedRoles", allowedRoles);
@@ -556,7 +556,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: allowedRoles
+         * Group: common
          */
         default ElytronEndpointProducerBuilder allowedRoles(String allowedRoles) {
             doSetProperty("allowedRoles", allowedRoles);
@@ -1112,7 +1112,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: allowedRoles
+         * Group: common
          */
         default ElytronEndpointBuilder allowedRoles(String allowedRoles) {
             doSetProperty("allowedRoles", allowedRoles);

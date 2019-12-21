@@ -1,5 +1,6 @@
 [[elytron-component]]
 = Elytron Component
+:page-source: components/camel-elytron/src/main/docs/elytron-component.adoc
 
 *Since Camel 3.1*
 
