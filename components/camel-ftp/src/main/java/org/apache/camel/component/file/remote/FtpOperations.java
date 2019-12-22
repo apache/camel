@@ -183,15 +183,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         // must set soTimeout after connect
-        if (endpoint instanceof FtpEndpoint) {
-            FtpEndpoint<?> ftpEndpoint = endpoint;
-            if (ftpEndpoint.getSoTimeout() > 0) {
-                log.trace("Using SoTimeout={}", ftpEndpoint.getSoTimeout());
-                try {
-                    client.setSoTimeout(ftpEndpoint.getSoTimeout());
-                } catch (IOException e) {
-                    throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-                }
+        if (endpoint.getSoTimeout() > 0) {
+            log.trace("Using SoTimeout={}", endpoint.getSoTimeout());
+            try {
+                client.setSoTimeout(endpoint.getSoTimeout());
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             }
         }
 
