@@ -107,8 +107,7 @@ public class RibbonServiceLoadBalancer
 
         if (serviceDiscovery != null) {
             LOGGER.info("ServiceCall is using ribbon load balancer with service discovery type: {} and service filter: {}",
-                serviceDiscovery.getClass(),
-                serviceDiscovery != null ? serviceFilter.getClass() : "none");
+                serviceDiscovery.getClass(), serviceFilter.getClass());
         } else {
             LOGGER.info("ServiceCall is using ribbon load balancer");
         }

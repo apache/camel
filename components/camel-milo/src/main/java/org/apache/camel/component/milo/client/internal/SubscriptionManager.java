@@ -479,10 +479,8 @@ public class SubscriptionManager {
 
             return new Connected(client, manager);
         } catch (final Throwable e) {
-            if (client != null) {
-                // clean up
-                client.disconnect();
-            }
+            // clean up
+            client.disconnect();
             throw e;
         }
     }
