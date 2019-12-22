@@ -22,9 +22,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
@@ -37,6 +39,8 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
@@ -51,7 +55,8 @@ import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
- * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions.
+ * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions,
+ * and validates configuration files such as application.properties.
  */
 @Mojo(name = "validate", threadSafe = true)
 public class ValidateMojo extends AbstractExecMojo {
@@ -158,6 +163,13 @@ public class ValidateMojo extends AbstractExecMojo {
     @Parameter(property = "camel.directOrSedaPairCheck", defaultValue = "true")
     private boolean directOrSedaPairCheck;
 
+    /**
+     * Location of configuration files to validate. The default is application.properties
+     * Multiple values can be separated by comma and use ANT path style.
+     */
+    @Parameter(property = "camel.configurationFiles")
+    private String configurationFiles = "application.properties";
+
     // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -195,6 +207,45 @@ public class ValidateMojo extends AbstractExecMojo {
             getLog().info("Validating using Camel version: " + catalog.getCatalogVersion());
         }
 
+        doExecuteRoutes(catalog);
+        doExecuteConfigurationFiles(catalog);
+    }
+
+    protected void doExecuteConfigurationFiles(CamelCatalog catalog) {
+        // TODO: implement me
+
+        Set<File> propertiesFiles = new LinkedHashSet<>();
+        List list = project.getResources();
+        for (Object obj : list) {
+            String dir = (String) obj;
+            findPropertiesFiles(new File(dir), propertiesFiles);
+        }
+        if (includeTest) {
+            list = project.getTestResources();
+            for (Object obj : list) {
+                String dir = (String) obj;
+                findPropertiesFiles(new File(dir), propertiesFiles);
+            }
+        }
+        for (File file : propertiesFiles) {
+            if (matchPropertiesFile(file)) {
+                InputStream is = null;
+                try {
+                    is = new FileInputStream(file);
+                    Properties prop = new OrderedProperties();
+                    prop.load(is);
+
+                    EndpointValidationResult result = catalog.validateConfigurationProperty(line);
+                } catch (Exception e) {
+                    getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
+                } finally {
+                    IOHelper.close(is);
+                }
+            }
+        }
+    }
+
+    protected void doExecuteRoutes(CamelCatalog catalog) throws MojoExecutionException, MojoFailureException {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
         List<CamelSimpleExpressionDetails> simpleExpressions = new ArrayList<>();
         List<CamelRouteDetails> routeIds = new ArrayList<>();
@@ -233,7 +284,7 @@ public class ValidateMojo extends AbstractExecMojo {
         }
 
         for (File file : javaFiles) {
-            if (matchFile(file)) {
+            if (matchRouteFile(file)) {
                 try {
                     List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
                     List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
@@ -271,7 +322,7 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
         for (File file : xmlFiles) {
-            if (matchFile(file)) {
+            if (matchRouteFile(file)) {
                 try {
                     List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
                     List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
@@ -773,6 +824,19 @@ public class ValidateMojo extends AbstractExecMojo {
         return null;
     }
 
+    private void findPropertiesFiles(File dir, Set<File> propertiesFiles) {
+        File[] files = dir.isDirectory() ? dir.listFiles() : null;
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith(".properties")) {
+                    propertiesFiles.add(file);
+                } else if (file.isDirectory()) {
+                    findJavaFiles(file, propertiesFiles);
+                }
+            }
+        }
+    }
+
     private void findJavaFiles(File dir, Set<File> javaFiles) {
         File[] files = dir.isDirectory() ? dir.listFiles() : null;
         if (files != null) {
@@ -799,7 +863,19 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
-    private boolean matchFile(File file) {
+    private boolean matchPropertiesFile(File file) {
+        for (String part : configurationFiles.split(",")) {
+            part = part.trim();
+            String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
+            boolean match = PatternHelper.matchPattern(fqn, part);
+            if (match) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matchRouteFile(File file) {
         if (excludes == null && includes == null) {
             return true;
         }
