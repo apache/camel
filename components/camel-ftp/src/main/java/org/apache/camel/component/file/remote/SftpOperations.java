@@ -1107,10 +1107,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 return socket;
             } catch (Exception e) {
                 String message = e.toString();
-                if (e instanceof Throwable) {
-                    throw new RuntimeCamelException(message, e);
-                }
-                throw new RuntimeCamelException(message);
+                throw new RuntimeCamelException(message, e);
             }
         }
         final Socket[] sockp = new Socket[1];
