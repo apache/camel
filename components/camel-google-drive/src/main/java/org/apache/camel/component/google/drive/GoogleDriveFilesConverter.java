@@ -59,10 +59,8 @@ public final class GoogleDriveFilesConverter {
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
             fileMetadata.setTitle(file.getFileName());
             InputStreamContent mediaContent = new InputStreamContent(null, is);
-            if (exchange != null) {
-                exchange.getIn().setHeader("CamelGoogleDrive.content", fileMetadata);
-                exchange.getIn().setHeader("CamelGoogleDrive.mediaContent", mediaContent);
-            }            
+            exchange.getIn().setHeader("CamelGoogleDrive.content", fileMetadata);
+            exchange.getIn().setHeader("CamelGoogleDrive.mediaContent", mediaContent);
             
             return fileMetadata;
         }

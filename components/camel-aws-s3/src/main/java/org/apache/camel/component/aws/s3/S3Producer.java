@@ -208,7 +208,7 @@ public class S3Producer extends DefaultProducer {
             message.setHeader(S3Constants.VERSION_ID, uploadResult.getVersionId());
         }
 
-        if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
+        if (getConfiguration().isDeleteAfterWrite()) {
             FileUtil.deleteFile(filePayload);
         }
     }

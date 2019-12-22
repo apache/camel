@@ -99,7 +99,7 @@ public final class AtmosAPIFacade {
         //verify uploading of a single file
         if (fileLocalPath.isFile()) {
             //check if atmos file exists
-            if (atmosEntry != null && !atmosEntry.isDirectory()) {
+            if (!atmosEntry.isDirectory()) {
                 throw new AtmosException(atmosPath + " exists on atmos and is not a folder!");
             }
             atmosPath = atmosPath + fileLocalPath.getName();
@@ -121,7 +121,7 @@ public final class AtmosAPIFacade {
         } else {       //verify uploading of a list of files inside a dir
             LOG.info("uploading a dir...");
             //check if atmos folder exists
-            if (atmosEntry != null && !atmosEntry.isDirectory()) {
+            if (!atmosEntry.isDirectory()) {
                 throw new AtmosException(atmosPath + " exists on atmos and is not a folder!");
             }
             //revert to old path
